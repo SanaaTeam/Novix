@@ -117,30 +117,6 @@ private fun WatchingMediaHistoryScreenContent(
                             onSaveIconClick = interactionListener::onSaveIconClick,
                             modifier = Modifier.fillMaxSize()
                         )
-                        val selectedMedia = state.selectedMediaToSave
-                        if (state.userIsLoggedIn) {
-                            if (state.showSaveToListBottomSheet && selectedMedia != null) {
-                                SaveToListBottomSheet(
-                                    isVisible = true,
-                                    mediaId = selectedMedia.id.toLong(),
-                                    onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-                                    onCreateNewListClick = interactionListener::onCreateNewListClick
-                                )
-                            }
-                            if (state.showAddListBottomSheet && selectedMedia != null) {
-                                AddBookmarkListBottomSheet(
-                                    isVisible = true,
-                                    onDismiss = interactionListener::onDismissAddListBottomSheet,
-                                    mediaId = selectedMedia.id
-                                )
-                            }
-                        } else {
-                            RequestToLoginBottomSheet(
-                                isVisible = state.showLoginBottomSheet,
-                                onDismiss = interactionListener::onDismissLoginBottomSheet,
-                                onLoginButtonClick = interactionListener::onLoginButtonClick
-                            )
-                        }
                     }
 
                     MediaTypeUiState.TV_SHOW -> {
@@ -163,6 +139,24 @@ private fun WatchingMediaHistoryScreenContent(
             }
         }
     }
+
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0,
+        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionListener::onCreateNewListClick
+    )
+
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+    )
+
+    RequestToLoginBottomSheet(
+        isVisible = state.showLoginBottomSheet,
+        onDismiss = interactionListener::onDismissLoginBottomSheet,
+        onLoginButtonClick = interactionListener::onLoginButtonClick
+    )
 }
 
 @Composable

@@ -86,7 +86,6 @@ fun PlayListEmptyStateScreen(
             AddBookmarkListBottomSheet(
                 isVisible = isVisible,
                 onDismiss = onDismissAddBottomSheet,
-                mediaId = 0
             )
     }
 }

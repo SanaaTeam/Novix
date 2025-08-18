@@ -11,4 +11,7 @@ VodStringProvider {
     val createListSuccess: String
     val createListFailed: String
     val deleteListFailed: String
+    val deleteListSuccess: String
+    val deleteFromListFailed: String
+    val deleteFromListSuccess: String
 }

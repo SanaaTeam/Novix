@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.state.MediaTypeUiState
+import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.MediaHistoryItem
 import entity.Movie
@@ -301,6 +302,38 @@ class HomeScreenViewModelTest {
         val expected =
             PagingSource.LoadResult.Page(data = upcomingMovies, prevKey = null, nextKey = 2)
         assertThat(result).isEqualTo(expected)
+    }
+
+    @Test
+    fun `onSaveIconClick when item is not saved should show SaveToList bottom sheet`() = runTest {
+        // Given
+        coEvery { checkIfUserIsLoggedInUseCase.isLoggedIn() } returns flowOf(true)
+        val unsavedMediaItem = dummyMovie.toState().copy(isSaved = false)
+        initializeViewModel()
+        advanceUntilIdle()
+
+        // When
+        viewModel.onSaveIconClick(unsavedMediaItem)
+
+        // Then
+        val state = viewModel.state.value
+        assertThat(state.showSaveToListBottomSheet).isTrue()
+        assertThat(state.selectedMediaToSave).isEqualTo(unsavedMediaItem)
+    }
+
+    @Test
+    fun `onDismissAddListBottomSheet should set showAddListBottomSheet to false`() = runTest {
+        // Given
+        initializeViewModel()
+        // Manually set state to show the sheet
+        viewModel.onCreateNewListClick()
+        assertThat(viewModel.state.value.showAddListBottomSheet).isTrue()
+
+        // When
+        viewModel.onDismissAddListBottomSheet()
+
+        // Then
+        assertThat(viewModel.state.value.showAddListBottomSheet).isFalse()
     }
 
     private companion object {

@@ -12,7 +12,6 @@ interface TvShowScreenInteractionListener {
     fun onRateClicked()
     fun onDismissRateBottomSheet()
     fun onDismissAnyBottomSheet()
-    fun onSaveTvShowClicked()
     fun onGenreClicked(genre: GenreUiModel)
     fun onRetryLoadDetails()
     fun onLoginButtonClick()

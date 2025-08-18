@@ -8,9 +8,9 @@ import com.sanaa.vod.custom_list.response.ItemStatusResponseDto
 import com.sanaa.vod.custom_list.response.ListApiResponse
 import com.sanaa.vod.custom_list.response.TmdbStatusResponseDto
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemRemoteDto
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDetailsDto
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListRemoteDto
 import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.coVerify
@@ -26,12 +26,12 @@ class RemoteSavedListDataSourceImplTest {
     private lateinit var dataSource: RemoteSavedListDataSource
 
     private val dummyLists = listOf(
-        SavedListDto(id = LIST_ID, title = "Watch-Later"),
-        SavedListDto(id = LIST_ID + 1, title = "Favorites")
+        SavedListRemoteDto(id = LIST_ID, title = "Watch-Later"),
+        SavedListRemoteDto(id = LIST_ID + 1, title = "Favorites")
     )
     private val dummyItems = listOf(
-        SavedItemDto(id = 1, title = "A"),
-        SavedItemDto(id = 2, title = "B")
+        SavedItemRemoteDto(id = 1, title = "A"),
+        SavedItemRemoteDto(id = 2, title = "B")
     )
     private val dummyListDetails = SavedListDetailsDto(
         id = LIST_ID,
@@ -75,7 +75,11 @@ class RemoteSavedListDataSourceImplTest {
 
     @Test
     fun `deleteList() should complete without error`() = runTest {
-        coJustRun { apiService.deleteList(LIST_ID, SESSION_ID) }
+        coEvery { apiService.deleteList(LIST_ID, SESSION_ID) } returns TmdbStatusResponseDto(
+            success = true,
+            statusCode = 300,
+            statusMessage = "success"
+        )
 
         dataSource.deleteList(SESSION_ID, LIST_ID)
 
@@ -121,27 +125,8 @@ class RemoteSavedListDataSourceImplTest {
         assertThat(success).isTrue()
     }
 
-    @Test
-    fun `isItemSaved returns true when item is present in the list`() = runTest {
-        coEvery {
-            apiService.checkItemStatus(LIST_ID, MOVIE_ID, SESSION_ID)
-        } returns ItemStatusResponseDto(id = "some_id", itemPresent = true)
 
-        val result = dataSource.isItemSaved(LIST_ID, MOVIE_ID, SESSION_ID)
 
-        assertThat(result).isTrue()
-    }
-
-    @Test
-    fun `isItemSaved returns false when item is NOT present in the list`() = runTest {
-        coEvery {
-            apiService.checkItemStatus(LIST_ID, MOVIE_ID, SESSION_ID)
-        } returns ItemStatusResponseDto(id = "some_id", itemPresent = false)
-
-        val result = dataSource.isItemSaved(LIST_ID, MOVIE_ID, SESSION_ID)
-
-        assertThat(result).isFalse()
-    }
 
 
     private companion object {

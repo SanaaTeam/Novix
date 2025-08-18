@@ -1,11 +1,13 @@
 package com.sanaa.presentation.screen.myAccount
 
+import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.profileBase.BaseViewModel
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.ContentRestrictionUiState
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.ThemeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.User
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.launch
 import repository.ContentRestriction
 import repository.Language
 import repository.Theme
@@ -13,6 +15,7 @@ import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.LogOutUseCase
 import usecase.MangeUserPreferenceUseCase
+import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,6 +24,7 @@ class MyAccountScreenViewModel @Inject constructor(
     val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     val logOutUseCase: LogOutUseCase,
+    val manageSavedListsUseCase: ManageSavedListsUseCase,
     val dispatcher: CoroutineDispatcher,
 ) : BaseViewModel<MyAccountScreenUiState, MyAccountScreenEffect>(
     MyAccountScreenUiState(), dispatcher
@@ -121,9 +125,13 @@ class MyAccountScreenViewModel @Inject constructor(
             block = logOutUseCase::logout,
             onSuccess = {
                 emitEffect(MyAccountScreenEffect.PopBackStackToWelcomeScreen)
+                clearSavedListData()
             }
         )
     }
+
+    private fun clearSavedListData() = tryToExecute(block = manageSavedListsUseCase::clearData)
+
 
     private fun fetchLanguage() {
         tryToCollect(
