@@ -54,7 +54,7 @@ class WatchingHistoryViewModel @Inject constructor(
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
             block = { loadWatchedHistoryTvShows(genreId) },
-            onCollect = ::onCollectMovies,
+            onCollect = ::onCollectTvShows,
             onError = ::onLoadDataError
         )
     }
@@ -67,7 +67,14 @@ class WatchingHistoryViewModel @Inject constructor(
             )
         }
     }
-
+    private fun onCollectTvShows(mediaList: List<MediaHistoryItem>) {
+        updateState {
+            copy(
+                tvShowList = mediaList.map { it.toMediaItemUiModel() },
+                isLoading = false
+            )
+        }
+    }
     private fun fetchMovieGenres() {
         tryToExecute(
             block = {
