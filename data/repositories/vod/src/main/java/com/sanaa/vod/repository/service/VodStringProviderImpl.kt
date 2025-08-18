@@ -9,6 +9,7 @@ import javax.inject.Inject
 class VodStringProviderImpl @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : VodStringProvider {
+
     override val noInternetConnectionError: String
         get() = context.getString(R.string.no_internet_connection_error)
     override val somethingWentWrongError: String
