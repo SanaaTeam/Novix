@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.actor.screen
+package com.sanaa.presentation.screen.actorGallery
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -29,15 +29,13 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.screen.actor.ActorScreenUiState
-import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.screen.actor.componants.GalleryCard
 import com.sanaa.designsystem.R as designR
 
 @Composable
 fun ActorGalleryScreen(
     navigateBack: () -> Unit,
-    viewModel: ActorScreenViewModel = hiltViewModel(),
+    viewModel: ActorGalleryScreenViewModel = hiltViewModel(),
 ) {
     BackHandler(onBack = navigateBack)
 
@@ -52,7 +50,7 @@ fun ActorGalleryScreen(
 
 @Composable
 private fun ActorGalleryContent(
-    state: ActorScreenUiState,
+    state: ActorGalleryScreenUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
 ) {
@@ -101,7 +99,7 @@ private fun ActorGalleryTopBar(onBackClick: () -> Unit) {
 }
 
 @Composable
-private fun GalleryImages(state: ActorScreenUiState) {
+private fun GalleryImages(state: ActorGalleryScreenUiState) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         columns = GridCells.Adaptive(minSize = 104.dp),
