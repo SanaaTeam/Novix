@@ -9,7 +9,6 @@ android {
 
 dependencies {
     implementation(projects.data.repositories.vod)
-    implementation(projects.preferences)
 
     // Room dependencies
     implementation(libs.bundles.room)

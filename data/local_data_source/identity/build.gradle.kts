@@ -26,7 +26,6 @@ protobuf {
 
 dependencies {
     implementation(projects.data.repositories.identity)
-    implementation(projects.preferences)
 
     implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)

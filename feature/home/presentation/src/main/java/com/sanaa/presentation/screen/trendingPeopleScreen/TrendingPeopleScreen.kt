@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,7 +44,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun TrendingPeopleScreen(
-    viewModel: TrendingPeopleScreenViewModel = hiltViewModel()
+    viewModel: TrendingPeopleScreenViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
@@ -75,20 +76,15 @@ private fun TrendingPeopleScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
+                    .statusBarsPadding()
             )
         },
         snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                NovixAnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionListener::onSnackBarDismiss
-                )
-            }
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackBarDismiss
+            )
         },
-        modifier = Modifier.systemBarsPadding()
     ) {
         AnimatedContent(
             targetState = state.isNoInternetConnection && (people.itemCount == 0),
@@ -112,15 +108,16 @@ private fun TrendingPeopleScreenContent(
                         LoadingIndicator()
                     }
                 }
-                    else ->{
-                        PersonList(
-                            persons = people,
-                            onItemClick = interactionListener::onActorClick
-                        )
-                        if (people.loadState.hasError) {
-                            RefreshButton(onRetryClick = interactionListener::onRetryClick)
-                        }
+
+                else -> {
+                    PersonList(
+                        persons = people,
+                        onItemClick = interactionListener::onActorClick
+                    )
+                    if (people.loadState.hasError) {
+                        RefreshButton(onRetryClick = interactionListener::onRetryClick)
                     }
+                }
             }
         }
     }

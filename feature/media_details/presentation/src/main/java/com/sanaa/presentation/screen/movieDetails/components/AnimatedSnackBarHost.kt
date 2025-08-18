@@ -14,13 +14,14 @@ import com.sanaa.designsystem.design_system.component.snack_bar.SnackBar
 import com.sanaa.presentation.screen.movieDetails.SnackData
 import kotlinx.coroutines.delay
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun AnimatedSnackBarHost(
     data: SnackData?,
     onDismiss: () -> Unit,
-    duration: Duration = 2.5.seconds
+    duration: Duration = 2.5.minutes
 ) {
     AnimatedVisibility(
         visible = data != null,

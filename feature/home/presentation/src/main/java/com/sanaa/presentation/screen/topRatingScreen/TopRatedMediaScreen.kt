@@ -6,16 +6,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -49,7 +46,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun TopRatedMediaScreen(
-    viewModel: TopRatedMediaScreenViewModel = hiltViewModel()
+    viewModel: TopRatedMediaScreenViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
@@ -76,27 +73,22 @@ private fun TopRatedMediaScreenContent(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_back),
-                        onClick = interactionListener::onBackClick
+                        onClick = interactionListener::onBackClick,
                     )
                 },
                 screenTitle = stringResource(R.string.top_rated),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
+                    .statusBarsPadding()
             )
         },
         snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                NovixAnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionListener::onSnackBarDismiss
-                )
-            }
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackBarDismiss
+            )
         },
-        modifier = modifier.systemBarsPadding(),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)

@@ -73,7 +73,6 @@ dependencies {
     implementation(projects.feature.search.presentation)
     implementation(projects.feature.userProfile.api)
     implementation(projects.feature.userProfile.presentation)
-    implementation(projects.preferences)
 
     implementation(libs.retrofit)
     implementation(libs.okhttp)
