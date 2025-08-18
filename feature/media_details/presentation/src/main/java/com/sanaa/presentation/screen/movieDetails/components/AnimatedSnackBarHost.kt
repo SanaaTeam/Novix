@@ -21,7 +21,7 @@ import kotlin.time.Duration.Companion.seconds
 fun AnimatedSnackBarHost(
     data: SnackData?,
     onDismiss: () -> Unit,
-    duration: Duration = 2.5.minutes
+    duration: Duration = 2.5.seconds
 ) {
     AnimatedVisibility(
         visible = data != null,
