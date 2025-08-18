@@ -144,65 +144,73 @@ private fun EpisodeDetailsScreenContent(
             )
 
             AnimatedContent(
-                targetState = state.isLoading || state.noInternetConnection,
+                targetState = Pair(state.isLoading, state.noInternetConnection),
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) {
-                if (it) {
-                    if (state.noInternetConnection) {
+            ) { (isLoading, noInternetConnection) ->
+                when {
+                    isLoading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            LoadingIndicator()
+                        }
+                    }
+
+                    noInternetConnection -> {
                         NetworkDisconnectionContact(
                             onRetryClick = { interactionListener.onRetryLoadDetails() },
                             modifier = Modifier.fillMaxSize(),
                             useDarkTheme = LocalThemeProvider.current
                         )
-                    } else {
-                        LoadingIndicator(modifier = Modifier.align(Alignment.Center))
-
                     }
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(scrollState)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 104.dp)
-                                .align(Alignment.TopCenter)
-                        ) {
-                            TvShowHeaderSection(
-                                title = stringResource(
-                                    R.string.episode_number, state.episode.number
-                                ) + " - ${state.episode.title}",
-                                rating = state.episode.rating,
-                                season = stringResource(
-                                    R.string.season_number, state.episode.seasonNumber
-                                ),
-                                airDate = state.episode.airDate,
-                                imagesUrl = state.imagesUrl,
-                                genres = emptyList(),
-                                showReviews = false,
-                                onGenreClicked = {}
-                            )
 
-                            state.episode.overview?.takeIf { it.isNotBlank() }
-                                ?.let { overviewText ->
-                                    OverviewSection(
-                                        onReadMore = {},
-                                        titleResId = R.string.overview,
-                                        overview = overviewText,
-                                        modifier = Modifier.padding(
-                                            start = 16.dp, end = 16.dp, top = 16.dp
-                                        )
-                                    )
-                                }
-                            if (state.guestOfHonor.isNotEmpty())
-                                GuestsOfHonorComponent(
-                                    guests = state.guestOfHonor,
-                                    onActorClick = interactionListener::onCastClick,
-                                    modifier = Modifier.padding(top = 16.dp)
+                    else -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(scrollState)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 104.dp)
+                                    .align(Alignment.TopCenter)
+                            ) {
+                                TvShowHeaderSection(
+                                    title = stringResource(
+                                        R.string.episode_number, state.episode.number
+                                    ) + " - ${state.episode.title}",
+                                    rating = state.episode.rating,
+                                    season = stringResource(
+                                        R.string.season_number, state.episode.seasonNumber
+                                    ),
+                                    airDate = state.episode.airDate,
+                                    imagesUrl = state.imagesUrl,
+                                    genres = emptyList(),
+                                    showReviews = false,
+                                    onGenreClicked = {}
                                 )
+
+                                state.episode.overview?.takeIf { it.isNotBlank() }
+                                    ?.let { overviewText ->
+                                        OverviewSection(
+                                            onReadMore = {},
+                                            titleResId = R.string.overview,
+                                            overview = overviewText,
+                                            modifier = Modifier.padding(
+                                                start = 16.dp, end = 16.dp, top = 16.dp
+                                            )
+                                        )
+                                    }
+                                if (state.guestOfHonor.isNotEmpty())
+                                    GuestsOfHonorComponent(
+                                        guests = state.guestOfHonor,
+                                        onActorClick = interactionListener::onCastClick,
+                                        modifier = Modifier.padding(top = 16.dp)
+                                    )
+                            }
                         }
                     }
                 }
