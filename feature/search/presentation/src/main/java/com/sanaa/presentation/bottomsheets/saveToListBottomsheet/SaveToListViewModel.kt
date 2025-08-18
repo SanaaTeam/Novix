@@ -1,8 +1,8 @@
 package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 
-import com.sanaa.presentation.searchBase.BaseViewModel
 import com.sanaa.presentation.screen.componants.SnackData
 import com.sanaa.presentation.screen.state.mapper.toState
+import com.sanaa.presentation.searchBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -24,7 +24,7 @@ class SaveToListViewModel @Inject constructor(
     ,SaveToListInteractionListener{
 
 
-    fun getMediaId(mediaId: Long) {
+    fun getMediaId(mediaId: Int) {
         updateState { copy(mediaId = mediaId) }
         observePlaylists()
     }
@@ -46,7 +46,7 @@ class SaveToListViewModel @Inject constructor(
     }
 
 
-    private fun removeUnSelectedList(selectedListsIds: List<Long>, listId: Long) {
+    private fun removeUnSelectedList(selectedListsIds: List<Int>, listId: Int) {
         val updated = selectedListsIds.toMutableList().apply { remove(listId) }
         updateState {
             copy(
@@ -56,7 +56,7 @@ class SaveToListViewModel @Inject constructor(
         }
     }
 
-    private fun addSelectedList(selectedListsIds: List<Long>, listId: Long) {
+    private fun addSelectedList(selectedListsIds: List<Int>, listId: Int) {
         val updated = selectedListsIds.toMutableList().apply { add(listId) }
         updateState {
             copy(
@@ -71,8 +71,8 @@ class SaveToListViewModel @Inject constructor(
 
 
     private suspend fun addMovieToSavedList(
-        selectedListId: Long,
-        mediaId: Long
+        selectedListId: Int,
+        mediaId: Int
     ){
         manageSavedListItemsUseCase.addMovieToSavedList(
             listId = selectedListId.toInt(),
@@ -97,7 +97,7 @@ class SaveToListViewModel @Inject constructor(
         emitEffect(SaveToListEffect.DismissBottomSheet)
     }
 
-    override fun onPlaylistClick(listId: Long) {
+    override fun onPlaylistClick(listId: Int) {
         val targetPlaylist = state.value.playlists.find { it.id == listId }
         if (targetPlaylist?.containsMediaItem == true) return
 
@@ -110,7 +110,7 @@ class SaveToListViewModel @Inject constructor(
     }
 
     override fun onAddClick() {
-        val selectedListsIds: MutableList<Long> = state.value.selectedListsIds
+        val selectedListsIds: MutableList<Int> = state.value.selectedListsIds
         if (selectedListsIds.isEmpty()) return
         updateState { copy(isUploading = true, isAddButtonEnabled = false) }
         tryToExecute(

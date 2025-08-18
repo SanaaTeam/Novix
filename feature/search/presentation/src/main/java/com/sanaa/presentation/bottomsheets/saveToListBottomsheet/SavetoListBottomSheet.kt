@@ -46,7 +46,7 @@ val TAG = "test34"
 @Composable
 fun SaveToListBottomSheet(
     isVisible: Boolean,
-    mediaId: Long,
+    mediaId: Int,
     onDismiss: () -> Unit,
     onCreateNewListClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -218,17 +218,17 @@ private fun SaveToListBottomSheetPreview() {
     val playlists = listOf(
         PlaylistUiItem(
             id = 1, title = "My favorite", itemCount = 12,
-            itemsIds = listOf(1L, 2L),
+            itemsIds = listOf(1, 2),
             containsMediaItem = true,
         ),
         PlaylistUiItem(
             id = 2, title = "My movies", itemCount = 5,
-            itemsIds = listOf(1L, 2L),
+            itemsIds = listOf(1, 2),
             containsMediaItem = false
         ),
         PlaylistUiItem(
             id = 3, title = "Watch Later", itemCount = 23,
-            itemsIds = listOf(1L, 2L),
+            itemsIds = listOf(1, 2),
             containsMediaItem = false
         )
     )
@@ -237,7 +237,7 @@ private fun SaveToListBottomSheetPreview() {
         mutableStateOf(
             SaveToListUiState(
                 playlists = playlists,
-                selectedListsIds = listOf(1L).toMutableList(),
+                selectedListsIds = listOf(1).toMutableList(),
                 isAddButtonEnabled = true
             )
         )

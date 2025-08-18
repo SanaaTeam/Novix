@@ -104,31 +104,27 @@ private fun TrendingMoviesScreenContent(
                         RefreshButton(onRetryClick = interactionListener::onRetryClick)
                     }
 
-                    if (state.userIsLoggedIn) {
-                        state.selectedMediaId?.let { mediaItem ->
-                            SaveToListBottomSheet(
-                                isVisible = state.showSaveToListBottomSheet,
-                                mediaId = mediaItem.toLong(),
-                                onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-                                onCreateNewListClick = interactionListener::onCreateNewListClick,
-                            )
-                        }
-                        AddBookmarkListBottomSheet(
-                            isVisible = state.showAddListBottomSheet,
-                            onDismiss = interactionListener::onDismissAddListBottomSheet,
-                            mediaId = state.selectedMediaId ?: 0
-                        )
-                    } else {
-                        RequestToLoginBottomSheet(
-                            isVisible = state.showLoginBottomSheet,
-                            onDismiss = interactionListener::onDismissLoginBottomSheet,
-                            onLoginButtonClick = interactionListener::onLoginButtonClick
-                        )
-                    }
+
                 }
             }
         }
     }
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaId ?: 0,
+        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionListener::onCreateNewListClick,
+    )
+
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+    )
+    RequestToLoginBottomSheet(
+        isVisible = state.showLoginBottomSheet,
+        onDismiss = interactionListener::onDismissLoginBottomSheet,
+        onLoginButtonClick = interactionListener::onLoginButtonClick
+    )
 }
 
 @Composable

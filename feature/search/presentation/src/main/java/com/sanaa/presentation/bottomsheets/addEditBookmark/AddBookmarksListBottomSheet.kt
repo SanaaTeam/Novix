@@ -36,8 +36,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun AddBookmarkListBottomSheet(
     isVisible: Boolean,
-    interactionsListener : SaveListListener,
-    mediaId: Int,
+    interactionsListener: SaveListListener,
 ) {
     val viewModel: AddBookmarksListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
@@ -65,7 +64,6 @@ fun AddBookmarkListBottomSheet(
         onDismiss = handleDismiss,
         state = state,
         interactionListener = viewModel,
-        mediaId = mediaId
     )
 }
 
@@ -75,7 +73,6 @@ private fun AddBookmarkListBottomSheetContent(
     onDismiss: () -> Unit,
     state: AddBookmarksListUiState,
     interactionListener: AddBookmarksInteractionsListener,
-    mediaId: Int,
     modifier: Modifier = Modifier,
 ) {
     var textFieldValue by remember(state.listTitle) {
@@ -135,7 +132,7 @@ private fun AddBookmarkListBottomSheetContent(
 
             PrimaryButton(
                 text = stringResource(R.string.add),
-                onClick = { interactionListener.onAddClicked(mediaId) },
+                onClick = { interactionListener.onAddClicked() },
                 isEnabled = state.isAddButtonEnabled,
                 isLoading = state.isLoading,
                 modifier = Modifier
@@ -161,10 +158,9 @@ private fun AddBookmarkListBottomSheetEmptyPreview() {
             interactionListener = object : AddBookmarksInteractionsListener {
                 override fun onListTitleChanged(title: String) {}
                 override fun resetState() {}
-                override fun onAddClicked(mediaId: Int) {}
+                override fun onAddClicked() {}
                 override fun onSnackBarDismiss() {}
             },
-            mediaId = 0
         )
     }
 }
@@ -183,10 +179,9 @@ private fun AddBookmarkListBottomSheetActivePreview() {
             interactionListener = object : AddBookmarksInteractionsListener {
                 override fun onListTitleChanged(title: String) {}
                 override fun resetState() {}
-                override fun onAddClicked(mediaId: Int) {}
+                override fun onAddClicked() {}
                 override fun onSnackBarDismiss() {}
             },
-            mediaId = 0
         )
     }
 }

@@ -1,8 +1,7 @@
 package com.sanaa.presentation.bottomsheet.addEditBookmark
 
-import androidx.lifecycle.viewModelScope
-import com.sanaa.presentation.homeBase.BaseViewModel
 import com.sanaa.presentation.components.SnackData
+import com.sanaa.presentation.homeBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -32,7 +31,7 @@ class AddBookmarkListViewModel @Inject constructor(
         updateState { copy(listTitle = "", isLoading = false) }
     }
 
-    override fun onAddClicked(mediaId: Int) {
+    override fun onAddClicked() {
         if (!state.value.isAddButtonEnabled) return
 
         updateState { copy(isLoading = true) }

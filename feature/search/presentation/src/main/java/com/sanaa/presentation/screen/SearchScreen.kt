@@ -42,7 +42,7 @@ import com.sanaa.presentation.screen.state.TvShowUiModel
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-val TAG = "test34"
+
 @Composable
 fun SearchScreen(
     navigator: SearchNavigatorApi,
@@ -88,7 +88,7 @@ private fun SearchScreenContent(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.TopCenter
             ) {
-                Log.d(TAG, "SearchScreenContent: snackBarData:${state.snackBarData}")
+                Log.d("TAG", "SearchScreenContent: snackBarData:${state.snackBarData}")
                 NovixAnimatedSnackBarHost(
                     data = state.snackBarData,
                     onDismiss = interactionsListener::onSnackBarDismiss
@@ -121,18 +121,16 @@ private fun SearchScreenContent(
                     )
                 }
             }
-            state.selectedMediaToSave?.let { mediaItem ->
                 SaveToListBottomSheet(
                     isVisible = state.showSaveToListBottomSheet,
-                    mediaId = mediaItem.id.toLong(),
+                    mediaId = state.selectedMediaToSave?.id ?: 0,
                     onDismiss = { interactionsListener.onDismissSaveToListBottomSheet() },
                     onCreateNewListClick = {},
                 )
-            }
+
             AddBookmarkListBottomSheet(
                 isVisible = state.showAddListBottomSheet,
                 interactionsListener = interactionsListener,
-                mediaId = state.selectedMediaToSave?.id ?: 0
             )
             RequestToLoginBottomSheet(
                 interactionsListener = interactionsListener,

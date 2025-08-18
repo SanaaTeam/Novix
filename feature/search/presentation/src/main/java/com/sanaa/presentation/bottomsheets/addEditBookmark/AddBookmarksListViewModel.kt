@@ -5,7 +5,6 @@ import com.sanaa.presentation.searchBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
@@ -13,7 +12,6 @@ import javax.inject.Inject
 @HiltViewModel
 class AddBookmarksListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<AddBookmarksListUiState, AddBookmarksEffect>(AddBookmarksListUiState(), dispatcher),
@@ -36,7 +34,7 @@ class AddBookmarksListViewModel @Inject constructor(
         updateState { copy(snackBarData = null) }
     }
 
-    override fun onAddClicked(mediaId: Int) {
+    override fun onAddClicked() {
         if (!state.value.isAddButtonEnabled) return
 
         updateState { copy(isLoading = true) }
@@ -49,7 +47,6 @@ class AddBookmarksListViewModel @Inject constructor(
                 updateState {
                     copy(snackBarData = SnackData(message = stringProvider.createListSuccess, isError = false))
                 }
-                savedListsStatusProvider.markItemSaved(mediaId)
             },
             onError = {
                 updateState {
