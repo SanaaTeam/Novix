@@ -15,15 +15,15 @@ import androidx.navigation.compose.rememberNavController
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.api.LocalThemeProvider
-import com.sanaa.presentation.screen.actor.screen.ActorGalleryScreen
 import com.sanaa.presentation.screen.actor.screen.ActorScreen
-import com.sanaa.presentation.screen.actor.screen.TopMoviesScreen
-import com.sanaa.presentation.screen.actor.screen.TopShowsScreen
+import com.sanaa.presentation.screen.actorGallery.ActorGalleryScreen
 import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreen
 import com.sanaa.presentation.screen.genreMovies.GenreMoviesScreen
 import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsScreen
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsScreen
 import com.sanaa.presentation.screen.review.ReviewsScreen
+import com.sanaa.presentation.screen.topMoviesScreen.TopMoviesScreen
+import com.sanaa.presentation.screen.topShowsScreen.TopTvShowsScreen
 import com.sanaa.presentation.screen.tvShow.TvShowScreen
 
 @Composable
@@ -91,7 +91,7 @@ fun DetailsNavHost(
             }
 
             composable<TopTvShowsScreenRoute> {
-                TopShowsScreen()
+                TopTvShowsScreen()
             }
 
             composable<ActorGalleryScreenRoute> {
