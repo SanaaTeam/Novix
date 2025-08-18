@@ -41,7 +41,7 @@ class TopTvShowsScreenViewModel @Inject constructor(
     private fun loadDetails() {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            block = ::fetchActorDetails,
+            block = ::fetchActorTopTvShows,
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },
@@ -59,11 +59,9 @@ class TopTvShowsScreenViewModel @Inject constructor(
         }
     }
 
-    private suspend fun fetchActorDetails() = coroutineScope {
+    private suspend fun fetchActorTopTvShows() = coroutineScope {
         val topTvShowsDeferred = async { manageActorDetails.getActorTopTvShows(route.actorId) }
-
         val topTvShows = topTvShowsDeferred.await()
-
         updateState {
             copy(
                 topTvShows = topTvShows.map { s -> s.toState() },

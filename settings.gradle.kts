@@ -42,7 +42,6 @@ include(":feature:media_details:presentation")
 include(":domain:vod")
 include(":image_viewer")
 include(":design_system")
-include(":preferences")
 include(":domain:identity")
 
 include(":data:local_data_source:identity")

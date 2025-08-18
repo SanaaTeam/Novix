@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.playlistDetails.components
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,16 +39,9 @@ fun SavedDetailsListSectionContent(
             }
 
             isListEmpty -> {
-                val isDarkTheme = isSystemInDarkTheme()
 
-                val myListImg = if (isDarkTheme) {
-                    R.drawable.no_items
-                } else {
-                    R.drawable.no_items
-                }
-                EmptyListScreen(
+                EmptyItemsScreen(
                     messageText = stringResource(R.string.the_list_is_empty),
-                    imageRes = myListImg,
 
                     )
             }

@@ -165,12 +165,7 @@ fun GenreMoviesScreenContent(
                                     verticalArrangement = Arrangement.spacedBy(12.dp),
                                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                                 ) {
-                                    items(
-                                        count = pagedMovies.itemCount,
-                                        key = { index ->
-                                            "${index}_${pagedMovies[index]?.id}"
-                                        }
-                                    ) { index ->
+                                    items(pagedMovies.itemCount) { index ->
                                         val movie = pagedMovies[index] ?: return@items
                                         MediaPosterCard(
                                             posterImage = {

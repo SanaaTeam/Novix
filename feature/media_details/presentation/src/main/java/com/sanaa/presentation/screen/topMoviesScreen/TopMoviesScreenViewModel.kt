@@ -63,7 +63,7 @@ class TopMoviesScreenViewModel @Inject constructor(
     private fun loadDetails() {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            block = ::fetchActorDetails,
+            block = ::fetchActorTopMovies,
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },
@@ -81,7 +81,7 @@ class TopMoviesScreenViewModel @Inject constructor(
         }
     }
 
-    private suspend fun fetchActorDetails() = coroutineScope {
+    private suspend fun fetchActorTopMovies() = coroutineScope {
         val topMoviesDeferred = async { manageActorDetails.getActorTopMovies(route.actorId) }
 
         val topMovies = topMoviesDeferred.await()

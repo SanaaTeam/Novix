@@ -18,9 +18,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,10 +44,9 @@ import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.episodeDetails.components.GuestsOfHonorComponent
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
-import com.sanaa.presentation.screen.movieDetails.SnackData
+import com.sanaa.presentation.screen.movieDetails.components.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.tvShow.components.TvShowHeaderSection
 import com.sanaa.presentation.shared_component.BottomContainer
-import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
@@ -62,12 +58,9 @@ import com.sanaa.designsystem.R as designR
 fun EpisodeDetailsScreen(
     viewModel: EpisodeDetailsScreenViewModel = hiltViewModel(),
 ) {
-    val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
-    val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
-    val state = viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     val authApi = EntryPointAccessors.fromApplication(
         context,
@@ -84,22 +77,12 @@ fun EpisodeDetailsScreen(
                 }
 
                 is EpisodeDetailsEffects.NavigateToActorDetails -> {
-                    navController.navigate(
-                        ActorScreenRoute(it.actorId)
-                    )
+                    navController.navigate(ActorScreenRoute(it.actorId))
                 }
 
                 is EpisodeDetailsEffects.PlayTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
                     context.startActivity(intent)
-                }
-
-                is EpisodeDetailsEffects.ShowSuccessSnackBar -> {
-                    snack = SnackData(message = submitRatingSuccessMsg, isError = false)
-                }
-
-                is EpisodeDetailsEffects.ShowErrorSnackBar -> {
-                    snack = SnackData(submitRatingFailedMsg, isError = true)
                 }
 
                 EpisodeDetailsEffects.NavigateToLogin -> {
@@ -108,15 +91,9 @@ fun EpisodeDetailsScreen(
             }
         }
     }
-    Box {
-        EpisodeDetailsScreenContent(
-            interactionListener = viewModel, state = state.value
-        )
-        NovixAnimatedSnackBarHost(
-            data = snack,
-            onDismiss = { snack = null }
-        )
-    }
+    EpisodeDetailsScreenContent(
+        interactionListener = viewModel, state = state
+    )
 }
 
 @Composable
@@ -130,7 +107,19 @@ private fun EpisodeDetailsScreenContent(
     )
 
     NovixScaffold(
-        backgroundShapes = { BackgroundShapes() }) {
+        backgroundShapes = { BackgroundShapes() },
+        snackBarHost = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                AnimatedSnackBarHost(
+                    data = state.snackBarData,
+                    onDismiss = interactionListener::onSnackDismissRequested
+                )
+            }
+        },
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()

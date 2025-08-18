@@ -1,7 +1,7 @@
 package com.sanaa.vod.cache
 
+import android.content.Context
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.vod.cache.dao.CachedContentDao
 import com.sanaa.vod.cache.dao.CachedContentMetadataDao
 import com.sanaa.vod.cache.dao.GenreDao
@@ -30,20 +30,19 @@ class LocalCachedContentDataSourceImplTest {
     private lateinit var movieDao: MovieDao
     private lateinit var tvShowDao: TvShowDao
     private lateinit var genreDao: GenreDao
-    private lateinit var languageProvider: LanguageProvider
+    lateinit var context: Context
 
     private lateinit var localCachedContentDataSource: LocalCachedContentDataSourceImpl
 
     @BeforeEach
-    fun setUp() {
+    fun setup() {
         cachedContentDao = mockk(relaxed = true)
         cachedContentMetadataDao = mockk(relaxed = true)
         movieDao = mockk(relaxed = true)
         tvShowDao = mockk(relaxed = true)
         genreDao = mockk(relaxed = true)
-        languageProvider = mockk(relaxed = true)
-
-        every { languageProvider.getCurrentLanguage() } returns FAKE_LANGUAGE
+        context = mockk(relaxed = true)
+        every { context.resources.configuration.locales[0].language } returns FAKE_LANGUAGE
 
         localCachedContentDataSource = LocalCachedContentDataSourceImpl(
             cachedContentDao,
@@ -51,7 +50,7 @@ class LocalCachedContentDataSourceImplTest {
             movieDao,
             tvShowDao,
             genreDao,
-            languageProvider
+            context
         )
     }
 
@@ -84,7 +83,12 @@ class LocalCachedContentDataSourceImplTest {
 
     @Test
     fun `getCachedMovies should return movies when there is valid metadata`() = runTest {
-        coEvery { cachedContentMetadataDao.getCachedContentMetadata(any(), any()) } returns dummyMetadata
+        coEvery {
+            cachedContentMetadataDao.getCachedContentMetadata(
+                any(),
+                any()
+            )
+        } returns dummyMetadata
         coEvery { cachedContentDao.getCachedContentInfo(any(), any()) } returns cachedContent
         coEvery { movieDao.getMoviesByIds(any()) } returns movies
 
@@ -118,7 +122,12 @@ class LocalCachedContentDataSourceImplTest {
 
     @Test
     fun `getCachedTvShows should return data when there is valid metadata`() = runTest {
-        coEvery { cachedContentMetadataDao.getCachedContentMetadata(any(), any()) } returns dummyMetadata
+        coEvery {
+            cachedContentMetadataDao.getCachedContentMetadata(
+                any(),
+                any()
+            )
+        } returns dummyMetadata
         coEvery { cachedContentDao.getCachedContentInfo(any(), any()) } returns cachedContent
         coEvery { tvShowDao.getTvShowsByIds(any()) } returns tvShows
 
@@ -152,7 +161,12 @@ class LocalCachedContentDataSourceImplTest {
 
     @Test
     fun `getCachedGenres should return data when there is valid metadata`() = runTest {
-        coEvery { cachedContentMetadataDao.getCachedContentMetadata(any(), any()) } returns dummyMetadata
+        coEvery {
+            cachedContentMetadataDao.getCachedContentMetadata(
+                any(),
+                any()
+            )
+        } returns dummyMetadata
         coEvery { cachedContentDao.getCachedContentInfo(any(), any()) } returns cachedContent
         coEvery { genreDao.getGenreByIds(any()) } returns genres
 

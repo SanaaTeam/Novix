@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -75,6 +75,7 @@ private fun WatchingMediaHistoryScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
+                    .statusBarsPadding()
             )
         },
         snackBarHost = {
@@ -83,7 +84,6 @@ private fun WatchingMediaHistoryScreenContent(
                 onDismiss = interactionListener::onSnackBarDismiss
             )
         },
-        modifier = Modifier.systemBarsPadding(),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)

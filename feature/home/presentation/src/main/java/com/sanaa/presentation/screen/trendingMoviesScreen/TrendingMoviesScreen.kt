@@ -7,7 +7,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -75,9 +75,9 @@ private fun TrendingMoviesScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 12.dp)
+                    .statusBarsPadding(),
             )
         },
-        modifier = Modifier.systemBarsPadding(),
     ) {
 
         AnimatedContent(
