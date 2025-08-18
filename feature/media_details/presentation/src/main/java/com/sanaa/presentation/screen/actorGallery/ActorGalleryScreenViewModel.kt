@@ -29,7 +29,7 @@ class ActorGalleryScreenViewModel @Inject constructor(
     private fun loadDetails() {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            callee = ::fetchActorDetails,
+            callee = ::fetchActorGalleryImages,
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },
@@ -45,7 +45,7 @@ class ActorGalleryScreenViewModel @Inject constructor(
         )
     }
 
-    private suspend fun fetchActorDetails() = coroutineScope {
+    private suspend fun fetchActorGalleryImages() = coroutineScope {
         val galleryDeferred = async { manageActorDetails.getGalleryImages(route.actorId) }
 
         val gallery = galleryDeferred.await()
