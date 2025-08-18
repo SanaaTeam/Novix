@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.state.MediaTypeUiState
+import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.MediaHistoryItem
 import entity.Movie
@@ -27,7 +28,6 @@ import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import usecase.custom_list.custom_list_param.SavedList
 import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
