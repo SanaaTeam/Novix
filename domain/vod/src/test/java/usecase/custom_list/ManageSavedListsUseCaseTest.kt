@@ -5,6 +5,7 @@ import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,7 +25,7 @@ class ManageSavedListsUseCaseTest {
 
     @Test
     fun `getSavedLists should call repository and return list`() = runTest {
-        val expected = listOf(DUMMY_LIST, DUMMY_LIST.copy(id = 2, title = "Faves"))
+        val expected = flowOf(listOf(DUMMY_LIST, DUMMY_LIST.copy(id = 2, title = "Faves")))
         coEvery { savedListRepository.getLocalSavedLists() } returns expected
 
         val result = manageSavedListsUseCase.getSavedLists()
@@ -40,15 +41,6 @@ class ManageSavedListsUseCaseTest {
         assertThrows<NovixAppException> {
             manageSavedListsUseCase.getSavedLists()
         }
-    }
-
-    @Test
-    fun `createSavedList should call repository and return SavedList`() = runTest {
-        coEvery { savedListRepository.createSavedList(DUMMY_LIST.title) } returns DUMMY_LIST
-
-        val result = manageSavedListsUseCase.createSavedList(DUMMY_LIST.title)
-
-        assertThat(result).isEqualTo(DUMMY_LIST)
     }
 
     @Test

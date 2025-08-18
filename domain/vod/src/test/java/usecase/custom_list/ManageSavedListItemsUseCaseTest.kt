@@ -23,7 +23,7 @@ class ManageSavedListItemsUseCaseTest {
     }
 
     @Test
-    fun `getAllItemsInSavedList should call repository and return movies`() = runTest {
+    fun `getItemsInSavedList should call repository and return movies`() = runTest {
         coEvery { savedListRepository.getMoviesInList(LIST_ID, PAGE) } returns DUMMY_MOVIES
 
         val result = manageSavedListItemsUseCase.getItemsInSavedList(LIST_ID, PAGE)
@@ -32,7 +32,7 @@ class ManageSavedListItemsUseCaseTest {
     }
 
     @Test
-    fun `addMovieToSavedList should call repository`() = runTest {
+    fun `addMovieToList should call repository`() = runTest {
 
         manageSavedListItemsUseCase.addMovieToSavedList(LIST_ID, MOVIE_ID)
 
@@ -40,7 +40,7 @@ class ManageSavedListItemsUseCaseTest {
     }
 
     @Test
-    fun `removeMovieFromSavedList should call repository`() = runTest {
+    fun `removeMovieFromList should call repository`() = runTest {
 
         manageSavedListItemsUseCase.removeMovieFromSavedList(LIST_ID, MOVIE_ID)
 

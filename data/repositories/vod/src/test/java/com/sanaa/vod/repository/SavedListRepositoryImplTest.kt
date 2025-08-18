@@ -19,7 +19,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.SavedListsStatusProvider
 import usecase.custom_list.custom_list_param.SavedList
 
 class SavedListRepositoryImplTest {
@@ -27,7 +26,6 @@ class SavedListRepositoryImplTest {
     private val prefs: PreferencesManager = mockk(relaxed = true)
     private val remoteLists: RemoteSavedListDataSource = mockk(relaxed = true)
     private val remoteMovies: RemoteMovieDataSource = mockk(relaxed = true)
-    private val savedListsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
 
     private lateinit var repository: SavedListRepositoryImpl
 
@@ -49,7 +47,7 @@ class SavedListRepositoryImplTest {
         every { prefs.sessionId } returns MutableStateFlow(SESSION_ID)
 
         repository =
-            SavedListRepositoryImpl(remoteLists, remoteMovies, prefs, savedListsStatusProvider)
+            SavedListRepositoryImpl(remoteLists, remoteMovies, prefs)
     }
 
 
