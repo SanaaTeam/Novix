@@ -28,7 +28,6 @@ class NovixAppViewModel @Inject constructor(
 
 
     init {
-        Log.d("main entry point", "every app launch :called once: ")
         refreshListData()
         fetchUserPreference()
     }

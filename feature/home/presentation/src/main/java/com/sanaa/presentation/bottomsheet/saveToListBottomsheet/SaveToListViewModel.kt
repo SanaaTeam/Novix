@@ -1,5 +1,6 @@
 package com.sanaa.presentation.bottomsheet.saveToListBottomsheet
 
+import android.util.Log
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.homeBase.BaseViewModel
 import com.sanaa.presentation.state.mapper.toState
@@ -12,7 +13,6 @@ import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
-
 @HiltViewModel
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
@@ -31,7 +31,9 @@ class SaveToListViewModel @Inject constructor(
     private fun observePlaylists() {
         updateState { copy(isLoading = true) }
         tryToCollect(
-            block = { mangeSavedListsUseCase.getSavedLists() },
+            block = {
+                mangeSavedListsUseCase.getSavedLists()
+                    },
             onCollect = ::onCollectPlaylists,
         )
     }
