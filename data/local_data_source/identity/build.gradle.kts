@@ -27,7 +27,6 @@ protobuf {
 dependencies {
     implementation(projects.data.repositories.identity)
     implementation(projects.domain.identity)
-    implementation(projects.preferences)
 
     // Room dependencies
     implementation(libs.bundles.room)
