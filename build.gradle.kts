@@ -139,7 +139,6 @@ allprojects {
 }
 
 dependencies {
-    kover(projects.preferences)
     kover(projects.app)
     kover(projects.data.repositories.vod)
     kover(projects.data.remoteDataSource.vod)

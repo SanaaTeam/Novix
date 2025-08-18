@@ -63,7 +63,7 @@ class TvShowScreenViewModel @Inject constructor(
     override fun onSeasonNumberClicked(seasonNumber: Int) {
         if (state.value.selectedSeason == seasonNumber) return
         tryToExecute(
-            callee = { fetchSeasonDetails(seasonNumber) },
+            block = { fetchSeasonDetails(seasonNumber) },
             onSuccess = { updateState { copy(isLoadingEpisodes = false) } },
             onError = ::onErrorAccrue
         )
@@ -108,7 +108,7 @@ class TvShowScreenViewModel @Inject constructor(
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
-            callee = ::submitTvShowRating,
+            block = ::submitTvShowRating,
             onError = ::onSubmitRatingFailed,
         )
     }
@@ -133,7 +133,7 @@ class TvShowScreenViewModel @Inject constructor(
 
     private fun loadTvShow() {
         tryToExecute(
-            callee = { fetchShowDetails() },
+            block = { fetchShowDetails() },
             onSuccess = { updateState { copy(isLoading = false) } },
             onError = ::onErrorAccrue
         )
@@ -142,10 +142,10 @@ class TvShowScreenViewModel @Inject constructor(
     private fun fetchUserRating() {
         if (state.value.isUserLoggedIn) {
             tryToCollect(
-                callee = { getUser.getLoggedInUser() },
+                block = { getUser.getLoggedInUser() },
                 onCollect = { user ->
                     tryToExecute(
-                        callee = { manageTvShowDetails.getTvShowRating(user.id, route.tvShowId) },
+                        block = { manageTvShowDetails.getTvShowRating(user.id, route.tvShowId) },
                         onSuccess = { rating ->
                             updateState { copy(imdbRating = rating) }
                         },
@@ -218,7 +218,7 @@ class TvShowScreenViewModel @Inject constructor(
 
     private fun updateUserLoginState() {
         tryToCollect(
-            callee = { checkUserLogin.isLoggedIn() },
+            block = { checkUserLogin.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
         )
     }
@@ -229,7 +229,7 @@ class TvShowScreenViewModel @Inject constructor(
 
     private fun addTvShowToHistory(tvShow: TvShow) {
         tryToCollect(
-            callee = { getLoggedInUserUseCase.getLoggedInUser() },
+            block = { getLoggedInUserUseCase.getLoggedInUser() },
             onCollect = { user ->
                 manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
                     mediaHistoryItem = tvShow.toHistory(),

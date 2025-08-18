@@ -47,7 +47,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     private fun loadItemsInSaved(listId: Int) {
         updateState { copy(isLoading = true) }
         tryToCollect(
-            callee = {
+            block = {
                 loadSavedMovies(listId)
             },
             onCollect = { movies ->
@@ -70,7 +70,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
 
     override fun onSaveIconClick(mediaItem: MediaItem) {
         tryToExecute(
-            callee = {
+            block = {
                 manageSavedListItemsUseCase.removeMovieFromSavedList(
                     listId = listId,
                     movieId = mediaItem.id

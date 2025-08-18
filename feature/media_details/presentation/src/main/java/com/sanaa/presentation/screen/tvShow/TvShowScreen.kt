@@ -103,57 +103,61 @@ private fun TvShowScreenContent(
             TvShowScreenTopBar(animatedColor, interactionListener)
 
             AnimatedContent(
-                targetState = state.isLoading || state.noInternetConnection,
+                targetState = Pair(state.isLoading, state.noInternetConnection),
                 modifier = Modifier.align(Alignment.Center),
-                contentAlignment = Alignment.Center,
-                label = "MainContentAnimation"
-            ) { shouldShowLoadingOrError ->
-                if (shouldShowLoadingOrError) {
-                    if (state.noInternetConnection) {
+                contentAlignment = Alignment.Center
+            ) { (isLoading, noInternetConnection) ->
+                when {
+                    isLoading -> {
+                        LoadingIndicator(
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+
+                    noInternetConnection -> {
                         NetworkDisconnectionContact(
                             onRetryClick = { interactionListener.onRetryLoadDetails() },
                             modifier = Modifier.fillMaxSize(),
                             useDarkTheme = LocalThemeProvider.current
                         )
-                    } else {
-                        LoadingIndicator(
-                            modifier = Modifier.align(Alignment.Center)
-                        )
+
                     }
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.BottomCenter
-                    )
-                    {
-                        TvShowDetailContent(state, interactionListener, scrollState)
-                        BottomContainer(
-                            modifier = Modifier.align(Alignment.BottomCenter),
-                            trailerUrl = state.tvShow.trailerUrl,
-                            onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
-                            onSetRateClicked = interactionListener::onRateClicked
+
+                    else -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.BottomCenter
                         )
+                        {
+                            TvShowDetailContent(state, interactionListener, scrollState)
+                            BottomContainer(
+                                modifier = Modifier.align(Alignment.BottomCenter),
+                                trailerUrl = state.tvShow.trailerUrl,
+                                onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
+                                onSetRateClicked = interactionListener::onRateClicked
+                            )
+                        }
                     }
                 }
             }
-        }
-        RateBottomSheet(
-            isRateSelected = state.hasUserSelectedRate,
-            imdbRating = state.imdbRating,
-            onDismiss = interactionListener::onDismissRateBottomSheet,
-            isVisible = state.showRateBottomSheet,
-            onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
-            onRatingChanged = interactionListener::onRatingChanged
-        )
+            RateBottomSheet(
+                isRateSelected = state.hasUserSelectedRate,
+                imdbRating = state.imdbRating,
+                onDismiss = interactionListener::onDismissRateBottomSheet,
+                isVisible = state.showRateBottomSheet,
+                onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
+                onRatingChanged = interactionListener::onRatingChanged
+            )
 
-        RequestToLoginBottomSheet(
-            onDismiss = interactionListener::onDismissLoginBottomSheet,
-            onLoginButtonClick = { interactionListener.onLoginButtonClick() },
-            isVisible = state.showLoginBottomSheet,
-            text = stringResource(R.string.please_login_to_rate_your_favorite_items),
-            title = stringResource(R.string.rate_it)
-        )
+            RequestToLoginBottomSheet(
+                onDismiss = interactionListener::onDismissLoginBottomSheet,
+                onLoginButtonClick = { interactionListener.onLoginButtonClick() },
+                isVisible = state.showLoginBottomSheet,
+                text = stringResource(R.string.please_login_to_rate_your_favorite_items),
+                title = stringResource(R.string.rate_it)
+            )
+        }
     }
 }
 
