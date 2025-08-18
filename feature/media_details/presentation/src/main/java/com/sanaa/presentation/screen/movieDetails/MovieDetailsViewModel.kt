@@ -12,8 +12,8 @@ import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
-import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.model.mapper.toState
+import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import entity.User
@@ -90,6 +90,7 @@ class MovieDetailsViewModel @Inject constructor(
             }
         }
     }
+
     override fun onBackClick() {
         emitEffect(MovieDetailsUiEffect.NavigateBack)
     }
@@ -108,7 +109,14 @@ class MovieDetailsViewModel @Inject constructor(
 
         if (movie.isSaved) {
             savedListsStatusProvider.markItemUnsaved(movie.id)
-            updateState { copy(snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false)) }
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.addToListSuccess,
+                        isError = false
+                    )
+                )
+            }
         } else {
             updateState {
                 copy(
@@ -209,6 +217,7 @@ class MovieDetailsViewModel @Inject constructor(
             )
         }
     }
+
     private fun fetchMovieDetails(movieId: Int) {
         updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -234,6 +243,7 @@ class MovieDetailsViewModel @Inject constructor(
                     )
                 }
             }
+
             else -> {
                 updateState {
                     copy(
@@ -337,10 +347,24 @@ class MovieDetailsViewModel @Inject constructor(
             rating = rating.toFloat()
         )
         if (isSendRateSuccess) {
-            updateState { copy(snackBarData = SnackData(message = stringProvider.deleteRatingSuccess, isError = false)) }
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingSuccess,
+                        isError = false
+                    )
+                )
+            }
             updateState { copy(showRateBottomSheet = false) }
         } else {
-            updateState { copy(snackBarData = SnackData(message = stringProvider.deleteRatingFailed, isError = true)) }
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingFailed,
+                        isError = true
+                    )
+                )
+            }
         }
     }
 

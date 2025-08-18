@@ -1,12 +1,14 @@
 package com.sanaa.vod.network.interceptor
 
-import com.sanaa.preferences.service.LanguageProvider
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.Interceptor
 import okhttp3.Response
 
 class LanguageInterceptor(
-    private val languageProvider: LanguageProvider
+    @ApplicationContext private val context: Context
 ) : Interceptor {
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()
 
@@ -20,10 +22,14 @@ class LanguageInterceptor(
         val originalUrl = original.url
 
         val newUrl = originalUrl.newBuilder()
-            .addQueryParameter("language", languageProvider.getCurrentLanguage()).build()
+            .addQueryParameter("language", getLanguageCode()).build()
 
         return chain.proceed(
             newRequest.newBuilder().url(newUrl).build()
         )
+    }
+
+    private fun getLanguageCode(): String {
+        return context.resources.configuration.locales[0].language
     }
 }
