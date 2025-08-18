@@ -22,7 +22,7 @@ class DeleteListViewModel @Inject constructor(
         updateState { copy(isLoading = true) }
 
         tryToExecute(
-            callee = { manageSavedListsUseCase.deleteSavedList(listId.toInt()) },
+            block = { manageSavedListsUseCase.deleteSavedList(listId.toInt()) },
             onSuccess = ::onDeleteConfirmedSuccess,
             onError = ::onDeleteConfirmedFailed,
         )
