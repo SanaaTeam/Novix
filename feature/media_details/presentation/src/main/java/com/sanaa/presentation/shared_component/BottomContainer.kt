@@ -1,6 +1,5 @@
 package com.sanaa.presentation.shared_component
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,8 +15,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.sanaa.designsystem.design_system.component.animation.FadeSlideInHorizontally
-import com.sanaa.designsystem.design_system.component.animation.FadeSlideOutHorizontally
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.feature.mediadetails.presentation.R
 
@@ -44,7 +41,7 @@ fun BottomContainer(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-       if (isRateButtonVisible) {
+        if (isRateButtonVisible) {
             PrimaryButton(
                 text = null,
                 isEnabled = isRateButtonEnabled,
