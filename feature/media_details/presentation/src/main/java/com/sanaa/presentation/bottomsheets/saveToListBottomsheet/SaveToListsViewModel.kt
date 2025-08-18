@@ -32,6 +32,10 @@ class SaveToListBottomSheetViewModel @Inject constructor(
 
     private fun observePlaylists() {
         updateState { copy(isLoading = true) }
+        tryToExecute(
+            block = { manageSavedListsUseCase.getSavedLists() },
+            onSuccess = ::onLoadPlaylistsSuccess,
+            onError = ::onLoadPlaylistsError
         tryToCollect(
             callee = { mangeSavedListsUseCase.getSavedLists() },
             onCollect = ::onCollectPlaylists,

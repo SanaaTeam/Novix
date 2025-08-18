@@ -50,7 +50,7 @@ class PlayListScreenViewModel @Inject constructor(
             block = { manageSavedListsUseCase.getSavedLists() },
             onCollect = ::handleSuccessfulFetch,
             onError = ::handleFetchError
-            
+
         )
     }
 

@@ -41,7 +41,7 @@ class GenreMoviesViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
         )
     }
@@ -103,7 +103,7 @@ class GenreMoviesViewModel @Inject constructor(
 
     private fun fetchMovies(categoryId: Int) {
         tryToCollect(
-            callee = { loadMoviesByCategory(categoryId) },
+            block = { loadMoviesByCategory(categoryId) },
             onCollect = onCollectMovies(),
             onError = ::onFetchMoviesFailed
         )
