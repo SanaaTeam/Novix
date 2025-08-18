@@ -10,13 +10,13 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.authentication.api)
     implementation(projects.domain.identity)
-    implementation(projects.feature.mediaDetails.api)
     implementation(projects.domain.vod)
     implementation(projects.domain.identity)
     implementation(projects.designSystem)
     implementation(projects.imageViewer)
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.feature.authentication.api)
 
     implementation(libs.material3)
     implementation(libs.kotlinx.serialization.json)

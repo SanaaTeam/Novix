@@ -10,12 +10,12 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.authentication.api)
-    implementation(projects.domain.identity)
     implementation(projects.designSystem)
-    implementation(projects.domain.vod)
     implementation(projects.imageViewer)
+    implementation(projects.domain.identity)
+    implementation(projects.domain.vod)
     implementation(projects.feature.search.api)
+    implementation(projects.feature.authentication.api)
     implementation(projects.feature.mediaDetails.api)
 
     implementation(libs.material3)

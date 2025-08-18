@@ -10,14 +10,14 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.mediaDetails.api)
-    implementation(projects.feature.category.api)
     implementation(projects.domain.identity)
     implementation(projects.domain.vod)
     implementation(projects.domain.identity)
     implementation(projects.designSystem)
     implementation(projects.imageViewer)
     implementation(projects.feature.home.api)
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.feature.category.api)
     implementation(projects.feature.search.api)
     implementation(projects.feature.userProfile.api)
     implementation(projects.feature.playlists.api)
