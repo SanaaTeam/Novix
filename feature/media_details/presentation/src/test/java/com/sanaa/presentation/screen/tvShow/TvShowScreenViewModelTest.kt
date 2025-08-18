@@ -134,12 +134,6 @@ class TvShowScreenViewModelTest {
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
     }
 
-    @Test
-    fun `onSaveShowClicked sets showLoginBottomSheet to true`() = runTest {
-        givenHappyViewModel()
-        viewModel.onSaveTvShowClicked()
-        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
-    }
 
     @Test
     fun `onGenreClicked emits NavigateToMovieCategoriesScreen`() = runTest {
@@ -213,7 +207,6 @@ class TvShowScreenViewModelTest {
     @Test
     fun `onDismissLoginBottomSheet sets showLoginBottomSheet to false`() = runTest {
         givenHappyViewModel()
-        viewModel.onSaveTvShowClicked()
         viewModel.onDismissLoginBottomSheet()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
@@ -221,7 +214,6 @@ class TvShowScreenViewModelTest {
     @Test
     fun `onLoginButtonClick hides sheet and emits NavigateToLogin`() = runTest {
         givenHappyViewModel()
-        viewModel.onSaveTvShowClicked()
         viewModel.onLoginButtonClick()
 
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()

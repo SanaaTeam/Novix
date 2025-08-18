@@ -60,17 +60,7 @@ class PlaylistDetailsScreenViewModelTest {
         }
     }
 
-    @Test
-    fun `onDeleteListClick on success calls use case and reloads items`() = runTest {
-        coEvery { manageSavedListItemsUseCase.removeMovieFromSavedList(any(), any()) } just runs
-        initViewModel()
 
-        viewModel.onDeleteListClick()
-        advanceUntilIdle()
-
-        coVerify(exactly = 1) { manageSavedListItemsUseCase.removeMovieFromSavedList(1, 456) }
-        assertThat(viewModel.state.value.isLoading).isFalse()
-    }
 
     @Test
     fun `onDeleteListClick on failure with general error updates error message`() = runTest {

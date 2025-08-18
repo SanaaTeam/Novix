@@ -122,10 +122,6 @@ class ActorViewModelTest {
         coEvery { manageActorDetailsUseCase.getActorTopTvShows(actorId) } returns dummyTvShow
         coEvery { manageActorDetailsUseCase.getGalleryImages(actorId) } returns dummyGallery
         coEvery { manageActorDetailsUseCase.getProfileImages(actorId) } returns dummyProfiles
-        val savedStateHandle = SavedStateHandle(mapOf(ActorScreenRoute.ARG_ACTOR_ID to actorId))
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
 
         val savedStateHandle = SavedStateHandle(mapOf("actorId" to actorId))
 
