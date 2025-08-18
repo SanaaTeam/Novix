@@ -96,6 +96,7 @@ class SaveToListBottomSheetViewModel @Inject constructor(
     }
 
     override fun onPlaylistClick(listId: Int) {
+        if (state.value.isLoading || state.value.isUploading) return
         val targetPlaylist = state.value.playlists.find { it.id == listId }
         if (targetPlaylist?.containsMediaItem == true) return
 

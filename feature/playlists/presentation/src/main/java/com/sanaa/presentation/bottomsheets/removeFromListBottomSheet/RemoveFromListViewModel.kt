@@ -101,6 +101,7 @@ class RemoveFromListViewModel @Inject constructor(
     }
 
     override fun onPlaylistClick(listId: Int) {
+        if (state.value.isLoading || state.value.isUploading) return
         val deselectedListsIds = state.value.deselectedListsIds
         if (listId in deselectedListsIds) {
             removeUnSelectedList(deselectedListsIds, listId)

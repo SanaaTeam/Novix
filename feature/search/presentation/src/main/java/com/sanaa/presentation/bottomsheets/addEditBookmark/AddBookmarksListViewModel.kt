@@ -3,6 +3,7 @@ package com.sanaa.presentation.bottomsheets.addEditBookmark
 import com.sanaa.presentation.screen.componants.SnackData
 import com.sanaa.presentation.searchBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import service.VodStringProvider
@@ -41,21 +42,32 @@ class AddBookmarksListViewModel @Inject constructor(
         val currentTitle = state.value.listTitle.trim()
         tryToExecute(
             block = { manageSavedListsUseCase.createSavedList(currentTitle) },
-            onSuccess = {
-                resetState()
-                emitEffect(AddBookmarksEffect.Dismiss)
-                updateState {
-                    copy(snackBarData = SnackData(message = stringProvider.createListSuccess, isError = false))
-                }
-            },
-            onError = {
-                updateState {
-                    copy(
-                        isLoading = false,
-                        snackBarData = SnackData(message = stringProvider.createListFailed, isError = true)
-                    )
-                }
-            }
+            onSuccess = ::onAddBookmarkListSuccess,
+            onError = ::onErrorAccrue
         )
+    }
+    private fun onAddBookmarkListSuccess(unit: Unit) {
+        resetState()
+        emitEffect(AddBookmarksEffect.Dismiss)
+        updateState {
+            copy(
+                snackBarData = SnackData(
+                    message = stringProvider.createListSuccess,
+                    isError = false
+                )
+            )
+        }
+    }
+
+    private fun onErrorAccrue(exception: NovixAppException) {
+        updateState {
+            copy(
+                isLoading = false,
+                snackBarData = SnackData(
+                    message = stringProvider.createListFailed,
+                    isError = true
+                )
+            )
+        }
     }
 }
