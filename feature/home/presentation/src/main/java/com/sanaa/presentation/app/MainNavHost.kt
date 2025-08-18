@@ -93,6 +93,7 @@ fun MainNavHost() {
                 AppBottomNavBar(navController = navController)
             }
         },
+        backgroundShapes = {},
         modifier = Modifier.navigationBarsPadding()
     ) {
         CompositionLocalProvider(
