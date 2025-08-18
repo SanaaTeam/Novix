@@ -42,7 +42,7 @@ import com.sanaa.presentation.api.navigationSaved.PlaylistsApiEntryPoint
 import com.sanaa.presentation.bottomsheets.removeFromListBottomSheet.RemoveFromListBottomSheet
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlistDetails.components.DeleteConfirmationBottomSheet
-import com.sanaa.presentation.screen.playlistDetails.components.EmptyListScreen
+import com.sanaa.presentation.screen.playlistDetails.components.EmptyItemsScreen
 import com.sanaa.presentation.screen.playlistDetails.components.PaginatedMediaListGrid
 import com.sanaa.presentation.screen.playlistDetails.components.RefreshButton
 import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
@@ -180,17 +180,9 @@ private fun SavedDetailsListSectionContent(
             }
 
             isListEmpty -> {
-                val isDarkTheme = isSystemInDarkTheme()
 
-                val myListImg = if (isDarkTheme) {
-                    R.drawable.no_items
-                } else {
-                    R.drawable.no_items
-                }
-                EmptyListScreen(
-                    messageText = stringResource(R.string.the_list_is_empty),
-                    imageRes = myListImg,
-                )
+                EmptyItemsScreen(
+                    messageText = stringResource(R.string.the_list_is_empty))
             }
 
             else -> {
