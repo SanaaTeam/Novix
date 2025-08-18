@@ -3,9 +3,9 @@ package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 import com.sanaa.presentation.screen.movieDetails.SnackData
 
 data class SaveToListBottomSheetUiState(
-    val mediaId:Long? = null,
+    val mediaId:Int? = null,
     val playlists: List<PlaylistUiStateItem> = emptyList(),
-    val selectedListsIds: MutableList<Long> = mutableListOf(),
+    val selectedListsIds: MutableList<Int> = mutableListOf(),
     val isLoading: Boolean = false,
     val isUploading:Boolean = false,
     val isAddButtonEnabled: Boolean = false,
@@ -13,9 +13,9 @@ data class SaveToListBottomSheetUiState(
 )
 
 data class PlaylistUiStateItem(
-    val id: Long,
+    val id: Int,
     val title: String,
     val itemCount: Int,
-    val itemsIds: List<Long>,
+    val itemsIds: List<Int>,
     var containsMediaItem:Boolean = false
 )

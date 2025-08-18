@@ -19,10 +19,6 @@ class AddBookmarkViewModel @Inject constructor(
 ) : BaseViewModel<AddBookmarkUiState, AddBookmarkEffects>(AddBookmarkUiState(), dispatcher),
     AddBookmarksInteractionListener {
 
-    init {
-//        refreshLists()
-    }
-
     override fun onSnackBarDismiss() {
         updateState { copy(snackBarData = null) }
     }
@@ -40,7 +36,7 @@ class AddBookmarkViewModel @Inject constructor(
         updateState { copy(listTitle = "", isLoading = false) }
     }
 
-    override fun onAddClicked(mediaId: Int) {
+    override fun onAddClicked() {
         if (!state.value.isAddButtonEnabled) return
 
         updateState { copy(isLoading = true) }

@@ -74,8 +74,8 @@ class SaveToListViewModel @Inject constructor(
         mediaId: Int
     ){
         manageSavedListItemsUseCase.addMovieToSavedList(
-            listId = selectedListId.toInt(),
-            movieId = mediaId.toInt()
+            listId = selectedListId,
+            movieId = mediaId
         )
     }
 

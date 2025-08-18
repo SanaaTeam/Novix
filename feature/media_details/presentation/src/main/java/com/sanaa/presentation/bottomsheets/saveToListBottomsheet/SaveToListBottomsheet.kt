@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -46,7 +47,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun SaveToListBottomSheet(
     isVisible: Boolean,
-    mediaId: Long,
+    mediaId: Int,
     onDismiss: () -> Unit,
     onCreateNewListClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -55,10 +56,6 @@ fun SaveToListBottomSheet(
     viewModel.getMediaId(mediaId)
 
     val state by viewModel.state.collectAsState()
-
-    NovixAnimatedSnackBarHost(
-        data = state.snackBarData, onDismiss = { viewModel.onSnackBarDismiss() }
-    )
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
@@ -162,6 +159,16 @@ private fun SaveToListBottomSheetContent(
             )
         }
     }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        NovixAnimatedSnackBarHost(
+            data = state.snackBarData,
+            onDismiss = interactionListener::onSnackBarDismiss
+        )
+    }
 }
 
 @Composable
@@ -214,17 +221,17 @@ private fun SaveToListBottomSheetPreview() {
     val playlists = listOf(
         PlaylistUiStateItem(
             id = 1, title = "My favorite", itemCount = 12,
-            itemsIds = listOf(1L, 2L),
+            itemsIds = listOf(1, 2),
             containsMediaItem = true,
         ),
         PlaylistUiStateItem(
             id = 2, title = "My movies", itemCount = 5,
-            itemsIds = listOf(1L, 2L),
+            itemsIds = listOf(1, 2),
             containsMediaItem = false
         ),
         PlaylistUiStateItem(
             id = 3, title = "Watch Later", itemCount = 23,
-            itemsIds = listOf(1L, 2L),
+            itemsIds = listOf(1, 2),
             containsMediaItem = false
         )
     )
@@ -233,7 +240,7 @@ private fun SaveToListBottomSheetPreview() {
         mutableStateOf(
             SaveToListBottomSheetUiState(
                 playlists = playlists,
-                selectedListsIds = listOf(1L).toMutableList(),
+                selectedListsIds = listOf(1).toMutableList(),
                 isAddButtonEnabled = true
             )
         )

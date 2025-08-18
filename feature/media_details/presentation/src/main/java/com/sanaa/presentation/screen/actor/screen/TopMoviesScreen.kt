@@ -86,18 +86,16 @@ fun TopMoviesScreen(
 
     SaveToListBottomSheet(
         isVisible = uiState.showSaveToListBottomSheet,
-        mediaId = selectedMedia?.id?.toLong() ?: 0,
+        mediaId = selectedMedia?.id ?: 0,
         onDismiss = viewModel::onDismissSaveToListBottomSheet,
         onCreateNewListClick = viewModel::onCreateNewListClick,
     )
 
-    if (uiState.showAddListBottomSheet && selectedMedia != null) {
-        AddBookmarkListBottomSheet(
-            isVisible = true,
-            onDismiss = viewModel::onDismissAddListBottomSheet,
-            mediaId = selectedMedia.id
-        )
-    }
+    AddBookmarkListBottomSheet(
+        isVisible = uiState.showAddListBottomSheet,
+        onDismiss = viewModel::onDismissAddListBottomSheet,
+    )
+
 }
 
 

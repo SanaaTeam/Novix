@@ -67,16 +67,13 @@ class SaveToListViewModel @Inject constructor(
 
     }
 
-
-
-
     private suspend fun addMovieToSavedList(
         selectedListId: Int,
         mediaId: Int
     ){
         manageSavedListItemsUseCase.addMovieToSavedList(
-            listId = selectedListId.toInt(),
-            movieId = mediaId.toInt()
+            listId = selectedListId,
+            movieId = mediaId
         )
     }
 
@@ -142,7 +139,6 @@ class SaveToListViewModel @Inject constructor(
             copy(snackBarData = null)
         }
     }
-
 
 
     override fun onCreateNewListClick() {

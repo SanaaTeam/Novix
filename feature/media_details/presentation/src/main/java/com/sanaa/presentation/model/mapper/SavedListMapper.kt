@@ -5,7 +5,7 @@ import usecase.custom_list.custom_list_param.SavedList
 
 
 fun SavedList.toState(): PlaylistUiStateItem {
-    return PlaylistUiStateItem(title = title, itemCount = itemCount, id = id.toLong(), itemsIds = itemsIds.map { it.toLong() })
+    return PlaylistUiStateItem(title = title, itemCount = itemCount, id = id, itemsIds = itemsIds)
 }
 
 fun List<SavedList>.toState(): List<PlaylistUiStateItem> {

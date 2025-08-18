@@ -42,7 +42,6 @@ import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.model.MediaTypeUiModel
-import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.GenreMovieScreenRoute
@@ -130,7 +129,9 @@ private fun MovieDetailsEffectsHandler(
                     )
                 }
 
-                NavigateToLogin -> { launcher.launch(authApi.getLaunchIntent(context)) }
+                NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
+                }
             }
         }
     }
@@ -237,7 +238,7 @@ private fun MovieDetailsScreenContent(
     ) {
         SaveToListBottomSheet(
             isVisible = state.showSaveToListBottomSheet,
-            mediaId = state.selectedMediaId?.toLong() ?: 0,
+            mediaId = state.selectedMediaId ?: 0,
             onDismiss = interactionListener::onDismissSaveToListBottomSheet,
             onCreateNewListClick = interactionListener::onCreateNewListClick,
         )
@@ -251,7 +252,6 @@ private fun MovieDetailsScreenContent(
         AddBookmarkListBottomSheet(
             isVisible = true,
             onDismiss = interactionListener::onDismissAddListBottomSheet,
-            mediaId = state.selectedMediaId ?: 0
         )
     }
 

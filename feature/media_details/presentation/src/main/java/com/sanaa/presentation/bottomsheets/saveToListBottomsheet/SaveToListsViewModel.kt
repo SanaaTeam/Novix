@@ -1,6 +1,5 @@
 package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 
-import android.util.Log
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.screen.movieDetails.SnackData
@@ -20,11 +19,13 @@ class SaveToListBottomSheetViewModel @Inject constructor(
     private val mangeSavedListsUseCase: ManageSavedListsUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<SaveToListBottomSheetUiState, SaveToListBottomSheetEffect>(SaveToListBottomSheetUiState(), dispatcher)
-    ,SaveToListBottomSheetInteractionListener{
+) : BaseViewModel<SaveToListBottomSheetUiState, SaveToListBottomSheetEffect>(
+    SaveToListBottomSheetUiState(),
+    dispatcher
+), SaveToListBottomSheetInteractionListener {
 
 
-    fun getMediaId(mediaId: Long) {
+    fun getMediaId(mediaId: Int) {
         updateState { copy(mediaId = mediaId) }
         observePlaylists()
     }
@@ -46,7 +47,7 @@ class SaveToListBottomSheetViewModel @Inject constructor(
     }
 
 
-    private fun removeUnSelectedList(selectedListsIds: List<Long>, listId: Long) {
+    private fun removeUnSelectedList(selectedListsIds: List<Int>, listId: Int) {
         val updated = selectedListsIds.toMutableList().apply { remove(listId) }
         updateState {
             copy(
@@ -56,7 +57,7 @@ class SaveToListBottomSheetViewModel @Inject constructor(
         }
     }
 
-    private fun addSelectedList(selectedListsIds: List<Long>, listId: Long) {
+    private fun addSelectedList(selectedListsIds: List<Int>, listId: Int) {
         val updated = selectedListsIds.toMutableList().apply { add(listId) }
         updateState {
             copy(
@@ -68,15 +69,13 @@ class SaveToListBottomSheetViewModel @Inject constructor(
     }
 
 
-
-
     private suspend fun addMovieToSavedList(
-        selectedListId: Long,
-        mediaId: Long
-    ){
+        selectedListId: Int,
+        mediaId: Int
+    ) {
         manageSavedListItemsUseCase.addMovieToSavedList(
-            listId = selectedListId.toInt(),
-            movieId = mediaId.toInt()
+            listId = selectedListId,
+            movieId = mediaId
         )
     }
 
@@ -93,11 +92,10 @@ class SaveToListBottomSheetViewModel @Inject constructor(
                 mediaId = null
             )
         }
-        Log.d("SaveToListViewModel", "onErrorAccrue: with exception :$exception")
         emitEffect(SaveToListBottomSheetEffect.DismissBottomSheet)
     }
 
-    override fun onPlaylistClick(listId: Long) {
+    override fun onPlaylistClick(listId: Int) {
         val targetPlaylist = state.value.playlists.find { it.id == listId }
         if (targetPlaylist?.containsMediaItem == true) return
 
@@ -110,7 +108,7 @@ class SaveToListBottomSheetViewModel @Inject constructor(
     }
 
     override fun onAddClick() {
-        val selectedListsIds: MutableList<Long> = state.value.selectedListsIds
+        val selectedListsIds: MutableList<Int> = state.value.selectedListsIds
         if (selectedListsIds.isEmpty()) return
         updateState { copy(isUploading = true, isAddButtonEnabled = false) }
         tryToExecute(
@@ -142,7 +140,6 @@ class SaveToListBottomSheetViewModel @Inject constructor(
             copy(snackBarData = null)
         }
     }
-
 
 
     override fun onCreateNewListClick() {
