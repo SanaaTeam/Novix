@@ -10,7 +10,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import repository.SavedListsStatusProvider
 import usecase.ManageActorUseCase
 import javax.inject.Inject
 
@@ -18,7 +17,6 @@ import javax.inject.Inject
 class TopMoviesScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<TopMoviesScreenUiState, ActorScreenEffects>(
     initialState = TopMoviesScreenUiState(),
     defaultDispatcher = Dispatchers.IO
@@ -42,7 +40,6 @@ class TopMoviesScreenViewModel @Inject constructor(
         }
 
         if (movie.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(movie.id)
         } else {
             updateState {
                 copy(
