@@ -138,10 +138,8 @@ private fun RemoveFromListBottomSheetContent(
             } else {
                 LazyColumn(
                     modifier = Modifier
-                        .heightIn(max = 300.dp)
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 16.dp, bottom = 24.dp),
-
+                        .heightIn(max = 350.dp)
+                        .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(state.selectedLists, key = { it.id }) { playlist ->
