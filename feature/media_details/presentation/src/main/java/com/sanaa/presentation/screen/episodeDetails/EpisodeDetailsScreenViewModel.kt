@@ -53,7 +53,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         onSuccess: (T) -> Unit,
     ) {
         tryToExecute(
-            callee = callee,
+            block = callee,
             onSuccess = onSuccess,
             onError = ::handleError
         )
@@ -133,7 +133,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         viewModelScope.launch {
             if (checkUserLogin.isLoggedIn().first()) {
                 tryToCollect(
-                    callee = { getCurrentUserRating() },
+                    block = { getCurrentUserRating() },
                     onCollect = { rating -> updateState { copy(imdbRating = rating) } }
                 )
             }
@@ -178,7 +178,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onSubmitRateBottomSheet() {
-        tryToExecute(callee = ::submitEpisodeRating, onError = ::handleError)
+        tryToExecute(block = ::submitEpisodeRating, onError = ::handleError)
         updateState { copy(showRateBottomSheet = false) }
     }
 
@@ -214,7 +214,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     private fun updateUserLoginState() {
         tryToCollect(
-            callee = { checkUserLogin.isLoggedIn() },
+            block = { checkUserLogin.isLoggedIn() },
             onCollect = { isLogged -> updateState { copy(isUserLoggedIn = isLogged) } }
         )
     }

@@ -49,7 +49,7 @@ class ActorScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag
         )
     }
@@ -130,7 +130,7 @@ class ActorScreenViewModel @Inject constructor(
     private fun loadDetails() {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            callee = ::fetchActorDetails,
+            block = ::fetchActorDetails,
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },

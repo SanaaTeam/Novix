@@ -61,7 +61,7 @@ class TopMoviesScreenViewModel @Inject constructor(
     private fun loadDetails() {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            callee = ::fetchActorTopMovies,
+            block = ::fetchActorTopMovies,
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },

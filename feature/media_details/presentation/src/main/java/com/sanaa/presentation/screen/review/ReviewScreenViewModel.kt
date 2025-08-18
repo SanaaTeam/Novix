@@ -51,7 +51,7 @@ class ReviewScreenViewModel @Inject constructor(
 
     private fun fetchReviews(id: Int) {
         tryToCollect(
-            callee = {
+            block = {
                 loadReviews(id, route.mediaType)
             },
             onCollect = ::onCollectReviews,

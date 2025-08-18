@@ -39,7 +39,7 @@ class TopTvShowsScreenViewModel @Inject constructor(
     private fun loadDetails() {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            callee = ::fetchActorTopTvShows,
+            block = ::fetchActorTopTvShows,
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },

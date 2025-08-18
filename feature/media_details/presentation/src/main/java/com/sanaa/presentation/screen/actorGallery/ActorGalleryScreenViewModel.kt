@@ -29,7 +29,7 @@ class ActorGalleryScreenViewModel @Inject constructor(
     private fun loadDetails() {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            callee = ::fetchActorGalleryImages,
+            block = ::fetchActorGalleryImages,
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },
