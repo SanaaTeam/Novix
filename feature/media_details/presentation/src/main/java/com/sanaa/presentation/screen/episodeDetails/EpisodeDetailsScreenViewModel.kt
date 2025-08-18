@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.episodeDetails
 
-import android.R.attr.rating
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
@@ -56,7 +55,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             val isLogged = checkUserLogin.isLoggedIn().first()
             if (isLogged) {
                 tryToCollect(
-                    callee = { getCurrentUserRating() },
+                    block = { getCurrentUserRating() },
                     onCollect = { rating ->
                         updateState { copy(imdbRating = rating) }
                     }
@@ -121,7 +120,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
-            callee = ::submitEpisodeRating,
+            block = ::submitEpisodeRating,
             onError = ::onErrorAccrue
         )
         updateState {
@@ -140,7 +139,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     private fun loadEpisode(tvShowId: Int, seasonNumber: Int, episodeNumber: Int) {
         tryToExecute(
-            callee = { fetchEpisodeDetails(tvShowId, seasonNumber, episodeNumber) },
+            block = { fetchEpisodeDetails(tvShowId, seasonNumber, episodeNumber) },
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },
@@ -238,7 +237,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     private fun updateUserLoginState() {
         tryToCollect(
-            callee = { checkUserLogin.isLoggedIn() },
+            block = { checkUserLogin.isLoggedIn() },
             onCollect = { isLogged ->
                 updateState {
                     copy(

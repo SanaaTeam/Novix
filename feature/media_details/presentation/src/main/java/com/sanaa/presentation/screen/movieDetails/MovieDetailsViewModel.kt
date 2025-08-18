@@ -197,7 +197,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
-            callee = ::submitMovieRating,
+            block = ::submitMovieRating,
             onError = ::onShowRateBottomSheetFailed,
         )
         updateState {
@@ -221,7 +221,7 @@ class MovieDetailsViewModel @Inject constructor(
     private fun fetchMovieDetails(movieId: Int) {
         updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            callee = {
+            block = {
                 loadMovieDetails(movieId)
             },
             onSuccess = {
@@ -286,7 +286,7 @@ class MovieDetailsViewModel @Inject constructor(
     private fun fetchUserRating() {
         if (state.value.isUserLoggedIn) {
             tryToCollect(
-                callee = { getCurrentUserRating(route.movieId) },
+                block = { getCurrentUserRating(route.movieId) },
                 onCollect = { rating -> updateState { copy(imdbRating = rating) } },
             )
         }
@@ -370,7 +370,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     private fun updateUserLoginState() {
         tryToCollect(
-            callee = { checkUserLogin.isLoggedIn() },
+            block = { checkUserLogin.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag
         )
     }
@@ -381,7 +381,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     private fun addMovieToHistory(movie: Movie) {
         tryToCollect(
-            callee = { getLoggedInUserUseCase.getLoggedInUser() },
+            block = { getLoggedInUserUseCase.getLoggedInUser() },
             onCollect = onCollectUser(movie)
         )
     }

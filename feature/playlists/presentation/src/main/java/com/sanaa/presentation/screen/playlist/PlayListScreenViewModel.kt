@@ -27,13 +27,13 @@ class PlayListScreenViewModel @Inject constructor(
 
     fun loadSavedLists() =
         tryToCollect(
-            callee = { checkUserLogin.isLoggedIn() },
+            block = { checkUserLogin.isLoggedIn() },
             onCollect = { isUserLoggedIn ->
                 updateState { copy(isUserLoggedIn = isUserLoggedIn) }
                 if (isUserLoggedIn) {
                     tryToCollect(
                         dispatcher = Dispatchers.IO,
-                        callee = { listsStatusProvider.savedLists },
+                        block = { listsStatusProvider.savedLists },
                         onCollect = { savedLists ->
                             updateState {
                                 copy(isLoading = false, lists = savedLists.map {
@@ -83,7 +83,7 @@ class PlayListScreenViewModel @Inject constructor(
 
     private fun refreshLists() {
         tryToExecute(
-            callee = { listsStatusProvider.refreshLists() },
+            block = { listsStatusProvider.refreshLists() },
             onSuccess = {
                 loadSavedLists()
             }

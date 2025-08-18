@@ -41,7 +41,7 @@ class GenreTvShowsViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
         )
     }
@@ -90,7 +90,7 @@ class GenreTvShowsViewModel @Inject constructor(
 
     private fun getTvShowsByGenreId(genreId: Int) {
         tryToCollect(
-            callee = { loadTvShowsByGenreId(genreId) },
+            block = { loadTvShowsByGenreId(genreId) },
             onCollect = ::onCollectTvShowsByGenreId,
             onError = ::onGetShowsByGeneraIdFailed
         )
