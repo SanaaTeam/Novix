@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,7 +52,7 @@ fun SearchScreen(
     val tvShowsPagingData = state.tvShows.collectAsLazyPagingItems()
     val actorsPagingData = state.actors.collectAsLazyPagingItems()
 
-    EffectHandler(viewModel.effect,navigator)
+    EffectHandler(viewModel.effect, navigator)
 
     CompositionLocalProvider(
         LocalThemeProvider provides state.isDarkMode,
@@ -77,10 +76,11 @@ private fun SearchScreenContent(
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
 ) {
-    NovixScaffold (
+    NovixScaffold(
         topBar = {
             TopBar(
-                modifier = Modifier.statusBarsPadding(), screenTitle = stringResource(R.string.search)
+                modifier = Modifier.statusBarsPadding(),
+                screenTitle = stringResource(R.string.search)
             )
         },
         snackBarHost = {
@@ -88,7 +88,6 @@ private fun SearchScreenContent(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.TopCenter
             ) {
-                Log.d("TAG", "SearchScreenContent: snackBarData:${state.snackBarData}")
                 NovixAnimatedSnackBarHost(
                     data = state.snackBarData,
                     onDismiss = interactionsListener::onSnackBarDismiss
@@ -96,7 +95,7 @@ private fun SearchScreenContent(
             }
 
         }
-    ){
+    ) {
         Column {
             SearchSection(
                 text = state.searchQuery,
@@ -121,28 +120,24 @@ private fun SearchScreenContent(
                     )
                 }
             }
-                SaveToListBottomSheet(
-                    isVisible = state.showSaveToListBottomSheet,
-                    mediaId = state.selectedMediaToSave?.id ?: 0,
-                    onDismiss = { interactionsListener.onDismissSaveToListBottomSheet() },
-                    onCreateNewListClick = {},
-                )
-
-            AddBookmarkListBottomSheet(
-                isVisible = state.showAddListBottomSheet,
-                interactionsListener = interactionsListener,
-            )
-            RequestToLoginBottomSheet(
-                interactionsListener = interactionsListener,
-                isVisible = state.showLoginBottomSheet,
-            )
         }
     }
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0,
+        onDismiss = interactionsListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionsListener::onCreateNewListClick,
+    )
 
-
-
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        interactionsListener = interactionsListener,
+    )
+    RequestToLoginBottomSheet(
+        interactionsListener = interactionsListener,
+        isVisible = state.showLoginBottomSheet,
+    )
 }
-
 
 
 @Composable

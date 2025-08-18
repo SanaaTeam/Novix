@@ -1,6 +1,5 @@
 package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -42,7 +42,6 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.screen.componants.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
-val TAG = "test34"
 @Composable
 fun SaveToListBottomSheet(
     isVisible: Boolean,
@@ -55,14 +54,6 @@ fun SaveToListBottomSheet(
     viewModel.getMediaId(mediaId)
 
     val state by viewModel.state.collectAsState()
-
-    Log.d(TAG, "SaveToListBottomSheet: snackBar in bottom sheet :${state.snackBarData}")
-    NovixAnimatedSnackBarHost(
-        data = state.snackBarData,
-        onDismiss = {
-            viewModel.onSnackBarDismiss()
-        }
-    )
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
@@ -127,7 +118,7 @@ private fun SaveToListBottomSheetContent(
             } else {
                 LazyColumn(
                     modifier = Modifier
-                        .heightIn(max = 400.dp)
+                        .heightIn(max = 300.dp)
 
                         .padding(horizontal = 16.dp)
                         .padding(top = 16.dp, bottom = 24.dp),
@@ -165,6 +156,16 @@ private fun SaveToListBottomSheetContent(
                     .padding(horizontal = 16.dp)
             )
         }
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        NovixAnimatedSnackBarHost(
+            data = state.snackBarData,
+            onDismiss = interactionListener::onSnackBarDismiss
+        )
     }
 }
 

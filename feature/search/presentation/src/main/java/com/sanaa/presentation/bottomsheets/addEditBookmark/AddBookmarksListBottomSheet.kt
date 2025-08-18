@@ -1,6 +1,8 @@
 package com.sanaa.presentation.bottomsheets.addEditBookmark
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -141,6 +143,16 @@ private fun AddBookmarkListBottomSheetContent(
                     .height(48.dp)
             )
         }
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        NovixAnimatedSnackBarHost(
+            data = state.snackBarData,
+            onDismiss = interactionListener::onSnackBarDismiss
+        )
     }
 }
 
