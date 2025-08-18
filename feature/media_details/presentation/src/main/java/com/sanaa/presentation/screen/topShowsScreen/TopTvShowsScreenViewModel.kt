@@ -5,6 +5,8 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.navigation.TopTvShowsScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -43,16 +45,18 @@ class TopTvShowsScreenViewModel @Inject constructor(
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },
-            onError = { e ->
-                when (e) {
-                    is exceptions.NoNetworkException ->
-                        updateState { copy(isLoading = false, noInternetConnection = true) }
-
-                    else ->
-                        updateState { copy(isLoading = false, error = e.message) }
-                }
-            }
+            onError = ::onErrorAccrue
         )
+    }
+
+    private fun onErrorAccrue(e: NovixAppException) {
+        when (e) {
+            is NoNetworkException ->
+                updateState { copy(isLoading = false, noInternetConnection = true) }
+
+            else ->
+                updateState { copy(isLoading = false, error = e.message) }
+        }
     }
 
     private suspend fun fetchActorTopTvShows() = coroutineScope {

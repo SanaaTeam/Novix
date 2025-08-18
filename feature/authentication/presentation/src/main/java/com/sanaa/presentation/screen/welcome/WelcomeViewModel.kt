@@ -1,11 +1,9 @@
 package com.sanaa.presentation.screen.welcome
 
-import android.util.Log
 import com.sanaa.presentation.screen.login_base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import okhttp3.Dispatcher
 import usecase.CreateGuestSessionUseCase
 import javax.inject.Inject
 
@@ -20,7 +18,7 @@ class WelcomeViewModel @Inject constructor(
 
     override fun onContinueClicked()  {
         tryToExecute(
-            callee = { createGuestSessionUseCase.createGuestSession() },
+            block = { createGuestSessionUseCase.createGuestSession() },
             onSuccess = { emitEffect(WelcomeScreenEffects.ReturnGuestResultCode) }
         )
     }

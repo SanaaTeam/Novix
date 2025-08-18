@@ -49,11 +49,11 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     }
 
     private fun <T> fetchData(
-        callee: suspend () -> T,
+        block: suspend () -> T,
         onSuccess: (T) -> Unit,
     ) {
         tryToExecute(
-            block = callee,
+            block = block,
             onSuccess = onSuccess,
             onError = ::handleError
         )
@@ -83,7 +83,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     private fun fetchEpisode() {
         fetchData(
-            callee = {
+            block = {
                 manageEpisodeDetails.getEpisodeDetails(
                     tvShowId,
                     seasonNumber,
@@ -98,7 +98,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     private fun fetchGuests() {
         fetchData(
-            callee = {
+            block = {
                 manageEpisodeDetails.getEpisodeGuestsOfHonor(
                     tvShowId,
                     seasonNumber,
@@ -113,7 +113,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     private fun fetchImages() {
         fetchData(
-            callee = { manageTvShowDetails.getTvShowImageUrls(tvShowId) },
+            block = { manageTvShowDetails.getTvShowImageUrls(tvShowId) },
             onSuccess = { images ->
                 updateState { copy(imagesUrl = images) }
             }
@@ -122,7 +122,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     private fun fetchTrailer() {
         fetchData(
-            callee = { manageTvShowDetails.getTvShowTrailer(tvShowId) },
+            block = { manageTvShowDetails.getTvShowTrailer(tvShowId) },
             onSuccess = { trailerUrl ->
                 updateState { copy(trailerUrl = trailerUrl) }
             }
