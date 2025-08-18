@@ -39,7 +39,7 @@ class NovixAppViewModel @Inject constructor(
                     if (logged)mangeSavedListsUseCase.refreshSavedList()
                 }
             }catch (e:Exception){
-                mangeSavedListsUseCase.clearData()
+                Log.d("NovixAppViewModel", "refreshListData: no internet keeping on local data e:$e")
             }
         }
     }
