@@ -45,9 +45,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     // Paging 3
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.compose)
-    testImplementation(libs.androidx.paging.testing)
+    implementation(libs.bundles.paging)
+    testImplementation(libs.bundles.paging.testing)
 
     testImplementation(libs.bundles.test)
     testImplementation(libs.bundles.test.runtime)

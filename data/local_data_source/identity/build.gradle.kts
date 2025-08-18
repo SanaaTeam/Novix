@@ -31,7 +31,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.bundles.room.testing)
 
-    implementation(libs.retrofit)
+    implementation(libs.bundles.retrofit)
     implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.androidx.work.runtime.ktx)

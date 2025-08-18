@@ -42,12 +42,10 @@ dependencies {
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
 
-    // Paging 3
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.compose)
+    implementation(libs.bundles.paging)
+    testImplementation(libs.bundles.paging.testing)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
-    testImplementation(libs.androidx.paging.testing)
 }

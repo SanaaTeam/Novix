@@ -36,8 +36,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
 
     // Paging 3
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.compose)
+    implementation(libs.bundles.paging)
 
     testImplementation(libs.bundles.test)
     testImplementation(libs.bundles.test.runtime)

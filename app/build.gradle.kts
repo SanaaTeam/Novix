@@ -49,6 +49,55 @@ android {
 }
 
 dependencies {
+    projectDependencies()
+
+    implementation(libs.bundles.retrofit)
+    implementation(libs.androidx.datastore)
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.splashscreen)
+
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose)
+    implementation(libs.androidx.material3)
+
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.compose.test.junit4)
+
+    debugImplementation(libs.androidx.ui.compose.tooling)
+    debugImplementation(libs.androidx.ui.compose.test.manifest)
+
+    implementation(libs.bundles.firebase)
+    implementation(platform(libs.firebase.bom))
+
+    implementation(libs.timber)
+
+    implementation(libs.bundles.ktor)
+
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.tensorflow.lite.task.vision)
+
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.bundles.room)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.converter.gson)
+    implementation(libs.androidx.appcompat)
+    testImplementation(libs.bundles.test)
+    testImplementation(libs.bundles.test.runtime)
+    testImplementation(libs.turbine)
+}
+tasks.withType(Test::class.java).configureEach {
+    useJUnitPlatform()
+}
+
+private fun DependencyHandlerScope.projectDependencies() {
     implementation(projects.data.localDataSource.identity)
     implementation(projects.data.localDataSource.vod)
     implementation(projects.data.remoteDataSource.identity)
@@ -73,54 +122,4 @@ dependencies {
     implementation(projects.feature.search.presentation)
     implementation(projects.feature.userProfile.api)
     implementation(projects.feature.userProfile.presentation)
-
-    implementation(libs.retrofit)
-    implementation(libs.okhttp)
-    implementation(libs.androidx.datastore)
-    implementation(libs.logging.interceptor)
-    implementation(libs.retrofit2.kotlinx.serialization.converter)
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.core.splashscreen)
-
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.bundles.compose)
-    implementation(libs.androidx.material3)
-
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.compose.test.junit4)
-
-    debugImplementation(libs.androidx.ui.compose.tooling)
-    debugImplementation(libs.androidx.ui.compose.test.manifest)
-
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics.ndk)
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.perf)
-
-    implementation(libs.timber)
-
-    implementation(libs.bundles.ktor)
-
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.tensorflow.lite.task.vision)
-
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.bundles.room)
-
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.converter.gson)
-    implementation(libs.androidx.appcompat)
-    testImplementation(libs.bundles.test)
-    testImplementation(libs.bundles.test.runtime)
-    testImplementation(libs.turbine)
-}
-tasks.withType(Test::class.java).configureEach {
-    useJUnitPlatform()
 }
