@@ -34,26 +34,19 @@ fun EmptyItemsScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(
-                    R.drawable.no_items
-                ),
+                painter = painterResource(R.drawable.no_items),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(bottom = 12.dp)
                     .size(128.dp),
                 contentScale = ContentScale.Fit
-
             )
-
             AppText(
-                modifier = Modifier.padding(start = 32.dp, end = 32.dp),
                 text = messageText,
                 style = Theme.textStyle.body.small,
                 color = Theme.colors.body,
                 textAlign = TextAlign.Center
             )
-
-
         }
     }
 }
