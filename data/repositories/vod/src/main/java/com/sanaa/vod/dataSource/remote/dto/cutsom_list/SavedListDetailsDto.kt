@@ -16,9 +16,9 @@ data class SavedListDetailsDto(
     @SerialName("page") val page: Int = 1,
     @SerialName("total_pages") val totalPages: Int = 1,
     @SerialName("total_results") val totalResults: Int = itemCount,
-    @SerialName("items") val items: List<SavedItemDto> = emptyList()
+    @SerialName("items") val items: List<SavedItemRemoteDto> = emptyList()
 ) {
-    fun toListDto() = SavedListDto(
+    fun toListDto() = SavedListRemoteDto(
         id = id,
         title = name,
         description = description,

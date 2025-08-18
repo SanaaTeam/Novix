@@ -246,7 +246,7 @@ private fun MovieDetailsBottomSheets(
     ) {
         SaveToListBottomSheet(
             isVisible = state.showSaveToListBottomSheet,
-            mediaId = state.selectedMediaId?.toLong() ?: 0,
+            mediaId = state.selectedMediaId ?: 0,
             onDismiss = interactionListener::onDismissSaveToListBottomSheet,
             onCreateNewListClick = interactionListener::onCreateNewListClick,
         )
@@ -260,7 +260,6 @@ private fun MovieDetailsBottomSheets(
         AddBookmarkListBottomSheet(
             isVisible = true,
             onDismiss = interactionListener::onDismissAddListBottomSheet,
-            mediaId = state.selectedMediaId ?: 0
         )
     }
 

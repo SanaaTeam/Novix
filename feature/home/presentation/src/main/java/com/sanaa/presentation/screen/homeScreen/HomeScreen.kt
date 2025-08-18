@@ -257,29 +257,24 @@ private fun HomeScreenContent(
             RefreshButton(onRetryClick = interactionListener::onRetryClick)
         }
 
-
-        if (state.userIsLoggedIn) {
-            state.selectedMediaToSave?.let { mediaItem ->
-                SaveToListBottomSheet(
-                    isVisible = state.showSaveToListBottomSheet,
-                    mediaId = mediaItem.id.toLong(),
-                    onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-                    onCreateNewListClick = interactionListener::onCreateNewListClick,
-                )
-            }
-
-            AddBookmarkListBottomSheet(
-                isVisible = state.showAddListBottomSheet,
-                onDismiss = interactionListener::onDismissAddListBottomSheet,
-                mediaId = state.selectedMediaToSave?.id ?: 0
-            )
-        }
-        RequestToLoginBottomSheet(
-            isVisible = state.showLoginBottomSheet,
-            onDismiss = interactionListener::onDismissLoginBottomSheet,
-            onLoginButtonClick = interactionListener::onLoginButtonClick
-        )
     }
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0,
+        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionListener::onCreateNewListClick,
+    )
+
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+    )
+
+    RequestToLoginBottomSheet(
+        isVisible = state.showLoginBottomSheet,
+        onDismiss = interactionListener::onDismissLoginBottomSheet,
+        onLoginButtonClick = interactionListener::onLoginButtonClick
+    )
 }
 
 @Composable
