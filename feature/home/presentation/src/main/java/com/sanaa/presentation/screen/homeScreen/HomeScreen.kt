@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -11,12 +12,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +33,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
@@ -82,6 +87,17 @@ private fun HomeScreenContent(
 
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
 
+    val gridScrollState = rememberLazyGridState()
+    val upcomingStartIndex = remember { 4 }
+
+    val isUpcomingVisible by remember {
+        derivedStateOf {
+            gridScrollState.layoutInfo.visibleItemsInfo
+                .any { it.index >= upcomingStartIndex }
+        }
+    }
+
+
     val showNoInternetScreen = (state.isNoInternetConnection
             && upcomingMovies.itemCount == 0
             && state.popularMedia.isEmpty()
@@ -89,15 +105,28 @@ private fun HomeScreenContent(
             && state.continueWatchingMedia.isEmpty())
 
     NovixScaffold(
-        topBar = { HomeTopBar(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) },
-        backgroundShapes = {},
+        topBar = {
+            HomeTopBar(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .statusBarsPadding()
+            )
+        },
+        backgroundShapes = {
+            AnimatedVisibility(
+                visible = !isUpcomingVisible,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                BackgroundShapes()
+            }
+        },
         snackBarHost = {
             NovixAnimatedSnackBarHost(
                 data = state.snackBarData,
                 onDismiss = interactionListener::onSnackBarDismiss
             )
         },
-        modifier = Modifier.systemBarsPadding()
     ) {
 
         AnimatedContent(
@@ -116,6 +145,7 @@ private fun HomeScreenContent(
             } else {
                 LazyVerticalGrid(
                     modifier = Modifier.fillMaxSize(),
+                    state = gridScrollState,
                     columns = GridCells.Adaptive(minSize = 140.dp),
                     contentPadding = PaddingValues(
                         start = 16.dp, end = 16.dp, bottom = 12.dp
