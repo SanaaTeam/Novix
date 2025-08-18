@@ -234,7 +234,7 @@ class MovieDetailsViewModel @Inject constructor(
     private fun fetchUserRating() {
         if (state.value.isUserLoggedIn) {
             tryToCollect(
-                block = { getCurrentUserRating(route.movieId) },
+                block = { getCurrentUserRating(movieId) },
                 onCollect = { rating -> updateState { copy(imdbRating = rating) } },
             )
         }

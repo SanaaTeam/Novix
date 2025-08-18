@@ -32,13 +32,10 @@ class SaveToListBottomSheetViewModel @Inject constructor(
 
     private fun observePlaylists() {
         updateState { copy(isLoading = true) }
-        tryToExecute(
-            block = { manageSavedListsUseCase.getSavedLists() },
-            onSuccess = ::onLoadPlaylistsSuccess,
-            onError = ::onLoadPlaylistsError
         tryToCollect(
-            callee = { mangeSavedListsUseCase.getSavedLists() },
+            block = {mangeSavedListsUseCase.getSavedLists()},
             onCollect = ::onCollectPlaylists,
+            onError = ::onErrorAccrue,
         )
     }
 
@@ -117,7 +114,7 @@ class SaveToListBottomSheetViewModel @Inject constructor(
         if (selectedListsIds.isEmpty()) return
         updateState { copy(isUploading = true, isAddButtonEnabled = false) }
         tryToExecute(
-            callee = {
+            block = {
                 selectedListsIds.forEach { listId ->
                     addMovieToSavedList(listId, state.value.mediaId!!)
                 }
