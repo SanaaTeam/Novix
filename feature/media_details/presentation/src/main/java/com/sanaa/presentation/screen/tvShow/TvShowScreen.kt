@@ -1,5 +1,7 @@
 package com.sanaa.presentation.screen.tvShow
 
+import android.app.Activity
+import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.EaseInOut
@@ -11,10 +13,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.zIndex
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.launchAuthActivityForResult
@@ -34,17 +35,21 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.api.LocalThemeProvider
+import com.sanaa.presentation.model.MediaTypeUiModel
+import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
+import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
+import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.screen.movieDetails.LoginPromptType
-import com.sanaa.presentation.screen.movieDetails.SnackData
-import com.sanaa.presentation.screen.tvShow.components.HandleTvShowScreenEffects
+import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.tvShow.components.TvShowDetailContent
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designR
 
 
@@ -52,25 +57,10 @@ import com.sanaa.designsystem.R as designR
 fun TvShowScreen(
     viewModel: TvShowScreenViewModel = hiltViewModel()
 ) {
-    var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    val navController = LocalNavControllerProvider.current
-
-    val authApi = EntryPointAccessors.fromApplication(
-        context,
-        DetailsApiEntryPoint::class.java
-    ).authenticationApi()
-
-    val launcher = launchAuthActivityForResult()
 
     HandleTvShowScreenEffects(
-        viewModel = viewModel,
-        navController = navController,
-        context = context,
-        launcher = launcher,
-        authApi = authApi,
-        onShowSnackBar = { newSnack -> snack = newSnack },
+        effect = viewModel.effect,
     )
 
     TvShowScreenContent(
@@ -131,47 +121,39 @@ private fun TvShowScreenContent(
                         )
                     }
                 } else {
-                    TvShowDetailContent(state, interactionListener, scrollState)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.BottomCenter
+                    )
+                    {
+                        TvShowDetailContent(state, interactionListener, scrollState)
+                        BottomContainer(
+                            modifier = Modifier.align(Alignment.BottomCenter),
+                            trailerUrl = state.tvShow.trailerUrl,
+                            onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
+                            onSetRateClicked = interactionListener::onRateClicked
+                        )
+                    }
                 }
             }
+        }
+        RateBottomSheet(
+            isRateSelected = state.hasUserSelectedRate,
+            imdbRating = state.imdbRating,
+            onDismiss = interactionListener::onDismissRateBottomSheet,
+            isVisible = state.showRateBottomSheet,
+            onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
+            onRatingChanged = interactionListener::onRatingChanged
+        )
 
-            BottomContainer(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                trailerUrl = state.tvShow.trailerUrl,
-                onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
-                onSetRateClicked = interactionListener::onRateClicked
-            )
-        }
-        if (state.showRateBottomSheet) {
-            RateBottomSheet(
-                isRateSelected = state.hasUserSelectedRate,
-                imdbRating = state.imdbRating,
-                onDismiss = interactionListener::onDismissAnyBottomSheet,
-                isVisible = true,
-                onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
-                onRatingChanged = interactionListener::onRatingChanged
-            )
-        }
-        if (state.showLoginBottomSheet) {
-            val title = when (state.loginPromptType) {
-                LoginPromptType.RATE -> stringResource(R.string.rate_it)
-                LoginPromptType.BOOKMARK -> stringResource(R.string.add_to_list)
-                else -> stringResource(R.string.add_to_list)
-            }
-
-            val text = when (state.loginPromptType) {
-                LoginPromptType.RATE -> stringResource(R.string.please_login_to_rate_your_favorite_items)
-                LoginPromptType.BOOKMARK -> stringResource(R.string.request_login)
-                else -> stringResource(R.string.request_login)
-            }
-            RequestToLoginBottomSheet(
-                onDismiss = interactionListener::onDismissAnyBottomSheet,
-                onLoginButtonClick = { interactionListener.onLoginButtonClick() },
-                isVisible = true,
-                text = text,
-                title = title
-            )
-        }
+        RequestToLoginBottomSheet(
+            onDismiss = interactionListener::onDismissLoginBottomSheet,
+            onLoginButtonClick = { interactionListener.onLoginButtonClick() },
+            isVisible = state.showLoginBottomSheet,
+            text = stringResource(R.string.please_login_to_rate_your_favorite_items),
+            title = stringResource(R.string.rate_it)
+        )
     }
 }
 
@@ -193,4 +175,63 @@ private fun TvShowScreenTopBar(
             )
         },
     )
+}
+
+@Composable
+private fun HandleTvShowScreenEffects(
+    effect: Flow<TvShowScreenEffects>,
+) {
+    val context = LocalContext.current
+    val navController = LocalNavControllerProvider.current
+
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        DetailsApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher = launchAuthActivityForResult()
+    LaunchedEffect(Unit) {
+        effect.collectLatest { effect ->
+            when (effect) {
+                is TvShowScreenEffects.NavigateToActorScreen -> {
+                    navController.navigate(ActorScreenRoute(effect.actorId).copy())
+                }
+
+                is TvShowScreenEffects.NavigateToEpisodeDetailsScreen -> {
+                    navController.navigate(
+                        EpisodeDetailsScreenRoute(
+                            effect.tvShowId, effect.seasonNumber, effect.episodeNumber
+                        ).copy()
+                    )
+                }
+
+                is TvShowScreenEffects.NavigateToReviewsScreen -> {
+                    navController.navigate(
+                        ReviewsScreenRoute(effect.tvShowId, MediaTypeUiModel.TV_SHOW).copy()
+                    )
+                }
+
+                is TvShowScreenEffects.NavigateBack -> {
+                    if (!navController.popBackStack()) {
+                        (navController.context as Activity).finish()
+                    }
+                }
+
+                is TvShowScreenEffects.PlayTrailer -> {
+                    val intent = Intent(Intent.ACTION_VIEW, effect.trailerUrl?.toUri())
+                    context.startActivity(intent)
+                }
+
+                is TvShowScreenEffects.NavigateToMovieCategoriesScreen -> {
+                    navController.navigate(
+                        GenreTvShowsScreenRoute(effect.category.id, effect.category.name).copy()
+                    )
+                }
+
+                TvShowScreenEffects.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
+                }
+            }
+        }
+    }
 }

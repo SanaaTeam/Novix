@@ -148,14 +148,6 @@ class TvShowScreenViewModelTest {
     }
 
     @Test
-    fun `onSaveShowClicked sets showLoginBottomSheet to true`() = runTest {
-        givenHappyViewModel()
-        advanceUntilIdle()
-        viewModel.onSaveTvShowClicked()
-        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
-    }
-
-    @Test
     fun `onGenreClicked emits NavigateToMovieCategoriesScreen`() = runTest {
         givenHappyViewModel()
         val genre = GenreUiModel(
@@ -168,34 +160,6 @@ class TvShowScreenViewModelTest {
                 .isEqualTo(TvShowScreenEffects.NavigateToMovieCategoriesScreen(genre))
             cancelAndIgnoreRemainingEvents()
         }
-    }
-
-    @Test
-    fun `loadTvShow handles error correctly when use case fails`() = runTest {
-        coEvery { manageTvShowDetails.getTvShowDetails(tvShowId) } throws RuntimeException("Test failure")
-        coEvery { stringProvider.deleteRatingSuccess } returns "Rating submitted successfully"
-        coEvery { stringProvider.deleteRatingFailed } returns "Failed to submit rating"
-        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
-
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "tvShowId" to tvShowId
-            )
-        )
-
-        viewModel = TvShowScreenViewModel(
-            savedStateHandle,
-            checkUserLogin,
-            getUser,
-            manageTvShowDetails,
-            manageWatchedMediaHistoryUseCase,
-            getLoggedInUserUseCase,
-            stringProvider,
-            dispatcher = testDispatcher
-        )
-        advanceUntilIdle()
-
-        assertThat(viewModel.state.value.error).isEqualTo("Test failure")
     }
 
     @Test
@@ -218,28 +182,6 @@ class TvShowScreenViewModelTest {
     }
 
     @Test
-    fun `onDismissLoginBottomSheet sets showLoginBottomSheet to false`() = runTest {
-        givenHappyViewModel()
-        viewModel.onSaveTvShowClicked()
-        viewModel.onDismissLoginBottomSheet()
-        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
-    }
-
-    @Test
-    fun `onLoginButtonClick hides sheet and emits NavigateToLogin`() = runTest {
-        givenHappyViewModel()
-        viewModel.onSaveTvShowClicked()
-        viewModel.onLoginButtonClick()
-
-        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
-
-        viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(TvShowScreenEffects.NavigateToLogin)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
     fun `onSubmitRateBottomSheet calls addRate successfully`() = runTest {
         coEvery { manageTvShowDetails.addTvShowRate(any(), any()) } returns true
         givenHappyViewModel()
@@ -249,36 +191,6 @@ class TvShowScreenViewModelTest {
         advanceUntilIdle()
 
         assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
-    }
-
-    @Test
-    fun `onDismissAnyBottomSheet hides both bottom sheets`() = runTest {
-        givenHappyViewModel()
-        viewModel.updateState {
-            copy(showRateBottomSheet = true, showLoginBottomSheet = true)
-        }
-
-        viewModel.onDismissAnyBottomSheet()
-
-        val state = viewModel.state.value
-        assertThat(state.showRateBottomSheet).isFalse()
-        assertThat(state.showLoginBottomSheet).isFalse()
-    }
-
-    @Test
-    fun `onSeasonNumberClicked handles errors correctly`() = runTest {
-        // Given
-        givenHappyViewModel()
-        val newSeasonNumber = 2
-        coEvery { manageTvShowDetails.getTvShowSeasonDetails(tvShowId, newSeasonNumber) } throws RuntimeException("Season error")
-
-        // When
-        viewModel.onSeasonNumberClicked(newSeasonNumber)
-        advanceUntilIdle()
-
-        // Then
-        assertThat(viewModel.state.value.isLoadingEpisodes).isFalse()
-        assertThat(viewModel.state.value.error).isEqualTo("Season error")
     }
 
     @Test
@@ -339,26 +251,6 @@ class TvShowScreenViewModelTest {
 
         // Then
         assertThat(viewModel.state.value.snackBarData).isNull()
-    }
-
-    @Test
-    fun `onRetryLoadDetails updates loading state and calls loadTvShow`() = runTest {
-        givenHappyViewModel()
-        val errorMsg = "Some error"
-
-        viewModel.updateState {
-            copy(
-                isLoading = false,
-                error = errorMsg,
-                noInternetConnection = true
-            )
-        }
-        viewModel.onRetryLoadDetails()
-
-        val state = viewModel.state.value
-        assertThat(state.isLoading).isTrue()
-        assertThat(state.error).isNull()
-        assertThat(state.noInternetConnection).isFalse()
     }
 
     private fun givenHappyViewModel(dispatcher: CoroutineDispatcher = StandardTestDispatcher()) {

@@ -11,8 +11,6 @@ interface TvShowScreenInteractionListener {
     fun onPlayTrailerClicked()
     fun onRateClicked()
     fun onDismissRateBottomSheet()
-    fun onDismissAnyBottomSheet()
-    fun onSaveTvShowClicked()
     fun onGenreClicked(genre: GenreUiModel)
     fun onRetryLoadDetails()
     fun onLoginButtonClick()
@@ -20,5 +18,4 @@ interface TvShowScreenInteractionListener {
     fun onDismissLoginBottomSheet()
     fun onSubmitRateBottomSheet()
     fun onSnackBarDismiss()
-    fun onDismiss()
 }

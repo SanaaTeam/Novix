@@ -7,9 +7,7 @@ import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.navigation.TvShowScreenRoute
-import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
-import com.sanaa.presentation.screen.tvShow.components.RateBottomSheetInteractionListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvShow
 import exceptions.NoNetworkException
@@ -39,13 +37,10 @@ class TvShowScreenViewModel @Inject constructor(
 ) : BaseViewModel<TvShowScreenUiState, TvShowScreenEffects>(
     initialState = TvShowScreenUiState(),
     defaultDispatcher = dispatcher
-),TvShowScreenInteractionListener, RateBottomSheetInteractionListener  {
+),TvShowScreenInteractionListener {
     val route = TvShowScreenRoute(
         tvShowId = checkNotNull(savedStateHandle["tvShowId"]),
     )
-    private val tvShowId: Int = checkNotNull(savedStateHandle["tvShowId"]) {
-        "tvShowId is required in SavedStateHandle"
-    }
 
     init {
         loadTvShow()
@@ -90,32 +85,18 @@ class TvShowScreenViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { copy(showRateBottomSheet = true) }
         } else {
-            promptLogin(LoginPromptType.RATE)
+            updateState { copy(showLoginBottomSheet = true) }
         }
     }
 
     override fun onDismissRateBottomSheet() {
-        updateState { copy(showRateBottomSheet = false) }
-    }
-
-    override fun onDismissAnyBottomSheet() {
-        updateState {
-            copy(
-                showRateBottomSheet = false,
-                showLoginBottomSheet = false
-            )
-        }
+        updateState { copy(showRateBottomSheet = false, imdbRating = 0) }
     }
 
     override fun onLoginButtonClick() {
         updateState { copy(showLoginBottomSheet = false) }
         emitEffect(TvShowScreenEffects.NavigateToLogin)
     }
-
-    override fun onSubmitButtonClick() {
-        updateState { copy() }
-    }
-
 
     override fun onRatingChanged(newRating: Int) {
         updateState { copy(imdbRating = newRating) }
@@ -128,31 +109,12 @@ class TvShowScreenViewModel @Inject constructor(
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
             callee = ::submitTvShowRating,
-            onError = ::onSubmitRatingFailed
+            onError = ::onSubmitRatingFailed,
         )
-        updateState {
-            copy(showRateBottomSheet = false)
-        }
     }
 
     override fun onSnackBarDismiss() {
         updateState { copy(snackBarData = null) }
-    }
-
-    private fun onSubmitRateBottomSheetFailed(exception: NovixAppException) {
-        updateState {
-            copy(
-                error = exception.message,
-                showRateBottomSheet = false
-            )
-        }
-    }
-
-    override fun onSaveTvShowClicked() {
-        val isLoggIn = state.value.isUserLoggedIn
-        if (!isLoggIn) {
-            promptLogin(LoginPromptType.BOOKMARK)
-        }
     }
 
     override fun onGenreClicked(genre: GenreUiModel) {
@@ -163,25 +125,16 @@ class TvShowScreenViewModel @Inject constructor(
         updateState {
             copy(
                 isLoading = true,
-                error = null,
                 noInternetConnection = false
             )
         }
         loadTvShow()
     }
 
-    override fun onDismiss() {
-        onDismissAnyBottomSheet()
-    }
-
     private fun loadTvShow() {
         tryToExecute(
-            callee = {
-                fetchShowDetails()
-            },
-            onSuccess = {
-                updateState { copy(isLoading = false) }
-            },
+            callee = { fetchShowDetails() },
+            onSuccess = { updateState { copy(isLoading = false) } },
             onError = ::onErrorAccrue
         )
     }
@@ -245,8 +198,10 @@ class TvShowScreenViewModel @Inject constructor(
             updateState {
                 copy(
                     snackBarData = SnackData(
-                        message = stringProvider.deleteRatingSuccess, isError = false
-                    )
+                        message = stringProvider.deleteRatingSuccess,
+                        isError = false
+                    ),
+                   showRateBottomSheet = false
                 )
             }
         } else {
@@ -272,15 +227,6 @@ class TvShowScreenViewModel @Inject constructor(
         updateState { copy(isUserLoggedIn = isLogged) }
     }
 
-    private fun promptLogin(type: LoginPromptType) {
-        updateState {
-            copy(
-                showLoginBottomSheet = true,
-                loginPromptType = type
-            )
-        }
-    }
-
     private fun addTvShowToHistory(tvShow: TvShow) {
         tryToCollect(
             callee = { getLoggedInUserUseCase.getLoggedInUser() },
@@ -297,6 +243,10 @@ class TvShowScreenViewModel @Inject constructor(
         if (exception is NoNetworkException) {
             updateState {
                 copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.noInternetConnectionError,
+                        isError = true
+                    ),
                     noInternetConnection = true,
                     isLoadingEpisodes = false
                 )
@@ -304,7 +254,10 @@ class TvShowScreenViewModel @Inject constructor(
         } else {
             updateState {
                 copy(
-                    error = exception.message,
+                    snackBarData = SnackData(
+                        message = stringProvider.somethingWentWrongError,
+                        isError = true
+                    ),
                     noInternetConnection = false,
                     isLoadingEpisodes = false
                 )
@@ -315,7 +268,6 @@ class TvShowScreenViewModel @Inject constructor(
     private fun onSubmitRatingFailed(exception: NovixAppException) {
         updateState {
             copy(
-                showRateBottomSheet = false,
                 snackBarData = SnackData(
                     message = stringProvider.deleteRatingFailed,
                     isError = true
