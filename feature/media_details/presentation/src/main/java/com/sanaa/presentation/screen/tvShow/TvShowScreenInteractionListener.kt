@@ -20,4 +20,5 @@ interface TvShowScreenInteractionListener {
     fun onDismissLoginBottomSheet()
     fun onSubmitRateBottomSheet()
     fun onSnackBarDismiss()
+    fun onDismiss()
 }

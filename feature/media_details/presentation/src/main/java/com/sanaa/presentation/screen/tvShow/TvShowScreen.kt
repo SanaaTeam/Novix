@@ -1,7 +1,5 @@
 package com.sanaa.presentation.screen.tvShow
 
-import android.app.Activity
-import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.EaseInOut
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,7 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.zIndex
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.launchAuthActivityForResult
@@ -38,15 +34,11 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.api.LocalThemeProvider
-import com.sanaa.presentation.model.MediaTypeUiModel
-import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
-import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
-import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
+import com.sanaa.presentation.screen.tvShow.components.HandleTvShowScreenEffects
 import com.sanaa.presentation.screen.tvShow.components.TvShowDetailContent
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
@@ -72,55 +64,14 @@ fun TvShowScreen(
 
     val launcher = launchAuthActivityForResult()
 
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect {
-            when (it) {
-                is TvShowScreenEffects.NavigateToActorScreen -> {
-                    navController.navigate(
-                        ActorScreenRoute(it.actorId)
-                    )
-                }
-
-                is TvShowScreenEffects.NavigateToEpisodeDetailsScreen -> {
-                    navController.navigate(
-                        EpisodeDetailsScreenRoute(
-                            it.tvShowId, it.seasonNumber, it.episodeNumber
-                        )
-                    )
-                }
-
-                is TvShowScreenEffects.NavigateToReviewsScreen -> {
-                    navController.navigate(
-                        ReviewsScreenRoute(it.tvShowId, MediaTypeUiModel.TV_SHOW)
-                    )
-                }
-
-                is TvShowScreenEffects.NavigateBack -> {
-                    if (!navController.popBackStack()) {
-                        (navController.context as Activity).finish()
-                    }
-                }
-
-                is TvShowScreenEffects.PlayTrailer -> {
-                    val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
-                    context.startActivity(intent)
-                }
-
-                is TvShowScreenEffects.NavigateToMovieCategoriesScreen -> {
-                    navController.navigate(
-                        GenreTvShowsScreenRoute(it.category.id, it.category.name)
-                    )
-                }
-
-
-                TvShowScreenEffects.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
-                }
-
-                is TvShowScreenEffects.ShowErrorSnackBar -> TODO()
-            }
-        }
-    }
+    HandleTvShowScreenEffects(
+        viewModel = viewModel,
+        navController = navController,
+        context = context,
+        launcher = launcher,
+        authApi = authApi,
+        onShowSnackBar = { newSnack -> snack = newSnack },
+    )
 
     TvShowScreenContent(
         interactionListener = viewModel, state = state.value
@@ -239,12 +190,6 @@ private fun TvShowScreenTopBar(
                 icon = painterResource(designR.drawable.icon_back),
                 onClick = listener::onBackClicked
 
-            )
-        },
-        rightContent = {
-            TopBarClickableIcon(
-                icon = painterResource(R.drawable.icon_save),
-                onClick = listener::onSaveTvShowClicked
             )
         },
     )

@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.tvShow
 
 import androidx.lifecycle.SavedStateHandle
-import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
@@ -10,6 +9,7 @@ import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.navigation.TvShowScreenRoute
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
+import com.sanaa.presentation.screen.tvShow.components.RateBottomSheetInteractionListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvShow
 import exceptions.NoNetworkException
@@ -39,7 +39,7 @@ class TvShowScreenViewModel @Inject constructor(
 ) : BaseViewModel<TvShowScreenUiState, TvShowScreenEffects>(
     initialState = TvShowScreenUiState(),
     defaultDispatcher = dispatcher
-), TvShowScreenInteractionListener {
+),TvShowScreenInteractionListener, RateBottomSheetInteractionListener  {
     val route = TvShowScreenRoute(
         tvShowId = checkNotNull(savedStateHandle["tvShowId"]),
     )
@@ -112,6 +112,11 @@ class TvShowScreenViewModel @Inject constructor(
         emitEffect(TvShowScreenEffects.NavigateToLogin)
     }
 
+    override fun onSubmitButtonClick() {
+        updateState { copy() }
+    }
+
+
     override fun onRatingChanged(newRating: Int) {
         updateState { copy(imdbRating = newRating) }
     }
@@ -163,6 +168,10 @@ class TvShowScreenViewModel @Inject constructor(
             )
         }
         loadTvShow()
+    }
+
+    override fun onDismiss() {
+        onDismissAnyBottomSheet()
     }
 
     private fun loadTvShow() {
