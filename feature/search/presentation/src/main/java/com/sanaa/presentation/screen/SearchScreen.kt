@@ -1,10 +1,7 @@
 package com.sanaa.presentation.screen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -53,7 +50,7 @@ fun SearchScreen(
     val tvShowsPagingData = state.tvShows.collectAsLazyPagingItems()
     val actorsPagingData = state.actors.collectAsLazyPagingItems()
 
-    EffectHandler(viewModel.effect,navigator)
+    EffectHandler(viewModel.effect, navigator)
 
     CompositionLocalProvider(
         LocalThemeProvider provides state.isDarkMode,
@@ -77,25 +74,20 @@ private fun SearchScreenContent(
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
 ) {
-    NovixScaffold (
+    NovixScaffold(
         topBar = {
             TopBar(
-                modifier = Modifier.statusBarsPadding(), screenTitle = stringResource(R.string.search)
+                modifier = Modifier.statusBarsPadding(),
+                screenTitle = stringResource(R.string.search)
             )
         },
         snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                NovixAnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionsListener::onSnackBarDismiss
-                )
-            }
-
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionsListener::onSnackBarDismiss
+            )
         }
-    ){
+    ) {
         Column {
             SearchSection(
                 text = state.searchQuery,
@@ -141,9 +133,7 @@ private fun SearchScreenContent(
     }
 
 
-
 }
-
 
 
 @Composable
