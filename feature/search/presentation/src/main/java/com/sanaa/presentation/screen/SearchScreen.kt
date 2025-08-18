@@ -112,27 +112,23 @@ private fun SearchScreenContent(
                     )
                 }
             }
-            state.selectedMediaToSave?.let { mediaItem ->
-                SaveToListBottomSheet(
-                    isVisible = state.showSaveToListBottomSheet,
-                    mediaId = mediaItem.id.toLong(),
-                    onDismiss = {},
-                    onCreateNewListClick = {},
-                )
-            }
-            AddBookmarkListBottomSheet(
-                isVisible = state.showAddListBottomSheet,
-                interactionsListener = interactionsListener,
-                mediaId = state.selectedMediaToSave?.id ?: 0
-            )
-            RequestToLoginBottomSheet(
-                interactionsListener = interactionsListener,
-                isVisible = state.showLoginBottomSheet,
-            )
         }
     }
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0,
+        onDismiss = interactionsListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionsListener::onCreateNewListClick,
+    )
 
-
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        interactionsListener = interactionsListener,
+    )
+    RequestToLoginBottomSheet(
+        interactionsListener = interactionsListener,
+        isVisible = state.showLoginBottomSheet,
+    )
 }
 
 

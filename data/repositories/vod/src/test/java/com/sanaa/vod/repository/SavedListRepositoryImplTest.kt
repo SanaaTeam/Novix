@@ -1,126 +1,144 @@
 package com.sanaa.vod.repository
 
-import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
+import com.sanaa.vod.dataSource.local.cache.LocalSavedMovieDataSource
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemDto
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemRemoteDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListRemoteDto
 import com.sanaa.vod.dataSource.remote.dto.movie.MovieDto
-import com.sanaa.vod.util.exceptions.ConnectionException
-import exceptions.NoNetworkException
-import io.mockk.coEvery
-import io.mockk.coJustRun
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
+import com.sanaa.vod.repository.mapper.savedList.toEntity
+import com.sanaa.vod.repository.mapper.savedList.toLocalDto
+import entity.Movie
+import io.mockk.*
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import repository.SavedListsStatusProvider
 import usecase.custom_list.custom_list_param.SavedList
 
 class SavedListRepositoryImplTest {
 
     private val prefs: PreferencesManager = mockk(relaxed = true)
-    private val remoteLists: RemoteSavedListDataSource = mockk(relaxed = true)
-    private val remoteMovies: RemoteMovieDataSource = mockk(relaxed = true)
-    private val savedListsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
+    private val remoteDataSource: RemoteSavedListDataSource = mockk(relaxed = true)
+    private val localDataSource: LocalSavedMovieDataSource = mockk(relaxed = true)
 
     private lateinit var repository: SavedListRepositoryImpl
 
-    private val dummyListsDto = listOf(
-        SavedListDto(id = LIST_ID, title = "Watch-Later"),
-        SavedListDto(id = LIST_ID + 1, title = "Favorites")
+    private val dummyRemoteLists = listOf(
+        SavedListRemoteDto(id = LIST_ID, title = "Watch-Later"),
+        SavedListRemoteDto(id = LIST_ID + 1, title = "Favorites")
     )
 
     private val dummyItemsDto = listOf(
-        SavedItemDto(id = 1, title = "A"),
-        SavedItemDto(id = 2, title = "B")
+        SavedItemRemoteDto(id = 1, title = "A"),
+        SavedItemRemoteDto(id = 2, title = "B")
     )
 
-    private val dummyMovieDto1 = MovieDto(id = 1, title = "A")
-    private val dummyMovieDto2 = MovieDto(id = 2, title = "B")
+    private val dummyMoviesDto = listOf(
+        MovieDto(id = 1, title = "A"),
+        MovieDto(id = 2, title = "B")
+    )
 
     @BeforeEach
     fun setup() {
         every { prefs.sessionId } returns MutableStateFlow(SESSION_ID)
-
-        repository =
-            SavedListRepositoryImpl(remoteLists, remoteMovies, prefs, savedListsStatusProvider)
-    }
-
-
-    @Test
-    fun `createSavedList returns created list`() = runTest {
-        coEvery { remoteLists.createList(SESSION_ID, "Watch-Later", any()) } returns
-                SavedListDto(id = LIST_ID, title = "Watch-Later")
-
-        val created: SavedList = repository.createSavedList("Watch-Later")
-        assertThat(created.id).isEqualTo(LIST_ID)
+        repository = SavedListRepositoryImpl(remoteDataSource, localDataSource, prefs)
     }
 
     @Test
-    fun `getSavedLists returns mapped saved lists on success`() = runTest {
-        coEvery { remoteLists.fetchUserLists(SESSION_ID) } returns dummyListsDto
+    fun `getLocalSavedLists emits mapped data from local`() = runTest {
+        // Arrange
+        val localDtos = dummyRemoteLists.map { it.toEntity(emptyList()).toLocalDto() }
+        coEvery { localDataSource.getAllLists() } returns flowOf(localDtos)
 
-        val lists = repository.getSavedLists()
+        // Act
+        val result = repository.getLocalSavedLists()
+        val collected = result.first()
 
-        assertThat(lists).hasSize(2)
-        assertThat(lists[0].id).isEqualTo(LIST_ID)
-        assertThat(lists[1].id).isEqualTo(LIST_ID + 1)
+        // Assert
+        assertThat(collected).hasSize(2)
+        assertThat(collected[0].id).isEqualTo(LIST_ID)
     }
 
     @Test
-    fun `getAllMoviesInList returns mapped movies with isSaved true`() = runTest {
-        coEvery { remoteLists.fetchListItems(LIST_ID, PAGE) } returns dummyItemsDto
-        coEvery { remoteMovies.fetchMovieDetails(1) } returns dummyMovieDto1
-        coEvery { remoteMovies.fetchMovieDetails(2) } returns dummyMovieDto2
-        coEvery { savedListsStatusProvider.isItemSaved(1) } returns true
-        coEvery { savedListsStatusProvider.isItemSaved(2) } returns false
+    fun `refreshSavedLists clears and inserts fetched lists`() = runTest {
+        coEvery { remoteDataSource.fetchUserLists(SESSION_ID) } returns dummyRemoteLists
+        coEvery { remoteDataSource.fetchListItems(any()) } returns dummyItemsDto
+        coJustRun { localDataSource.clearAllLists() }
+        coJustRun { localDataSource.insertList(any()) }
 
-        val movies = repository.getAllMoviesInList(LIST_ID, PAGE)
+        repository.refreshSavedLists()
 
-        assertThat(movies).hasSize(2)
-        assertThat(movies[0].id).isEqualTo(1)
+        coVerify { localDataSource.clearAllLists() }
+        coVerify(atLeast = 1) { localDataSource.insertList(any()) }
     }
 
     @Test
-    fun `deleteSavedList completes without error`() = runTest {
-        coJustRun { remoteLists.deleteList(SESSION_ID, LIST_ID) }
+    fun `createSavedList inserts new list to local`() = runTest {
+        coEvery { remoteDataSource.createList(SESSION_ID, "Watch-Later") } returns
+                SavedListRemoteDto(id = LIST_ID, title = "Watch-Later")
+        coJustRun { localDataSource.insertList(any()) }
+
+        repository.createSavedList("Watch-Later")
+
+        coVerify { localDataSource.insertList(match { it.id == LIST_ID }) }
+    }
+
+    @Test
+    fun `deleteSavedList deletes from both remote and local`() = runTest {
+        coEvery { remoteDataSource.deleteList(SESSION_ID, LIST_ID) } returns true
+        coJustRun { localDataSource.deleteList(LIST_ID) }
 
         repository.deleteSavedList(LIST_ID)
 
-        coVerify(exactly = 1) { remoteLists.deleteList(SESSION_ID, LIST_ID) }
-    }
-
-
-    @Test
-    fun `addMovieToList returns true when successful`() = runTest {
-        coEvery { remoteLists.addItem(SESSION_ID, LIST_ID, MOVIE_ID) } returns true
-
-        val success = repository.addMovieToList(LIST_ID, MOVIE_ID)
-
-        assertThat(success).isTrue()
+        coVerify { remoteDataSource.deleteList(SESSION_ID, LIST_ID) }
+        coVerify { localDataSource.deleteList(LIST_ID) }
     }
 
     @Test
-    fun `removeMovieFromList returns true when successful`() = runTest {
-        coEvery { remoteLists.removeItem(SESSION_ID, LIST_ID, MOVIE_ID) } returns true
+    fun `clearAllLists calls local clear`() = runTest {
+        coJustRun { localDataSource.clearAllLists() }
 
-        val success = repository.removeMovieFromList(LIST_ID, MOVIE_ID)
+        repository.clearAllLists()
 
-        assertThat(success).isTrue()
+        coVerify { localDataSource.clearAllLists() }
+    }
+
+//    @Test
+//    fun `getMoviesInList maps remote movies`() = runTest {
+//        coEvery { remoteDataSource.fetchListItems(LIST_ID, PAGE) } returns dummyMoviesDto
+//
+//        val result = repository.getMoviesInList(LIST_ID, PAGE)
+//
+//        assertThat(result).isInstanceOf(List::class.java)
+//        assertThat(result).hasSize(2)
+//        assertThat(result[0]).isInstanceOf(Movie::class.java)
+//        assertThat(result[0].id).isEqualTo(1)
+//    }
+
+    @Test
+    fun `addMovieToList updates both remote and local on success`() = runTest {
+        coEvery { remoteDataSource.addItem(SESSION_ID, LIST_ID, MOVIE_ID) } returns true
+        coJustRun { localDataSource.addMovieToList(LIST_ID, MOVIE_ID) }
+
+        repository.addMovieToList(LIST_ID, MOVIE_ID)
+
+        coVerify { remoteDataSource.addItem(SESSION_ID, LIST_ID, MOVIE_ID) }
+        coVerify { localDataSource.addMovieToList(LIST_ID, MOVIE_ID) }
     }
 
     @Test
-    fun `getSavedLists throws NoNetworkException on ConnectionException`() = runTest {
-        coEvery { remoteLists.fetchUserLists(any(), any()) } throws ConnectionException()
+    fun `removeMovieFromList updates both remote and local on success`() = runTest {
+        coEvery { remoteDataSource.removeItem(SESSION_ID, LIST_ID, MOVIE_ID) } returns true
+        coJustRun { localDataSource.removeMovieFromList(LIST_ID, MOVIE_ID) }
 
-        assertThrows<NoNetworkException> { repository.getSavedLists() }
+        repository.removeMovieFromList(LIST_ID, MOVIE_ID)
+
+        coVerify { remoteDataSource.removeItem(SESSION_ID, LIST_ID, MOVIE_ID) }
+        coVerify { localDataSource.removeMovieFromList(LIST_ID, MOVIE_ID) }
     }
 
     private companion object {

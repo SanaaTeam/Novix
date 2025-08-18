@@ -1,6 +1,5 @@
 package com.sanaa.vod.cache
 
-import android.content.Context
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.vod.cache.dao.CachedContentDao
 import com.sanaa.vod.cache.dao.CachedContentMetadataDao
@@ -17,7 +16,6 @@ import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
 import com.sanaa.vod.util.DateTimeUtils
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -30,7 +28,6 @@ class LocalCachedContentDataSourceImplTest {
     private lateinit var movieDao: MovieDao
     private lateinit var tvShowDao: TvShowDao
     private lateinit var genreDao: GenreDao
-    lateinit var context: Context
 
     private lateinit var localCachedContentDataSource: LocalCachedContentDataSourceImpl
 
@@ -41,8 +38,6 @@ class LocalCachedContentDataSourceImplTest {
         movieDao = mockk(relaxed = true)
         tvShowDao = mockk(relaxed = true)
         genreDao = mockk(relaxed = true)
-        context = mockk(relaxed = true)
-        every { context.resources.configuration.locales[0].language } returns FAKE_LANGUAGE
 
         localCachedContentDataSource = LocalCachedContentDataSourceImpl(
             cachedContentDao,
@@ -50,7 +45,6 @@ class LocalCachedContentDataSourceImplTest {
             movieDao,
             tvShowDao,
             genreDao,
-            context
         )
     }
 

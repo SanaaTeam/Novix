@@ -30,14 +30,14 @@ abstract class BaseViewModel<T, E>(
     }
 
     protected fun <T> tryToExecute(
-        callee: suspend () -> T,
+        block: suspend () -> T,
         onSuccess: (T) -> Unit = {},
         onError: (exception: IdentityException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
         val handler = createExceptionHandler(onError)
         viewModelScope.launch(dispatcher + handler) {
-            val result = callee()
+            val result = block()
             onSuccess(result)
         }
     }

@@ -45,8 +45,8 @@ fun PaginatedMediaListGrid(
                         imageUrl = media.imageUrl.orEmpty(),
                         modifier = Modifier.fillMaxWidth(),
                         sensitiveContentThreshold = 0.2f,
-                        // isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                        //   safeContentThreshold = LocalSafeContentThreshold.current,
+//                         isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+//                           safeContentThreshold = LocalSafeContentThreshold.current,
                         contentDescription = media.title,
                         placeholderContent = {
                             RemoteImagePlaceholder(Modifier.fillMaxSize())
@@ -65,7 +65,7 @@ fun PaginatedMediaListGrid(
                         )
                     }
                 },
-                topLeftContent = { SaveIconChip(onClick = { onSaveIconClick(media) }, isSaved = media.isSaved) },
+                topLeftContent = { SaveIconChip(onClick = { onSaveIconClick(media) }, isSaved = true) },
                 onCardClick = { onMediaClick(media) })
         }
     }

@@ -7,10 +7,11 @@ import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.navigation.TopMoviesScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenEffects
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import repository.SavedListsStatusProvider
 import usecase.ManageActorUseCase
 import javax.inject.Inject
 
@@ -18,7 +19,6 @@ import javax.inject.Inject
 class TopMoviesScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<TopMoviesScreenUiState, ActorScreenEffects>(
     initialState = TopMoviesScreenUiState(),
     defaultDispatcher = Dispatchers.IO
@@ -42,7 +42,6 @@ class TopMoviesScreenViewModel @Inject constructor(
         }
 
         if (movie.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(movie.id)
         } else {
             updateState {
                 copy(
@@ -61,20 +60,22 @@ class TopMoviesScreenViewModel @Inject constructor(
     private fun loadDetails() {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            callee = ::fetchActorTopMovies,
+            block = ::fetchActorTopMovies,
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },
-            onError = { e ->
-                when (e) {
-                    is exceptions.NoNetworkException ->
-                        updateState { copy(isLoading = false, noInternetConnection = true) }
-
-                    else ->
-                        updateState { copy(isLoading = false, error = e.message) }
-                }
-            }
+            onError = ::onErrorAccrue
         )
+    }
+
+    private fun onErrorAccrue(e: NovixAppException) {
+        when (e) {
+            is NoNetworkException ->
+                updateState { copy(isLoading = false, noInternetConnection = true) }
+
+            else ->
+                updateState { copy(isLoading = false, error = e.message) }
+        }
     }
 
     private suspend fun fetchActorTopMovies() = coroutineScope {

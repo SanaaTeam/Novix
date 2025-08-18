@@ -1,5 +1,6 @@
 package com.sanaa.presentation.bottomsheet.saveToListBottomsheet
 
 sealed interface SaveToListEffect {
-    object Dismiss : SaveToListEffect
+    object CreateNewList:SaveToListEffect
+    object DismissBottomSheet:SaveToListEffect
 }
