@@ -123,7 +123,6 @@ private fun PlaylistScreenContent(
                         isVisible = state.showAddBottomSheet,
                         lists = state.lists,
                         interactionListener = interactionListener,
-                        isUserLoggedIn = state.isUserLoggedIn
                     )
                 }
             }

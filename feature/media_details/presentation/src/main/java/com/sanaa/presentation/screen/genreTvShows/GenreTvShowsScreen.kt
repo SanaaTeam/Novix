@@ -35,6 +35,7 @@ import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.TvShowScreenRoute
 import com.sanaa.presentation.screen.genreTvShows.components.GenreTvShowsGrid
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
@@ -89,7 +90,14 @@ private fun GenreTvShowsScreenContent(
     interactionListener: GenreTvShowsScreenInteractionListener,
 ) {
     NovixScaffold(
-        backgroundShapes = { BackgroundShapes() }
+        backgroundShapes = { BackgroundShapes() },
+        snackBarHost = {
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackDismissRequested,
+                modifier = Modifier.statusBarsPadding()
+            )
+        },
     ) {
         Column(
             modifier = Modifier.navigationBarsPadding()

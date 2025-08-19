@@ -17,7 +17,7 @@ fun MovieSearchDto.toEntity(): Movie {
         imdbRating = voteAverage ?: -1f,
         duration = (-1).minutes,
         releaseDate = getLocalDateOrDefault(releaseDate),
-        overview = "",
+        overview = overview.orEmpty(),
         trailerUrl = "",
         rating = -1
     )

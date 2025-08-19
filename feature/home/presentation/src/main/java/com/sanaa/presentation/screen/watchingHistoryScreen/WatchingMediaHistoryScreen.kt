@@ -28,7 +28,6 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.designsystem.R as designSystemR
 import com.sanaa.presentation.api.HomeApiEntryPoint
 import com.sanaa.presentation.app.navigation.LocalMainNavController
 import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
@@ -42,6 +41,7 @@ import com.sanaa.presentation.state.MediaTypeUiState
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import com.sanaa.designsystem.R as designSystemR
 
 @Composable
 fun WatchingMediaHistoryScreen(
@@ -82,7 +82,8 @@ private fun WatchingMediaHistoryScreenContent(
         snackBarHost = {
             NovixAnimatedSnackBarHost(
                 data = state.snackBarData,
-                onDismiss = interactionListener::onSnackBarDismiss
+                onDismiss = interactionListener::onSnackBarDismiss,
+                modifier = Modifier.statusBarsPadding()
             )
         },
     ) {

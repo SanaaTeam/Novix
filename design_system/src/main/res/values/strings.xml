@@ -38,6 +38,7 @@
     <string name="moderate_restriction">Moderate</string>
     <string name="unrestricted">Off</string>
     <string name="light">Light</string>
+    <string name="system_language">System Language</string>
     <string name="dark">Dark</string>
     <string name="save">Save</string>
     <string name="blurs_all_sensitive_content">Blurs all sensitive content.</string>
@@ -61,5 +62,9 @@
     <string name="remove_from_list_caption">Click on list name to remove movie from it</string>
     <string name="remove_from_list">Remove from list</string>
     <string name="remove">Remove</string>
+    <string name="home">Home</string>
+    <string name="categories">Categories</string>
+    <string name="my_list">My list</string>
+    <string name="login_title">login</string>
 
 </resources>

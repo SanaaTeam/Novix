@@ -7,7 +7,6 @@ data class MyRatingScreenUiState(
     val ratedTvShows: List<RatedMediaUiModel> = emptyList(),
     val isLoading: Boolean = false,
     val selectedTab: MyRatingTab = MyRatingTab.ALL,
-    val error: String? = null,
     val isNoInternetConnection: Boolean = false,
     val snackBarData: SnackData? = null
 

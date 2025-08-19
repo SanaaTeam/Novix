@@ -25,6 +25,7 @@ import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.review.components.EmptyReviewsContent
 import com.sanaa.presentation.screen.review.components.ReviewsList
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.designsystem.R as designR
 
 @Composable
@@ -61,6 +62,13 @@ fun ReviewsScreenContent(
                         onClick = interactionListener::onBackClick
                     )
                 }
+            )
+        },
+        snackBarHost = {
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackBarDismiss,
+                modifier = Modifier.statusBarsPadding()
             )
         },
         modifier = Modifier.statusBarsPadding(),

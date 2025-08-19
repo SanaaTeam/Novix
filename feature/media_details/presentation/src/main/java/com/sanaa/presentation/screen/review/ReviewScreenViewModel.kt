@@ -9,6 +9,7 @@ import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.model.ReviewUiModel
 import com.sanaa.presentation.model.mapper.toReviewUiModel
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
+import com.sanaa.presentation.screen.movieDetails.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Review
 import exceptions.NoNetworkException
@@ -17,6 +18,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import service.VodStringProvider
 import usecase.ManageMovieUseCase
 import usecase.ManageTvShowUseCase
 import javax.inject.Inject
@@ -26,6 +28,7 @@ class ReviewScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
     private val manageTvShowDetails: ManageTvShowUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<ReviewScreenUiState, ReviewScreenEffects>(
     initialState = ReviewScreenUiState(),
@@ -45,7 +48,7 @@ class ReviewScreenViewModel @Inject constructor(
     }
 
     override fun onRetryClicked() {
-        updateState { copy(error = null, noInternetConnection = false, isLoading = true) }
+        updateState { copy(noInternetConnection = false, isLoading = true) }
         fetchReviews(route.mediaId)
     }
 
@@ -64,19 +67,38 @@ class ReviewScreenViewModel @Inject constructor(
     }
 
     private fun onFetchReviewsFailed(exception: NovixAppException) {
-        if (exception is NoNetworkException) {
-            updateState {
-                copy(
-                    noInternetConnection = true,
-                    isLoading = false,
-                    error = null
-                )
+        when (exception) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        noInternetConnection = true,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true,
+                        )
+                    )
+                }
             }
-        } else {
-            updateState { copy(isLoading = false, error = exception.message) }
+
+            else -> {
+                updateState {
+                    copy(
+                        noInternetConnection = false,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
+            }
         }
     }
 
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
     private fun loadReviews(id: Int, mediaType: MediaTypeUiModel): Flow<PagingData<ReviewUiModel>> {
         updateState { copy(isLoading = true) }
         return createPagingFlow(

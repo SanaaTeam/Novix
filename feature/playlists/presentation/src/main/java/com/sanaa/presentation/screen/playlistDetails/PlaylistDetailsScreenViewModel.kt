@@ -20,7 +20,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import repository.ContentRestriction
+import repository.Theme
 import service.VodStringProvider
+import usecase.MangeUserPreferenceUseCase
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
@@ -30,11 +33,12 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
+    private val manageUserPreferenceUseCase: MangeUserPreferenceUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(
-        SavedDetailsScreenUiState(), dispatcher
-    ),
+    SavedDetailsScreenUiState(), dispatcher
+),
     PlaylistDetailsInteractionListener {
     private val listId: Int = checkNotNull(savedStateHandle["listId"]) {
         "listId is required in SavedStateHandle"
@@ -45,7 +49,38 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
 
     init {
         updateState { copy(listId = listId, title = listTitle) }
+        getUserThemePreference()
+        getUserContentRestrictionPreference()
         loadItemsInSavedList(listId)
+    }
+
+    private fun getUserThemePreference() {
+        tryToCollect(
+            block = { manageUserPreferenceUseCase.getTheme() },
+            onCollect = { theme ->
+                updateState { copy(isDarkTheme = theme == Theme.DARK) }
+            },
+            onError = ::onDataLoadError
+        )
+    }
+
+    private fun getUserContentRestrictionPreference() {
+        tryToCollect(
+            block = { manageUserPreferenceUseCase.getContentRestriction() },
+            onCollect = ::onContentRestrictionCollect,
+            onError = ::onDataLoadError
+        )
+    }
+
+    private fun onContentRestrictionCollect(contentRestriction: ContentRestriction) {
+        val threshold = when (contentRestriction) {
+            ContentRestriction.RESTRICTED -> STRICT_CONTENT_THRESHOLD
+            ContentRestriction.MODERATE_RESTRICTION -> MODERATE_CONTENT_THRESHOLD
+            ContentRestriction.UNRESTRICTED -> UNRESTRICTED_CONTENT_THRESHOLD
+        }
+        updateState {
+            copy(safeContentThreshold = threshold)
+        }
     }
 
     private fun loadItemsInSavedList(listId: Int) {
@@ -87,7 +122,16 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
                 )
             }
         }
-        updateState { copy(showRemoveFromListBottomSheet = false, selectedMediaToRemove = null) }
+        updateState {
+            copy(
+                showRemoveFromListBottomSheet = false,
+                selectedMediaToRemove = null,
+                snackBarData = SnackData(
+                    message = stringProvider.deleteFromListSuccess,
+                    isError = false
+                )
+            )
+        }
     }
 
     override fun onBackClick() {
@@ -192,5 +236,11 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private companion object {
+        const val STRICT_CONTENT_THRESHOLD = 0.9f
+        const val MODERATE_CONTENT_THRESHOLD = 0.5f
+        const val UNRESTRICTED_CONTENT_THRESHOLD = 0.0f
     }
 }

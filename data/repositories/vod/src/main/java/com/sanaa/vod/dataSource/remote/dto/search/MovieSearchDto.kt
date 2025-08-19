@@ -5,9 +5,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MovieSearchDto(
-    @SerialName("id") val id: Int,
+    @SerialName("id")
+    val id: Int,
     @SerialName("title")
     val title: String? = null,
+    @SerialName("overview")
+    val overview: String? = null,
     @SerialName("poster_path")
     val posterImagePath: String? = null,
     @SerialName("release_date")

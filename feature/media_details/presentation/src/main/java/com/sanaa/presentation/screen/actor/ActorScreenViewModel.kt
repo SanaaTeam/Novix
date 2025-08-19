@@ -6,12 +6,14 @@ import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.navigation.ActorScreenRoute
+import com.sanaa.presentation.screen.movieDetails.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import exceptions.NovixAppException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageActorUseCase
 import javax.inject.Inject
@@ -20,6 +22,7 @@ import javax.inject.Inject
 class ActorScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
+    private val stringProvider: VodStringProvider,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
 ) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
     initialState = ActorScreenUiState(),
@@ -106,7 +109,7 @@ class ActorScreenViewModel @Inject constructor(
     }
 
     override fun onRetryClicked() {
-        updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
+        updateState { copy(noInternetConnection = false, isLoading = true) }
         loadDetails()
     }
 
@@ -123,12 +126,36 @@ class ActorScreenViewModel @Inject constructor(
 
     private fun onErrorAccrue(e: NovixAppException) {
         when (e) {
-            is NoNetworkException ->
-                updateState { copy(isLoading = false, noInternetConnection = true) }
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        noInternetConnection = true,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true,
+                        )
+                    )
+                }
+            }
 
-            else ->
-                updateState { copy(isLoading = false, error = e.message) }
+            else -> {
+                updateState {
+                    copy(
+                        noInternetConnection = false,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
+            }
         }
+    }
+
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
     }
 
     private suspend fun fetchActorDetails() = coroutineScope {

@@ -88,7 +88,6 @@ class WatchingHistoryViewModelTest {
                 }
 
                 assertThat(successState.isLoading).isFalse()
-                assertThat(successState.error).isNull()
                 cancelAndConsumeRemainingEvents()
             }
         }
@@ -116,7 +115,6 @@ class WatchingHistoryViewModelTest {
 
                 assertThat(currentState.selectedMediaTypeUi).isEqualTo(MediaTypeUi.MOVIE)
                 assertThat(currentState.isLoading).isFalse()
-                assertThat(currentState.error).isNull()
                 cancelAndConsumeRemainingEvents()
             }
         }

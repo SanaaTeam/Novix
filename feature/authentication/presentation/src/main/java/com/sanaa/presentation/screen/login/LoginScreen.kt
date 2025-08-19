@@ -99,7 +99,8 @@ private fun LoginContent(
         snackBarHost = {
             NovixAnimatedSnackBarHost(
                 data = state.snackBarData,
-                onDismiss = listener::onSnackBarDismiss
+                onDismiss = listener::onSnackBarDismiss,
+                modifier = Modifier.statusBarsPadding()
             )
         },
         modifier = Modifier.navigationBarsPadding()

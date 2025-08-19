@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -39,33 +37,25 @@ import kotlinx.coroutines.flow.collectLatest
 fun AddBookmarkListBottomSheet(
     isVisible: Boolean,
     interactionsListener: SaveListListener,
+    modifier: Modifier = Modifier,
 ) {
     val viewModel: AddBookmarksListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
 
-    val handleDismiss = {
-        viewModel.resetState()
-        interactionsListener.onDismissAddListBottomSheet()
-    }
-
-    NovixAnimatedSnackBarHost(
-        data = state.snackBarData,
-        onDismiss = viewModel::onSnackBarDismiss
-    )
-
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                is AddBookmarksEffect.Dismiss -> handleDismiss()
+                is AddBookmarksEffect.Dismiss -> interactionsListener.onDismissAddListBottomSheet()
             }
         }
     }
 
     AddBookmarkListBottomSheetContent(
         isVisible = isVisible,
-        onDismiss = handleDismiss,
+        onDismiss = interactionsListener::onDismissAddListBottomSheet,
         state = state,
         interactionListener = viewModel,
+        modifier = modifier
     )
 }
 
@@ -77,78 +67,71 @@ private fun AddBookmarkListBottomSheetContent(
     interactionListener: AddBookmarksInteractionsListener,
     modifier: Modifier = Modifier,
 ) {
-    var textFieldValue by remember(state.listTitle) {
-        mutableStateOf(
-            TextFieldValue(
-                text = state.listTitle,
-                selection = TextRange(state.listTitle.length)
-            )
-        )
-    }
 
-    BaseBottomSheet(
-        isVisible = isVisible,
-        onDismiss = onDismiss,
-    ) {
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            TopBar(
-                screenTitle = stringResource(R.string.add_new_list),
-                rightContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_cancel),
-                        onClick = onDismiss
-                    )
-                }
-            )
-
-            Text(
-                text = stringResource(R.string.list_title),
-                style = Theme.textStyle.body.medium,
-                color = Theme.colors.title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 25.dp, bottom = 8.dp)
-            )
-
-            TextField(
-                value = textFieldValue,
-                onValueChange = { newValue ->
-                    textFieldValue = newValue
-                    if (state.listTitle != newValue.text) {
-                        interactionListener.onListTitleChanged(newValue.text)
-                    }
-                },
-                hint = stringResource(R.string.my_favorite_placeholder),
-                icon = painterResource(id = R.drawable.ic_bookmark_list),
-                modifier = Modifier
-                    .padding(bottom = 24.dp)
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .padding(start = 16.dp, end = 16.dp)
-            )
-
-            PrimaryButton(
-                text = stringResource(R.string.add),
-                onClick = { interactionListener.onAddClicked() },
-                isEnabled = state.isAddButtonEnabled,
-                isLoading = state.isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(48.dp)
-            )
-        }
-    }
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .statusBarsPadding(),
     ) {
+        BaseBottomSheet(
+            isVisible = isVisible,
+            onDismiss = onDismiss,
+        ) {
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                TopBar(
+                    screenTitle = stringResource(R.string.add_new_list),
+                    rightContent = {
+                        TopBarClickableIcon(
+                            icon = painterResource(id = R.drawable.icon_cancel),
+                            onClick = onDismiss
+                        )
+                    }
+                )
+
+                Text(
+                    text = stringResource(R.string.list_title),
+                    style = Theme.textStyle.body.medium,
+                    color = Theme.colors.title,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, top = 25.dp, bottom = 8.dp)
+                )
+
+                TextField(
+                    value = TextFieldValue(
+                        text = state.listTitle,
+                        selection = TextRange(state.listTitle.length)
+                    ),
+                    onValueChange = { newValue ->
+                        interactionListener.onListTitleChanged(newValue.text)
+                    },
+                    hint = stringResource(R.string.my_favorite_placeholder),
+                    icon = painterResource(id = R.drawable.ic_bookmark_list),
+                    modifier = Modifier
+                        .padding(bottom = 24.dp)
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .padding(start = 16.dp, end = 16.dp)
+                )
+
+                PrimaryButton(
+                    text = stringResource(R.string.add),
+                    onClick = { interactionListener.onAddClicked() },
+                    isEnabled = state.isAddButtonEnabled,
+                    isLoading = state.isLoading,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .height(48.dp)
+                )
+            }
+        }
+
         NovixAnimatedSnackBarHost(
             data = state.snackBarData,
             onDismiss = interactionListener::onSnackBarDismiss

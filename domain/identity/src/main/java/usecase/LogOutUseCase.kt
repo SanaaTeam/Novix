@@ -7,5 +7,4 @@ class LogOutUseCase @Inject constructor(
     private val authenticationRepository: AuthenticationRepository
 ) {
     suspend fun logout() = authenticationRepository.logout()
-
 }

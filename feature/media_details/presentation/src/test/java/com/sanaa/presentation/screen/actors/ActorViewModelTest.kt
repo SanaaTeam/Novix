@@ -1,11 +1,9 @@
 package com.sanaa.presentation.screen.actors
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.navigation.toRoute
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.MovieUiModel
-import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenEffects
 import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.util.DateTimeUtils.defaultDate
@@ -24,6 +22,7 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageActorUseCase
 import kotlin.time.Duration.Companion.minutes
@@ -34,6 +33,7 @@ class ActorViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val manageActorDetailsUseCase: ManageActorUseCase = mockk(relaxed = true)
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
+    private val stringProvider: VodStringProvider= mockk(relaxed = true)
     private lateinit var viewModel: ActorScreenViewModel
     private val actorId = 77
 
@@ -128,6 +128,7 @@ class ActorViewModelTest {
         viewModel = ActorScreenViewModel(
             savedStateHandle,
             manageActorDetailsUseCase,
+            stringProvider,
             checkIfUserIsLoggedInUseCase,
         )
     }

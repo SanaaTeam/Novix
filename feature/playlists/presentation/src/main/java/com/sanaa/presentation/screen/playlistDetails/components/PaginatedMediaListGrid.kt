@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.playlistDetails.components
 
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,8 @@ fun PaginatedMediaListGrid(
     isScrollEnabled: Boolean = true,
     onMediaClick: (MediaItem) -> Unit = {},
     onSaveIconClick: (MediaItem) -> Unit = {},
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    safeContentThreshold: Float = 0.5f
 ) {
     LazyVerticalGrid(
         modifier = modifier,
@@ -45,14 +48,14 @@ fun PaginatedMediaListGrid(
                         imageUrl = media.imageUrl.orEmpty(),
                         modifier = Modifier.fillMaxWidth(),
                         sensitiveContentThreshold = 0.2f,
-//                         isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-//                           safeContentThreshold = LocalSafeContentThreshold.current,
+                         isBlurEnabled = safeContentThreshold != 0f,
+                        safeContentThreshold = safeContentThreshold,
                         contentDescription = media.title,
                         placeholderContent = {
-                            RemoteImagePlaceholder(Modifier.fillMaxSize())
+                            RemoteImagePlaceholder(Modifier.fillMaxSize(), isDarkTheme = isDarkTheme)
                         },
                         errorContent = {
-                            RemoteImagePlaceholder(Modifier.fillMaxSize())
+                            RemoteImagePlaceholder(Modifier.fillMaxSize(), isDarkTheme = isDarkTheme)
                         },
                     ) {
                         OnBlurContent(

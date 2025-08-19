@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Novix</string>
+    <string name="login_success">Login Success</string>
+    <string name="see_detail">See details</string>
+    <string name="top_rated">Top rating</string>
+    <string name="watching_history">Watching history</string>
+    <string name="unsuitable_image">Unsuitable image</string>
+    <string name="welcome_back">Welcome back</string>
+    <string name="up_upcoming">Upcoming</string>"
+    <string name="no_internet_connection_error">No Internet Connection</string>
+    <string name="invalid_username_password_error">Invalid user name or password</string>
+    <string name="enter_username_password_error">Please enter username and password</string>
+    <string name="something_went_wrong_error">Something went wrong, please try again later</string>
+    <string name="more_like_this">More like this</string>
+    <string name="rate_it">Rate it</string>
+    <string name="submit">Submit</string>
+    <string name="cast">Cast</string>
+    <string name="select_how_much_you_like_it">Select how much you like it</string>
+    <string name="play_trailer">Play trailer</string>
+    <string name="episode_number">Episode %d</string>
+    <string name="submit_rating_successfully">Submit rating successfully</string>
+    <string name="submit_rating_failed">Submit rating failed</string>
+    <string name="guest_of_honor">Guest of Honor</string>
+    <string name="minutes_duration">%s m</string>
+    <string name="season">Season</string>
+    <string name="season_number">S%d</string>
+    <string name="episodes_count">%d Episodes</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="please_login_to_access_your_account_details_and_other_features">Please login to access your account details and other features!</string>
+    <string name="app_icon">app icon</string>
+    <string name="please_login_to_rate_your_favorite_items">Please login to rate your favorite items.</string>
+    <string name="continue_as_guest">Continue as guest</string>
+    <string name="Gallery">gallery</string>
+    <string name="series">Series</string>
+    <string name="empty_search_message">Start exploring! Search for your favorite movies, series and shows</string>
+    <string name="search_hint">Search…</string>
+    <string name="offline_subtitle">Check your connection and try again, we’ll be waiting with your movies and popcorn </string>
+    <string name="offline_title">Oops! It looks like you\'re offline.</string>
+    <string name="settings">Settings</string>
+    <string name="categories">Categories</string>
+    <string name="movies">Movies</string>
+    <string name="tv_shows">TV Shows</string>
+</resources>

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -68,6 +69,7 @@ import com.sanaa.presentation.screen.actor.componants.GalleryCard
 import com.sanaa.presentation.screen.actor.componants.MediaSection
 import com.sanaa.presentation.screen.actor.componants.PosterCard
 import com.sanaa.presentation.shared_component.ImageSlider
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
@@ -151,7 +153,14 @@ private fun ActorScreenContent(
     }
 
     NovixScaffold(
-        backgroundShapes = { BackgroundShapes() }
+        backgroundShapes = { BackgroundShapes() },
+        snackBarHost = {
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackBarDismiss,
+                modifier = Modifier.statusBarsPadding()
+            )
+        },
     ) {
         Box(
             modifier = Modifier

@@ -11,13 +11,11 @@ data class EpisodeDetailsScreenUiState(
     val episode: EpisodeUiState = EpisodeUiState(),
     val guestOfHonor: List<ActorUiModel> = emptyList(),
     val imagesUrl: List<String> = emptyList(),
-    val error: String? = null,
     val tvShowId: Int = 0,
     val trailerUrl: String? = null,
     val showLoginBottomSheet: Boolean = false,
     val noInternetConnection: Boolean = false,
     val guestSessionId: String = "",
     val loginPromptType: LoginPromptType? = null,
-    val isUserLoggedIn: Boolean = false,
     val snackBarData: SnackData? = null,
 )

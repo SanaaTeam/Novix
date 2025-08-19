@@ -10,6 +10,7 @@ interface GenreMoviesScreenInteractionListener:GenreMoviesGridInteractionListene
     fun onDismissSaveToListBottomSheet()
     fun onDismissAddListBottomSheet()
     fun onCreateNewListClick()
+    fun onSnackDismissRequested()
 }
 interface GenreMoviesGridInteractionListener {
     fun onMovieClick(id: Int)
