@@ -98,6 +98,7 @@ tasks.withType(Test::class.java).configureEach {
 }
 
 private fun DependencyHandlerScope.projectDependencies() {
+    implementation(projects.designSystem)
     implementation(projects.data.localDataSource.identity)
     implementation(projects.data.localDataSource.vod)
     implementation(projects.data.remoteDataSource.identity)
