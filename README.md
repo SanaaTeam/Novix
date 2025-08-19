@@ -1,9 +1,10 @@
-# Novix
+# Novix 
 ## About the project
 
 Discover, explore, and enjoy movies like never before. Novix helps you dive into your favorite movies and instantly discover similar, trending titles you’ll love. Save your personal watchlist, enjoy a stunning design, and browse with ease.
 
 [![Youtube teaser](https://github.com/user-attachments/assets/094f04d9-4faa-4284-9c21-42c3c08abdcb)](https://youtu.be/l6PnYc1RyFg)
+
 
 ## Novix As Brand
 
@@ -14,6 +15,9 @@ Over eight weeks, we combined hard work, creativity, and collaboration to bring 
 <div align="center">
 <img src="https://github.com/LondonSquad/Novix/blob/develop/assets/app-branding.png?raw=true" alt="Novix Brand Identity" width="400"/>
 </div>
+
+![Branded Image](https://github.com/user-attachments/assets/60925671-27ec-4ceb-be1c-2a8cc5373587)
+
 
 ## Features
 
