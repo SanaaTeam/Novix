@@ -64,7 +64,7 @@ class HomeScreenViewModelTest {
         coEvery {
             manageWatchedMediaHistoryUseCase.getMediaHistory(any(), any(), any())
         } returns flowOf(emptyList())
-        coEvery { manageMovieUseCase.getMovieGenres(freshData) } returns emptyList()
+        coEvery { manageMovieUseCase.getMovieGenres() } returns emptyList()
         coEvery { manageMovieUseCase.getUpcomingMovies(any(), any()) } returns emptyList()
     }
 
@@ -174,7 +174,7 @@ class HomeScreenViewModelTest {
     @Test
     fun `init should fetch genres and update state on success`() = runTest(testDispatcher) {
         val genres = listOf(dummyGenre)
-        coEvery { manageMovieUseCase.getMovieGenres(freshData) } returns genres
+        coEvery { manageMovieUseCase.getMovieGenres(true) } returns genres
         initializeViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
         viewModel.state.test {

@@ -49,7 +49,7 @@ class TrendingMoviesScreenViewModelTest {
 
     @Test
     fun `init should fetch genres and update state on creation`() = runTest {
-        coEvery { manageMovieUseCase.getMovieGenres(freshData) } returns genres
+        coEvery { manageMovieUseCase.getMovieGenres() } returns genres
 
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
