@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.actor
 import com.sanaa.presentation.model.ActorUiModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.TvShowUiState
+import com.sanaa.presentation.screen.movieDetails.SnackData
 
 data class ActorScreenUiState(
     val actor: ActorUiModel = ActorUiModel(),
@@ -17,7 +18,8 @@ data class ActorScreenUiState(
     val userIsLoggedIn: Boolean = false,
     val showSaveToListBottomSheet: Boolean = false,
     val showAddListBottomSheet: Boolean = false,
-    val selectedMediaToSave: MovieUiModel? = null
+    val selectedMediaToSave: MovieUiModel? = null,
+    val snackBarData: SnackData? = null
 )
 
 

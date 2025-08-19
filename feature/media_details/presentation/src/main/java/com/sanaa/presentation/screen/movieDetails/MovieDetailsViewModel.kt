@@ -184,6 +184,8 @@ class MovieDetailsViewModel @Inject constructor(
             is NoNetworkException -> {
                 updateState {
                     copy(
+                        isLoading = false,
+                        noInternetConnection = true,
                         isError = true,
                         snackBarData = SnackData(
                             message = stringProvider.noInternetConnectionError,
@@ -196,6 +198,8 @@ class MovieDetailsViewModel @Inject constructor(
             else -> {
                 updateState {
                     copy(
+                        isLoading = false,
+                        noInternetConnection = false,
                         isError = true,
                         snackBarData = SnackData(
                             message = stringProvider.somethingWentWrongError,

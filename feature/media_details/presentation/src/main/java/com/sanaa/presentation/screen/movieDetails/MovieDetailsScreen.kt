@@ -57,9 +57,9 @@ import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateB
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToLogin
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToMovieCategoriesScreen
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToReviewsScreen
-import com.sanaa.presentation.screen.movieDetails.components.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsGridContent
 import com.sanaa.presentation.shared_component.BottomContainer
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.util.DateTimeUtils.getCurrentLocale
@@ -171,9 +171,10 @@ private fun MovieDetailsScreenContent(
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
         snackBarHost = {
-            AnimatedSnackBarHost(
+            NovixAnimatedSnackBarHost(
                 data = state.snackBarData,
-                onDismiss = interactionListener::onSnackDismissRequested
+                onDismiss = interactionListener::onSnackDismissRequested,
+                modifier = Modifier.statusBarsPadding()
             )
         },
     ) {

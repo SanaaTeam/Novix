@@ -121,7 +121,8 @@ private fun HomeScreenContent(
         snackBarHost = {
             NovixAnimatedSnackBarHost(
                 data = state.snackBarData,
-                onDismiss = interactionListener::onSnackBarDismiss
+                onDismiss = interactionListener::onSnackBarDismiss,
+                modifier = Modifier.statusBarsPadding()
             )
         },
     ) {

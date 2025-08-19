@@ -12,4 +12,5 @@ interface GenreMoviesScreenInteractionListener {
     fun onDismissSaveToListBottomSheet()
     fun onDismissAddListBottomSheet()
     fun onCreateNewListClick()
+    fun onSnackDismissRequested()
 }

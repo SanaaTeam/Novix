@@ -9,4 +9,5 @@ interface TopMoviesScreenInteractionListener {
     fun onDismissSaveToListBottomSheet()
     fun onCreateNewListClick()
     fun onDismissAddListBottomSheet()
+    fun onSnackBarDismiss()
 }

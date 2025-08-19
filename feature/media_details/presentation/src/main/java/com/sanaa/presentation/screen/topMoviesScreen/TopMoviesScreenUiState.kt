@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.topMoviesScreen
 
 import com.sanaa.presentation.model.MovieUiModel
+import com.sanaa.presentation.screen.movieDetails.SnackData
 
 data class TopMoviesScreenUiState(
     val topMovies: List<MovieUiModel> = emptyList(),
@@ -12,4 +13,5 @@ data class TopMoviesScreenUiState(
     val showSaveToListBottomSheet: Boolean = false,
     val showAddListBottomSheet: Boolean = false,
     val selectedMediaToSave: MovieUiModel? = null,
+    val snackBarData: SnackData? = null
 )
