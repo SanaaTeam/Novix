@@ -28,6 +28,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.designsystem.R as designSystemR
 import com.sanaa.presentation.api.HomeApiEntryPoint
 import com.sanaa.presentation.app.navigation.LocalMainNavController
 import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
@@ -67,7 +68,7 @@ private fun WatchingMediaHistoryScreenContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_back),
+                        icon = painterResource(id = designSystemR.drawable.icon_back),
                         onClick = interactionListener::onBackClick
                     )
                 },
