@@ -166,8 +166,9 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onDeleteRecentSearchItem(id: Int) {
-        updateState { copy(isLoading = true) }
+
         tryToExecute(
+            onStart = ::setLoadingState,
             block = { manageSearchHistoryUseCase.removeSearchHistory(id) },
             onSuccess = { setSuccessState() },
             onError = ::onDataLoadError
@@ -207,8 +208,8 @@ class SearchViewModel @Inject constructor(
     }
 
     fun observeRecentViewedItems() {
-        setLoadingState()
         tryToCollect(
+            onStart = ::setLoadingState,
             block = ::onGetRecentViewedItems,
             onCollect = ::onCollectRecentViewedItems,
             onError = ::onDataLoadError
@@ -224,8 +225,8 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun loadTvShows(query: String) {
-        setLoadingState()
         tryToCollect(
+            onStart = ::setLoadingState,
             block = { loadTvShowsOperation(query) },
             onCollect = ::onTvShowsLoaded,
             onError = ::onDataLoadError
@@ -233,8 +234,8 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun loadMovies(query: String) {
-        setLoadingState()
         tryToCollect(
+            onStart = ::setLoadingState,
             block = { loadMoviesOperation(query) },
             onCollect = ::onMoviesLoaded,
             onError = ::onDataLoadError
@@ -242,8 +243,8 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun loadActors(query: String) {
-        setLoadingState()
         tryToCollect(
+            onStart = ::setLoadingState,
             block = { loadActorsOperation(query) },
             onCollect = ::onActorsLoaded,
             onError = ::onDataLoadError
