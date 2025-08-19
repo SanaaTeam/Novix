@@ -7,6 +7,11 @@ plugins {
 
 android {
     namespace = "com.sanaa.feature.category.presentation"
+    packaging {
+        resources {
+            excludes += "feature/category/presentation/src/main/assets/genre-images/**"
+        }
+    }
 }
 
 

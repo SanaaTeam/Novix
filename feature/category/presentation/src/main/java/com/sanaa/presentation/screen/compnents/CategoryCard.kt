@@ -56,8 +56,8 @@ fun CategoryCard(
             )
     ) {
         AsyncImage(
-//            model = category.imageResourceId,
-            model = "https://raw.githubusercontent.com/SanaaTeam/Novix/refs/heads/development/feature/category/presentation/src/main/res/drawable/movie_action.webp",
+            model = category.imageRawUrl,
+//            model = "https://raw.githubusercontent.com/SanaaTeam/Novix/refs/heads/enhancement/decrease-app-size/feature/category/presentation/src/main/assets/genre-images/movie_action.webp",
             contentDescription = category.name,
             contentScale = ContentScale.Crop,
         )
