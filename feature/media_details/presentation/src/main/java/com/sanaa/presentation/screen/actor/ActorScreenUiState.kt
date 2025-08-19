@@ -12,7 +12,6 @@ data class ActorScreenUiState(
     val profileImageUrls: List<String> = emptyList(),
     val galleryImageUrls: List<String> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null,
     val showLoginBottomSheet: Boolean = false,
     val noInternetConnection: Boolean = false,
     val userIsLoggedIn: Boolean = false,

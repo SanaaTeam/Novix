@@ -53,7 +53,7 @@ class TopMoviesScreenViewModel @Inject constructor(
     }
 
     override fun onRetryClicked() {
-        updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
+        updateState { copy(noInternetConnection = false, isLoading = true) }
         loadDetails()
     }
 

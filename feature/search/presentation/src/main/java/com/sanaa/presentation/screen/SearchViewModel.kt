@@ -166,7 +166,7 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onDeleteRecentSearchItem(id: Int) {
-        updateState { copy(isLoading = true, error = null) }
+        updateState { copy(isLoading = true) }
         tryToExecute(
             block = { manageSearchHistoryUseCase.removeSearchHistory(id) },
             onSuccess = { setSuccessState() },
@@ -284,7 +284,6 @@ class SearchViewModel @Inject constructor(
                 tvShows = flowOf(PagingData.empty()),
                 actors = flowOf(PagingData.empty()),
                 isLoading = false,
-                error = null,
                 noInternetConnection = false
             )
         }
@@ -315,20 +314,31 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun onDataLoadError(e: Throwable) {
-        updateState {
-            if (e is NoNetworkException) {
-                copy(
-                    noInternetConnection = true,
-                    isLoading = false,
-                    error = null
-                )
-            } else {
-                val errorMessage = e.message ?: "An unexpected error occurred."
-                copy(
-                    isLoading = false,
-                    error = errorMessage,
-                    noInternetConnection = false
-                )
+        when (e) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        noInternetConnection = true,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true,
+                        )
+                    )
+                }
+            }
+
+            else -> {
+                updateState {
+                    copy(
+                        noInternetConnection = false,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
             }
         }
     }
@@ -403,7 +413,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun setLoadingState() {
-        updateState { copy(isLoading = true, error = null, noInternetConnection = false) }
+        updateState { copy(isLoading = true, noInternetConnection = false) }
     }
 
     private fun setSuccessState() {
