@@ -29,7 +29,7 @@ import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -48,7 +48,6 @@ import com.sanaa.presentation.screen.movieDetails.components.AnimatedSnackBarHos
 import com.sanaa.presentation.screen.tvShow.components.TvShowHeaderSection
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.OverviewSection
-import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
@@ -67,8 +66,6 @@ fun EpisodeDetailsScreen(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult()
-
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
             when (it) {
@@ -86,7 +83,7 @@ fun EpisodeDetailsScreen(
                 }
 
                 EpisodeDetailsEffects.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }
@@ -219,18 +216,9 @@ private fun EpisodeDetailsScreenContent(
                 trailerUrl = state.trailerUrl,
                 modifier = Modifier.align(Alignment.BottomCenter),
                 onPlayTrailerClicked = interactionListener::onPlayTrailerClick,
-                onSetRateClicked = interactionListener::onRateClicked
+                isRateButtonVisible = false
             )
-            if (state.showRateBottomSheet) {
-                RateBottomSheet(
-                    isRateSelected = state.hasUserSelectedRate,
-                    imdbRating = state.imdbRating,
-                    onDismiss = interactionListener::onDismissRateBottomSheet,
-                    isVisible = true,
-                    onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
-                    onRatingChanged = interactionListener::onRatingChanged
-                )
-            }
+
             if (state.showLoginBottomSheet) {
                 val title = when (state.loginPromptType) {
                     LoginPromptType.RATE -> stringResource(R.string.rate_it)

@@ -27,14 +27,20 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    @Inject lateinit var homeFeatureApi: HomeFeatureApi
-    @Inject lateinit var authenticationApi: AuthenticationApi
-    @Inject lateinit var onboardingApi: OnboardingApi
-    @Inject lateinit var preferenceManager: PreferencesManager
+    @Inject
+    lateinit var homeFeatureApi: HomeFeatureApi
+
+    @Inject
+    lateinit var authenticationApi: AuthenticationApi
+
+    @Inject
+    lateinit var onboardingApi: OnboardingApi
+
+    @Inject
+    lateinit var preferenceManager: PreferencesManager
 
     private val viewModel: MainViewModel by viewModels()
 
-    private lateinit var authLauncher: ActivityResultLauncher<Intent>
     private lateinit var onboardingLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,32 +66,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun registerLaunchers() {
-        onboardingLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                lifecycleScope.launch {
-                    preferenceManager.disableFirstLaunch()
-                    handleAuthOrMain()
+        onboardingLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    lifecycleScope.launch {
+                        preferenceManager.disableFirstLaunch()
+                        handleAuthOrMain()
+                    }
+                } else {
+                    finish()
                 }
-            } else {
-                finish()
             }
-        }
 
-        authLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            when (result.resultCode) {
-                AuthenticationApi.RESULT_LOGGED_WITH_SESSION_ID,
-                AuthenticationApi.RESULT_LOGGED_AS_GUEST -> setMainContent()
-                else -> finish()
-            }
-        }
     }
 
     private suspend fun handleAuthOrMain() {
         val sessionId = preferenceManager.sessionId.firstOrNull()
         if (sessionId.isNullOrEmpty()) {
-            authLauncher.launch(authenticationApi.getLaunchIntent(this, AuthStartRoute.Welcome))
+            authenticationApi.launch(this, AuthStartRoute.Welcome)
         } else {
             setMainContent()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        lifecycleScope.launch {
+            val sessionId = preferenceManager.sessionId.firstOrNull()
+            if (!sessionId.isNullOrEmpty()) {
+                setMainContent()
+            }
         }
     }
 

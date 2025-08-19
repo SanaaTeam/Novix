@@ -121,14 +121,6 @@ class EpisodeDetailsScreenViewModelTest {
         }
     }
 
-    @Test
-    fun `onSavedClick and onRateClicked toggle login bottom sheet`() = runTest {
-        givenHappyViewModel()
-        viewModel.onSavedClick(tvShowId)
-        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
-        viewModel.onRateClicked()
-        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
-    }
 
     @Test
     fun `onDismissBottomSheet sets showLoginBottomSheet to false`() = runTest {
@@ -138,12 +130,6 @@ class EpisodeDetailsScreenViewModelTest {
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
 
-    @Test
-    fun `onRatingChanged updates rating`() = runTest {
-        givenHappyViewModel()
-        viewModel.onRatingChanged(4)
-        assertThat(viewModel.state.value.imdbRating).isEqualTo(4)
-    }
 
     @Test
     fun `onLoginButtonClick emits NavigateToLogin and hides BottomSheet`() = runTest {
@@ -155,31 +141,6 @@ class EpisodeDetailsScreenViewModelTest {
             assertThat(awaitItem()).isEqualTo(EpisodeDetailsEffects.NavigateToLogin)
             cancelAndIgnoreRemainingEvents()
         }
-    }
-
-
-    @Test
-    fun `onSubmitRateBottomSheet hides sheet and calls addRate`() = runTest {
-        givenHappyViewModel()
-        viewModel.onRatingChanged(7)
-        viewModel.onSubmitRateBottomSheet()
-        testDispatcher.scheduler.advanceUntilIdle()
-        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
-    }
-
-    @Test
-    fun `onSubmitRateBottomSheet handles error properly`() = runTest {
-        val errorMessage = "Rating failed"
-        coEvery {
-            manageEpisodeDetails.addTvEpisodeRate(any(), any(), any(), any())
-        } throws RuntimeException(errorMessage)
-
-        givenHappyViewModel()
-        viewModel.onRatingChanged(5)
-        viewModel.onSubmitRateBottomSheet()
-        testDispatcher.scheduler.advanceUntilIdle()
-        assertThat(viewModel.state.value.error).isEqualTo(errorMessage)
-        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
     }
 
 

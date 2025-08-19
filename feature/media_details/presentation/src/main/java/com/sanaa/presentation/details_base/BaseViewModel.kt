@@ -40,6 +40,7 @@ abstract class BaseViewModel<T, E>(
 
     protected fun <T> tryToExecute(
         block: suspend () -> T,
+        onStarted: () -> Unit = {},
         onSuccess: (T) -> Unit = {},
         onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
@@ -60,6 +61,7 @@ abstract class BaseViewModel<T, E>(
 
     protected fun <T> tryToCollect(
         block: suspend () -> Flow<T>,
+        onStarted: () -> Unit = {},
         onCollect: suspend (T) -> Unit,
         onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
