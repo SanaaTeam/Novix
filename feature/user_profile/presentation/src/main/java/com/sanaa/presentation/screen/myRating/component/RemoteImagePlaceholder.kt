@@ -10,7 +10,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
-import com.sanaa.presentation.provider.LocalThemeMode
+import com.sanaa.presentation.profileProvider.LocalThemeMode
 
 @Composable
 fun RemoteImagePlaceholder(modifier: Modifier = Modifier) {

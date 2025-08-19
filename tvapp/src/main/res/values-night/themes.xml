@@ -1,0 +1,16 @@
+<resources>
+
+    <style name="Theme.StartingScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#0D0608</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.Novix</item>
+    </style>
+
+    <style name="Theme.Novix" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+</resources>

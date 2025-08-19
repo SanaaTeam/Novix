@@ -1,4 +1,4 @@
-package com.sanaa.presentation.provider
+package com.sanaa.presentation.profileProvider
 
 import androidx.compose.runtime.staticCompositionLocalOf
 

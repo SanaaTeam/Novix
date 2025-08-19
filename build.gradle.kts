@@ -30,6 +30,7 @@ val excludedPackages = listOf(
     "*.MainActivity*",
     "*.NovixApp*",
     "com.sanaa.image_viewer.*",
+    "com.sanaa.tvapp.*",
     "com.sanaa.designsystem.*",
     "com.sanaa.vod.dataSource.**",
     "com.sanaa.movies.MovieApiService.*",

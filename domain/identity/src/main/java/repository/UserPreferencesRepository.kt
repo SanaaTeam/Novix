@@ -12,7 +12,7 @@ interface UserPreferencesRepository {
 }
 
 enum class Language(val code: String) {
-    ENGLISH("en",),
+    ENGLISH("en"),
     ARABIC("ar"),
 }
 

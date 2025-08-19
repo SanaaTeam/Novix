@@ -11,6 +11,8 @@ class MovieLocalDto (
     val id: Int,
     @ColumnInfo(name = "title")
     val title: String,
+    @ColumnInfo(name = "overview")
+    val overview: String,
     @ColumnInfo(name = "poster_image_url")
     val posterImageUrl: String,
     @ColumnInfo(name = "release_date")

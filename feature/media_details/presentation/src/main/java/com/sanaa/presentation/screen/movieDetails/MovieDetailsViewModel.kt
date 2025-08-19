@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.movieDetails
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData

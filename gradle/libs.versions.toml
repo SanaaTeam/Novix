@@ -1,5 +1,7 @@
 [versions]
 # Project Config
+conscryptAndroid = "2.5.2"
+
 appcompatVersion = "1.6.1"
 compileSdk = "35"
 converterGson = "3.0.0"
@@ -29,7 +31,7 @@ dagger = "2.56.2"
 agp = "8.10.1"
 paging = "3.3.6"
 composeBomVersion = "2024.06.00"
-foundationLayoutAndroid = "1.6.8"
+foundationLayoutAndroid = "1.8.3"
 junitJupiterApi = "5.13.3"
 junitJupiterEngine = "5.13.3"
 kotlin = "2.0.21"
@@ -70,7 +72,8 @@ uiTestJunit4Android = "1.8.3"
 navigationTestingAndroid = "2.9.2"
 runtimeAndroid = "1.8.3"
 foundationAndroid = "1.8.3"
-
+tvFoundation = "1.0.0-alpha12"
+tvMaterial = "1.0.1"
 [libraries]
 # AndroidX
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -99,6 +102,7 @@ androidx-compose-material3-material3 = { module = "androidx.compose.material3:ma
 androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
 androidx-material3-window-size-class1 = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+conscrypt-android = { module = "org.conscrypt:conscrypt-android", version.ref = "conscryptAndroid" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 material3 = { module = "androidx.compose.material3:material3" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -184,6 +188,8 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 androidx-navigation-testing-android = { group = "androidx.navigation", name = "navigation-testing-android", version.ref = "navigationTestingAndroid" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
+androidx-tv-foundation = { group = "androidx.tv", name = "tv-foundation", version.ref = "tvFoundation" }
+androidx-tv-material = { group = "androidx.tv", name = "tv-material", version.ref = "tvMaterial" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -207,6 +213,11 @@ novix-android-library = { id = "novix.android.library" }
 novix-android-application = { id = "novix.android.application" }
 
 [bundles]
+tv-compose = [
+    "androidx-tv-material",
+    "androidx-tv-foundation",
+]
+
 compose = [
     "androidx-ui-compose",
     "androidx-ui-compose-graphics",

@@ -40,6 +40,7 @@
     <string name="moderate_restriction">معتدل</string>
     <string name="unrestricted">إيقاف</string>
     <string name="light">فاتح</string>
+    <string name="system_language">لغة النظام</string>
     <string name="dark">داكن</string>
     <string name="save">حفظ</string>
     <string name="blurs_all_sensitive_content">يخفي كل المحتوى الحساس</string>
@@ -64,4 +65,7 @@
 
     <string name="eng">الإنجليزية</string>
     <string name="ar">العربية</string>
+    <string name="home">الرئيسية</string>
+    <string name="categories">الفئات</string>
+    <string name="my_list">قائمتى</string>
 </resources>
