@@ -14,5 +14,7 @@ data class SavedDetailsScreenUiState(
     val showRemoveFromListBottomSheet: Boolean = false,
     val selectedMediaToRemove: MediaItem? = null,
     val snackBarData: SnackData? = null,
-    val noInternetConnection: Boolean = false
+    val noInternetConnection: Boolean = false,
+    val isDarkTheme: Boolean = false,
+    val safeContentThreshold: Float = 0.5f,
 )

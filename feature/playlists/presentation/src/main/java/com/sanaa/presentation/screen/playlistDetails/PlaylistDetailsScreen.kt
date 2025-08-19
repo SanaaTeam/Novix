@@ -6,11 +6,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
@@ -20,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,9 +37,8 @@ import com.sanaa.presentation.api.navigationSaved.PlaylistsApiEntryPoint
 import com.sanaa.presentation.bottomsheets.removeFromListBottomSheet.RemoveFromListBottomSheet
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlistDetails.components.DeleteConfirmationBottomSheet
-import com.sanaa.presentation.screen.playlistDetails.components.EmptyItemsScreen
-import com.sanaa.presentation.screen.playlistDetails.components.PaginatedMediaListGrid
 import com.sanaa.presentation.screen.playlistDetails.components.RefreshButton
+import com.sanaa.presentation.screen.playlistDetails.components.SavedDetailsListSectionContent
 import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
@@ -91,21 +86,31 @@ fun PlaylistDetailsContent(
         },
     ) {
         AnimatedContent(
-            targetState = state.noInternetConnection,
+            targetState = state.noInternetConnection to movieList.loadState.refresh,
             transitionSpec = {
                 fadeIn(animationSpec = tween(150, delayMillis = 150))
                     .togetherWith(fadeOut(animationSpec = tween(150)))
             },
-        ) { isNoInternetConnection ->
+        ) { (isNoInternetConnection, inLoading) ->
 
             if (isNoInternetConnection && (movieList.itemCount == 0)) {
                 NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
-            } else {
-
+            } else if (inLoading is LoadState.Loading && movieList.itemCount == 0) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    LoadingIndicator()
+                }
+            }else{
                 SavedDetailsListSectionContent(
                     mediaList = movieList,
                     onMediaClick = { interactionListener.onMediaClick(it.id, MediaTypeUi.MOVIE) },
-                    onSaveIconClick = { interactionListener.onDeleteIconClick(it) }
+                    onSaveIconClick = { interactionListener.onDeleteIconClick(it) },
+                    safeContentThreshold = state.safeContentThreshold,
+                    isDarkTheme = state.isDarkTheme,
                 )
 
                 if (movieList.loadState.hasError) {
@@ -154,56 +159,6 @@ fun PlaylistDetailsTopBar(
             .statusBarsPadding()
             .padding(vertical = 12.dp)
     )
-}
-
-@Composable
-private fun SavedDetailsListSectionContent(
-    mediaList: LazyPagingItems<MediaItem>,
-    onMediaClick: (MediaItem) -> Unit,
-    modifier: Modifier = Modifier,
-    onSaveIconClick: (MediaItem) -> Unit = {},
-    isScrollEnabled: Boolean = true,
-) {
-    val isListEmpty = mediaList.itemCount == 0
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        when {
-            mediaList.loadState.refresh is LoadState.Loading -> {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    LoadingIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-            }
-
-            isListEmpty -> {
-
-                EmptyItemsScreen(
-                    messageText = stringResource(R.string.the_list_is_empty))
-            }
-
-            else -> {
-                PaginatedMediaListGrid(
-                    mediaList = mediaList,
-                    onMediaClick = onMediaClick,
-                    onSaveIconClick = onSaveIconClick,
-                    isScrollEnabled = isScrollEnabled,
-                )
-
-                if (mediaList.loadState.append is LoadState.Loading) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        LoadingIndicator()
-                    }
-                }
-            }
-        }
-    }
 }
 
 @Composable
