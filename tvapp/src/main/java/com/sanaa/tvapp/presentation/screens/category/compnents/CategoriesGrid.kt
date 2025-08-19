@@ -1,26 +1,19 @@
 package com.sanaa.tvapp.presentation.screens.category.compnents
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.Surface
+import androidx.tv.material3.Border
+import androidx.tv.material3.Card
+import androidx.tv.material3.CardDefaults
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.presentation.screens.category.state.CategoryUiState
 
@@ -46,29 +39,27 @@ fun CategoriesGrid(
             items = categories,
             key = { _, category -> category.id }
         ) { _, category ->
-
-            val interactionSource = remember { MutableInteractionSource() }
-            val isFocused by interactionSource.collectIsFocusedAsState()
-            val scale by animateFloatAsState(
-                targetValue = if (isFocused) 1.1f else 1f,
-                animationSpec = tween(durationMillis = 300)
-            )
-
-            Surface(
-                modifier = Modifier
-                    .focusable(interactionSource = interactionSource)
-                    .graphicsLayer(scaleX = scale, scaleY = scale)
-                    .clip(RoundedCornerShape(12.dp))
-                    .border(
-                        width = if (isFocused) 3.dp else 1.dp,
-                        color = if (isFocused) Theme.colors.primary else Theme.colors.stroke,
-                        shape = RoundedCornerShape(12.dp)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onCategoryClick(category) },
+                border = CardDefaults.border(
+                    border = Border(
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = Theme.colors.stroke,
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                    ),
+                    focusedBorder = Border(
+                        border = BorderStroke(
+                            width = 3.dp,
+                            color = Theme.colors.primary,
+                        ),
+                        shape = RoundedCornerShape(12.dp),
                     )
-                    .clickable(
-                        interactionSource = interactionSource,
-                        indication = null,
-                        onClick = { onCategoryClick(category) }
-                    )
+                ),
+                shape = CardDefaults.shape(RoundedCornerShape(12.dp)),
+                scale = CardDefaults.scale(focusedScale = 1.05f),
             ) {
                 CategoryCard(category)
             }

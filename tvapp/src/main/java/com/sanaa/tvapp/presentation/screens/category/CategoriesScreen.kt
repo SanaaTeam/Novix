@@ -16,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
+import com.sanaa.tvapp.presentation.screens.category.CategoriesScreenUiState.Companion.MOVIE_TAB_INDEX
 import com.sanaa.tvapp.presentation.screens.category.compnents.CategoriesGrid
 import com.sanaa.tvapp.presentation.screens.category.compnents.CategoryTopBar
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
@@ -33,7 +34,6 @@ fun CategoriesScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is CategoriesScreenEffects.NavigateToMovieGenreDetails -> {
-
                     navController.navigate(
                         GenreMovieScreenRoute(
                             genreId = effect.genreId,
@@ -83,32 +83,25 @@ private fun CategoriesScreen(
             }
 
             else -> {
-                Column(
-                    modifier = Modifier.padding(top = 12.dp)
-                ) {
-
-                    Crossfade(
-                        targetState = state.isLoading,
-
-                        ) { isLoading ->
-                        if (isLoading) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                LoadingIndicator()
+                Column(modifier = Modifier.padding(top = 12.dp)) {
+                    Crossfade(targetState = state.isLoading) { isLoading ->
+                        when {
+                            isLoading -> {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    LoadingIndicator()
+                                }
                             }
 
-                        } else {
-                            CategoriesGrid(
-                                categories = if (state.selectedTabIndex ==
-                                    CategoriesScreenUiState.MOVIE_TAB_INDEX
+                            else -> {
+                                CategoriesGrid(
+                                    categories = if (state.selectedTabIndex == MOVIE_TAB_INDEX)
+                                        state.movieCategories else state.tvCategories,
+                                    onCategoryClick = interactionListener::onGenreClicked
                                 )
-                                    state.movieCategories
-                                else
-                                    state.tvCategories,
-                                onCategoryClick = interactionListener::onGenreClicked
-                            )
+                            }
                         }
                     }
                 }
