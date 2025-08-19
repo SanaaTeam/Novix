@@ -43,18 +43,6 @@ class MyAccountScreenViewModel @Inject constructor(
         fetchTvShows()
     }
 
-    override fun onClickChangePassword() {
-        emitEffect(MyAccountScreenEffect.NavigateToChangePasswordSetting)
-    }
-
-    override fun onClickMyTopRating() {
-        emitEffect(MyAccountScreenEffect.NavigateToMyRating)
-    }
-
-    override fun onClickWatchingHistory() {
-        emitEffect(MyAccountScreenEffect.NavigateToWatchingHistory)
-    }
-
     override fun onSelectLanguage(language: String) {
         updateState { copy(selectedLanguage = language) }
         if (state.value.savedLanguage == state.value.selectedLanguage)

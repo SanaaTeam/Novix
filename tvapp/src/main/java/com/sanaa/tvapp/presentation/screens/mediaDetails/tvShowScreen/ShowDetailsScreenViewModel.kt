@@ -79,64 +79,6 @@ class ShowDetailsScreenViewModel @Inject constructor(
         emitEffect(TvShowDetailsScreenEffects.PlayTrailer(trailerUrl = state.value.tvShows.trailerUrl))
     }
 
-    override fun onRateClicked() {
-        if (state.value.isUserLoggedIn) {
-            updateState { copy(showRateBottomSheet = true) }
-        } else {
-            promptLogin(LoginPromptType.RATE)
-        }
-    }
-
-    override fun onDismissRateBottomSheet() {
-        updateState { copy(showRateBottomSheet = false) }
-    }
-
-    override fun onDismissAnyBottomSheet() {
-        updateState {
-            copy(
-                showRateBottomSheet = false,
-                showLoginBottomSheet = false
-            )
-        }
-    }
-
-    override fun onLoginButtonClick() {
-        updateState { copy(showLoginBottomSheet = false) }
-        emitEffect(TvShowDetailsScreenEffects.NavigateToLogin)
-    }
-
-    override fun onRatingChanged(newRating: Int) {
-        updateState { copy(imdbRating = newRating) }
-    }
-
-    override fun onDismissLoginBottomSheet() {
-        updateState { copy(showLoginBottomSheet = false) }
-    }
-
-    override fun onSubmitRateBottomSheet() {
-        tryToExecute(
-            block = ::submitTvShowRating,
-            onError = { exception ->
-                updateState {
-                    copy(
-                        error = exception.message,
-                        showRateBottomSheet = false
-                    )
-                }
-            }
-        )
-        updateState {
-            copy(showRateBottomSheet = false)
-        }
-    }
-
-    override fun onSaveSeriesClicked() {
-        val isLoggIn = state.value.isUserLoggedIn
-        if (!isLoggIn) {
-            promptLogin(LoginPromptType.BOOKMARK)
-        }
-    }
-
     override fun onGenreClicked(genre: GenreUiModel) {
         emitEffect(TvShowDetailsScreenEffects.NavigateToMovieCategoriesScreen(genre))
     }
@@ -207,27 +149,5 @@ class ShowDetailsScreenViewModel @Inject constructor(
         val season = manageTvShowDetails.getTvShowSeasonDetails(tvShowId, seasonNumber)
 
         updateState { copy(season = season.toSeasonUiModel()) }
-    }
-
-    private suspend fun submitTvShowRating() {
-        val isSendRateSuccess = manageTvShowDetails.addTvShowRate(
-            tvShowId = tvShowId,
-            rating = state.value.imdbRating.toFloat()
-        )
-        if (isSendRateSuccess) {
-            emitEffect(TvShowDetailsScreenEffects.ShowSuccessSnackBar)
-        } else {
-            emitEffect(TvShowDetailsScreenEffects.ShowErrorSnackBar)
-        }
-    }
-
-
-    private fun promptLogin(type: LoginPromptType) {
-        updateState {
-            copy(
-                showLoginBottomSheet = true,
-                loginPromptType = type
-            )
-        }
     }
 }

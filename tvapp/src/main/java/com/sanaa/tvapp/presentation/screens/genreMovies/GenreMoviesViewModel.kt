@@ -53,10 +53,6 @@ class GenreMoviesViewModel @Inject constructor(
         fetchMovies(genreId)
     }
 
-    override fun onSaveIconClick(media: MovieUiModel) {
-
-    }
-
     override fun onMovieClick(id: Int) {
         emitEffect(GenreMoviesEffects.NavigateToMovieDetails(id))
     }

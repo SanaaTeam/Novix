@@ -210,11 +210,6 @@ class SearchScreenViewModel @Inject constructor(
         emitEffect(SearchScreenEffect.NavigateToActorDetails(id))
     }
 
-    override fun onLoginButtonClick() {
-        emitEffect(SearchScreenEffect.NavigateToLogin)
-    }
-
-
     override fun onMovieClicked(id: Int) {
         emitEffect(SearchScreenEffect.NavigateToMovieDetails(id))
     }
@@ -224,7 +219,6 @@ class SearchScreenViewModel @Inject constructor(
     }
 
     companion object {
-        private const val PAGE_SIZE = 20
         const val MOVIE_INDEX = 0
         const val TV_SHOW_INDEX = 1
     }

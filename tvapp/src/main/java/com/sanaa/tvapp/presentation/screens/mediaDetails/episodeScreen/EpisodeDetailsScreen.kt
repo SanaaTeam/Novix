@@ -61,7 +61,7 @@ fun EpisodeDetailsScreen(
             when (it) {
                 is EpisodeDetailsEffects.NavigateToActorDetails -> {
                     navController.navigate(
-                        ScreensRoute.ActorDetailsRoute(it.actorId)
+                        ScreensRoute.ActorDetailsRoute(actorId = it.actorId)
                     )
                 }
 

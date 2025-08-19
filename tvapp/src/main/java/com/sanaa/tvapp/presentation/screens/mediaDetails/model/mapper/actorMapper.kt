@@ -9,11 +9,7 @@ fun Actor.toActorUiModel() = ActorUiModel(
     name = name,
     department = department,
     character = character,
-    lifeSpan = when {
-        birthDate != null && deathDate != null -> "$birthDate - $deathDate"
-        birthDate != null -> birthDate!!.toString()
-        else -> null
-    },
+    lifeSpan = "$birthDate - $deathDate",
     placeOfBirth = placeOfBirth,
     biography = biography.takeIf(String::isNotBlank),
 )
