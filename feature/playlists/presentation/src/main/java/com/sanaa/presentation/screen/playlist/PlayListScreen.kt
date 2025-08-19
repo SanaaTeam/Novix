@@ -18,7 +18,8 @@ import com.sanaa.presentation.playListNavigation.PlayListApiEntryPoint
 import com.sanaa.presentation.playListNavigation.SavedDetailsScreenRoute
 import com.sanaa.presentation.playListProviders.LocalNavControllerProvider
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
-import com.sanaa.presentation.screen.playlist.componants.PlayListGuestScreen
+import com.sanaa.presentation.screen.playlist.componants.PlayListGuestStateComponent
+import com.sanaa.presentation.screen.playlist.componants.PlayListWithItemsStateComponent
 import com.sanaa.presentation.screen.playlist.componants.PlaylistEmptyScreen
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.Flow
@@ -82,7 +83,7 @@ private fun PlaylistScreenContent(
                 }
 
                 PlaylistScreenState.Guest -> {
-                    PlayListGuestScreen(onLoginClick = { interactionListener.onNavigateToLogin() })
+                    PlayListGuestStateComponent(onLoginClick = { interactionListener.onNavigateToLogin() })
                 }
 
                 PlaylistScreenState.Empty -> {
@@ -94,7 +95,7 @@ private fun PlaylistScreenContent(
                 }
 
                 PlaylistScreenState.WithItems -> {
-                    PlayListWithItemsScreen(
+                    PlayListWithItemsStateComponent(
                         isVisible = state.showAddBottomSheet,
                         lists = state.lists,
                         interactionListener = interactionListener,

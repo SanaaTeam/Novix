@@ -7,7 +7,7 @@ import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.playListProviders.LocalThemeProvider
 
 @Composable
-fun PlayListGuestScreen(
+fun PlayListGuestStateComponent(
     onLoginClick: () -> Unit,
 ) {
     val myListImg = if (LocalThemeProvider.current) {
@@ -26,6 +26,6 @@ fun PlayListGuestScreen(
 
 @Preview
 @Composable
-private fun PlayListGuestScreenPrev() {
-    PlayListGuestScreen(onLoginClick = {})
+private fun PlayListGuestStateComponentPrev() {
+    PlayListGuestStateComponent(onLoginClick = {})
 }

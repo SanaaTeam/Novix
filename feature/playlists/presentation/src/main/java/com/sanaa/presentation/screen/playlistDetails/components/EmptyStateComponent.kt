@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -26,28 +25,26 @@ import com.sanaa.feature.playlists.presentation.R
 fun EmptyStateComponent(
     messageText: String,
 ) {
-    NovixScaffold {
-        Column(
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
+    ) {
+        Image(
+            painter = painterResource(R.drawable.no_items),
+            contentDescription = null,
             modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
-        ) {
-            Image(
-                painter = painterResource(R.drawable.no_items),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(bottom = 12.dp)
-                    .size(128.dp),
-                contentScale = ContentScale.Fit
-            )
-            AppText(
-                text = messageText,
-                style = Theme.textStyle.body.small,
-                color = Theme.colors.body,
-                textAlign = TextAlign.Center
-            )
-        }
+                .padding(bottom = 12.dp)
+                .size(128.dp),
+            contentScale = ContentScale.Fit
+        )
+        AppText(
+            text = messageText,
+            style = Theme.textStyle.body.small,
+            color = Theme.colors.body,
+            textAlign = TextAlign.Center
+        )
     }
 }
 

@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.playlist
+package com.sanaa.presentation.screen.playlist.componants
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,10 +17,11 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
-import com.sanaa.presentation.screen.playlist.componants.MyListItem
+import com.sanaa.presentation.screen.playlist.PlayListItemsInteractionListener
+import com.sanaa.presentation.screen.playlist.PlayListUiModel
 
 @Composable
-fun PlayListWithItemsScreen(
+fun PlayListWithItemsStateComponent(
     lists: List<PlayListUiModel>,
     interactionListener: PlayListItemsInteractionListener,
     isVisible: Boolean = false,
