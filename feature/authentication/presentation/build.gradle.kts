@@ -11,6 +11,10 @@ android {
 
 dependencies {
     implementation(projects.domain.identity)
+    implementation(projects.designSystem)
+    implementation(projects.feature.authentication.api)
+    implementation(projects.feature.mediaDetails.api)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -25,9 +29,6 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
-
-    implementation(projects.feature.mediaDetails.api)
-    implementation(projects.designSystem)
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.material3)
@@ -45,13 +46,4 @@ dependencies {
     testImplementation(libs.bundles.test.runtime)
 
     testImplementation(libs.turbine)
-
-    // Design System
-    implementation(projects.designSystem)
-
-    // Authentication API
-    implementation(projects.feature.authentication.api)
-
-    // Navigation
-    implementation(projects.feature.mediaDetails.api)
 }

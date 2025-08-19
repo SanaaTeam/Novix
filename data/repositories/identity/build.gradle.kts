@@ -12,7 +12,7 @@ android {
 dependencies {
     implementation(projects.domain.identity)
     implementation(projects.data.remoteDataSource.identity)
-    implementation(libs.retrofit)
+    implementation(libs.bundles.retrofit)
 
     implementation(libs.ktor.serialization.kotlinx.json)
 

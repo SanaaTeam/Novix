@@ -16,13 +16,11 @@ android {
 
 
 dependencies {
-
     implementation(projects.domain.vod)
     implementation(projects.designSystem)
-    implementation(projects.feature.mediaDetails.api)
-    implementation(projects.designSystem)
-    implementation(projects.feature.mediaDetails.api)
     implementation(projects.feature.category.api)
+    implementation(projects.feature.mediaDetails.api)
+
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.core.ktx)

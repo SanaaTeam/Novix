@@ -8,10 +8,7 @@ android {
 }
 
 dependencies {
-
-
     implementation(projects.data.repositories.vod)
-    implementation(projects.domain.vod)
 
     // Room dependencies
     implementation(libs.bundles.room)
