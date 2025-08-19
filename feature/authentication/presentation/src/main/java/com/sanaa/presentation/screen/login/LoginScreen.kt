@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.login
 import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -105,44 +106,49 @@ private fun LoginContent(
         },
         modifier = Modifier.navigationBarsPadding()
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(
                     rememberScrollState()
                 )
         ) {
-            LoginHeader()
-
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .fillMaxSize()
             ) {
-                Spacer(Modifier.height(24.dp))
+                LoginHeader()
 
-                UsernameField(
-                    value = state.username,
-                    onValueChange = listener::onUsernameChanged
-                )
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Spacer(Modifier.height(24.dp))
 
-                PasswordField(
-                    value = state.password,
-                    onValueChange = listener::onPasswordChanged,
-                    isVisible = state.isPasswordVisible,
-                    onToggleVisibility = listener::onTogglePasswordVisibility
-                )
+                    UsernameField(
+                        value = state.username,
+                        onValueChange = listener::onUsernameChanged
+                    )
 
-                LoginActions(
-                    onLogin = listener::onLoginClicked,
-                    onForgot = listener::onForgotPasswordClicked,
-                    isEnabled = state.canSubmit,
-                    isLoading = state.isLoading
-                )
+                    PasswordField(
+                        value = state.password,
+                        onValueChange = listener::onPasswordChanged,
+                        isVisible = state.isPasswordVisible,
+                        onToggleVisibility = listener::onTogglePasswordVisibility
+                    )
 
-                Spacer(modifier = Modifier.weight(1f))
+                    LoginActions(
+                        onLogin = listener::onLoginClicked,
+                        onForgot = listener::onForgotPasswordClicked,
+                        isEnabled = state.canSubmit,
+                        isLoading = state.isLoading
+                    )
 
-                SignupFooter(onCreateAccount = listener::onCreateAccountClicked)
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    SignupFooter(onCreateAccount = listener::onCreateAccountClicked)
+                }
             }
         }
     }
