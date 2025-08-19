@@ -51,8 +51,10 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             is NoNetworkException -> {
                 updateState {
                     copy(
+                        isLoading = false,
+                        noInternetConnection = true,
                         snackBarData = SnackData(
-                            message = stringProvider.deleteRatingSuccess,
+                            message = stringProvider.noInternetConnectionError,
                             isError = false,
                         )
                     )
@@ -62,6 +64,8 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             else -> {
                 updateState {
                     copy(
+                        isLoading = false,
+                        noInternetConnection = false,
                         snackBarData = SnackData(
                             message = stringProvider.deleteRatingFailed,
                             isError = true

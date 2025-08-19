@@ -237,6 +237,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
                 updateState {
                     copy(
                         isNoInternetConnection = true,
+                        isLoading = false,
                         snackBarData =
                             SnackData(
                                 message = stringProvider.noInternetConnectionError,
@@ -250,6 +251,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
                 updateState {
                     copy(
                         isNoInternetConnection = false,
+                        isLoading = false,
                         snackBarData =
                             SnackData(
                                 message = stringProvider.somethingWentWrongError,
