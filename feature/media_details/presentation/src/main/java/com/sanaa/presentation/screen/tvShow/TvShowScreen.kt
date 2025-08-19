@@ -26,7 +26,7 @@ import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.animation.FadeSlideInVertically
 import com.sanaa.designsystem.design_system.component.animation.FadeSlideOutVertically
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
@@ -199,7 +199,6 @@ private fun HandleTvShowScreenEffects(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult()
     LaunchedEffect(Unit) {
         effect.collectLatest { effect ->
             when (effect) {
@@ -239,7 +238,7 @@ private fun HandleTvShowScreenEffects(
                 }
 
                 TvShowScreenEffects.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }

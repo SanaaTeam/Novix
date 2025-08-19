@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -14,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.api.AuthenticationApi.Companion.RESULT_LOGGED_AS_GUEST
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
@@ -27,8 +27,6 @@ import com.sanaa.presentation.screen.welcome.components.WelcomeSection
 @Composable
 fun WelcomeScreen(
     modifier: Modifier = Modifier,
-    onExit: () -> Unit = {},
-    onFinish: (Int) -> Unit,
     viewModel: WelcomeViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavControllerProvider.current
@@ -44,12 +42,11 @@ fun WelcomeScreen(
                 }
 
                 WelcomeScreenEffects.ReturnGuestResultCode -> {
-                    onFinish(RESULT_LOGGED_AS_GUEST)
+                    (navController.context as? Activity)?.finish()
                 }
 
                 WelcomeScreenEffects.ExitApp -> {
                     (navController.context as? Activity)?.finish()
-                    onExit()
                 }
             }
         }
@@ -78,7 +75,7 @@ fun WelcomeContent(
         }
     ) {
         Column(
-            modifier = Modifier
+            modifier = Modifier.fillMaxSize()
                 .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())
         ) {
