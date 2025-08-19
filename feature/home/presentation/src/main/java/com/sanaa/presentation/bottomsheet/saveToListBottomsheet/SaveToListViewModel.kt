@@ -1,11 +1,9 @@
 package com.sanaa.presentation.bottomsheet.saveToListBottomsheet
 
-import android.util.Log
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.homeBase.BaseViewModel
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import service.VodStringProvider
@@ -13,6 +11,7 @@ import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
+
 @HiltViewModel
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
@@ -121,10 +120,6 @@ class SaveToListViewModel @Inject constructor(
                         isUploading = false,
                         isLoading = false,
                         isAddButtonEnabled = false,
-                        snackBarData = SnackData(
-                            message = stringProvider.addToListSuccess,
-                            isError = false,
-                        ),
                         selectedListsIds = mutableListOf(),
                         mediaId = null
                     )

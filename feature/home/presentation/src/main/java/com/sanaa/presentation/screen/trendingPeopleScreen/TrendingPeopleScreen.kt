@@ -101,7 +101,7 @@ private fun TrendingPeopleScreenContent(
                     )
                 }
 
-                people.loadState.refresh is LoadState.Loading -> {
+                people.loadState.refresh is LoadState.Loading && (people.itemCount == 0) -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
