@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.homeScreen
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -67,6 +68,7 @@ fun HomeScreen(
 ) {
 
     val state = viewModel.state.collectAsStateWithLifecycle()
+    Log.d("test94", "HomeScreen: genres:${state.value.movieGenres}")
 
     EffectHandler(effect = viewModel.effect)
 

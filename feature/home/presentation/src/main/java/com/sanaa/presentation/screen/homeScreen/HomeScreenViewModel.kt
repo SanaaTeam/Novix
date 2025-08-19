@@ -2,8 +2,6 @@ package com.sanaa.presentation.screen.homeScreen
 
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import androidx.paging.cachedIn
-import androidx.paging.map
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.homeBase.BasePagingSourceForHome
 import com.sanaa.presentation.homeBase.BaseViewModel
@@ -28,6 +26,7 @@ import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvShowUseCase
+import usecase.MangeUserPreferenceUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
@@ -38,6 +37,7 @@ class HomeScreenViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val mangeUserPreference: MangeUserPreferenceUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
@@ -47,14 +47,13 @@ class HomeScreenViewModel @Inject constructor(
 
     init {
         updateUserLoggingStatus()
+        onLanguageChanges()
         fetchPopularMediaData()
         fetchTopRatedMediaData()
-        fetchWatchedMediaData()
-        fetchMovieGenres()
         fetchUpcomingMovies()
     }
 
-    fun updateUserLoggingStatus() {
+    private fun updateUserLoggingStatus() {
         tryToCollect(
             block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
@@ -62,8 +61,19 @@ class HomeScreenViewModel @Inject constructor(
         )
     }
 
+    private fun onLanguageChanges(){
+        tryToCollect(
+            block = { mangeUserPreference.getLanguage() },
+            onCollect = { fetchMovieGenres(freshData = true) },
+            onError = ::onDataLoadError
+        )
+    }
+
     private fun onCollectLoggedFlag(isLogged: Boolean) {
-        updateState { copy(userIsLoggedIn = isLogged, showLoginBottomSheet = false) }
+        if (isLogged != state.value.userIsLoggedIn) {
+            fetchWatchedMediaData()
+            updateState { copy(userIsLoggedIn = isLogged) }
+        }
     }
 
     private fun fetchPopularMediaData() {
@@ -122,7 +132,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchWatchedMediaData() {
         tryToCollect(
-            onStart = { updateState { copy(isLoadingHistory = false) } },
+            onStart = { updateState { copy(isLoadingHistory = true) } },
             block = ::loadWatchedMediaHistory,
             onCollect = ::onFetchWatchedMediaSuccess,
             onError = ::onDataLoadError
@@ -139,10 +149,10 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    private fun fetchMovieGenres() {
+    private fun fetchMovieGenres(freshData: Boolean = false) {
         tryToExecute(
             onStart = { updateState { copy(isLoadingGenre = true) } },
-            block = { manageMovieUseCase.getMovieGenres().map { it.toState() } },
+            block = { manageMovieUseCase.getMovieGenres(freshData).map { it.toState() } },
             onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError,
         )

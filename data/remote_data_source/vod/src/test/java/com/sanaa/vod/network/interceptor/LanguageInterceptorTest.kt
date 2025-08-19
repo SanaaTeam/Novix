@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 class LanguageInterceptorTest {
 
     private val chain = mockk<Interceptor.Chain>()
-    private val interceptor = LanguageInterceptor()
+    private val interceptor = LanguageInterceptor({ "en" })
 
 
     @Test
