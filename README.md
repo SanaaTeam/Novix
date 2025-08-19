@@ -67,6 +67,37 @@ TMDB_API_KEY="your_api_key_here"
 ```
 
 ## Architecture
+
+```
+.
+├── app                    # Mobile application entry point
+├── tvapp                  # TV application entry point
+├── buildConfig            # Shared Gradle build configurations
+├── imageViewer            # Jetpack Compose image viewer component with sensitive-content filtering
+├── data
+│   ├── localDataSource    # Local storage (Database, Datastore)
+│   │   ├── identity       # Local user profile & authentication data
+│   │   └── vod            # Local video-on-demand (VOD) storage
+│   ├── remoteDataSource   # Remote APIs and network calls
+│   │   ├── identity       # Remote user profile & authentication API
+│   │   └── vod            # Remote VOD data (e.g., from TMDB API)
+│   └── repositories
+│       ├── identity       # Identity data repository
+│       └── vod            # VOD data repository
+├── domain                 # Business logic & use cases
+│   ├── identity           # Authentication & user-related rules
+│   └── vod                # VOD-specific business rules
+└── feature
+    ├── authentication     # Login, signup, session management
+    ├── category           # Content categories & browsing
+    ├── home               # Main dashboard  landing screen
+    ├── mediaDetails       # Media details & metadata display
+    ├── onboarding         # First-time user flow
+    ├── playlists          # Playlist creation & management
+    ├── search             # Content search
+    └── userProfile        # User profile & settings
+```
+
 ![Novix Modules](https://github.com/user-attachments/assets/aca43439-8065-4eb7-a1a5-ae88d0f13d4c)
 
 ## Technologies Used
