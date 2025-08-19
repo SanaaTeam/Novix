@@ -1,8 +1,8 @@
 <resources>
 
     <style name="Theme.StartingScreen" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#FCF9F5</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_logo_light</item>
+        <item name="windowSplashScreenBackground">#0D0608</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.Novix</item>
     </style>
 
