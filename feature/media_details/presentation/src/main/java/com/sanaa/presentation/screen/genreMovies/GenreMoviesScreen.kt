@@ -91,7 +91,6 @@ private fun GenreMoviesScreenContent(
     interactionListener: GenreMoviesScreenInteractionListener,
 ) {
     NovixScaffold(
-        backgroundShapes = { BackgroundShapes() },
         snackBarHost = {
             NovixAnimatedSnackBarHost(
                 data = state.snackBarData,
@@ -152,15 +151,6 @@ private fun GenreMoviesScreenContent(
                         }
                     }
                 }
-
-                state.selectedMovieToSave?.let { mediaItem ->
-                    SaveToListBottomSheet(
-                        isVisible = state.showSaveToListBottomSheet,
-                        mediaId = state.selectedMovieToSave?.id ?: 0,
-                        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-                        onCreateNewListClick = interactionListener::onCreateNewListClick,
-                    )
-                }
             }
         }
     }
@@ -173,5 +163,11 @@ private fun GenreMoviesScreenContent(
         onDismiss = { interactionListener.onBottomSheetDismiss() },
         onLoginButtonClick = { interactionListener.onLoginButtonClick() },
         isVisible = state.showBottomSheet
+    )
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMovieToSave?.id ?: 0,
+        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionListener::onCreateNewListClick,
     )
 }

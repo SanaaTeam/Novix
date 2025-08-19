@@ -161,14 +161,13 @@ private fun GenreTvShowsScreenContent(
                         }
                     }
                 }
-
-                RequestToLoginBottomSheet(
-                    onDismiss = interactionListener::onBottomSheetDismiss,
-                    onLoginButtonClick = interactionListener::onLoginButtonClick,
-                    isVisible = state.showBottomSheet
-                )
             }
         }
     }
+    RequestToLoginBottomSheet(
+        onDismiss = interactionListener::onBottomSheetDismiss,
+        onLoginButtonClick = interactionListener::onLoginButtonClick,
+        isVisible = state.showBottomSheet
+    )
 }
 
