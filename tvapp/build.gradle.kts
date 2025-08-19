@@ -128,5 +128,4 @@ private fun DependencyHandlerScope.projectsDependencies() {
     implementation(projects.data.repositories.identity)
     implementation(projects.data.remoteDataSource.identity)
     implementation(projects.data.localDataSource.identity)
-    implementation(projects.preferences)
 }
