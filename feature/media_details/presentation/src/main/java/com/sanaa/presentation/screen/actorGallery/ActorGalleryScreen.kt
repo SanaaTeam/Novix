@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.actorGallery
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,24 +31,24 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.actor.componants.GalleryCard
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.designsystem.R as designR
 
 @Composable
 fun ActorGalleryScreen(
-    navigateBack: () -> Unit,
     viewModel: ActorGalleryScreenViewModel = hiltViewModel(),
 ) {
-    BackHandler(onBack = navigateBack)
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
+    val navController = LocalNavControllerProvider.current
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 ActorGalleryScreenEffects.NavigateBack -> {
-                    navigateBack()
+                    navController.popBackStack()
                 }
             }
         }
