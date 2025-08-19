@@ -56,7 +56,6 @@ fun MoreLikeThisCard(
         },
         topLeftContent = {
             SaveIconChip(
-                isSaved = movie.isSaved,
                 onClick = { interactionListener.onBookmarkClick(movie) }
             )
         }

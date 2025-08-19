@@ -15,14 +15,9 @@ data class EpisodeDetailsScreenUiState(
     val tvShowId: Int = 0,
     val trailerUrl: String? = null,
     val showLoginBottomSheet: Boolean = false,
-    val showRateBottomSheet: Boolean = false,
     val noInternetConnection: Boolean = false,
-    val imdbRating: Int = 0,
     val guestSessionId: String = "",
     val loginPromptType: LoginPromptType? = null,
     val isUserLoggedIn: Boolean = false,
     val snackBarData: SnackData? = null,
-) {
-    val hasUserSelectedRate: Boolean
-        get() = imdbRating > 0
-}
+)
