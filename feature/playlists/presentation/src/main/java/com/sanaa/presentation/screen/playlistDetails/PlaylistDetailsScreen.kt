@@ -5,7 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
@@ -32,14 +30,13 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.playlists.presentation.R
-import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
-import com.sanaa.presentation.api.navigationSaved.PlaylistsApiEntryPoint
+import com.sanaa.presentation.playListProviders.LocalNavControllerProvider
+import com.sanaa.presentation.playListNavigation.PlaylistsApiEntryPoint
 import com.sanaa.presentation.bottomsheets.removeFromListBottomSheet.RemoveFromListBottomSheet
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlistDetails.components.DeleteConfirmationBottomSheet
 import com.sanaa.presentation.screen.playlistDetails.components.RefreshButton
 import com.sanaa.presentation.screen.playlistDetails.components.SavedDetailsListSectionContent
-import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
 import dagger.hilt.android.EntryPointAccessors
@@ -50,13 +47,11 @@ fun PlaylistDetailsScreen(
     viewModel: PlaylistDetailsScreenViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val movieList = state.value.movieList.collectAsLazyPagingItems()
 
     EffectHandler(effect = viewModel.effect)
 
     PlaylistDetailsContent(
         state = state.value,
-        movieList = movieList,
         interactionListener = viewModel
     )
 }
@@ -65,17 +60,29 @@ fun PlaylistDetailsScreen(
 @Composable
 fun PlaylistDetailsContent(
     state: SavedDetailsScreenUiState,
-    movieList: LazyPagingItems<MediaItem>,
     interactionListener: PlaylistDetailsInteractionListener,
-    modifier: Modifier = Modifier,
 ) {
+    val movieList = state.movieList.collectAsLazyPagingItems()
     NovixScaffold(
-        modifier = modifier.background(color = Theme.colors.surface),
-        backgroundShapes = {},
         topBar = {
-            PlaylistDetailsTopBar(
-                title = state.title.orEmpty(),
-                interactionListener = interactionListener,
+            TopBar(
+                leftContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(R.drawable.icon_back),
+                        onClick = interactionListener::onBackClick
+                    )
+                },
+                screenTitle = state.title.orEmpty(),
+                rightContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(R.drawable.icon_deleat),
+                        onClick = { interactionListener.onDeleteListClick() },
+                        tint = Theme.colors.statusColors.redAccent
+                    )
+                },
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(vertical = 12.dp)
             )
         },
         snackBarHost = {
@@ -104,13 +111,12 @@ fun PlaylistDetailsContent(
                 ) {
                     LoadingIndicator()
                 }
-            }else{
+            } else {
                 SavedDetailsListSectionContent(
                     mediaList = movieList,
                     onMediaClick = { interactionListener.onMediaClick(it.id, MediaTypeUi.MOVIE) },
                     onSaveIconClick = { interactionListener.onDeleteIconClick(it) },
                     safeContentThreshold = state.safeContentThreshold,
-                    isDarkTheme = state.isDarkTheme,
                 )
 
                 if (movieList.loadState.hasError) {
@@ -132,32 +138,6 @@ fun PlaylistDetailsContent(
         isLoading = state.isLoading,
         onDismiss = interactionListener::onDismissConfirmationBottomSheet,
         onConfirm = interactionListener::onDeleteListConfirmed
-    )
-}
-
-@Composable
-fun PlaylistDetailsTopBar(
-    title: String,
-    interactionListener: PlaylistDetailsInteractionListener,
-) {
-    TopBar(
-        leftContent = {
-            TopBarClickableIcon(
-                icon = painterResource(R.drawable.icon_back),
-                onClick = interactionListener::onBackClick
-            )
-        },
-        screenTitle = title,
-        rightContent = {
-            TopBarClickableIcon(
-                icon = painterResource(R.drawable.icon_deleat),
-                onClick = { interactionListener.onDeleteListClick() },
-                tint = Theme.colors.statusColors.redAccent
-            )
-        },
-        modifier = Modifier
-            .statusBarsPadding()
-            .padding(vertical = 12.dp)
     )
 }
 

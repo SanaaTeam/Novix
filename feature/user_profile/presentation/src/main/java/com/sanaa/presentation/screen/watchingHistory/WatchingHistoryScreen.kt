@@ -36,7 +36,7 @@ import com.sanaa.presentation.screen.watchingHistory.component.AnimatedSnackBarH
 import com.sanaa.presentation.screen.watchingHistory.component.FilterTab
 import com.sanaa.presentation.screen.watchingHistory.component.GridSection
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -48,7 +48,6 @@ fun WatchingHistoryScreen(
 
     WatchingHistoryScreenEffectsHandler(
         effects = viewModel.effect,
-        interactionListener = viewModel
     )
 
     WatchingHistoryScreenContent(
@@ -56,37 +55,6 @@ fun WatchingHistoryScreen(
         interactionListener = viewModel,
         modifier = modifier,
     )
-}
-
-@Composable
-private fun WatchingHistoryScreenEffectsHandler(
-    interactionListener: WatchingHistoryInteractionListener,
-    effects: SharedFlow<WatchingHistoryScreenEffect>,
-) {
-    val navController = LocalNavControllerProvider.current
-    val appContext = LocalContext.current.applicationContext
-
-    val detailsApi: MediaDetailsApi = remember {
-        EntryPointAccessors
-            .fromApplication(appContext, ProfileApiEntryPoint::class.java)
-            .detailsApi()
-    }
-
-    LaunchedEffect(Unit) {
-        effects.collectLatest { effect ->
-            when (effect) {
-                is NavigateBack -> navController.popBackStack()
-                is NavigateToMediaDetails -> detailsApi.launch(
-                    context = navController.context,
-                    id = effect.id,
-                    startRoute = when (effect.mediaTypeUi) {
-                        MediaTypeUi.MOVIE -> StartRoute.MOVIE
-                        MediaTypeUi.TV_SHOW -> StartRoute.TV_SHOW
-                    }
-                )
-            }
-        }
-    }
 }
 
 @Composable
@@ -183,4 +151,35 @@ private fun WatchingHistoryScreenContent(
         isVisible = state.showAddListBottomSheet,
         onDismiss = interactionListener::onDismissAddListBottomSheet,
     )
+}
+
+
+@Composable
+private fun WatchingHistoryScreenEffectsHandler(
+    effects: Flow<WatchingHistoryScreenEffect>,
+) {
+    val navController = LocalNavControllerProvider.current
+    val appContext = LocalContext.current.applicationContext
+
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, ProfileApiEntryPoint::class.java)
+            .detailsApi()
+    }
+
+    LaunchedEffect(Unit) {
+        effects.collectLatest { effect ->
+            when (effect) {
+                is NavigateBack -> navController.popBackStack()
+                is NavigateToMediaDetails -> detailsApi.launch(
+                    context = navController.context,
+                    id = effect.id,
+                    startRoute = when (effect.mediaTypeUi) {
+                        MediaTypeUi.MOVIE -> StartRoute.MOVIE
+                        MediaTypeUi.TV_SHOW -> StartRoute.TV_SHOW
+                    }
+                )
+            }
+        }
+    }
 }

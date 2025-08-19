@@ -8,16 +8,12 @@ import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import repository.UserPreferencesRepository
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltAndroidApp
 class NovixApp : Application() {
     @Inject
     lateinit var crashlytics: FirebaseCrashlytics
-
-    @Inject
-    lateinit var timberTree: Timber.Tree
 
     @Inject
     lateinit var userPreference: UserPreferencesRepository

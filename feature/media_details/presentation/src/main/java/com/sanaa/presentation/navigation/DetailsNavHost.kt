@@ -95,9 +95,7 @@ fun DetailsNavHost(
             }
 
             composable<ActorGalleryScreenRoute> {
-                ActorGalleryScreen(
-                    navigateBack = { navController.popBackStack() }
-                )
+                ActorGalleryScreen()
             }
 
             composable<ReviewsScreenRoute> {

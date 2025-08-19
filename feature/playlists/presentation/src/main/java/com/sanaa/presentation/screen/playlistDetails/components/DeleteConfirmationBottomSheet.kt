@@ -37,7 +37,7 @@ fun DeleteConfirmationBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 24.dp, start = 16.dp, end = 24.dp),
+                .padding(bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -48,11 +48,8 @@ fun DeleteConfirmationBottomSheet(
                         icon = painterResource(id = R.drawable.icon_cancel),
                         onClick = onDismiss
                     )
-                }
+                },
             )
-
-            Spacer(Modifier.height(25.dp))
-
             Image(
                 painter = painterResource(id = R.drawable.ic_delete_confirmation),
                 contentDescription = null,
@@ -62,6 +59,7 @@ fun DeleteConfirmationBottomSheet(
             Spacer(Modifier.height(16.dp))
 
             Text(
+                modifier = Modifier.padding(horizontal = 16.dp),
                 text = stringResource(R.string.delete_list_confirmation_message),
                 style = Theme.textStyle.body.medium,
                 color = Theme.colors.body,
@@ -77,6 +75,7 @@ fun DeleteConfirmationBottomSheet(
                 isLoading = isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
                     .height(48.dp)
             )
         }

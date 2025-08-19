@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.playlistDetails.components
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,11 +24,9 @@ fun SavedDetailsListSectionContent(
     modifier: Modifier = Modifier,
     onSaveIconClick: (MediaItem) -> Unit = {},
     isScrollEnabled: Boolean = true,
-    isDarkTheme: Boolean = isSystemInDarkTheme(),
     safeContentThreshold: Float = 0.5f
 ) {
     val isListEmpty = mediaList.itemCount == 0
-
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -42,7 +39,7 @@ fun SavedDetailsListSectionContent(
             }
 
             isListEmpty -> {
-                EmptyItemsScreen(
+                EmptyStateComponent(
                     messageText = stringResource(R.string.the_list_is_empty),
                 )
             }
@@ -54,7 +51,6 @@ fun SavedDetailsListSectionContent(
                     onSaveIconClick = onSaveIconClick,
                     isScrollEnabled = isScrollEnabled,
                     safeContentThreshold = safeContentThreshold,
-                    isDarkTheme = isDarkTheme,
                 )
 
                 if (mediaList.loadState.append is LoadState.Loading) {

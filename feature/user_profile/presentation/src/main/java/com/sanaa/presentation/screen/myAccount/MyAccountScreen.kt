@@ -39,63 +39,14 @@ import com.sanaa.presentation.screen.myAccount.component.NotLoggedInStateCompone
 import com.sanaa.presentation.screen.myAccount.component.SelectionBottomSheet
 import com.sanaa.presentation.screen.myAccount.component.UserOptions
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val navController = LocalNavControllerProvider.current
-    val view = LocalView.current
-    val activity = view.context as? AppCompatActivity
-    val context = LocalContext.current
-
-
-    val authApi = EntryPointAccessors.fromApplication(
-        context,
-        ProfileApiEntryPoint::class.java
-    ).authenticationApi()
-
-
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
-            when (it) {
-                NavigateToChangePasswordSetting -> {
-                    navController.navigate(ChangePasswordScreenRoute)
-                }
-
-                is UpdateAppLanguage -> {
-                    val localeList = LocaleListCompat.forLanguageTags(it.language)
-                    if (AppCompatDelegate.getApplicationLocales()
-                            .toLanguageTags() != localeList.toLanguageTags()
-                    ) {
-                        AppCompatDelegate.setApplicationLocales(localeList)
-                    }
-                    activity?.recreate()
-                }
-
-                NavigateToMyRating -> navController.navigate(MyRatingScreenRoute)
-                NavigateToWatchingHistory -> navController.navigate(WatchingHistoryScreenRoute)
-                is MyAccountScreenEffect.UpdateAppTheme -> {
-                    if (it.isDarkMode) {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    } else {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
-                }
-
-                MyAccountScreenEffect.NavigateToLogin -> {
-                    authApi.launch(context, AuthStartRoute.Login)
-                }
-
-                MyAccountScreenEffect.PopBackStackToWelcomeScreen -> {
-                    activity?.recreate()
-                }
-            }
-        }
-    }
-
+    EffectHandler(viewModel.effect)
     MyAccountScreenContent(state, viewModel)
 }
 
@@ -207,6 +158,63 @@ private fun MyAccountScreenContent(
                         interactionsListener.onSaveThemeClick()
                     },
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EffectHandler(
+    effects: Flow<MyAccountScreenEffect>,
+) {
+
+    val navController = LocalNavControllerProvider.current
+    val view = LocalView.current
+    val activity = view.context as? AppCompatActivity
+    val context = LocalContext.current
+
+
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        ProfileApiEntryPoint::class.java
+    ).authenticationApi()
+
+
+
+    LaunchedEffect(Unit) {
+        effects.collectLatest {
+            when (it) {
+                NavigateToChangePasswordSetting -> {
+                    navController.navigate(ChangePasswordScreenRoute)
+                }
+
+                is UpdateAppLanguage -> {
+                    val localeList = LocaleListCompat.forLanguageTags(it.language)
+                    if (AppCompatDelegate.getApplicationLocales()
+                            .toLanguageTags() != localeList.toLanguageTags()
+                    ) {
+                        AppCompatDelegate.setApplicationLocales(localeList)
+                    }
+                    activity?.recreate()
+                }
+
+                NavigateToMyRating -> navController.navigate(MyRatingScreenRoute)
+                NavigateToWatchingHistory -> navController.navigate(WatchingHistoryScreenRoute)
+                is MyAccountScreenEffect.UpdateAppTheme -> {
+                    if (it.isDarkMode) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    } else {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+                }
+
+                MyAccountScreenEffect.NavigateToLogin -> {
+                    authApi.launch(context, AuthStartRoute.Login)
+                }
+
+                MyAccountScreenEffect.PopBackStackToWelcomeScreen -> {
+                    activity?.recreate()
+                }
             }
         }
     }

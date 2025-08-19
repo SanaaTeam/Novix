@@ -4,11 +4,9 @@ import com.sanaa.presentation.screen.componants.SnackData
 import com.sanaa.presentation.screen.state.mapper.toState
 import com.sanaa.presentation.searchBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import service.VodStringProvider
-import timber.log.Timber
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
@@ -20,8 +18,8 @@ class SaveToListViewModel @Inject constructor(
     private val mangeSavedListsUseCase: ManageSavedListsUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher)
-    ,SaveToListInteractionListener{
+) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher),
+    SaveToListInteractionListener {
 
 
     fun getMediaId(mediaId: Int) {
@@ -32,7 +30,7 @@ class SaveToListViewModel @Inject constructor(
     private fun observePlaylists() {
         updateState { copy(isLoading = true) }
         tryToCollect(
-            block = { mangeSavedListsUseCase.getSavedLists() },
+            block = mangeSavedListsUseCase::getSavedLists,
             onCollect = ::onCollectPlaylists,
         )
     }
@@ -70,14 +68,14 @@ class SaveToListViewModel @Inject constructor(
     private suspend fun addMovieToSavedList(
         selectedListId: Int,
         mediaId: Int
-    ){
+    ) {
         manageSavedListItemsUseCase.addMovieToSavedList(
             listId = selectedListId,
             movieId = mediaId
         )
     }
 
-    private fun onErrorAccrue(exception: NovixAppException) {
+    private fun onErrorAccrue() {
         updateState {
             copy(
                 isLoading = false,
@@ -90,7 +88,6 @@ class SaveToListViewModel @Inject constructor(
                 mediaId = null
             )
         }
-        Timber.tag("SaveToListViewModel").d("onErrorAccrue: with exception :$exception")
         emitEffect(SaveToListEffect.DismissBottomSheet)
     }
 
@@ -110,28 +107,19 @@ class SaveToListViewModel @Inject constructor(
     override fun onAddClick() {
         val selectedListsIds: MutableList<Int> = state.value.selectedListsIds
         if (selectedListsIds.isEmpty()) return
-        updateState { copy(isUploading = true, isAddButtonEnabled = false) }
+
         tryToExecute(
+            onStart = { updateState { copy(isUploading = true, isAddButtonEnabled = false) } },
             block = {
                 selectedListsIds.forEach { listId ->
-                    addMovieToSavedList(listId, state.value.mediaId!!)
-                }
-                updateState {
-                    copy(
-                        isUploading = false,
-                        isLoading = false,
-                        isAddButtonEnabled = false,
-                        snackBarData = SnackData(
-                            message = stringProvider.addToListSuccess,
-                            isError = false,
-                        ),
-                        selectedListsIds = mutableListOf(),
-                        mediaId = null
+                    addMovieToSavedList(
+                        listId,
+                        state.value.mediaId!!
                     )
                 }
-                emitEffect(SaveToListEffect.DismissBottomSheet)
             },
-            onError = ::onErrorAccrue
+            onSuccess = { onAddToListSuccess() },
+            onError = { onErrorAccrue() }
         )
     }
 
@@ -156,5 +144,22 @@ class SaveToListViewModel @Inject constructor(
                 isAddButtonEnabled = false,
             )
         }
+    }
+
+    private fun onAddToListSuccess() {
+        updateState {
+            copy(
+                isUploading = false,
+                isLoading = false,
+                isAddButtonEnabled = false,
+                snackBarData = SnackData(
+                    message = stringProvider.addToListSuccess,
+                    isError = false,
+                ),
+                selectedListsIds = mutableListOf(),
+                mediaId = null
+            )
+        }
+        emitEffect(SaveToListEffect.DismissBottomSheet)
     }
 }

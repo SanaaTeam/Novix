@@ -19,10 +19,10 @@ class RemoveFromListViewModel @Inject constructor(
     private val mangeSavedListsUseCase: ManageSavedListsUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<RemoveFromListUiState, RemoveFromListEffect>(RemoveFromListUiState(), dispatcher)
-,RemoveFromListInteractionListener{
+) : BaseViewModel<RemoveFromListUiState, RemoveFromListEffect>(RemoveFromListUiState(), dispatcher),
+    RemoveFromListInteractionListener {
 
-    init{
+    init {
         observePlaylists()
     }
 
@@ -42,7 +42,13 @@ class RemoveFromListViewModel @Inject constructor(
 
     private fun onCollectPlaylists(playlist: List<SavedList>) {
         val selectedLists = playlist.filter { it.itemsIds.contains(state.value.mediaId) }.toState()
-        updateState { copy(playlists = playlist.toState(), selectedLists = selectedLists, isLoading = false) }
+        updateState {
+            copy(
+                playlists = playlist.toState(),
+                selectedLists = selectedLists,
+                isLoading = false
+            )
+        }
     }
 
 
@@ -69,10 +75,10 @@ class RemoveFromListViewModel @Inject constructor(
     private suspend fun removeMovieFromSavedList(
         selectedListId: Int,
         mediaId: Int
-    ){
+    ) {
         manageSavedListItemsUseCase.removeMovieFromSavedList(
             listId = selectedListId,
-            movieId =mediaId
+            movieId = mediaId
         )
     }
 
@@ -113,23 +119,17 @@ class RemoveFromListViewModel @Inject constructor(
     override fun onRemoveClick() {
         val deselectedListsIds: MutableList<Int> = state.value.deselectedListsIds
         if (deselectedListsIds.isEmpty()) return
-        updateState { copy(isUploading = true, isRemoveButtonEnabled = false) }
         tryToExecute(
+            onStart = { updateState { copy(isUploading = true, isRemoveButtonEnabled = false) } },
             block = {
                 deselectedListsIds.forEach { listId ->
-                    removeMovieFromSavedList(listId, state.value.mediaId!!)
-                }
-                updateState {
-                    copy(
-                        isUploading = false,
-                        isLoading = false,
-                        isRemoveButtonEnabled = false,
-                        deselectedListsIds = mutableListOf(),
-                        mediaId = null
+                    removeMovieFromSavedList(
+                        listId,
+                        state.value.mediaId!!
                     )
                 }
-                emitEffect(RemoveFromListEffect.DismissBottomSheet(deselectedListsIds))
             },
+            onSuccess = { onRemoveFromListSuccess(deselectedListsIds) },
             onError = ::onErrorAccrue
         )
     }
@@ -150,6 +150,21 @@ class RemoveFromListViewModel @Inject constructor(
                 isRemoveButtonEnabled = false,
             )
         }
+    }
+
+    private fun onRemoveFromListSuccess(
+        deselectedListsIds: List<Int>
+    ) {
+        updateState {
+            copy(
+                isUploading = false,
+                isLoading = false,
+                isRemoveButtonEnabled = false,
+                deselectedListsIds = mutableListOf(),
+                mediaId = null
+            )
+        }
+        emitEffect(RemoveFromListEffect.DismissBottomSheet(deselectedListsIds))
     }
 }
 

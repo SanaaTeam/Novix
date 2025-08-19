@@ -58,7 +58,7 @@ fun WelcomeScreen(
 }
 
 @Composable
-fun WelcomeContent(
+private fun WelcomeContent(
     state: WelcomeScreenUiState,
     interactionListener: WelcomeScreenInteractionListener
 ) {
