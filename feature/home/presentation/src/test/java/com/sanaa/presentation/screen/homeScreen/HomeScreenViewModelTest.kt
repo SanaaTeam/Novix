@@ -13,7 +13,6 @@ import entity.User
 import exceptions.NoLoggedInUserException
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.justRun
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -65,7 +64,7 @@ class HomeScreenViewModelTest {
         coEvery {
             manageWatchedMediaHistoryUseCase.getMediaHistory(any(), any(), any())
         } returns flowOf(emptyList())
-        coEvery { manageMovieUseCase.getMovieGenres() } returns emptyList()
+        coEvery { manageMovieUseCase.getMovieGenres(freshData) } returns emptyList()
         coEvery { manageMovieUseCase.getUpcomingMovies(any(), any()) } returns emptyList()
     }
 
@@ -175,7 +174,7 @@ class HomeScreenViewModelTest {
     @Test
     fun `init should fetch genres and update state on success`() = runTest(testDispatcher) {
         val genres = listOf(dummyGenre)
-        coEvery { manageMovieUseCase.getMovieGenres() } returns genres
+        coEvery { manageMovieUseCase.getMovieGenres(freshData) } returns genres
         initializeViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
         viewModel.state.test {

@@ -64,7 +64,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun onLanguageChanges(){
         tryToCollect(
             block = { mangeUserPreference.getLanguage() },
-            onCollect = { fetchMovieGenres() },
+            onCollect = { fetchMovieGenres(freshData = true) },
             onError = ::onDataLoadError
         )
     }
@@ -149,10 +149,10 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    private fun fetchMovieGenres() {
+    private fun fetchMovieGenres(freshData: Boolean = false) {
         tryToExecute(
             onStart = { updateState { copy(isLoadingGenre = true) } },
-            block = { manageMovieUseCase.getMovieGenres().map { it.toState() } },
+            block = { manageMovieUseCase.getMovieGenres(freshData).map { it.toState() } },
             onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError,
         )

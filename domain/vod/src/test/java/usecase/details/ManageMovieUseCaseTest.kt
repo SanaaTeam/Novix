@@ -335,7 +335,7 @@ class ManageMovieUseCaseTest {
         val expected = listOf(dummyGenre)
         coEvery { movieRepository.getMovieGenres() } returns listOf(dummyGenre)
 
-        val result = manageMovieDetailsUseCase.getMovieGenres()
+        val result = manageMovieDetailsUseCase.getMovieGenres(freshData)
 
         assertThat(result).isEqualTo(expected)
     }
@@ -345,7 +345,7 @@ class ManageMovieUseCaseTest {
         coEvery { movieRepository.getMovieGenres() } throws NovixAppException("Error")
 
         assertThrows<NovixAppException> {
-            manageMovieDetailsUseCase.getMovieGenres()
+            manageMovieDetailsUseCase.getMovieGenres(freshData)
         }
     }
 

@@ -52,7 +52,7 @@ class TopRatedMediaScreenViewModelTest {
 
     @Test
     fun `init should fetch movie genres and update state`() = runTest {
-        coEvery { manageMovieUseCase.getMovieGenres() } returns genres
+        coEvery { manageMovieUseCase.getMovieGenres(freshData) } returns genres
 
         viewModel =
             TopRatedMediaScreenViewModel(
