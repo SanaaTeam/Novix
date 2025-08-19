@@ -38,9 +38,6 @@ class CategoriesScreenViewModel @Inject constructor(
                 loadTvGenres(true)
                 loadMovieGenres(true)
                         },
-            onError = {
-                //todo add snack bar
-            }
         )
     }
 
