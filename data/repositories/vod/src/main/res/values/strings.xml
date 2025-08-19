@@ -10,6 +10,6 @@
     <string name="failed_to_create_list">Failed to create list</string>
     <string name="failed_to_delete_list">Failed to delete list. Please try again.</string>
     <string name="success_to_delete_list">Delete list successfully.</string>
-    <string name="removed_from_list_successfully">تمت الإزالة من القائمة بنجاح</string>
-    <string name="removed_from_list_failed">فشل في الإزالة من القائمة</string>
+    <string name="removed_from_list_successfully">Removed from list successfully</string>
+    <string name="removed_from_list_failed">Failed to delete from list</string>
 </resources>
