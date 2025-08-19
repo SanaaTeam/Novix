@@ -2,18 +2,19 @@ package com.sanaa.tvapp.presentation.screens.home
 
 import androidx.paging.PagingData
 import com.sanaa.tvapp.state.GenreUiState
-import com.sanaa.tvapp.state.MediaItem
+import com.sanaa.tvapp.state.MediaItemUiState
+import com.sanaa.tvapp.state.SnackData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 data class HomeScreenUiState(
     val featuredCarousel: FeaturedCarouselState = FeaturedCarouselState(),
-    val popularMedia: List<MediaItem> = emptyList(),
-    val topRatingMovies: List<MediaItem> = emptyList(),
-    val topRatingTvShows: List<MediaItem> = emptyList(),
-    val continueWatchingMovies: List<MediaItem> = emptyList(),
-    val continueWatchingTvShows: List<MediaItem> = emptyList(),
-    val upcomingMovies: Flow<PagingData<MediaItem>> = flowOf(PagingData.empty()),
+    val popularMedia: List<MediaItemUiState> = emptyList(),
+    val topRatingMovies: List<MediaItemUiState> = emptyList(),
+    val topRatingTvShows: List<MediaItemUiState> = emptyList(),
+    val continueWatchingMovies: List<MediaItemUiState> = emptyList(),
+    val continueWatchingTvShows: List<MediaItemUiState> = emptyList(),
+    val upcomingMovies: Flow<PagingData<MediaItemUiState>> = flowOf(PagingData.empty()),
     val movieGenres: List<GenreUiState> = emptyList(),
     val movieSelectedGenreId: Int? = null,
     val isLoading: Boolean = false,
@@ -23,7 +24,8 @@ data class HomeScreenUiState(
     val isNoInternet: Boolean = false,
     val userIsLoggedIn: Boolean = false,
     val showSaveToListBottomSheet: Boolean = false,
-    val selectedMediaId: Long = 0L
+    val selectedMediaId: Long = 0L,
+    val snackBarData: SnackData? = null,
 )
 
 data class FeaturedCarouselState(

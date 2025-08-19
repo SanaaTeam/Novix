@@ -2,8 +2,8 @@ package com.sanaa.tvapp.di
 
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.sanaa.identity.dataSoruce.local.dataStore.LocalUserPreferenceDataSource
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.tvapp.BuildConfig
 import com.sanaa.vod.network.interceptor.APIKeyInterceptor
 import com.sanaa.vod.network.interceptor.LanguageInterceptor
@@ -54,8 +54,16 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideLanguageInterceptor(
-        languageProvider: LanguageProvider
-    ): LanguageInterceptor = LanguageInterceptor(languageProvider)
+        localUserPreferenceDataSource: LocalUserPreferenceDataSource
+    ): LanguageInterceptor {
+        return LanguageInterceptor(
+            getLanguage = {
+                runBlocking {
+                    localUserPreferenceDataSource.getLanguage().firstOrNull()
+                }
+            }
+        )
+    }
 
     @Provides
     @Singleton

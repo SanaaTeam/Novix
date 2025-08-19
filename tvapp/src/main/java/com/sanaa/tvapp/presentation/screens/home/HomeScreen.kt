@@ -53,7 +53,7 @@ import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
-import com.sanaa.tvapp.state.MediaItem
+import com.sanaa.tvapp.state.MediaItemUiState
 import com.sanaa.designsystem.R as dosingSystemResource
 import com.sanaa.tvapp.R as tvResource
 
@@ -86,7 +86,7 @@ fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
+fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItemUiState>) {
     val sidePaddings = 36.dp
     val scrollState = rememberScrollState()
     val mainTvNavController = LocalAppNavController.current
@@ -132,7 +132,7 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
                 )
                 .focusRequester(carouselFocusRequester),
 
-            mediaItems = state.popularMedia,
+            mediaItemUiStates = state.popularMedia,
             onShowDetails = {}
         )
 
@@ -158,7 +158,7 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
 @Composable
 fun HomeMovies(
     state: HomeScreenUiState,
-    upcomingMovies: LazyPagingItems<MediaItem>,
+    upcomingMovies: LazyPagingItems<MediaItemUiState>,
     onItemClick: (Int) -> Unit,
 ) {
     Column {
@@ -212,7 +212,7 @@ fun HomeMovies(
 @Composable
 fun HomeTvShows(
     state: HomeScreenUiState,
-    upcomingMovies: LazyPagingItems<MediaItem>,
+    upcomingMovies: LazyPagingItems<MediaItemUiState>,
     onItemClick: (Int) -> Unit,
 ) {
     Column {
@@ -270,7 +270,7 @@ fun HomeTvShows(
 @Composable
 @OptIn(ExperimentalTvMaterial3Api::class)
 fun ImageList(
-    item: MediaItem,
+    item: MediaItemUiState,
     onItemClick: (Int) -> Unit,
 ) {
     Card(

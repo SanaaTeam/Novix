@@ -57,7 +57,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.api.LocalSafeContentThreshold
-import com.sanaa.tvapp.state.MediaItem
+import com.sanaa.tvapp.state.MediaItemUiState
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
 import kotlin.time.Duration.Companion.seconds
@@ -71,9 +71,9 @@ val CarouselSaver = Saver<CarouselState, Int>(
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun PopularMoviesCarousel(
-    mediaItems: List<MediaItem>,
+    mediaItemUiStates: List<MediaItemUiState>,
     modifier: Modifier = Modifier,
-    onShowDetails: (movie: MediaItem) -> Unit,
+    onShowDetails: (movie: MediaItemUiState) -> Unit,
 ) {
     val carouselState = rememberSaveable(saver = CarouselSaver) { CarouselState(0) }
     var isFocused by remember { mutableStateOf(false) }
@@ -92,23 +92,23 @@ fun PopularMoviesCarousel(
                 isFocused = it.hasFocus
             }
             .handleDPadKeyEvents(onEnter = {
-                if (mediaItems.isNotEmpty()) {
-                    onShowDetails(mediaItems[carouselState.activeItemIndex])
+                if (mediaItemUiStates.isNotEmpty()) {
+                    onShowDetails(mediaItemUiStates[carouselState.activeItemIndex])
                 }
             }),
-        itemCount = mediaItems.size,
+        itemCount = mediaItemUiStates.size,
         carouselState = carouselState,
         carouselIndicator = {
             CarouselDots(
-                totalDots = mediaItems.size,
+                totalDots = mediaItemUiStates.size,
                 selectedIndex = carouselState.activeItemIndex
             )
         },
         content = { index ->
-            val mediaItem = mediaItems[index]
+            val mediaItem = mediaItemUiStates[index]
             CarouselItemBackground(movie = mediaItem, modifier = Modifier.fillMaxSize())
             CarouselItemForeground()
-            MediaInfo(mediaItem = mediaItem, isFocused = isFocused)
+            MediaInfo(mediaItemUiState = mediaItem, isFocused = isFocused)
         },
         autoScrollDurationMillis = 5.seconds.inWholeMilliseconds,
         contentTransformStartToEnd = fadeIn(tween(durationMillis = 500))
@@ -120,7 +120,7 @@ fun PopularMoviesCarousel(
 
 @Composable
 fun MediaInfo(
-    mediaItem: MediaItem,
+    mediaItemUiState: MediaItemUiState,
     isFocused: Boolean,
 ) {
     Column(
@@ -132,14 +132,14 @@ fun MediaInfo(
 
         Text(
             modifier = Modifier,
-            text = mediaItem.title,
+            text = mediaItemUiState.title,
             color = Theme.colors.body,
             style = Theme.textStyle.label.medium
         )
 
         Text(
             modifier = Modifier.padding(top = 4.dp),
-            text = mediaItem.title,
+            text = mediaItemUiState.title,
             color = Theme.colors.title,
             style = Theme.textStyle.title.large
         )
@@ -148,7 +148,7 @@ fun MediaInfo(
             modifier = Modifier
                 .fillMaxWidth(0.5f)
                 .padding(top = 12.dp),
-            text = mediaItem.overview,
+            text = mediaItemUiState.overview,
             color = Theme.colors.body,
             style = Theme.textStyle.label.medium,
             maxLines = 3,
@@ -181,7 +181,7 @@ private fun CarouselItemForeground() {
 }
 
 @Composable
-private fun CarouselItemBackground(movie: MediaItem, modifier: Modifier = Modifier) {
+private fun CarouselItemBackground(movie: MediaItemUiState, modifier: Modifier = Modifier) {
     movie.imageUrl?.let {
         RemoteBlurredSensitiveImage(
             isBlurEnabled = LocalSafeContentThreshold.current != 0f,
