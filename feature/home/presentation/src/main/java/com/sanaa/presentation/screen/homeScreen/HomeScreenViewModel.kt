@@ -49,37 +49,20 @@ class HomeScreenViewModel @Inject constructor(
     init {
         updateUserLoggingStatus()
         onLanguageChanges()
-
-    }
-    private fun onLanguageChanges(){
-        tryToCollect(
-            block = {
-                mangeUserPreference.getLanguage().distinctUntilChanged()
-            },
-            onCollect = {
-                fetchPopularMediaData()
-                fetchTopRatedMediaData()
-                fetchMovieGenres()
-                fetchUpcomingMovies()
-                if (state.value.userIsLoggedIn) {
-                    fetchWatchedMediaData()
-                }
-            },
-            onError = {
-                updateState { copy(
-                    snackBarData = SnackData(
-                        message = stringProvider.somethingWentWrongError,
-                        isError = true
-                    ),
-                ) }
-            },
-        )
     }
 
     private fun updateUserLoggingStatus() {
         tryToCollect(
             block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
+            onError = ::onDataLoadError
+        )
+    }
+
+    private fun onLanguageChanges(){
+        tryToCollect(
+            block = { mangeUserPreference.getLanguage().distinctUntilChanged() },
+            onCollect = { fetchMovieGenres() },
             onError = ::onDataLoadError
         )
     }
