@@ -23,6 +23,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.designsystem.R as designSystemR
 
 @Composable
 fun RateBottomSheet(
@@ -50,7 +51,7 @@ fun RateBottomSheet(
                     screenTitle = stringResource(R.string.rate_it),
                     rightContent = {
                         TopBarClickableIcon(
-                            icon = painterResource(id = R.drawable.icon_cancel),
+                            icon = painterResource(id = designSystemR.drawable.icon_cancel),
                             onClick = onDismiss
                         )
                     }

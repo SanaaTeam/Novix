@@ -9,7 +9,7 @@ fun Genre.toUiState(): CategoryUiState {
     return CategoryUiState(
         id = id,
         name = name,
-        imageResourceId = getGenreImage(id)
+        imageRawUrl = getGenreImage(id)
     )
 }
 

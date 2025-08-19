@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.R as designSystemR
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.text_field.TextField
@@ -84,7 +85,7 @@ private fun AddBookmarkListBottomSheetContent(
                 screenTitle = stringResource(R.string.add_new_list),
                 rightContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_cancel),
+                        icon = painterResource(id = designSystemR.drawable.icon_cancel),
                         onClick = onDismiss
                     )
                 }

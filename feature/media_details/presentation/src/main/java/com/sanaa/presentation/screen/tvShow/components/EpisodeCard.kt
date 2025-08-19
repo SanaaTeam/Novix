@@ -90,7 +90,7 @@ fun EpisodeCard(
             ) {
                 episode.rating?.let {
                     IconWithText(
-                        iconRes = R.drawable.icon_star,
+                        iconRes = RDesignSystem.drawable.icon_star,
                         text = episode.rating,
                         contentDescription = episode.rating,
                         tint = Theme.colors.statusColors.yellowAccent

@@ -42,6 +42,8 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
+import com.sanaa.designsystem.R as designSystemR
+
 
 
 @Composable
@@ -100,7 +102,7 @@ private fun SaveToListBottomSheetContent(
                 screenTitle = stringResource(R.string.save_to_list),
                 rightContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_cancel),
+                        icon = painterResource(id = designSystemR.drawable.icon_cancel),
                         onClick = {
                             interactionListener.onRequestBottomSheetDismiss()
                             onDismiss()
