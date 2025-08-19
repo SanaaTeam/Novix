@@ -157,7 +157,7 @@ class MyRatingScreenViewModel @Inject constructor(
     private fun onLoadTvShowsSuccess(tvShows: List<TvShow>) {
         updateState {
             copy(
-                ratedMovies = tvShows.map { it.toRatedMediaUiModel() },
+                ratedTvShows = tvShows.map { it.toRatedMediaUiModel() },
                 isLoading = false
             )
         }
