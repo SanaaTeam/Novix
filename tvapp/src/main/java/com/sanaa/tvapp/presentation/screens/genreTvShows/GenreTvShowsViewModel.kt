@@ -9,8 +9,6 @@ import com.sanaa.tvapp.presentation.screens.searchScreen.TvShowUiModel
 import com.sanaa.tvapp.presentation.screens.searchScreen.mapper.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvShow
-import exceptions.NoNetworkException
-import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
@@ -97,18 +95,10 @@ class GenreTvShowsViewModel @Inject constructor(
         updateState {
             copy(
                 title = genreName,
-                genreid = genreId,
+                genreId = genreId,
                 tvShows = flowOf(tvShows),
                 isLoading = false
             )
-        }
-    }
-
-    private fun onGetShowsByGeneraIdFailed(exception: NovixAppException) {
-        if (exception is NoNetworkException) {
-            updateState { copy(noInternetConnection = true, isLoading = false, error = null) }
-        } else {
-            updateState { copy(error = exception.message, isLoading = false) }
         }
     }
 

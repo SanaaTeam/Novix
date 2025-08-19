@@ -62,7 +62,6 @@ import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingSection
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ChangePasswordScreenRoute
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.LoginRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MyRatingScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.WatchingHistoryScreenRoute
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents

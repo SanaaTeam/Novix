@@ -9,8 +9,6 @@ import com.sanaa.tvapp.presentation.screens.searchScreen.MovieUiModel
 import com.sanaa.tvapp.presentation.screens.searchScreen.mapper.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
-import exceptions.NoNetworkException
-import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -107,24 +105,9 @@ class GenreMoviesViewModel @Inject constructor(
     private fun onCollectMovies(): suspend (PagingData<MovieUiModel>) -> Unit = { movies ->
         updateState { copy(movies = flowOf(movies),
             title = genreName,
-            genreid = genreId,
+            genreId = genreId,
             isLoading = false) }
     }
-
-    private fun onFetchMoviesFailed(exception: NovixAppException) {
-        if (exception is NoNetworkException) {
-            updateState {
-                copy(
-                    noInternetConnection = true,
-                    isLoading = false,
-                    error = null
-                )
-            }
-        } else {
-            updateState { copy(error = exception.message, isLoading = false) }
-        }
-    }
-
 
     private fun createMoviesPagingDataSource(
         genreId: Int,

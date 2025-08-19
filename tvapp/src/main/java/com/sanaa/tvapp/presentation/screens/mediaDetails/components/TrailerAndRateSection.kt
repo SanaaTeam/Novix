@@ -32,8 +32,6 @@ fun TrailerAndRateSection(
     onPlayTrailerClicked: () -> Unit = {},
     onRateClicked: () -> Unit = {}
 ) {
-    var isFocused by remember { mutableStateOf(false) }
-
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,

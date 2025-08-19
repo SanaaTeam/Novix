@@ -12,21 +12,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvShowUseCase
-import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
 
 @HiltViewModel
 class ShowDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val getUser: GetLoggedInUserUseCase,
     private val manageTvShowDetails: ManageTvShowUseCase,
-    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
-    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TvShowDetailsScreenUiState, TvShowDetailsScreenEffects>(
     initialState = TvShowDetailsScreenUiState(),

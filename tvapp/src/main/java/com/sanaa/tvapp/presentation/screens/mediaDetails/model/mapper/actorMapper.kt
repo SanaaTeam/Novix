@@ -7,7 +7,7 @@ fun Actor.toActorUiModel() = ActorUiModel(
     id = id,
     imageUrl = imageUrl,
     name = name,
-    department = department?.toString(),
+    department = department,
     character = character,
     lifeSpan = when {
         birthDate != null && deathDate != null -> "$birthDate - $deathDate"

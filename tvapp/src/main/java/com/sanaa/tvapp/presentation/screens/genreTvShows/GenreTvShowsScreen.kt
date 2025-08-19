@@ -93,16 +93,16 @@ fun GenreTvShowsScreenContent(
     interactionListener: GenreTvShowsScreenInteractionListener,
 ) {
     val pagedTvShows = state.tvShows.collectAsLazyPagingItems()
-    val screenState = when {
-        pagedTvShows.loadState.refresh is LoadState.Loading -> ScreenState.LOADING
-        pagedTvShows.loadState.refresh is LoadState.Error -> ScreenState.NO_INTERNET
+    val screenState = when (pagedTvShows.loadState.refresh) {
+        is LoadState.Loading -> ScreenState.LOADING
+        is LoadState.Error -> ScreenState.NO_INTERNET
         else -> ScreenState.CONTENT
     }
 
     NovixScaffold(
         backgroundShapes = {
             Image(
-                painter = painterResource(id = getGenreImage(state.genreid)),
+                painter = painterResource(id = getGenreImage(state.genreId)),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
@@ -191,7 +191,7 @@ fun GenreTvShowsScreenContent(
                                     ) {
                                         TvMediaPosterCard(
                                             title = movie.title,
-                                            imageUrl = movie.imageUrl.orEmpty(),
+                                            imageUrl = movie.imageUrl,
                                             onCardClick = {
                                             },
                                         )

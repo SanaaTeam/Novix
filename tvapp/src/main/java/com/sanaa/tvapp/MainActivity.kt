@@ -13,7 +13,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.tvapp.presentation.api.LocalSafeContentThreshold
-import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreen
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.NavBarRoute
 import com.sanaa.tvapp.presentation.screens.navigation.TvNavGraph

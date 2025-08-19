@@ -1,6 +1,5 @@
 package com.sanaa.tvapp.presentation.screens
 
-import com.sanaa.tvapp.state.MediaItemUiState
 import com.sanaa.tvapp.state.MediaTypeUiState
 
 interface HomeScreenInteractionListener {

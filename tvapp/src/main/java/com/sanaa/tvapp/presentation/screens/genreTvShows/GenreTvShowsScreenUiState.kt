@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.flowOf
 
 data class GenreTvShowsScreenUiState(
     val title: String? = null,
-    val genreid: Int = 0,
+    val genreId: Int = 0,
     val tvShows: Flow<PagingData<TvShowUiModel>> = flowOf(PagingData.empty()),
     val isLoading: Boolean = false,
     val error: String? = null,

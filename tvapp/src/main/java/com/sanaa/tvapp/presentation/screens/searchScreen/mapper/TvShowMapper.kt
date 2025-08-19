@@ -7,6 +7,6 @@ fun TvShow.toUiState(): TvShowUiModel {
     return TvShowUiModel(
         id = this.id,
         title = this.title,
-        imageUrl = this.posterImageUrl.orEmpty(),
+        imageUrl = this.posterImageUrl,
     )
 }

@@ -20,7 +20,4 @@ data class EpisodeDetailsScreenUiState(
     val guestSessionId: String = "",
     val loginPromptType: LoginPromptType? = null,
     val isUserLoggedIn: Boolean = false
-) {
-    val hasUserSelectedRate: Boolean
-        get() = imdbRating > 0
-}
+)

@@ -1,6 +1,5 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
@@ -170,11 +169,6 @@ class MovieDetailsViewModel @Inject constructor(
             onError = { },
         )
     }
-
-    fun updateUserStatus() {
-        tryToExecute(block = ::updateUserLoginState)
-    }
-
 
     private suspend fun submitMovieRating() {
         val rating = state.value.rating
