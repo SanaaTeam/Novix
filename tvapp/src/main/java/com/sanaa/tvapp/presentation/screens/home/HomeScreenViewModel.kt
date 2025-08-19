@@ -217,36 +217,6 @@ class HomeScreenViewModel @Inject constructor(
             }
     }
 
-    override fun onMovieGenreClick(id: Int?) {
-        if (id != state.value.movieSelectedGenreId) {
-            updateState { copy(movieSelectedGenreId = id) }
-            fetchUpcomingMovies(id)
-        }
-    }
-
-    override fun onMediaClick(id: Int, mediaTypeUiState: MediaTypeUiState) {
-        emitEffect(HomeScreenEffect.NavigateToMediaDetails(id, mediaTypeUiState))
-    }
-
-    override fun onDismissSaveToListBottomSheet() {
-        updateState { copy(showSaveToListBottomSheet = false) }
-    }
-
-    override fun onCreateNewListClick() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onRetryClick() {
-        updateState { copy(isNoInternet = false) }
-        fetchPopularMediaData()
-        fetchTopRatedMovieData()
-        fetchTopRatedTvShowData()
-        fetchWatchedMediaData()
-        fetchMovieGenres()
-        fetchUpcomingMovies()
-    }
-
-
     private fun loadUpcomingMovies(
         genreId: Int?,
     ): Flow<PagingData<MediaItemUiState>> {

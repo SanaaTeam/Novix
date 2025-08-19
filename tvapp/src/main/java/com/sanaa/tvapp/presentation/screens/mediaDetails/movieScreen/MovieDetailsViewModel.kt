@@ -16,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import javax.inject.Inject
 
@@ -24,7 +23,6 @@ import javax.inject.Inject
 class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
-    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsScreenUiState, MovieDetailsScreenUiEffect>(
     initialState = MovieDetailsScreenUiState(),
@@ -107,81 +105,5 @@ class MovieDetailsViewModel @Inject constructor(
         return BasePagingSource { page ->
             manageMovieDetails.getSimilarMoviesByMovieId(movieId, page)
         }
-    }
-
-
-    override fun onWatchTrailerClick(urlString: String) {
-        emitEffect(MovieDetailsScreenUiEffect.OpenTrailer(urlString))
-    }
-
-    override fun onSimilarMovieClick(movieId: Int) {
-        emitEffect(MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails(movieId))
-    }
-
-    override fun onDismissLoginBottomSheet() {
-        updateState { copy(showLoginDialog = false) }
-    }
-
-    override fun onLoginButtonClick() {
-        emitEffect(MovieDetailsScreenUiEffect.NavigateToLogin)
-    }
-
-    override fun onActorCardClick(actorId: Int) {
-        emitEffect(MovieDetailsScreenUiEffect.NavigateToActorScreen(actorId))
-    }
-
-    override fun onRetryLoadDetails() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onRateMovieClick() {
-        if (state.value.isUserLoggedIn) {
-            updateState {
-                copy(showRateDialog = true)
-            }
-        } else {
-            updateState {
-                copy(showLoginDialog = true)
-            }
-        }
-    }
-
-    override fun onRatingChange(rating: Int) {
-        updateState { copy(rating = rating) }
-    }
-
-    override fun onDismissRateDialog() {
-        updateState { copy(showLoginDialog = false) }
-    }
-
-    override fun onSummitRateClick() {
-        tryToExecute(
-            block = ::submitMovieRating,
-        )
-    }
-
-    private fun updateUserLoginState() {
-        tryToCollect(
-            block = { checkUserLogin.isLoggedIn() },
-            onCollect = { loggedIn ->
-                updateState { copy(isUserLoggedIn = loggedIn) }
-            },
-            onError = { },
-        )
-    }
-
-    private suspend fun submitMovieRating() {
-        val rating = state.value.rating
-        val isSendRateSuccess = manageMovieDetails.addMovieRate(
-            movieId = movieId,
-            rating = rating.toFloat()
-        )
-        if (isSendRateSuccess) {
-            updateState { copy(showRateDialog = false) }
-        }
-    }
-
-    companion object {
-        private const val PAGE_SIZE = 20
     }
 }

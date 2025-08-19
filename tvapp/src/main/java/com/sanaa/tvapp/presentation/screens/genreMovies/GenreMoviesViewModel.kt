@@ -53,34 +53,8 @@ class GenreMoviesViewModel @Inject constructor(
         fetchMovies(genreId)
     }
 
-
-    override fun onBottomSheetDismiss() {
-        updateState { copy(showBottomSheet = false) }
-    }
-
-    override fun onLoginButtonClick() {
-        updateState { copy(showBottomSheet = false) }
-        emitEffect(GenreMoviesEffects.NavigateToLogin)
-    }
-
-    override fun onDismissSaveToListBottomSheet() {
-        updateState { copy(showSaveToListBottomSheet = false) }
-    }
-
-    override fun onCreateNewListClick() {
-        updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
-    }
-
-    override fun onDismissAddListBottomSheet() {
-        updateState { copy(showAddListBottomSheet = false) }
-    }
-
     override fun onSaveIconClick(media: MovieUiModel) {
 
-    }
-
-    override fun onBackClick() {
-        emitEffect(GenreMoviesEffects.NavigateBack)
     }
 
     override fun onMovieClick(id: Int) {

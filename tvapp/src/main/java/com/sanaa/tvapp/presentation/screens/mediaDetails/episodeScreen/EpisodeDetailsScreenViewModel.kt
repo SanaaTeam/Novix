@@ -46,30 +46,9 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         emitEffect(EpisodeDetailsEffects.PlayTrailer(state.value.trailerUrl))
     }
 
-    override fun onGenreTypeClick(genreId: Int) {
-        emitEffect(EpisodeDetailsEffects.NavigateToActorDetails(genreId))
-    }
-
-    override fun onCastClick(actorId: Int) {
-        emitEffect(EpisodeDetailsEffects.NavigateToActorDetails(actorId))
-    }
-
-    override fun onLoginButtonClick() {
-        updateState { copy(showLoginBottomSheet = false) }
-        emitEffect(EpisodeDetailsEffects.NavigateToLogin)
-    }
-
     override fun onRetryLoadDetails() {
         updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
         loadEpisode(state.value.seriesId, 0, 0)
-    }
-
-    override fun onRatingChanged(newRating: Int) {
-        updateState { copy(imdbRating = newRating) }
-    }
-
-    override fun onDismissRateBottomSheet() {
-        updateState { copy(showRateBottomSheet = false) }
     }
 
     private fun loadEpisode(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {

@@ -46,6 +46,6 @@ fun BackButton(
 
 @Preview
 @Composable
-private fun BackPreview(modifier: Modifier = Modifier) {
+private fun BackPreview() {
     BackButton(onBackClick = {})
 }

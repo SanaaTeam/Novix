@@ -180,7 +180,7 @@ fun GenreMoviesScreenContent(
                                             indication = null,
 
                                             onClick = {
-                                                interactionListener.onMovieClick(movie.id)
+                                                interactionListener.onMovieClick(id = movie.id)
                                             }
                                         )
                                 ) {

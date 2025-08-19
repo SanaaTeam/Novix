@@ -46,16 +46,6 @@ class GenreTvShowsViewModel @Inject constructor(
         updateState { copy(userIsLoggedIn = isLogged) }
     }
 
-    override fun onSaveIconClick() {
-        if (!state.value.userIsLoggedIn) {
-            updateState {
-                copy(
-                    showBottomSheet = true
-                )
-            }
-        }
-    }
-
     override fun onRetryClick() {
         updateState {
             copy(
@@ -65,19 +55,6 @@ class GenreTvShowsViewModel @Inject constructor(
             )
         }
         getTvShowsByGenreId(genreId)
-    }
-
-    override fun onBottomSheetDismiss() {
-        updateState { copy(showBottomSheet = false) }
-    }
-
-    override fun onLoginButtonClick() {
-        updateState { copy(showBottomSheet = false) }
-        emitEffect(GenreTvShowsEffects.NavigateToLogin)
-    }
-
-    override fun onBackClick() {
-        emitEffect(GenreTvShowsEffects.NavigateBack)
     }
 
     override fun onTvShowClick(id: Int) {
