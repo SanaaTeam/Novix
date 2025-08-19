@@ -21,7 +21,7 @@ class AddBookmarkViewModel @Inject constructor(
         updateState {
             copy(
                 listTitle = title,
-                isAddButtonEnabled = title.isNotBlank()
+                isAddButtonEnabled = title.isNotBlank() && !state.value.isLoading
             )
         }
     }
