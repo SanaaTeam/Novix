@@ -18,6 +18,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.designsystem.R as designSystemR
 import com.sanaa.presentation.providers.LocalThemeProvider
 
 @Composable
@@ -32,9 +33,9 @@ fun RequestToLoginBottomSheet(
 ) {
     val isDarkTheme = LocalThemeProvider.current
     val loginImageId = if (isDarkTheme) {
-        R.drawable.icon_users_dark
+        designSystemR.drawable.icon_users_dark
     } else {
-        R.drawable.icon_users_light
+        designSystemR.drawable.icon_users_light
     }
     BaseBottomSheet(
         isVisible = isVisible,
