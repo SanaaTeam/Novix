@@ -13,5 +13,4 @@ fun Genre.toUiState(): CategoryUiState {
         imageRawUrl = getGenreImage(id)
     )
 }
-//getGenreImage(id)
 
