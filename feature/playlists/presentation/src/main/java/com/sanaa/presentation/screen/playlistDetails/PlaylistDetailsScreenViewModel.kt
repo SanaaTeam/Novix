@@ -143,6 +143,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         updateState {
             copy(
                 isLoading = false,
+                showListDeletionConfirmationBottomSheet = false
             )
         }
         emitEffect(PlaylistDetailsScreenEffect.NavigateBackAfterDelete)
