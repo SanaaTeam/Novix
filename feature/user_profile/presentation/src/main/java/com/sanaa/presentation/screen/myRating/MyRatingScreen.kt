@@ -35,7 +35,7 @@ import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect.NavigateToMed
 import com.sanaa.presentation.screen.myRating.component.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.myRating.component.RatedMediaListSectionContent
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designR
 
@@ -51,36 +51,6 @@ fun MyRatingScreen(
         state = state,
         interactionListener = viewModel,
     )
-}
-
-@Composable
-private fun MyRatingScreenEffectsHandler(
-    effects: SharedFlow<MyRatingScreenEffect>,
-) {
-    val navController = LocalNavControllerProvider.current
-    val appContext = LocalContext.current.applicationContext
-
-    val detailsApi: MediaDetailsApi = remember {
-        EntryPointAccessors
-            .fromApplication(appContext, ProfileApiEntryPoint::class.java)
-            .detailsApi()
-    }
-
-    LaunchedEffect(Unit) {
-        effects.collectLatest { effect ->
-            when (effect) {
-                is NavigateBack -> navController.popBackStack()
-                is NavigateToMediaDetails -> detailsApi.launch(
-                    context = navController.context,
-                    id = effect.mediaId,
-                    startRoute = when (effect.mediaTypeUi) {
-                        MediaTypeUi.MOVIE -> StartRoute.MOVIE
-                        MediaTypeUi.TV_SHOW -> StartRoute.TV_SHOW
-                    }
-                )
-            }
-        }
-    }
 }
 
 @Composable
@@ -138,6 +108,36 @@ private fun MyRatingScreenContent(
                         onCardClick = interactionListener::onMediaClick
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MyRatingScreenEffectsHandler(
+    effects: Flow<MyRatingScreenEffect>,
+) {
+    val navController = LocalNavControllerProvider.current
+    val appContext = LocalContext.current.applicationContext
+
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, ProfileApiEntryPoint::class.java)
+            .detailsApi()
+    }
+
+    LaunchedEffect(Unit) {
+        effects.collectLatest { effect ->
+            when (effect) {
+                is NavigateBack -> navController.popBackStack()
+                is NavigateToMediaDetails -> detailsApi.launch(
+                    context = navController.context,
+                    id = effect.mediaId,
+                    startRoute = when (effect.mediaTypeUi) {
+                        MediaTypeUi.MOVIE -> StartRoute.MOVIE
+                        MediaTypeUi.TV_SHOW -> StartRoute.TV_SHOW
+                    }
+                )
             }
         }
     }

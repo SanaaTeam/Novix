@@ -4,6 +4,8 @@ import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.presentation.profileBase.BaseViewModel
 import com.sanaa.presentation.profileMapper.toRatedMediaUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import entity.Movie
+import entity.TvShow
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -39,13 +41,7 @@ class MyRatingScreenViewModel @Inject constructor(
     private fun loadRatedMovies() {
         tryToExecute(
             block = { manageMovieUseCase.getUserRatedMovies() },
-            onSuccess = { movies ->
-                val uiModels = movies.map { it.toRatedMediaUiModel() }
-                updateState { copy(ratedMovies = uiModels) }
-                if (state.value.ratedTvShows.isNotEmpty()) {
-                    updateState { copy(isLoading = false) }
-                }
-            },
+            onSuccess = ::onLoadMoviesSuccess,
             onError = ::onDataLoadError
         )
     }
@@ -55,16 +51,9 @@ class MyRatingScreenViewModel @Inject constructor(
             block = {
                 val accountId = preferencesManager.accountId.first()
                 val sessionId = preferencesManager.sessionId.first()
-
                 manageTvShowUseCase.getRatedTvShows(accountId, sessionId)
             },
-            onSuccess = { tvShows ->
-                val uiModels = tvShows.map { it.toRatedMediaUiModel() }
-                updateState { copy(ratedTvShows = uiModels) }
-                if (state.value.ratedMovies.isNotEmpty()) {
-                    updateState { copy(isLoading = false) }
-                }
-            },
+            onSuccess = ::onLoadTvShowsSuccess,
             onError = ::onDataLoadError
         )
     }
@@ -117,26 +106,16 @@ class MyRatingScreenViewModel @Inject constructor(
     private fun deleteRatedMovie(mediaId: Int) {
         tryToExecute(
             block = { manageMovieUseCase.deleteMovieRate(mediaId) },
-            onSuccess = { success ->
-                updateState { copy(ratedMovies = ratedMovies.filter { movie -> movie.id != mediaId }) }
-                onShowSuccessSnackBar(stringProvider.deleteRatingSuccess)
-            },
-            onError = {
-                onShowErrorSnackBar(stringProvider.deleteRatingFailed)
-            }
+            onSuccess = { onDeleteRatedMovieSuccess(mediaId) },
+            onError = { onShowErrorSnackBar(stringProvider.deleteRatingFailed) }
         )
     }
 
     private fun deleteRatedTvShow(mediaId: Int) {
         tryToExecute(
             block = { manageTvShowUseCase.deleteTvShowRate(mediaId) },
-            onSuccess = { success ->
-                updateState { copy(ratedTvShows = ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
-                onShowSuccessSnackBar(stringProvider.deleteRatingSuccess)
-            },
-            onError = {
-                onShowErrorSnackBar(stringProvider.deleteRatingFailed)
-            }
+            onSuccess = { onDeleteRatedTvShowSuccess(mediaId) },
+            onError = { onShowErrorSnackBar(stringProvider.deleteRatingFailed) }
         )
     }
 
@@ -165,4 +144,33 @@ class MyRatingScreenViewModel @Inject constructor(
     override fun onShowErrorSnackBar(message: String) {
         updateState { copy(snackBarData = SnackData(message = message, isError = true)) }
     }
+
+    private fun onLoadMoviesSuccess(movies: List<Movie>) {
+        updateState {
+            copy(
+                ratedMovies = movies.map { it.toRatedMediaUiModel() },
+                isLoading = false
+            )
+        }
+    }
+
+    private fun onLoadTvShowsSuccess(tvShows: List<TvShow>) {
+        updateState {
+            copy(
+                ratedMovies = tvShows.map { it.toRatedMediaUiModel() },
+                isLoading = false
+            )
+        }
+    }
+
+    private fun onDeleteRatedTvShowSuccess(mediaId: Int) {
+        updateState { copy(ratedTvShows = ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
+        onShowSuccessSnackBar(stringProvider.deleteRatingSuccess)
+    }
+
+    private fun onDeleteRatedMovieSuccess(mediaId: Int) {
+        updateState { copy(ratedMovies = ratedMovies.filter { movie -> movie.id != mediaId }) }
+        onShowSuccessSnackBar(stringProvider.deleteRatingSuccess)
+    }
+
 }
