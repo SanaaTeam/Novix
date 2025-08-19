@@ -7,7 +7,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -20,8 +19,8 @@ import kotlinx.coroutines.delay
 fun NovixAnimatedSnackBarHost(
     data: SnackData?,
     onDismiss: () -> Unit,
-    durationMillis: Long = 2500,
     modifier: Modifier = Modifier,
+    durationMillis: Long = 2500,
 ) {
     AnimatedVisibility(
         visible = data != null,
@@ -30,7 +29,6 @@ fun NovixAnimatedSnackBarHost(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 12.dp)
-            .statusBarsPadding()
     ) {
         if (data != null) {
             LaunchedEffect(data) {
