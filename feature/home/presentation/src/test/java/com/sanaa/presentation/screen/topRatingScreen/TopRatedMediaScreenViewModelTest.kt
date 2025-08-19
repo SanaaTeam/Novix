@@ -3,18 +3,16 @@ package com.sanaa.presentation.screen.topRatingScreen
 import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaItemUiState
+import com.sanaa.presentation.state.MediaTypeUiState
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.Movie
 import entity.TvShow
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -23,7 +21,6 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
@@ -39,7 +36,6 @@ class TopRatedMediaScreenViewModelTest {
     private lateinit var manageTvShowUseCase: ManageTvShowUseCase
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
-    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
 
     @BeforeEach
@@ -47,9 +43,6 @@ class TopRatedMediaScreenViewModelTest {
         Dispatchers.setMain(testDispatcher)
         manageMovieUseCase = mockk(relaxed = true)
         manageTvShowUseCase = mockk(relaxed = true)
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
     }
 
     @AfterEach
@@ -65,7 +58,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvShowUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -83,7 +75,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvShowUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -101,7 +92,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvShowUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -121,7 +111,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvShowUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -142,7 +131,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvShowUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -166,7 +154,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvShowUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -187,7 +174,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvShowUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -205,7 +191,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvShowUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -240,6 +225,6 @@ class TopRatedMediaScreenViewModelTest {
             TvShow(1, "Show 1", "", LocalDate(2021, 1, 1), emptyList(), 9f, "", 3, 0),
             TvShow(2, "Show 2", "", LocalDate(2022, 1, 1), emptyList(), 8f, "", 2, 0)
         )
-        val media = MediaItem(1, "Media", "", mediaTypeUi = MediaTypeUi.MOVIE)
+        val media = MediaItemUiState(1, "Media", "", mediaTypeUiState = MediaTypeUiState.MOVIE)
     }
 }

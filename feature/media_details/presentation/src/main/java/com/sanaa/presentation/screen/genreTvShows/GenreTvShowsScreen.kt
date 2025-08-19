@@ -30,7 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
@@ -45,7 +45,7 @@ import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.TvShowDetailsScreenRoute
+import com.sanaa.presentation.navigation.TvShowScreenRoute
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -67,7 +67,6 @@ fun GenreTvShowsScreen(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -77,11 +76,11 @@ fun GenreTvShowsScreen(
                 }
 
                 is GenreTvShowsEffects.NavigateToTvShowDetails -> navController.navigate(
-                    TvShowDetailsScreenRoute(effect.id).route()
+                    TvShowScreenRoute(effect.id)
                 )
 
                 GenreTvShowsEffects.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }
@@ -161,12 +160,7 @@ fun GenreTvShowsScreenContent(
                                 verticalArrangement = Arrangement.spacedBy(12.dp),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                items(
-                                    count = pagedTvShows.itemCount,
-                                    key = { index ->
-                                        "${index}_${pagedTvShows[index]?.id}"
-                                    }
-                                ) { index ->
+                                items(pagedTvShows.itemCount) { index ->
                                     val tvShow = pagedTvShows[index] ?: return@items
                                     MediaPosterCard(
                                         posterImage = {

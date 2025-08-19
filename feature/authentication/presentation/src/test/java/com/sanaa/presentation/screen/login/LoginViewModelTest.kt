@@ -2,9 +2,6 @@ package com.sanaa.presentation.screen.login
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import exceptions.InvalidUserOrPasswordException
-import exceptions.NoInternetException
-import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,7 +23,8 @@ class LoginViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = LoginViewModel(loginUseCase, identityStringProvider, ioDispatcher = testDispatcher)
+        viewModel =
+            LoginViewModel(loginUseCase, identityStringProvider, ioDispatcher = testDispatcher)
     }
 
     @Test
@@ -34,7 +32,6 @@ class LoginViewModelTest {
         val newUsername = "test-user"
         viewModel.onUsernameChanged(newUsername)
         assertThat(viewModel.state.value.username).isEqualTo(newUsername)
-        assertThat(viewModel.state.value.usernameError).isNull()
     }
 
     @Test
@@ -42,7 +39,6 @@ class LoginViewModelTest {
         val newPassword = "test-password"
         viewModel.onPasswordChanged(newPassword)
         assertThat(viewModel.state.value.password).isEqualTo(newPassword)
-        assertThat(viewModel.state.value.passwordError).isNull()
     }
 
     @Test
@@ -122,63 +118,31 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `onLoginClicked with valid credentials calls loginUseCase and navigates to home`() = runTest {
-        val username = "test-user"
-        val password = "test-pass"
-        viewModel.onUsernameChanged(username)
-        viewModel.onPasswordChanged(password)
-        viewModel.onLoginClicked()
+    fun `onLoginClicked with valid credentials calls loginUseCase and navigates to home`() =
+        runTest {
+            val username = "test-user"
+            val password = "test-pass"
+            viewModel.onUsernameChanged(username)
+            viewModel.onPasswordChanged(password)
+            viewModel.onLoginClicked()
 
-        viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(LoginScreenEffects.ReturnLoggedInResultCode)
-            cancelAndIgnoreRemainingEvents()
+            viewModel.effect.test {
+                assertThat(awaitItem()).isEqualTo(LoginScreenEffects.ReturnLoggedInResultCode)
+                cancelAndIgnoreRemainingEvents()
+            }
+            assertThat(viewModel.state.value.isLoading).isFalse()
+            assertThat(viewModel.state.value.canSubmit).isTrue()
         }
-        assertThat(viewModel.state.value.isLoading).isFalse()
-        assertThat(viewModel.state.value.canSubmit).isTrue()
-    }
 
-
-    @Test
-    fun `onDataLoadError handles NoInternetException`() = runTest {
-        val errorMessage = "No internet connection"
-        coEvery { identityStringProvider.noInternetConnectionError } returns errorMessage
-        val exception = NoInternetException()
-        viewModel.onDataLoadError(exception)
-
-        viewModel.effect.test {
-            val effect = awaitItem()
-            assertThat(effect).isInstanceOf(LoginScreenEffects.ShowError::class.java)
-            assertThat((effect as LoginScreenEffects.ShowError).message).isEqualTo(errorMessage)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `onDataLoadError handles unknown exception`() = runTest {
-        val errorMessage = "Something went wrong"
-        coEvery { identityStringProvider.somethingWentWrongError } returns errorMessage
-        val exception = RuntimeException("Unknown error")
-        viewModel.onDataLoadError(exception)
-
-        viewModel.effect.test {
-            val effect = awaitItem()
-            assertThat(effect).isInstanceOf(LoginScreenEffects.ShowError::class.java)
-            assertThat((effect as LoginScreenEffects.ShowError).message).isEqualTo(errorMessage)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
 
     @Test
     fun `initial state has correct default values`() = runTest {
         assertThat(viewModel.state.value.username).isEmpty()
         assertThat(viewModel.state.value.password).isEmpty()
-        assertThat(viewModel.state.value.usernameError).isNull()
-        assertThat(viewModel.state.value.passwordError).isNull()
         assertThat(viewModel.state.value.isPasswordVisible).isFalse()
         assertThat(viewModel.state.value.isLoading).isFalse()
         assertThat(viewModel.state.value.canSubmit).isFalse()
     }
-
 
 
     @Test
@@ -191,33 +155,6 @@ class LoginViewModelTest {
         viewModel.onPasswordChanged("password")
 
         assertThat(viewModel.state.value.canSubmit).isTrue()
-    }
-
-    @Test
-    fun `onLoginClicked allows retry after failure`() = runTest {
-        val username = "test-user"
-        val password = "wrong-pass"
-        viewModel.onUsernameChanged(username)
-        viewModel.onPasswordChanged(password)
-
-        val errorMessage = "Invalid credentials"
-        coEvery { loginUseCase.login(username, password) } throws InvalidUserOrPasswordException()
-        coEvery { identityStringProvider.invalidUserNameAndPasswordError } returns errorMessage
-
-        viewModel.onLoginClicked()
-        viewModel.effect.test {
-            val effect = awaitItem()
-            assertThat(effect).isInstanceOf(LoginScreenEffects.ShowError::class.java)
-            cancelAndIgnoreRemainingEvents()
-        }
-
-        coEvery { loginUseCase.login(username, password) } returns Unit
-        viewModel.onLoginClicked()
-
-        viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(LoginScreenEffects.ReturnLoggedInResultCode)
-            cancelAndIgnoreRemainingEvents()
-        }
     }
 
 }

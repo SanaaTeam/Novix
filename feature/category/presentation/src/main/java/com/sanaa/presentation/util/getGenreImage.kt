@@ -2,44 +2,7 @@ package com.sanaa.presentation.util
 
 import com.sanaa.feature.category.presentation.R
 
-
-private val genreImageMap = mapOf(
-    // Movies
-    GENRE_MOVIE_ACTION to R.drawable.movie_action,
-    GENRE_MOVIE_ADVENTURE to R.drawable.movie_adventure,
-    GENRE_MOVIE_ANIMATION to R.drawable.movie_animation,
-    GENRE_MOVIE_COMEDY to R.drawable.movie_comedy,
-    GENRE_MOVIE_CRIME to R.drawable.movie_crime,
-    GENRE_MOVIE_DOCUMENTARY to R.drawable.movie_documenteray,
-    GENRE_MOVIE_DRAMA to R.drawable.movie_drama,
-    GENRE_MOVIE_FAMILY to R.drawable.movie_family,
-    GENRE_MOVIE_FANTASY to R.drawable.movie_fantasy,
-    GENRE_MOVIE_HISTORY to R.drawable.movie_history,
-    GENRE_MOVIE_HORROR to R.drawable.movie_horror,
-    GENRE_MOVIE_MUSIC to R.drawable.movie_music,
-    GENRE_MOVIE_MYSTERY to R.drawable.movie_mystery,
-    GENRE_MOVIE_ROMANCE to R.drawable.movie_romance,
-    GENRE_MOVIE_SCIENCE_FICTION to R.drawable.movie_science_fiction,
-    GENRE_MOVIE_TV_MOVIE to R.drawable.movie_tv_movie,
-    GENRE_MOVIE_THRILLER to R.drawable.movie_threiller,
-    GENRE_MOVIE_WAR to R.drawable.movie_war,
-    GENRE_MOVIE_WESTERN to R.drawable.movie_western,
-
-    // TV
-    GENRE_TV_ACTION_ADVENTURE to R.drawable.tv_action_adventure,
-    GENRE_TV_KIDS to R.drawable.tv_kids,
-    GENRE_TV_NEWS to R.drawable.tv_news,
-    GENRE_TV_REALITY to R.drawable.tv_reality,
-    GENRE_TV_SCI_FI_FANTASY to R.drawable.tv_sci_fi_fantasy,
-    GENRE_TV_SOAP to R.drawable.tv_soap,
-    GENRE_TV_TALK to R.drawable.tv_talk,
-    GENRE_TV_WAR_POLITICS to R.drawable.movie_war
-)
-
-fun getGenreImage(genreId: Int): Int {
-    return genreImageMap[genreId] ?: R.drawable.movie_tv_movie
-}
-
+const val IMAGE_RAW_BASE_URL = "https://raw.githubusercontent.com/SanaaTeam/Novix/refs/heads/development/feature/category/presentation/src/main/genre-images"
 // Movie genre IDs
 const val GENRE_MOVIE_ACTION = 28
 const val GENRE_MOVIE_ADVENTURE = 12
@@ -70,3 +33,42 @@ const val GENRE_TV_SCI_FI_FANTASY = 10765
 const val GENRE_TV_SOAP = 10766
 const val GENRE_TV_TALK = 10767
 const val GENRE_TV_WAR_POLITICS = 10768
+
+
+
+private val genreImageMap = mapOf(
+    // Movies
+    GENRE_MOVIE_ACTION to "movie_action",
+    GENRE_MOVIE_ADVENTURE to "movie_adventure",
+    GENRE_MOVIE_ANIMATION to "movie_animation",
+    GENRE_MOVIE_COMEDY to "movie_comedy",
+    GENRE_MOVIE_CRIME to "movie_crime",
+    GENRE_MOVIE_DOCUMENTARY to "movie_documenteray",
+    GENRE_MOVIE_DRAMA to "movie_drama",
+    GENRE_MOVIE_FAMILY to  "movie_family",
+    GENRE_MOVIE_FANTASY to  "movie_fantasy",
+    GENRE_MOVIE_HISTORY to  "movie_history",
+    GENRE_MOVIE_HORROR to  "movie_horror",
+    GENRE_MOVIE_MUSIC to "movie_music",
+    GENRE_MOVIE_MYSTERY to "movie_mystery",
+    GENRE_MOVIE_ROMANCE to "movie_romance",
+    GENRE_MOVIE_SCIENCE_FICTION to "movie_science_fiction",
+    GENRE_MOVIE_TV_MOVIE to "movie_tv_movie",
+    GENRE_MOVIE_THRILLER to "movie_threiller",
+    GENRE_MOVIE_WAR to "movie_war",
+    GENRE_MOVIE_WESTERN to "movie_western",
+
+    // TV
+    GENRE_TV_ACTION_ADVENTURE to "tv_action_adventure",
+    GENRE_TV_KIDS to "tv_kids",
+    GENRE_TV_NEWS to "tv_news",
+    GENRE_TV_REALITY to "tv_reality",
+    GENRE_TV_SCI_FI_FANTASY to "tv_sci_fi_fantasy",
+    GENRE_TV_SOAP to "tv_soap",
+    GENRE_TV_TALK to "tv_talk",
+    GENRE_TV_WAR_POLITICS to "movie_war"
+)
+
+fun getGenreImage(genreId: Int): String {
+    return "$IMAGE_RAW_BASE_URL/${genreImageMap[genreId]}.webp"
+}

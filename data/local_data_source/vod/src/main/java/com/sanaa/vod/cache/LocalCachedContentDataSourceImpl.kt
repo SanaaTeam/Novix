@@ -1,6 +1,5 @@
 package com.sanaa.vod.cache
 
-import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.vod.cache.dao.CachedContentDao
 import com.sanaa.vod.cache.dao.CachedContentMetadataDao
 import com.sanaa.vod.cache.dao.GenreDao
@@ -14,6 +13,7 @@ import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Ca
 import com.sanaa.vod.dataSource.local.cache.dto.GenreLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
+import java.util.Locale
 import javax.inject.Inject
 
 class LocalCachedContentDataSourceImpl @Inject constructor(
@@ -22,11 +22,10 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
     private val movieDao: MovieDao,
     private val tvShowDao: TvShowDao,
     private val genreDao: GenreDao,
-    private val languageProvider: LanguageProvider
 ) : LocalCachedContentDataSource {
 
     private val currentLanguage: String
-        get() = languageProvider.getCurrentLanguage()
+        get() = Locale.getDefault().language
 
     override suspend fun cacheMovie(movies: List<MovieLocalDto>, category: Category) {
         movieDao.insertAll(movies).also {

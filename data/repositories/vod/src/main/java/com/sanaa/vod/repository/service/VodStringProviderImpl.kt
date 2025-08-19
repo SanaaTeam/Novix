@@ -9,6 +9,7 @@ import javax.inject.Inject
 class VodStringProviderImpl @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : VodStringProvider {
+
     override val noInternetConnectionError: String
         get() = context.getString(R.string.no_internet_connection_error)
     override val somethingWentWrongError: String
@@ -27,4 +28,10 @@ class VodStringProviderImpl @Inject constructor(
         get() = context.getString(R.string.failed_to_create_list)
     override val deleteListFailed: String
         get() = context.getString(R.string.failed_to_delete_list)
+    override val deleteListSuccess: String
+        get() = context.getString(R.string.success_to_delete_list)
+    override val deleteFromListFailed: String
+        get() = context.getString(R.string.removed_from_list_failed)
+    override val deleteFromListSuccess: String
+        get() = context.getString(R.string.removed_from_list_successfully)
 }

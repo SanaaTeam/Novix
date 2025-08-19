@@ -43,12 +43,10 @@ fun MovieDetailsGridContent(
         ),
         modifier = Modifier.fillMaxSize()
     ) {
-        // This is a single item for the entire header section
         item(span = { GridItemSpan(maxLineSpan) }) {
             MovieHeaderSection(state, interactionListener, locale)
         }
 
-        // This is a single item for the overview section
         item(span = { GridItemSpan(maxLineSpan) }) {
             if (state.movieDetails.overview.isNotEmpty()) {
                 OverviewSection(
@@ -60,7 +58,6 @@ fun MovieDetailsGridContent(
             }
         }
 
-        // This is a single item for the cast section
         item(span = { GridItemSpan(maxLineSpan) }) {
             if (state.cast.isNotEmpty()) {
                 CastComponent(
@@ -71,8 +68,6 @@ fun MovieDetailsGridContent(
             }
         }
 
-        // Now, add the similar movies section directly here,
-        // using a separate item for the header and then items() for the list.
         if (pagedSimilarMovies.itemCount > 0) {
             item(span = { GridItemSpan(maxLineSpan) }) {
                 AppText(

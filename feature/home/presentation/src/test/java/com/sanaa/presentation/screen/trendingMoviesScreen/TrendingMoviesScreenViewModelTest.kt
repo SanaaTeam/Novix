@@ -2,18 +2,16 @@ package com.sanaa.presentation.screen.trendingMoviesScreen
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaItemUiState
+import com.sanaa.presentation.state.MediaTypeUiState
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.Movie
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -23,7 +21,6 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
@@ -36,16 +33,12 @@ class TrendingMoviesScreenViewModelTest {
     private lateinit var manageMovieUseCase: ManageMovieUseCase
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
-    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         manageMovieUseCase = mockk(relaxed = true)
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -61,7 +54,6 @@ class TrendingMoviesScreenViewModelTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedListsStatusProvider,
             stringProvider,
             testDispatcher
         )
@@ -77,7 +69,6 @@ class TrendingMoviesScreenViewModelTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedListsStatusProvider,
             stringProvider,
             testDispatcher
         )
@@ -96,8 +87,7 @@ class TrendingMoviesScreenViewModelTest {
             viewModel = TrendingMoviesScreenViewModel(
                 manageMovieUseCase,
                 checkIfUserIsLoggedInUseCase,
-                savedListsStatusProvider,
-                stringProvider,
+                    stringProvider,
                 testDispatcher
             )
             testDispatcher.scheduler.advanceUntilIdle()
@@ -115,7 +105,6 @@ class TrendingMoviesScreenViewModelTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedListsStatusProvider,
             stringProvider,
             testDispatcher
         )
@@ -132,7 +121,6 @@ class TrendingMoviesScreenViewModelTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedListsStatusProvider,
             stringProvider,
             testDispatcher
         )
@@ -152,7 +140,6 @@ class TrendingMoviesScreenViewModelTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedListsStatusProvider,
             stringProvider,
             testDispatcher
         )
@@ -172,7 +159,6 @@ class TrendingMoviesScreenViewModelTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedListsStatusProvider,
             stringProvider,
             testDispatcher
         )
@@ -222,11 +208,11 @@ class TrendingMoviesScreenViewModelTest {
                 rating = 0
             )
         )
-        val media = MediaItem(
+        val media = MediaItemUiState(
             id = 1,
             title = "Test Movie",
             imageUrl = "https://example.com/image.jpg",
-            mediaTypeUi = MediaTypeUi.MOVIE
+            mediaTypeUiState = MediaTypeUiState.MOVIE
         )
     }
 }

@@ -16,7 +16,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.preferences)
     implementation(projects.data.repositories.vod)
     implementation(libs.retrofit)
     implementation(libs.okhttp)

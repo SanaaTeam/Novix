@@ -59,6 +59,9 @@
 
     <string name="save_to_list">Save to list</string>
     <string name="create_new_list">Create new list</string>
+    <string name="remove_from_list_caption">Click on list name to remove movie from it</string>
+    <string name="remove_from_list">Remove from list</string>
+    <string name="remove">Remove</string>
     <string name="home">Home</string>
     <string name="categories">Categories</string>
     <string name="my_list">My list</string>

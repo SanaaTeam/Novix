@@ -10,11 +10,9 @@ import entity.Genre
 import entity.MediaHistoryItem
 import entity.User
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -22,7 +20,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -37,7 +34,6 @@ class WatchingHistoryViewModelTest {
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
     private val manageMovieUseCase: ManageMovieUseCase = mockk(relaxed = true)
     private val manageTvShowUseCase: ManageTvShowUseCase = mockk(relaxed = true)
-    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private lateinit var viewModel: WatchingHistoryViewModel
     private val testDispatcher = StandardTestDispatcher()
@@ -54,9 +50,6 @@ class WatchingHistoryViewModelTest {
                 any()
             )
         } returns flowOf(dummyHistoryItems)
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
     }
 
     private fun initializeViewModel() {
@@ -65,7 +58,6 @@ class WatchingHistoryViewModelTest {
             getLoggedInUserUseCase = getLoggedInUserUseCase,
             manageMovieUseCase = manageMovieUseCase,
             manageTvShowUseCase = manageTvShowUseCase,
-            savedListsStatusProvider = savedListsStatusProvider,
             stringProvider = stringProvider,
             dispatcher = testDispatcher
         )
@@ -242,7 +234,7 @@ class WatchingHistoryViewModelTest {
             viewModel.state.test {
                 val state = awaitItem()
                 assertThat(state.tvShowSelectedGenreId).isEqualTo(newGenreId)
-                assertThat(state.tvShowList).hasSize(0)
+                assertThat(state.tvShowList).hasSize(1)
                 cancelAndConsumeRemainingEvents()
             }
         }

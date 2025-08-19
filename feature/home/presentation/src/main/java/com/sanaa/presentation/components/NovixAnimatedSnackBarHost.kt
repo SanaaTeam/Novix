@@ -7,7 +7,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -28,7 +27,6 @@ fun NovixAnimatedSnackBarHost(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 12.dp)
-            .statusBarsPadding()
     ) {
         if (data != null) {
             LaunchedEffect(data) {

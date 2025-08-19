@@ -43,6 +43,7 @@ fun MyListItem(
                 color = Theme.colors.stroke,
                 shape = RoundedCornerShape(12.dp)
             )
+            .clickable{ onItemClick() }
             .padding(vertical = 16.dp, horizontal = 12.dp)
     ) {
         AppText(
@@ -56,9 +57,6 @@ fun MyListItem(
         Row(
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(8.dp))
-                .clickable(
-                    onClick = { onItemClick() }
-                )
                 .background(
                     color = Theme.colors.primaryVariant,
                 )

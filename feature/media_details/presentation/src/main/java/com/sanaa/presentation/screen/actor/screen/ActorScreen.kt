@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -52,7 +52,7 @@ import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.TopMoviesScreenRoute
 import com.sanaa.presentation.navigation.TopTvShowsScreenRoute
-import com.sanaa.presentation.navigation.TvShowDetailsScreenRoute
+import com.sanaa.presentation.navigation.TvShowScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateBack
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToGallery
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToLogin
@@ -61,7 +61,7 @@ import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToTopMovie
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToTopTvShows
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToTvShowDetails
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
-import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
 import com.sanaa.presentation.screen.actor.componants.ActorInfoCard
 import com.sanaa.presentation.screen.actor.componants.GalleryCard
@@ -76,7 +76,7 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun ActorScreen(
-    viewModel: ActorViewModel = hiltViewModel(),
+    viewModel: ActorScreenViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
@@ -86,7 +86,6 @@ fun ActorScreen(
         .fromApplication(context, DetailsApiEntryPoint::class.java)
         .authenticationApi()
 
-    val launcher = launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -98,27 +97,27 @@ fun ActorScreen(
                 }
 
                 is NavigateToTopMovies -> navController.navigate(
-                    TopMoviesScreenRoute(effect.actorId).route()
+                    TopMoviesScreenRoute(effect.actorId)
                 )
 
                 is NavigateToTopTvShows -> navController.navigate(
-                    TopTvShowsScreenRoute(effect.actorId).route()
+                    TopTvShowsScreenRoute(effect.actorId)
                 )
 
                 is NavigateToGallery -> {
-                    navController.navigate(ActorGalleryScreenRoute(effect.actorId).route())
+                    navController.navigate(ActorGalleryScreenRoute(effect.actorId))
                 }
 
                 is NavigateToMovieDetails -> {
-                    navController.navigate(MovieDetailsScreenRoute(effect.movieId).route())
+                    navController.navigate(MovieDetailsScreenRoute(effect.movieId))
                 }
 
                 is NavigateToTvShowDetails -> {
-                    navController.navigate(TvShowDetailsScreenRoute(effect.tvShowId).route())
+                    navController.navigate(TvShowScreenRoute(effect.tvShowId))
                 }
 
                 NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }
@@ -162,26 +161,26 @@ private fun ActorScreenContent(
             ActorScreenTopBar(animatedColor, interactionListener)
 
             AnimatedContent(
-                targetState = state.isLoading || state.noInternetConnection,
+                targetState = Pair(state.isLoading, state.noInternetConnection),
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) { noContentYet ->
+            ) { (isLoading, noInternetConnection) ->
                 when {
-                    noContentYet -> {
-                        if (state.noInternetConnection) {
-                            NetworkDisconnectionContact(
-                                onRetryClick = { interactionListener.onRetryClicked() },
-                                modifier = Modifier.fillMaxSize(),
-                                useDarkTheme = LocalThemeProvider.current
-                            )
-                        } else {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                LoadingIndicator()
-                            }
+                    isLoading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            LoadingIndicator()
                         }
+                    }
+
+                    noInternetConnection -> {
+                        NetworkDisconnectionContact(
+                            onRetryClick = { interactionListener.onRetryClicked() },
+                            modifier = Modifier.fillMaxSize(),
+                            useDarkTheme = LocalThemeProvider.current
+                        )
                     }
 
                     else -> {
@@ -190,30 +189,24 @@ private fun ActorScreenContent(
                 }
             }
         }
-
-        if (state.showLoginBottomSheet) {
-            RequestToLoginBottomSheet(
-                isVisible = true,
-                onDismiss = interactionListener::onDismissBottomSheet,
-                onLoginButtonClick = interactionListener::onLoginButtonClick
-            )
-        }
-
-        SaveToListBottomSheet(
-            isVisible = state.showSaveToListBottomSheet,
-            mediaId = state.selectedMediaToSave?.id?.toLong() ?: 0,
-            onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-            onCreateNewListClick = interactionListener::onCreateNewListClick,
-        )
-
-        if (state.showAddListBottomSheet && state.selectedMediaToSave?.id != null) {
-            AddBookmarkListBottomSheet(
-                isVisible = true,
-                onDismiss = interactionListener::onDismissAddListBottomSheet,
-                mediaId = state.selectedMediaToSave.id
-            )
-        }
     }
+    RequestToLoginBottomSheet(
+        isVisible = state.showLoginBottomSheet,
+        onDismiss = interactionListener::onDismissBottomSheet,
+        onLoginButtonClick = interactionListener::onLoginButtonClick
+    )
+
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0,
+        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionListener::onCreateNewListClick,
+    )
+
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+    )
 }
 
 @Composable

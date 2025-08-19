@@ -1,15 +1,12 @@
 package com.sanaa.presentation.screen.trendingMoviesScreen
 
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import androidx.paging.cachedIn
-import androidx.paging.map
-import com.sanaa.presentation.BaseViewModel
-import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.components.SnackData
+import com.sanaa.presentation.homeBase.BasePagingSourceForHome
+import com.sanaa.presentation.homeBase.BaseViewModel
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
@@ -18,9 +15,7 @@ import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
@@ -30,7 +25,6 @@ import javax.inject.Inject
 class TrendingMoviesScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TrendingMoviesScreenUiState, TrendingMoviesScreenEffect>(
@@ -76,18 +70,14 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         )
     }
 
-    private fun loadMoviesOperation(): Flow<PagingData<MediaItem>> {
+    private fun loadMoviesOperation(): Flow<PagingData<MediaItemUiState>> {
         return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingSource() },
             mapper = Movie::toState
-        ).combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-            pagingData.map { mediaItem ->
-                mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
-            }
-        }.cachedIn(viewModelScope)
+        )
     }
 
-    private fun onLoadMoviesSuccess(pagingData: PagingData<MediaItem>) {
+    private fun onLoadMoviesSuccess(pagingData: PagingData<MediaItemUiState>) {
         updateState {
             copy(
                 mediaList = flowOf(pagingData),
@@ -107,21 +97,17 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         emitEffect(TrendingMoviesScreenEffect.NavigateToMoviesDetails(id))
     }
 
-    override fun onSaveIconClick(media: MediaItem) {
+    override fun onSaveIconClick(media: MediaItemUiState) {
         if (!state.value.userIsLoggedIn) {
             updateState { copy(showLoginBottomSheet = true) }
             return
         }
 
-        if (media.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(media.id)
-        } else {
-            updateState {
-                copy(
-                    showSaveToListBottomSheet = true,
-                    selectedMediaId = media.id
-                )
-            }
+        updateState {
+            copy(
+                showSaveToListBottomSheet = true,
+                selectedMediaId = media.id
+            )
         }
     }
 

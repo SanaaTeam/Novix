@@ -2,7 +2,6 @@ package com.sanaa.vod.network.interceptor
 
 import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.preferences.service.LanguageProvider
 import io.mockk.every
 import io.mockk.mockk
 import okhttp3.HttpUrl
@@ -14,15 +13,12 @@ import org.junit.jupiter.api.Test
 
 class LanguageInterceptorTest {
 
-    private val languageProvider = mockk<LanguageProvider>()
     private val chain = mockk<Interceptor.Chain>()
-    private val interceptor = LanguageInterceptor(languageProvider)
+    private val interceptor = LanguageInterceptor()
 
 
     @Test
     fun `adds language query parameter when Ignore-Language header not present`() {
-        every { languageProvider.getCurrentLanguage() } returns "en-US"
-
         val originalUrl = HttpUrl.Builder()
             .scheme("https")
             .host("example.com")
@@ -48,7 +44,7 @@ class LanguageInterceptorTest {
         val proceededRequest = response.request
 
 
-        Truth.assertThat(proceededRequest.url.queryParameter("language")).isEqualTo("en-US")
+        Truth.assertThat(proceededRequest.url.queryParameter("language")).isEqualTo("en")
     }
 
 

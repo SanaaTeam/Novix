@@ -2,13 +2,13 @@ package com.sanaa.presentation.screen.watchingHistoryScreen
 
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaItemUiState
+import com.sanaa.presentation.state.MediaTypeUiState
 
 data class WatchingMediaHistoryScreenUiState(
-    val selectedMediaTypeUiState: MediaTypeUi = MediaTypeUi.MOVIE,
-    val movieList: List<MediaItem> = emptyList(),
-    val tvShowList: List<MediaItem> = emptyList(),
+    val selectedMediaTypeUiState: MediaTypeUiState = MediaTypeUiState.MOVIE,
+    val movieList: List<MediaItemUiState> = emptyList(),
+    val tvShowList: List<MediaItemUiState> = emptyList(),
     val movieGenres: List<GenreUiState> = emptyList(),
     val tvShowGenres: List<GenreUiState> = emptyList(),
     val movieSelectedGenreId: Int? = null,
@@ -19,7 +19,7 @@ data class WatchingMediaHistoryScreenUiState(
     val showLoginBottomSheet: Boolean = false,
     val showSaveToListBottomSheet: Boolean = false,
     val showAddListBottomSheet: Boolean = false,
-    val selectedMediaToSave: MediaItem? = null,
+    val selectedMediaToSave: MediaItemUiState? = null,
     val userIsLoggedIn: Boolean = false,
     val showBottomSheet: Boolean = false,
     val snackBarData: SnackData? = null

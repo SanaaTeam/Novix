@@ -15,7 +15,7 @@ import com.sanaa.presentation.webview.ResetPasswordWebViewScreen
 import com.sanaa.presentation.webview.WebViewScreen
 
 @Composable
-fun AuthNavHost(onAuthResult: (Int) -> Unit, startRoute: AuthStartRoute) {
+fun AuthNavHost( startRoute: AuthStartRoute) {
     val navController = rememberNavController()
     val startDestination = when (startRoute) {
         AuthStartRoute.Welcome -> WelcomeRoute()
@@ -31,15 +31,11 @@ fun AuthNavHost(onAuthResult: (Int) -> Unit, startRoute: AuthStartRoute) {
             modifier = Modifier.background(Theme.colors.surface)
         ) {
             composable(WelcomeRoute::class) {
-                WelcomeScreen(
-                    onFinish = onAuthResult
-                )
+                WelcomeScreen()
             }
 
             composable(LoginRoute::class) {
-                LoginScreen(
-                    onFinish = onAuthResult
-                )
+                LoginScreen()
             }
 
             composable(SignUpRoute::class) { entry ->

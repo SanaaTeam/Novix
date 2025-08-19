@@ -77,7 +77,6 @@ dependencies {
     implementation(projects.feature.userProfile.presentation)
     implementation(projects.feature.playlists.presentation)
     implementation(projects.feature.authentication.presentation)
-    implementation(projects.preferences)
     implementation(projects.domain.identity)
     implementation(projects.data.remoteDataSource.identity)
     implementation(projects.data.localDataSource.identity)

@@ -13,6 +13,7 @@ import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.LogOutUseCase
 import usecase.MangeUserPreferenceUseCase
+import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,6 +22,7 @@ class MyAccountScreenViewModel @Inject constructor(
     val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     val logOutUseCase: LogOutUseCase,
+    val manageSavedListsUseCase: ManageSavedListsUseCase,
     val dispatcher: CoroutineDispatcher,
 ) : BaseViewModel<MyAccountScreenUiState, MyAccountScreenEffect>(
     MyAccountScreenUiState(), dispatcher
@@ -31,7 +33,6 @@ class MyAccountScreenViewModel @Inject constructor(
         fetchContentRestriction()
         fetchTheme()
         checkUserLoggedIn()
-        fetchUserData()
         loadSavedLang()
     }
 
@@ -121,9 +122,13 @@ class MyAccountScreenViewModel @Inject constructor(
             block = logOutUseCase::logout,
             onSuccess = {
                 emitEffect(MyAccountScreenEffect.PopBackStackToWelcomeScreen)
+                clearSavedListData()
             }
         )
     }
+
+    private fun clearSavedListData() = tryToExecute(block = manageSavedListsUseCase::clearData)
+
 
     private fun fetchLanguage() {
         tryToCollect(
@@ -198,6 +203,7 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private fun onCheckUserLoginSuccess(isLogged: Boolean) {
+        if (isLogged) fetchUserData()
         updateState {
             copy(
                 isUserLoggedIn = isLogged

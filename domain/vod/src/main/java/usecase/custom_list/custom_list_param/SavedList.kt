@@ -4,4 +4,5 @@ data class SavedList(
     val id: Int,
     val title: String,
     val itemCount: Int,
+    val itemsIds: List<Int> = emptyList(),
 )

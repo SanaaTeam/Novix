@@ -41,7 +41,7 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun MyRatingScreen(
-    viewModel: MyRatingScreenViewModel = hiltViewModel()
+    viewModel: MyRatingScreenViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -55,7 +55,7 @@ fun MyRatingScreen(
 
 @Composable
 private fun MyRatingScreenEffectsHandler(
-    effects: SharedFlow<MyRatingScreenEffect>
+    effects: SharedFlow<MyRatingScreenEffect>,
 ) {
     val navController = LocalNavControllerProvider.current
     val appContext = LocalContext.current.applicationContext
@@ -106,15 +106,10 @@ private fun MyRatingScreenContent(
             )
         },
         snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                AnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionListener::onDismissSnack,
-                )
-            }
+            AnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onDismissSnack,
+            )
         }
     ) {
         Box(

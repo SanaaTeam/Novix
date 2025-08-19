@@ -59,7 +59,9 @@
 
     <string name="save_to_list">حفظ في القائمة</string>
     <string name="create_new_list">إنشاء قائمة جديدة</string>
-
+    <string name="remove_from_list">أزالة من القائمة</string>
+    <string name="remove_from_list_caption">اضغط على القائمة لازالة الفلم منها</string>
+    <string name="remove">أزالة</string>
 
     <string name="eng">الإنجليزية</string>
     <string name="ar">العربية</string>

@@ -1,99 +1,160 @@
 package com.sanaa.presentation.bottomsheet.saveToListBottomsheet
 
-import androidx.lifecycle.viewModelScope
-import com.sanaa.presentation.BaseViewModel
+import android.util.Log
 import com.sanaa.presentation.components.SnackData
+import com.sanaa.presentation.homeBase.BaseViewModel
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
+import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
-
 @HiltViewModel
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
-    private val listsStatusProvider: SavedListsStatusProvider,
+    private val mangeSavedListsUseCase: ManageSavedListsUseCase,
     private val stringProvider: VodStringProvider,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher),
-    SaveToListInteractionListener {
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher)
+,SaveToListInteractionListener{
 
-    init {
+
+    fun getMediaId(mediaId: Int) {
+        updateState { copy(mediaId = mediaId) }
         observePlaylists()
     }
 
     private fun observePlaylists() {
+        updateState { copy(isLoading = true) }
         tryToCollect(
-            block = { listsStatusProvider.savedLists },
+            block = {
+                mangeSavedListsUseCase.getSavedLists()
+                    },
             onCollect = ::onCollectPlaylists,
         )
     }
 
     private fun onCollectPlaylists(playlist: List<SavedList>) {
-        updateState { copy(playlists = playlist.toState()) }
+        val tempPlayList = playlist.toState()
+        tempPlayList.forEach { playlistUiItem: PlaylistUiItem ->
+            playlistUiItem.containsMediaItem = playlistUiItem.itemsIds.contains(state.value.mediaId)
+        }
+        updateState { copy(playlists = tempPlayList, isLoading = false) }
     }
 
-    override fun onPlaylistSelected(listId: Long) {
+
+    private fun removeUnSelectedList(selectedListsIds: List<Int>, listId: Int) {
+        val updated = selectedListsIds.toMutableList().apply { remove(listId) }
         updateState {
             copy(
-                selectedListId = listId,
-                isAddButtonEnabled = true
+                selectedListsIds = updated,
+                isAddButtonEnabled = updated.isNotEmpty()
             )
         }
+    }
+
+    private fun addSelectedList(selectedListsIds: List<Int>, listId: Int) {
+        val updated = selectedListsIds.toMutableList().apply { add(listId) }
+        updateState {
+            copy(
+                selectedListsIds = updated,
+                isAddButtonEnabled = updated.isNotEmpty()
+            )
+        }
+
+    }
+
+    private suspend fun addMovieToSavedList(
+        selectedListId: Int,
+        mediaId: Int
+    ){
+        manageSavedListItemsUseCase.addMovieToSavedList(
+            listId = selectedListId,
+            movieId = mediaId
+        )
+    }
+
+    private fun onErrorAccrue(){
+        updateState {
+            copy(
+                isLoading = false,
+                isUploading = false,
+                snackBarData = SnackData(
+                    message = stringProvider.addToListFailed,
+                    isError = true
+                ),
+                selectedListsIds = mutableListOf(),
+                mediaId = null
+            )
+        }
+        emitEffect(SaveToListEffect.DismissBottomSheet)
+    }
+
+    override fun onPlaylistClick(listId: Int) {
+        if (state.value.isLoading || state.value.isUploading) return
+        val targetPlaylist = state.value.playlists.find { it.id == listId }
+        if (targetPlaylist?.containsMediaItem == true) return
+
+        val selectedListsIds = state.value.selectedListsIds
+        if (listId in selectedListsIds) {
+            removeUnSelectedList(selectedListsIds, listId)
+        } else {
+            addSelectedList(selectedListsIds, listId)
+        }
+    }
+
+    override fun onAddClick() {
+        val selectedListsIds: MutableList<Int> = state.value.selectedListsIds
+        if (selectedListsIds.isEmpty()) return
+        updateState { copy(isUploading = true, isAddButtonEnabled = false) }
+        tryToExecute(
+            block = {
+                selectedListsIds.forEach { listId ->
+                    addMovieToSavedList(listId, state.value.mediaId!!)
+                }
+                updateState {
+                    copy(
+                        isUploading = false,
+                        isLoading = false,
+                        isAddButtonEnabled = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.addToListSuccess,
+                            isError = false,
+                        ),
+                        selectedListsIds = mutableListOf(),
+                        mediaId = null
+                    )
+                }
+                emitEffect(SaveToListEffect.DismissBottomSheet)
+            },
+            onError = { onErrorAccrue() }
+        )
     }
 
     override fun onSnackBarDismiss() {
-        updateState { copy(snackBarData = null) }
+        updateState {
+            copy(snackBarData = null)
+        }
     }
 
-    override fun onAddClicked(mediaId: Long) {
-        val selectedListId = state.value.selectedListId ?: return
-        if (!state.value.isAddButtonEnabled) return
 
-        updateState { copy(isLoading = true) }
 
-        tryToExecute(
-            block = addMovieToSavedList(selectedListId, mediaId),
-            onSuccess = onAddMovieToSavedListSuccess(mediaId),
-            onError = ::onErrorAccrue
-        )
+    override fun onCreateNewListClick() {
+        emitEffect(SaveToListEffect.CreateNewList)
     }
 
-    private fun addMovieToSavedList(
-        selectedListId: Long,
-        mediaId: Long,
-    ): suspend () -> Boolean = {
-        manageSavedListItemsUseCase.addMovieToSavedList(
-            listId = selectedListId.toInt(),
-            movieId = mediaId.toInt()
-        )
-    }
-
-    private fun onAddMovieToSavedListSuccess(mediaId: Long): (Boolean) -> Unit = {
+    override fun onRequestBottomSheetDismiss() {
         updateState {
             copy(
+                mediaId = null,
+                selectedListsIds = mutableListOf(),
+                isUploading = false,
                 isLoading = false,
-                snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false)
-            )
-        }
-        listsStatusProvider.markItemSaved(mediaId.toInt())
-        viewModelScope.launch {
-            listsStatusProvider.refreshLists()
-        }
-        emitEffect(SaveToListEffect.Dismiss)
-    }
-
-    private fun onErrorAccrue(exception: NovixAppException) {
-        updateState {
-            copy(
-                isLoading = false,
-                snackBarData = SnackData(message = stringProvider.addToListFailed, isError = true)
+                isAddButtonEnabled = false,
             )
         }
     }

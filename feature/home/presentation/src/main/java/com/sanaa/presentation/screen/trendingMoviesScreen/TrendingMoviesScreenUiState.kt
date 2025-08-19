@@ -3,12 +3,12 @@ package com.sanaa.presentation.screen.trendingMoviesScreen
 import androidx.paging.PagingData
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-data class TrendingMoviesScreenUiState(
-    val mediaList: Flow<PagingData<MediaItem>> = flowOf(PagingData.empty()),
+data class TrendingMoviesScreenUiState (
+    val mediaList: Flow<PagingData<MediaItemUiState>> = flowOf(PagingData.empty()),
     val genreList: List<GenreUiState> = emptyList(),
     val selectedGenreId: Int? = null,
     val isLoading: Boolean = false,

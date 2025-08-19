@@ -1,10 +1,7 @@
 package com.sanaa.presentation.screen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -18,9 +15,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.SearchNavigatorApi
 import com.sanaa.api.StartRoute
-import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
@@ -53,7 +50,7 @@ fun SearchScreen(
     val tvShowsPagingData = state.tvShows.collectAsLazyPagingItems()
     val actorsPagingData = state.actors.collectAsLazyPagingItems()
 
-    EffectHandler(viewModel.effect,navigator)
+    EffectHandler(viewModel.effect, navigator)
 
     CompositionLocalProvider(
         LocalThemeProvider provides state.isDarkMode,
@@ -77,25 +74,20 @@ private fun SearchScreenContent(
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
 ) {
-    NovixScaffold (
+    NovixScaffold(
         topBar = {
             TopBar(
-                modifier = Modifier.statusBarsPadding(), screenTitle = stringResource(R.string.search)
+                modifier = Modifier.statusBarsPadding(),
+                screenTitle = stringResource(R.string.search)
             )
         },
         snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                NovixAnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionsListener::onSnackBarDismiss
-                )
-            }
-
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionsListener::onSnackBarDismiss
+            )
         }
-    ){
+    ) {
         Column {
             SearchSection(
                 text = state.searchQuery,
@@ -120,30 +112,24 @@ private fun SearchScreenContent(
                     )
                 }
             }
-            state.selectedMediaToSave?.let { mediaItem ->
-                SaveToListBottomSheet(
-                    isVisible = state.showSaveToListBottomSheet,
-                    mediaId = mediaItem.id.toLong(),
-                    onDismiss = {},
-                    onCreateNewListClick = {},
-                )
-            }
-            AddBookmarkListBottomSheet(
-                isVisible = state.showAddListBottomSheet,
-                interactionsListener = interactionsListener,
-                mediaId = state.selectedMediaToSave?.id ?: 0
-            )
-            RequestToLoginBottomSheet(
-                interactionsListener = interactionsListener,
-                isVisible = state.showLoginBottomSheet,
-            )
         }
     }
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0,
+        onDismiss = interactionsListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionsListener::onCreateNewListClick,
+    )
 
-
-
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        interactionsListener = interactionsListener,
+    )
+    RequestToLoginBottomSheet(
+        interactionsListener = interactionsListener,
+        isVisible = state.showLoginBottomSheet,
+    )
 }
-
 
 
 @Composable
@@ -153,8 +139,6 @@ fun EffectHandler(effect: Flow<SearchScreenEffects>, navigator: SearchNavigatorA
         context,
         SearchApiEntryPoint::class.java
     ).authenticationApi()
-
-    val launcher = launchAuthActivityForResult()
 
 
     LaunchedEffect(Unit) {
@@ -182,7 +166,7 @@ fun EffectHandler(effect: Flow<SearchScreenEffects>, navigator: SearchNavigatorA
                     )
 
                 SearchScreenEffects.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }

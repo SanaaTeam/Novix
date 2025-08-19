@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,39 +25,40 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.animation.FadeSlideInVertically
 import com.sanaa.designsystem.design_system.component.animation.FadeSlideOutVertically
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
+import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.GenreMovieScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateBack
-import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToActorScreen
-import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToAnotherMovieDetails
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToLogin
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToMovieCategoriesScreen
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToReviewsScreen
 import com.sanaa.presentation.screen.movieDetails.components.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsGridContent
-import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsTopBar
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
@@ -64,10 +66,11 @@ import com.sanaa.presentation.util.DateTimeUtils.getCurrentLocale
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import com.sanaa.designsystem.R as dR
 
 @Composable
 fun MovieDetailsScreen(
-    viewModel: MovieDetailsViewModel = hiltViewModel()
+    viewModel: MovieDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -93,8 +96,6 @@ private fun MovieDetailsEffectsHandler(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult()
-
     LaunchedEffect(Unit) {
         effects.collectLatest { effect ->
             when (effect) {
@@ -113,30 +114,31 @@ private fun MovieDetailsEffectsHandler(
 
                 is NavigateToReviewsScreen -> {
                     currentNavController.navigate(
-                        ReviewsScreenRoute(effect.movieId, MediaTypeParam.MOVIE).route()
+                        ReviewsScreenRoute(effect.movieId, MediaTypeUiModel.MOVIE)
                     )
                 }
 
-                is NavigateToAnotherMovieDetails -> {
-                    currentNavController.navigate(MovieDetailsScreenRoute(effect.movieId).route())
+                is MovieDetailsUiEffect.NavigateToAnotherMovieDetails -> {
+                    currentNavController.navigate(MovieDetailsScreenRoute(effect.movieId))
                 }
 
-                is NavigateToActorScreen -> {
-                    currentNavController.navigate(ActorScreenRoute(effect.actorId).route())
+                is MovieDetailsUiEffect.NavigateToActorScreen -> {
+                    currentNavController.navigate(ActorScreenRoute(effect.actorId))
                 }
 
                 is NavigateToMovieCategoriesScreen -> {
                     currentNavController.navigate(
-                        GenreMovieScreenRoute(effect.categoryId, effect.categoryName).route()
+                        GenreMovieScreenRoute(effect.categoryId, effect.categoryName)
                     )
                 }
 
-                NavigateToLogin -> { launcher.launch(authApi.getLaunchIntent(context)) }
+                NavigateToLogin -> {
+                    authApi.launch(context, AuthStartRoute.Login)
+                }
             }
         }
     }
 }
-
 
 @Composable
 private fun MovieDetailsScreenContent(
@@ -169,15 +171,10 @@ private fun MovieDetailsScreenContent(
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
         snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                AnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionListener::onSnackDismissRequested
-                )
-            }
+            AnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackDismissRequested
+            )
         },
     ) {
         Box(
@@ -185,24 +182,33 @@ private fun MovieDetailsScreenContent(
                 .navigationBarsPadding()
                 .fillMaxSize()
         ) {
-            MovieDetailsTopBar(
-                interactionListener = interactionListener,
-                movie = state.movieDetails,
-                modifier = Modifier.background(color = animatedColor)
+            TopBar(
+                leftContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(dR.drawable.icon_back),
+                        onClick = interactionListener::onBackClick
+                    )
+                },
+                rightContent = {
+                    TopBarClickableIcon(
+                        isClickable = state.isError.not(),
+                        icon = painterResource(dR.drawable.icon_save),
+                        onClick = { interactionListener.onBookmarkClick(state.movieDetails) }
+                    )
+                },
+                modifier = Modifier
+                    .background(animatedColor)
+                    .statusBarsPadding()
+                    .zIndex(10f)
             )
+
             AnimatedContent(
-                targetState = state.isLoading || state.noInternetConnection,
+                targetState = Pair(state.isLoading, state.noInternetConnection),
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) {
-                if (it) {
-                    if (state.noInternetConnection) {
-                        NetworkDisconnectionContact(
-                            onRetryClick = { interactionListener.onRetryLoadDetails() },
-                            modifier = Modifier.fillMaxSize(),
-                            useDarkTheme = LocalThemeProvider.current
-                        )
-                    } else {
+            ) { (isLoading, noInternetConnection) ->
+                when {
+                    isLoading -> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
@@ -210,27 +216,54 @@ private fun MovieDetailsScreenContent(
                             LoadingIndicator()
                         }
                     }
-                } else {
-                    MovieDetailsGridContent(
-                        state = state,
-                        pagedSimilarMovies = pagedSimilarMovies,
-                        locale = locale,
-                        interactionListener = interactionListener,
-                        lazyState = lazyState,
-                    )
+
+                    noInternetConnection -> {
+                        NetworkDisconnectionContact(
+                            onRetryClick = { interactionListener.onRetryLoadDetails() },
+                            modifier = Modifier.fillMaxSize(),
+                            useDarkTheme = LocalThemeProvider.current
+                        )
+                    }
+
+                    else -> {
+                        MovieDetailsGridContent(
+                            state = state,
+                            pagedSimilarMovies = pagedSimilarMovies,
+                            locale = locale,
+                            interactionListener = interactionListener,
+                            lazyState = lazyState,
+                        )
+                    }
                 }
             }
-            BottomContainer(
-                onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },
-                trailerUrl = state.movieDetails.trailerUrl,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .navigationBarsPadding(),
-                onSetRateClicked = { interactionListener.onRateMovieClick() }
-            )
+
+            AnimatedVisibility(
+                !state.isLoading,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                enter = FadeSlideInVertically,
+                exit = FadeSlideOutVertically
+            ) {
+                BottomContainer(
+                    onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },
+                    trailerUrl = state.movieDetails.trailerUrl,
+                    modifier = Modifier
+                        .navigationBarsPadding(),
+                    isRateButtonEnabled = state.isError.not(),
+                    onSetRateClicked = { interactionListener.onRateMovieClick() },
+                    isRateButtonVisible = state.showRateButton
+                )
+            }
         }
     }
 
+    MovieDetailsBottomSheets(state, interactionListener)
+}
+
+@Composable
+private fun MovieDetailsBottomSheets(
+    state: MovieDetailsUiState,
+    interactionListener: MovieDetailsScreenInteractionListener,
+) {
     AnimatedVisibility(
         visible = state.showSaveToListBottomSheet,
         enter = FadeSlideInVertically,
@@ -238,7 +271,7 @@ private fun MovieDetailsScreenContent(
     ) {
         SaveToListBottomSheet(
             isVisible = state.showSaveToListBottomSheet,
-            mediaId = state.selectedMediaId?.toLong() ?: 0,
+            mediaId = state.selectedMediaId ?: 0,
             onDismiss = interactionListener::onDismissSaveToListBottomSheet,
             onCreateNewListClick = interactionListener::onCreateNewListClick,
         )
@@ -252,7 +285,6 @@ private fun MovieDetailsScreenContent(
         AddBookmarkListBottomSheet(
             isVisible = true,
             onDismiss = interactionListener::onDismissAddListBottomSheet,
-            mediaId = state.selectedMediaId ?: 0
         )
     }
 
@@ -287,6 +319,7 @@ private fun MovieDetailsScreenContent(
             LoginPromptType.BOOKMARK -> stringResource(R.string.request_login)
             else -> stringResource(R.string.request_login)
         }
+
         RequestToLoginBottomSheet(
             onDismiss = { interactionListener.onDismissLoginBottomSheet() },
             isVisible = true,

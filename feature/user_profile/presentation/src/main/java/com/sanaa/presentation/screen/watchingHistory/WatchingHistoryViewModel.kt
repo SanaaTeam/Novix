@@ -14,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -30,7 +29,6 @@ class WatchingHistoryViewModel @Inject constructor(
     private val manageTvShowUseCase: ManageTvShowUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<WatchingHistoryUiState, WatchingHistoryScreenEffect>(
     WatchingHistoryUiState(),
     dispatcher
@@ -54,7 +52,7 @@ class WatchingHistoryViewModel @Inject constructor(
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
             block = { loadWatchedHistoryTvShows(genreId) },
-            onCollect = ::onCollectMovies,
+            onCollect = ::onCollectTvShows,
             onError = ::onLoadDataError
         )
     }
@@ -67,7 +65,14 @@ class WatchingHistoryViewModel @Inject constructor(
             )
         }
     }
-
+    private fun onCollectTvShows(mediaList: List<MediaHistoryItem>) {
+        updateState {
+            copy(
+                tvShowList = mediaList.map { it.toMediaItemUiModel() },
+                isLoading = false
+            )
+        }
+    }
     private fun fetchMovieGenres() {
         tryToExecute(
             block = {
@@ -112,16 +117,11 @@ class WatchingHistoryViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(mediaItem: MediaItemUiModel) {
-        if (mediaItem.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(mediaItem.id)
-            emitEffect(WatchingHistoryScreenEffect.ShowSuccessSnackBar(stringProvider.addToListSuccess))
-        } else {
-            updateState {
-                copy(
-                    showSaveToListBottomSheet = true,
-                    selectedMediaToSave = mediaItem
-                )
-            }
+        updateState {
+            copy(
+                showSaveToListBottomSheet = true,
+                selectedMediaToSave = mediaItem
+            )
         }
     }
 

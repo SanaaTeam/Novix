@@ -1,16 +1,23 @@
 package com.sanaa.presentation.api
 
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.navigation.AuthNavHost
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -18,17 +25,18 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthenticationApiImpl @Inject constructor() : AuthenticationApi {
-    override fun getLaunchIntent(context: Context, startRoute: AuthStartRoute): Intent {
-        return Intent(context, AuthActivity::class.java).apply {
-            putExtra(AuthActivity.EXTRA_START_ROUTE, startRoute.name)
-        }
+    override fun launch(context: Context, startRoute: AuthStartRoute) {
+        val intent = AuthActivity.createIntent(context, startRoute)
+        context.startActivity(
+            intent,
+            ActivityOptions.makeSceneTransitionAnimation(context as? AppCompatActivity).toBundle()
+        )
     }
 }
 
 
 @AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
-
     private val viewModel: AuthenticationViewModel by viewModels()
 
 
@@ -40,25 +48,34 @@ class AuthActivity : AppCompatActivity() {
             intent.getStringExtra(EXTRA_START_ROUTE)?.let { AuthStartRoute.valueOf(it) }
 
         setContent {
+            val view = LocalView.current
+            val activity = view.context as? ComponentActivity
+
             val state = viewModel.state.collectAsStateWithLifecycle()
             NovixTheme(isDarkMode = state.value.isDarkTheme) {
-                AuthNavHost(
-                    startRoute = startRoute ?: AuthStartRoute.Welcome,
-                    onAuthResult = { code: Int ->
-                        finishWithResultCode(code)
+                val navColor = Theme.colors.surface
+                LaunchedEffect(state.value.isDarkTheme) {
+                    activity?.window?.also { window ->
+                        WindowInsetsControllerCompat(window, view).apply {
+                            window.navigationBarColor = navColor.toArgb()
+                            isAppearanceLightStatusBars = !state.value.isDarkTheme
+                            isAppearanceLightNavigationBars = !state.value.isDarkTheme
+                        }
                     }
-                )
+                }
+
+                AuthNavHost(startRoute = startRoute ?: AuthStartRoute.Welcome)
             }
         }
     }
 
 
-    fun finishWithResultCode(code: Int) {
-        setResult(code)
-        finish()
-    }
-
     internal companion object {
         const val EXTRA_START_ROUTE = "extra_start_route"
+        fun createIntent(context: Context, startRoute: AuthStartRoute): Intent {
+            return Intent(context, AuthActivity::class.java).apply {
+                putExtra(EXTRA_START_ROUTE, startRoute.name)
+            }
+        }
     }
 }

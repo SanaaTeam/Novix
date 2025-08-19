@@ -1,53 +1,49 @@
 package com.sanaa.presentation.screen.login
 
-import android.app.Activity.RESULT_CANCELED
-import android.util.Log
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.api.AuthenticationApi.Companion.RESULT_LOGGED_WITH_SESSION_ID
-import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.feature.authentication.presentation.R
 import com.sanaa.presentation.navigation.ForgetPasswordRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SignUpRoute
 import com.sanaa.presentation.screen.login.components.LoginActions
 import com.sanaa.presentation.screen.login.components.LoginHeader
-import com.sanaa.presentation.screen.login.components.LoginTopBar
 import com.sanaa.presentation.screen.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.screen.login.components.PasswordField
 import com.sanaa.presentation.screen.login.components.SignupFooter
 import com.sanaa.presentation.screen.login.components.UsernameField
+import com.sanaa.designsystem.R as designSystemR
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier,
-    onFinish: (Int) -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     BackHandler(onBack = viewModel::onBackClicked)
 
@@ -58,11 +54,11 @@ fun LoginScreen(
                     val previousAuthScreen = navController.previousBackStackEntry
                     previousAuthScreen?.let {
                         navController.popBackStack()
-                    }?:onFinish(RESULT_CANCELED)
+                    } ?: (navController.context as? Activity)?.finish()
                 }
 
                 LoginScreenEffects.ReturnLoggedInResultCode -> {
-                    onFinish(RESULT_LOGGED_WITH_SESSION_ID)
+                    (navController.context as? Activity)?.finish()
                 }
 
                 LoginScreenEffects.NavigateToForgotPassword -> {
@@ -72,57 +68,54 @@ fun LoginScreen(
                 LoginScreenEffects.NavigateToCreateAccount -> {
                     navController.navigate(SignUpRoute)
                 }
-
-                is LoginScreenEffects.ShowError -> {
-                    snack = SnackData(effect.message, isError = true)
-                }
-
-                is LoginScreenEffects.ShowSuccess -> {
-                    snack = SnackData(effect.message, isError = false)
-                }
             }
         }
     }
 
-    Box(modifier = modifier) {
-        LoginContent(
-            state = uiState,
-            listener = viewModel,
-        )
-
-        NovixAnimatedSnackBarHost(
-            data = snack,
-            onDismiss = { snack = null }
-        )
-    }
+    LoginContent(
+        state = uiState,
+        listener = viewModel,
+    )
 }
 
 @Composable
-fun LoginContent(
+private fun LoginContent(
     state: LoginUiState,
     listener: LoginScreenInteractionListener,
-    modifier: Modifier = Modifier,
 ) {
     NovixScaffold(
-        backgroundShapes = { BackgroundShapes() },
-        topBar = { LoginTopBar(onBackClick = listener::onBackClicked) }
+        topBar = {
+            TopBar(
+                leftContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(id = designSystemR.drawable.icon_back),
+                        onClick = listener::onBackClicked
+                    )
+                },
+                screenTitle = stringResource(R.string.login),
+                modifier = Modifier.statusBarsPadding()
+            )
+        },
+        snackBarHost = {
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = listener::onSnackBarDismiss
+            )
+        },
+        modifier = Modifier.navigationBarsPadding()
     ) {
-        Box(
-            modifier = modifier
+        Column(
+            modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(
                     rememberScrollState()
                 )
-        )
-        Column(
-            modifier = Modifier
         ) {
             LoginHeader()
 
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .navigationBarsPadding(),
+                    .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Spacer(Modifier.height(24.dp))
@@ -174,8 +167,8 @@ fun PreviewLoginScreen() {
                 override fun onForgotPasswordClicked() {}
                 override fun onCreateAccountClicked() {}
                 override fun onBackClicked() {}
+                override fun onSnackBarDismiss() {}
             },
-            modifier = Modifier.fillMaxSize()
         )
     }
 }

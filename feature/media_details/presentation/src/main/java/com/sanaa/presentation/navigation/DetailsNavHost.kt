@@ -9,32 +9,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.api.LocalThemeProvider
-import com.sanaa.presentation.screen.actor.ActorViewModel
-import com.sanaa.presentation.screen.actor.screen.ActorGalleryScreen
 import com.sanaa.presentation.screen.actor.screen.ActorScreen
-import com.sanaa.presentation.screen.actor.screen.TopMoviesScreen
-import com.sanaa.presentation.screen.actor.screen.TopShowsScreen
+import com.sanaa.presentation.screen.actorGallery.ActorGalleryScreen
 import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreen
-import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreenViewModel
 import com.sanaa.presentation.screen.genreMovies.GenreMoviesScreen
-import com.sanaa.presentation.screen.genreMovies.GenreMoviesViewModel
 import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsScreen
-import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsViewModel
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsScreen
-import com.sanaa.presentation.screen.movieDetails.MovieDetailsViewModel
-import com.sanaa.presentation.screen.review.ReviewScreenViewModel
 import com.sanaa.presentation.screen.review.ReviewsScreen
+import com.sanaa.presentation.screen.topMoviesScreen.TopMoviesScreen
+import com.sanaa.presentation.screen.topShowsScreen.TopTvShowsScreen
 import com.sanaa.presentation.screen.tvShow.TvShowScreen
-import com.sanaa.presentation.screen.tvShow.TvShowScreenViewModel
 
 @Composable
 fun DetailsNavHost(
@@ -46,22 +36,21 @@ fun DetailsNavHost(
 ) {
     val initialRoute = when {
         startRoute != null && mediaId != null -> when (startRoute) {
-            StartRoute.TV_SHOW -> TvShowDetailsScreenRoute(mediaId).route()
-            StartRoute.MOVIE -> MovieDetailsScreenRoute(mediaId).route()
-            StartRoute.ACTOR -> ActorScreenRoute(mediaId).route()
+            StartRoute.TV_SHOW -> TvShowScreenRoute(mediaId)
+            StartRoute.MOVIE -> MovieDetailsScreenRoute(mediaId)
+            StartRoute.ACTOR -> ActorScreenRoute(mediaId)
         }
 
         else -> {
             if (isTvGenre) {
-                GenreTvShowsScreenRoute(genreId!!, genreName!!).route()
+                GenreTvShowsScreenRoute(genreId!!, genreName!!)
             } else {
-                GenreMovieScreenRoute(genreId!!, genreName!!).route()
+                GenreMovieScreenRoute(genreId!!, genreName!!)
             }
         }
     }
     val navController = rememberNavController()
 
-    /**/
     val navColor = Theme.colors.surface
     val isDarkTheme = LocalThemeProvider.current
     val view = LocalView.current
@@ -85,135 +74,46 @@ fun DetailsNavHost(
             startDestination = initialRoute,
             modifier = Modifier.background(Theme.colors.surface)
         ) {
-
-            // ──── TvShows ───────────────────────────────────────────────────────────
-            composable(
-                route = TvShowDetailsScreenRoute.PATTERN,
-                arguments = listOf(
-                    navArgument(TvShowDetailsScreenRoute.ARG_TV_SHOW_ID) {
-                        type = NavType.IntType
-                    }
-                )
-            ) {
-                val tvShowScreenViewModel: TvShowScreenViewModel = hiltViewModel()
-                TvShowScreen(viewModel = tvShowScreenViewModel)
+            composable<TvShowScreenRoute> {
+                TvShowScreen()
             }
 
-            // ──── Episodes ─────────────────────────────────────────────────────────
-            composable(
-                route = EpisodeDetailsScreenRoute.PATTERN,
-                arguments = listOf(
-                    navArgument(EpisodeDetailsScreenRoute.ARG_TH_SHOW_ID) {
-                        type = NavType.IntType
-                    },
-                    navArgument(EpisodeDetailsScreenRoute.ARG_SEASON_NUMBER) {
-                        type = NavType.IntType
-                    },
-                    navArgument(EpisodeDetailsScreenRoute.ARG_EPISODE_NUMBER) {
-                        type = NavType.IntType
-                    }
-                )
-            ) {
-                val episodeViewModel: EpisodeDetailsScreenViewModel = hiltViewModel()
-                EpisodeDetailsScreen(viewModel = episodeViewModel)
+            composable<EpisodeDetailsScreenRoute> {
+                EpisodeDetailsScreen()
             }
 
-            // ──── Actors ───────────────────────────────────────────────────────────
-            composable(
-                route = ActorScreenRoute.PATTERN,
-                arguments = listOf(navArgument(ActorScreenRoute.ARG_ACTOR_ID) {
-                    type = NavType.IntType
-                })
-            ) {
-                val actorViewModel: ActorViewModel = hiltViewModel()
-                ActorScreen(viewModel = actorViewModel)
+            composable<ActorScreenRoute> {
+                ActorScreen()
             }
 
-            composable(
-                route = TopMoviesScreenRoute.PATTERN,
-                arguments = listOf(navArgument(TopMoviesScreenRoute.ARG_ACTOR_ID) {
-                    type = NavType.IntType
-                })
-            ) {
-                val actorViewModel: ActorViewModel = hiltViewModel()
-                TopMoviesScreen(viewModel = actorViewModel,)
+            composable<TopMoviesScreenRoute> {
+                TopMoviesScreen()
             }
 
-            composable(
-                route = TopTvShowsScreenRoute.PATTERN,
-                arguments = listOf(navArgument(TopTvShowsScreenRoute.ARG_ACTOR_ID) {
-                    type = NavType.IntType
-                })
-            ) {
-                val actorViewModel: ActorViewModel = hiltViewModel()
-                TopShowsScreen(viewModel = actorViewModel)
+            composable<TopTvShowsScreenRoute> {
+                TopTvShowsScreen()
             }
 
-            composable(
-                route = ActorGalleryScreenRoute.PATTERN,
-                arguments = listOf(navArgument(ActorGalleryScreenRoute.ARG_ACTOR_ID) {
-                    type = NavType.IntType
-                })
-            ) {
-                val actorViewModel: ActorViewModel = hiltViewModel()
+            composable<ActorGalleryScreenRoute> {
                 ActorGalleryScreen(
-                    viewModel = actorViewModel,
                     navigateBack = { navController.popBackStack() }
                 )
             }
 
-            // ──── Reviews ──────────────────────────────────────────────────────────
-            composable(
-                route = ReviewsScreenRoute.PATTERN,
-                arguments = listOf(
-                    navArgument(ReviewsScreenRoute.ARG_MEDIA_ID) { type = NavType.IntType },
-                    navArgument(ReviewsScreenRoute.ARG_MEDIA_TYPE) { type = NavType.StringType }
-                )
-            ) {
-                val reviewScreenViewModel: ReviewScreenViewModel = hiltViewModel()
-                ReviewsScreen(viewModel = reviewScreenViewModel)
+            composable<ReviewsScreenRoute> {
+                ReviewsScreen()
             }
 
-            // ──── Movies ───────────────────────────────────────────────────────────
-            composable(
-                route = MovieDetailsScreenRoute.PATTERN,
-                arguments = listOf(navArgument(MovieDetailsScreenRoute.ARG_MOVIE_ID) {
-                    type = NavType.IntType
-                })
-            ) {
-                val movieDetailsViewModel: MovieDetailsViewModel = hiltViewModel()
-                MovieDetailsScreen(viewModel = movieDetailsViewModel)
+            composable<MovieDetailsScreenRoute> {
+                MovieDetailsScreen()
             }
 
-            // ──── Genre ───────────────────────────────────────────────────────
-            composable(
-                route = GenreMovieScreenRoute.PATTERN,
-                arguments = listOf(
-                    navArgument(GenreMovieScreenRoute.ARG_GENRE_ID) {
-                        type = NavType.IntType
-                    },
-                    navArgument(GenreMovieScreenRoute.ARG_GENRE_NAME) {
-                        type = NavType.StringType
-                    }
-                )
-            ) {
-                val genreMoviesViewModel: GenreMoviesViewModel = hiltViewModel()
-                GenreMoviesScreen(viewModel = genreMoviesViewModel)
+            composable<GenreMovieScreenRoute> {
+                GenreMoviesScreen()
             }
 
-            composable(
-                route = GenreTvShowsScreenRoute.PATTERN,
-                arguments = listOf(
-                    navArgument(GenreTvShowsScreenRoute.ARG_GENRE_ID) {
-                        type = NavType.IntType
-                    },
-                    navArgument(GenreTvShowsScreenRoute.ARG_GENRE_NAME) {
-                        type = NavType.StringType
-                    }
-                )
-            ) {
-                val genreTvShowsViewModel: GenreTvShowsViewModel = hiltViewModel()
-                GenreTvShowsScreen(viewModel = genreTvShowsViewModel)
+            composable<GenreTvShowsScreenRoute> {
+                GenreTvShowsScreen()
             }
         }
     }
