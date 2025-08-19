@@ -419,6 +419,7 @@ class MovieRepositoryImplTest {
         private val sampleMovieDto = MovieDto(id = 1, title = "Fight club")
         private val sampleMovieLocalDto = MovieLocalDto(
             id = 1, title = "Fight club",
+            overview = "overview",
             posterImageUrl = "",
             releaseDate = null,
             imdbRating = 5f

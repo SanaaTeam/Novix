@@ -5,4 +5,5 @@
     <string name="enter_username_password_error">يرجى ادخال الحساب وكلمة السر</string>
     <string name="no_internet_connection_error">لا يوجد اتصال انترنت</string>
     <string name="something_went_wrong_error">حدث خطأ ما، يرجى المحاولة لاحقًا</string>
+    <string name="login_success">تم تسجيل الدخول بنجاح</string>
 </resources>

@@ -16,6 +16,7 @@ fun Movie.toLocalDto(): MovieLocalDto =
         posterImageUrl = posterImageUrl,
         imdbRating = imdbRating,
         releaseDate = releaseDate.toString(),
+        overview = overview,
     )
 
 fun TvShow.toLocalDto(): TvShowLocalDto =
@@ -36,7 +37,7 @@ fun MovieLocalDto.toEntity() = Movie(
     genres = emptyList(),
     duration = (-1).minutes,
     releaseDate = getLocalDateOrDefault(releaseDate),
-    overview = "",
+    overview = overview,
     trailerUrl = "",
     rating = -1,
 )

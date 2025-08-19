@@ -18,7 +18,7 @@ import com.sanaa.designsystem.design_system.component.button.OutlinedButton
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.userprofile.presentation.R
-import com.sanaa.presentation.provider.LocalThemeMode
+import com.sanaa.presentation.profileProvider.LocalThemeMode
 
 @Composable
 fun NotLoggedInStateComponent(

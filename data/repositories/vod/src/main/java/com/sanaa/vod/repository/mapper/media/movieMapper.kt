@@ -14,7 +14,7 @@ fun MovieDto.toEntity(): Movie {
         imdbRating = voteAverage ?: -1f,
         duration = duration?.minutes ?: (-1).minutes,
         releaseDate = getLocalDateOrDefault(releaseDate),
-        overview = overview.toString(),
+        overview = overview.orEmpty(),
         rating = rating?.toInt() ?: -1,
         trailerUrl = "",
     )
