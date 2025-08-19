@@ -18,13 +18,14 @@ import kotlinx.coroutines.delay
 fun NovixAnimatedSnackBarHost(
     data: SnackData?,
     onDismiss: () -> Unit,
-    durationMillis: Long = 2500
+    modifier: Modifier = Modifier,
+    durationMillis: Long = 2500,
 ) {
     AnimatedVisibility(
         visible = data != null,
         enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
         exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(top = 12.dp)
     ) {

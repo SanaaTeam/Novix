@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import kotlin.time.Duration.Companion.minutes
@@ -32,6 +33,7 @@ class GenreMoviesViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: GenreMoviesViewModel
     private lateinit var manageMoviesDetailsUseCase: ManageMovieUseCase
+    private val stringProvider: VodStringProvider= mockk(relaxed = true)
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
 
     @BeforeAll
@@ -65,6 +67,7 @@ class GenreMoviesViewModelTest {
             manageMoviesDetailsUseCase = manageMoviesDetailsUseCase,
             dispatcher = testDispatcher,
             checkIfUserIsLoggedInUseCase = checkIfUserIsLoggedInUseCase,
+            stringProvider = stringProvider
         )
         testDispatcher.scheduler.advanceUntilIdle()
     }

@@ -7,10 +7,7 @@ import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import exceptions.NoNetworkException
 import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -20,6 +17,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import service.VodStringProvider
+import usecase.MangeUserPreferenceUseCase
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
 
@@ -28,6 +26,7 @@ class PlaylistDetailsScreenViewModelTest {
 
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase = mockk(relaxed = true)
     private val manageSavedListsUseCase: ManageSavedListsUseCase = mockk(relaxed = true)
+    private val mangeUserPreferenceUseCase: MangeUserPreferenceUseCase = mockk(relaxed = true)
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private lateinit var viewModel: PlaylistDetailsScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
@@ -137,6 +136,7 @@ class PlaylistDetailsScreenViewModelTest {
             savedStateHandle = savedStateHandle,
             manageSavedListItemsUseCase = manageSavedListItemsUseCase,
             manageSavedListsUseCase= manageSavedListsUseCase,
+            manageUserPreferenceUseCase = mangeUserPreferenceUseCase,
             stringProvider = stringProvider,
             dispatcher = testDispatcher
         )

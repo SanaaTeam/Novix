@@ -173,12 +173,8 @@ class MovieDetailsViewModel @Inject constructor(
     private fun fetchMovieDetails(movieId: Int) {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            block = {
-                loadMovieDetails(movieId)
-            },
-            onSuccess = {
-                updateState { copy(isLoading = false) }
-            },
+            block = { loadMovieDetails(movieId) },
+            onSuccess = { updateState { copy(isLoading = false, isError = false) } },
             onError = ::onFetchMovieDetailsFailed,
             dispatcher = defaultDispatcher
         )
@@ -189,9 +185,13 @@ class MovieDetailsViewModel @Inject constructor(
             is NoNetworkException -> {
                 updateState {
                     copy(
-                        noInternetConnection = true,
                         isLoading = false,
+                        noInternetConnection = true,
                         isError = true,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true,
+                        )
                     )
                 }
             }
@@ -200,8 +200,12 @@ class MovieDetailsViewModel @Inject constructor(
                 updateState {
                     copy(
                         isLoading = false,
-                        isError = true,
                         noInternetConnection = false,
+                        isError = true,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
                     )
                 }
             }

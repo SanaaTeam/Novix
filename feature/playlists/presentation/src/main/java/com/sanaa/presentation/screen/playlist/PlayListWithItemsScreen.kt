@@ -23,7 +23,6 @@ import com.sanaa.presentation.screen.playlist.componants.MyListItem
 fun PlayListWithItemsScreen(
     lists: List<PlayListUiModel>,
     interactionListener: PlayListItemsInteractionListener,
-    isUserLoggedIn: Boolean,
     isVisible: Boolean = false,
 ) {
     NovixScaffold(
@@ -64,11 +63,9 @@ fun PlayListWithItemsScreen(
             }
         }
 
-        if (isUserLoggedIn) {
-            AddBookmarkListBottomSheet(
-                isVisible = isVisible,
-                onDismiss = interactionListener::onDismissAddBottomSheet,
-            )
-        }
     }
+    AddBookmarkListBottomSheet(
+        isVisible = isVisible,
+        onDismiss = interactionListener::onDismissAddBottomSheet,
+    )
 }

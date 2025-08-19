@@ -70,20 +70,31 @@ class MyRatingScreenViewModel @Inject constructor(
     }
 
     private fun onDataLoadError(e: Throwable) {
-        if (e is NoNetworkException) {
-            updateState {
-                copy(
-                    isNoInternetConnection = true,
-                    isLoading = false,
-                    error = null
-                )
+        when (e) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        isNoInternetConnection = true,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true,
+                        )
+                    )
+                }
             }
-        } else {
-            updateState {
-                copy(
-                    isLoading = false,
-                    error = e.message
-                )
+
+            else -> {
+                updateState {
+                    copy(
+                        isNoInternetConnection = false,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
             }
         }
     }
@@ -133,7 +144,6 @@ class MyRatingScreenViewModel @Inject constructor(
         updateState {
             copy(
                 isLoading = true,
-                error = null,
                 isNoInternetConnection = false
             )
         }

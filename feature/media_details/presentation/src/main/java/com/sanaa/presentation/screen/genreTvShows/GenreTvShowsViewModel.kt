@@ -8,6 +8,7 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.TvShowUiState
 import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
+import com.sanaa.presentation.screen.movieDetails.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvShow
 import exceptions.NoNetworkException
@@ -15,6 +16,7 @@ import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageTvShowUseCase
 import javax.inject.Inject
@@ -24,6 +26,7 @@ class GenreTvShowsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageTvShowUseCase: ManageTvShowUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<GenreTvShowsScreenUiState, GenreTvShowsEffects>(
     initialState = GenreTvShowsScreenUiState(),
@@ -65,7 +68,6 @@ class GenreTvShowsViewModel @Inject constructor(
             copy(
                 noInternetConnection = false,
                 isLoading = true,
-                error = null
             )
         }
         getTvShowsByGenreId(route.genreId)
@@ -88,6 +90,10 @@ class GenreTvShowsViewModel @Inject constructor(
         emitEffect(GenreTvShowsEffects.NavigateToTvShowDetails(id))
     }
 
+    override fun onSnackDismissRequested() {
+        updateState { copy(snackBarData = null) }
+    }
+
     private fun getTvShowsByGenreId(genreId: Int) {
         tryToCollect(
             block = { loadTvShowsByGenreId(genreId) },
@@ -108,11 +114,30 @@ class GenreTvShowsViewModel @Inject constructor(
 
     private fun onGetShowsByGeneraIdFailed(exception: NovixAppException) {
         when (exception) {
-            is NoNetworkException -> updateState {
-                copy(noInternetConnection = true, isLoading = false, error = null)
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        noInternetConnection = true,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true,
+                        )
+                    )
+                }
             }
-            else -> updateState {
-                copy(error = exception.message, isLoading = false)
+
+            else -> {
+                updateState {
+                    copy(
+                        noInternetConnection = false,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
             }
         }
     }

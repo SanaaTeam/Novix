@@ -16,4 +16,5 @@ interface ActorsScreenInteractionListener {
     fun onDismissSaveToListBottomSheet()
     fun onCreateNewListClick()
     fun onDismissAddListBottomSheet()
+    fun onSnackBarDismiss()
 }

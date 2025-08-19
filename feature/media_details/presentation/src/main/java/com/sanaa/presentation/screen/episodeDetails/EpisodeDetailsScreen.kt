@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -43,12 +44,10 @@ import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.episodeDetails.components.GuestsOfHonorComponent
-import com.sanaa.presentation.screen.movieDetails.LoginPromptType
-import com.sanaa.presentation.screen.movieDetails.components.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.tvShow.components.TvShowHeaderSection
 import com.sanaa.presentation.shared_component.BottomContainer
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
-import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designR
@@ -106,15 +105,11 @@ private fun EpisodeDetailsScreenContent(
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
         snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                AnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionListener::onSnackDismissRequested
-                )
-            }
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackDismissRequested,
+                modifier = Modifier.statusBarsPadding()
+            )
         },
     ) {
         Box(
@@ -129,11 +124,6 @@ private fun EpisodeDetailsScreenContent(
                         onClick = interactionListener::onBackClick
 
                     )
-                }, rightContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(R.drawable.icon_save), onClick = {
-                            interactionListener.onSavedClick(state.tvShowId)
-                        })
                 }, modifier = Modifier
                     .background(animatedColor)
                     .systemBarsPadding()
@@ -218,27 +208,6 @@ private fun EpisodeDetailsScreenContent(
                 onPlayTrailerClicked = interactionListener::onPlayTrailerClick,
                 isRateButtonVisible = false
             )
-
-            if (state.showLoginBottomSheet) {
-                val title = when (state.loginPromptType) {
-                    LoginPromptType.RATE -> stringResource(R.string.rate_it)
-                    LoginPromptType.BOOKMARK -> stringResource(R.string.add_to_list)
-                    else -> stringResource(R.string.add_to_list)
-                }
-
-                val text = when (state.loginPromptType) {
-                    LoginPromptType.RATE -> stringResource(R.string.please_login_to_rate_your_favorite_items)
-                    LoginPromptType.BOOKMARK -> stringResource(R.string.request_login)
-                    else -> stringResource(R.string.request_login)
-                }
-                RequestToLoginBottomSheet(
-                    isVisible = true,
-                    onDismiss = interactionListener::onDismissBottomSheet,
-                    onLoginButtonClick = { interactionListener.onLoginButtonClick() },
-                    text = text,
-                    title = title
-                )
-            }
         }
     }
 }

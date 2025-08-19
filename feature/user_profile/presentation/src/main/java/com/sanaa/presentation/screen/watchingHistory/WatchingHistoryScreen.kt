@@ -32,8 +32,6 @@ import com.sanaa.presentation.screen.bottomsheet.saveToBottomSheet.SaveToListBot
 import com.sanaa.presentation.screen.myRating.MediaTypeUi
 import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreenEffect.NavigateBack
 import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreenEffect.NavigateToMediaDetails
-import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreenEffect.ShowErrorSnackBar
-import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreenEffect.ShowSuccessSnackBar
 import com.sanaa.presentation.screen.watchingHistory.component.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.watchingHistory.component.FilterTab
 import com.sanaa.presentation.screen.watchingHistory.component.GridSection
@@ -86,9 +84,6 @@ private fun WatchingHistoryScreenEffectsHandler(
                         MediaTypeUi.TV_SHOW -> StartRoute.TV_SHOW
                     }
                 )
-
-                is ShowErrorSnackBar -> interactionListener.onShowErrorSnackBar(effect.message)
-                is ShowSuccessSnackBar -> interactionListener.onShowSuccessSnackBar(effect.message)
             }
         }
     }
@@ -124,7 +119,8 @@ private fun WatchingHistoryScreenContent(
                 data = state.snackBarData,
                 onDismiss = interactionListener::onDismissSnack
             )
-        }) {
+        }
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

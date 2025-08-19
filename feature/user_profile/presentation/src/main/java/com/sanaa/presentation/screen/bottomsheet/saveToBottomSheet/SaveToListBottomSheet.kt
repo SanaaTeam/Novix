@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -82,85 +83,85 @@ private fun SaveToListBottomSheetContent(
     interactionListener: SaveToListInteractionsListener,
     modifier: Modifier = Modifier,
 ) {
-    BaseBottomSheet(
-        isVisible = isVisible,
-        onDismiss = {
-            interactionListener.onRequestBottomSheetDismiss()
-            onDismiss()
-        },
-    ) {
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            TopBar(
-                screenTitle = stringResource(R.string.save_to_list),
-                rightContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_cancel),
-                        onClick = {
-                            interactionListener.onRequestBottomSheetDismiss()
-                            onDismiss()
-                        }
-                    )
-                }
-            )
-            if (state.isLoading && state.playlists.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .height(200.dp)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    WavyProgressIndicator()
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .heightIn(max = 350.dp)
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(state.playlists, key = { it.id }) { playlist ->
-                        PlaylistItem(
-                            title = playlist.title,
-                            itemCount = playlist.itemCount,
-                            isSelected = state.selectedListsIds.contains(playlist.id) || playlist.containsMediaItem,
-                            onClick = { interactionListener.onPlaylistClick(playlist.id) }
-                        )
-                    }
-                }
-            }
-
-            PrimaryButton(
-                text = stringResource(R.string.add),
-                onClick = interactionListener::onAddClick,
-                isEnabled = state.isAddButtonEnabled,
-                isLoading = state.isUploading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(48.dp)
-            )
-
-            OutlinedButton(
-                text = stringResource(R.string.create_new_list),
-                onClick = interactionListener::onCreateNewListClick,
-                modifier = Modifier
-                    .padding(top = 12.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            )
-        }
-    }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .statusBarsPadding(),
     ) {
+        BaseBottomSheet(
+            isVisible = isVisible,
+            onDismiss = {
+                interactionListener.onRequestBottomSheetDismiss()
+                onDismiss()
+            },
+        ) {
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                TopBar(
+                    screenTitle = stringResource(R.string.save_to_list),
+                    rightContent = {
+                        TopBarClickableIcon(
+                            icon = painterResource(id = R.drawable.icon_cancel),
+                            onClick = {
+                                interactionListener.onRequestBottomSheetDismiss()
+                                onDismiss()
+                            }
+                        )
+                    }
+                )
+                if (state.isLoading && state.playlists.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .height(200.dp)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        WavyProgressIndicator()
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .heightIn(max = 350.dp)
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(state.playlists, key = { it.id }) { playlist ->
+                            PlaylistItem(
+                                title = playlist.title,
+                                itemCount = playlist.itemCount,
+                                isSelected = state.selectedListsIds.contains(playlist.id) || playlist.containsMediaItem,
+                                onClick = { interactionListener.onPlaylistClick(playlist.id) }
+                            )
+                        }
+                    }
+                }
+
+                PrimaryButton(
+                    text = stringResource(R.string.add),
+                    onClick = interactionListener::onAddClick,
+                    isEnabled = state.isAddButtonEnabled,
+                    isLoading = state.isUploading,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .height(48.dp)
+                )
+
+                OutlinedButton(
+                    text = stringResource(R.string.create_new_list),
+                    onClick = interactionListener::onCreateNewListClick,
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
+            }
+        }
+
         NovixAnimatedSnackBarHost(
             data = state.snackBarData,
             onDismiss = interactionListener::onSnackBarDismiss
