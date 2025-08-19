@@ -185,7 +185,6 @@ private fun TopMoviesContent(
                                         },
                                         topLeftContent = {
                                             SaveIconChip(
-                                                isSaved = movie.isSaved,
                                                 onClick = { interactionListener.onSaveClicked(movie) }
                                             )
                                         },

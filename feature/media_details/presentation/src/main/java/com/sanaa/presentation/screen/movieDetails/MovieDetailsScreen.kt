@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,7 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,6 +39,8 @@ import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.api.LocalThemeProvider
@@ -54,7 +59,6 @@ import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateT
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToReviewsScreen
 import com.sanaa.presentation.screen.movieDetails.components.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsGridContent
-import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsTopBar
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
@@ -62,6 +66,7 @@ import com.sanaa.presentation.util.DateTimeUtils.getCurrentLocale
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import com.sanaa.designsystem.R as dR
 
 @Composable
 fun MovieDetailsScreen(
@@ -179,10 +184,24 @@ private fun MovieDetailsScreenContent(
                 .navigationBarsPadding()
                 .fillMaxSize()
         ) {
-            MovieDetailsTopBar(
-                interactionListener = interactionListener,
-                movie = state.movieDetails,
-                modifier = Modifier.background(color = animatedColor)
+            TopBar(
+                leftContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(dR.drawable.icon_back),
+                        onClick = interactionListener::onBackClick
+                    )
+                },
+                rightContent = {
+                    TopBarClickableIcon(
+                        isClickable = state.isError.not(),
+                        icon = painterResource(dR.drawable.icon_save),
+                        onClick = { interactionListener.onBookmarkClick(state.movieDetails) }
+                    )
+                },
+                modifier = Modifier
+                    .background(animatedColor)
+                    .statusBarsPadding()
+                    .zIndex(10f)
             )
 
             AnimatedContent(
@@ -220,14 +239,22 @@ private fun MovieDetailsScreenContent(
                 }
             }
 
-            BottomContainer(
-                onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },
-                trailerUrl = state.movieDetails.trailerUrl,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .navigationBarsPadding(),
-                onSetRateClicked = { interactionListener.onRateMovieClick() }
-            )
+            AnimatedVisibility(
+                !state.isLoading,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                enter = FadeSlideInVertically,
+                exit = FadeSlideOutVertically
+            ) {
+                BottomContainer(
+                    onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },
+                    trailerUrl = state.movieDetails.trailerUrl,
+                    modifier = Modifier
+                        .navigationBarsPadding(),
+                    isRateButtonEnabled = state.isError.not(),
+                    onSetRateClicked = { interactionListener.onRateMovieClick() },
+                    isRateButtonVisible = state.showRateButton
+                )
+            }
         }
     }
 
