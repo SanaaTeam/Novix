@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
@@ -62,13 +62,12 @@ private fun PlaylistEffectsHandler(
         PlayListApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
        effect.collectLatest { effect ->
             when (effect) {
                 PlayListScreenEffect.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
 
                 is PlayListScreenEffect.NavigateToSavedDetails ->

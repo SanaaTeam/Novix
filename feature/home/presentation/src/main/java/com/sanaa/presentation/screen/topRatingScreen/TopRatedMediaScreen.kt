@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
@@ -196,7 +196,6 @@ private fun EffectHandler(
         HomeApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
         effect.collectLatest { effect ->
@@ -222,7 +221,7 @@ private fun EffectHandler(
                 }
 
                 TopRatedMediaScreenEffect.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }
