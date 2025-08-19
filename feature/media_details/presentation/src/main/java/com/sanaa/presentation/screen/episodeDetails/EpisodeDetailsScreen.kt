@@ -127,11 +127,6 @@ private fun EpisodeDetailsScreenContent(
                         onClick = interactionListener::onBackClick
 
                     )
-                }, rightContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(R.drawable.icon_save), onClick = {
-                            interactionListener.onSavedClick(state.tvShowId)
-                        })
                 }, modifier = Modifier
                     .background(animatedColor)
                     .systemBarsPadding()
