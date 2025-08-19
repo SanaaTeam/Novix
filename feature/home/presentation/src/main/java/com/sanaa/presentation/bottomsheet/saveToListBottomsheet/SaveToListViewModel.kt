@@ -78,7 +78,7 @@ class SaveToListViewModel @Inject constructor(
         )
     }
 
-    private fun onErrorAccrue(exception: NovixAppException): () -> Unit = {
+    private fun onErrorAccrue(){
         updateState {
             copy(
                 isLoading = false,
@@ -131,7 +131,7 @@ class SaveToListViewModel @Inject constructor(
                 }
                 emitEffect(SaveToListEffect.DismissBottomSheet)
             },
-            onError = ::onErrorAccrue
+            onError = { onErrorAccrue() }
         )
     }
 
