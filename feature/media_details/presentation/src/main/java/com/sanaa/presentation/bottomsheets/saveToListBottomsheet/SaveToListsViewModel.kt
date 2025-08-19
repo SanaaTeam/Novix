@@ -1,15 +1,12 @@
 package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 
-import android.util.Log
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.screen.movieDetails.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import service.VodStringProvider
-import timber.log.Timber
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
@@ -35,9 +32,8 @@ class SaveToListBottomSheetViewModel @Inject constructor(
     private fun observePlaylists() {
         updateState { copy(isLoading = true) }
         tryToCollect(
-            block = {mangeSavedListsUseCase.getSavedLists()},
+            block = mangeSavedListsUseCase::getSavedLists,
             onCollect = ::onCollectPlaylists,
-            onError = ::onErrorAccrue,
         )
     }
 
@@ -71,7 +67,6 @@ class SaveToListBottomSheetViewModel @Inject constructor(
 
     }
 
-
     private suspend fun addMovieToSavedList(
         selectedListId: Int,
         mediaId: Int
@@ -82,8 +77,7 @@ class SaveToListBottomSheetViewModel @Inject constructor(
         )
     }
 
-    private fun onErrorAccrue(exception: NovixAppException) {
-        Timber.d("onErrorAccrue: $exception")
+    private fun onErrorAccrue() {
         updateState {
             copy(
                 isLoading = false,
@@ -115,28 +109,19 @@ class SaveToListBottomSheetViewModel @Inject constructor(
     override fun onAddClick() {
         val selectedListsIds: MutableList<Int> = state.value.selectedListsIds
         if (selectedListsIds.isEmpty()) return
-        updateState { copy(isUploading = true, isAddButtonEnabled = false) }
+
         tryToExecute(
+            onStart = { updateState { copy(isUploading = true, isAddButtonEnabled = false) } },
             block = {
                 selectedListsIds.forEach { listId ->
-                    addMovieToSavedList(listId, state.value.mediaId!!)
-                }
-                updateState {
-                    copy(
-                        isUploading = false,
-                        isLoading = false,
-                        isAddButtonEnabled = false,
-                        snackBarData = SnackData(
-                            message = stringProvider.addToListSuccess,
-                            isError = false,
-                        ),
-                        selectedListsIds = mutableListOf(),
-                        mediaId = null
+                    addMovieToSavedList(
+                        listId,
+                        state.value.mediaId!!
                     )
                 }
-                emitEffect(SaveToListBottomSheetEffect.DismissBottomSheet)
             },
-            onError = ::onErrorAccrue
+            onSuccess = { onAddToListSuccess() },
+            onError = { onErrorAccrue() }
         )
     }
 
@@ -161,5 +146,22 @@ class SaveToListBottomSheetViewModel @Inject constructor(
                 isAddButtonEnabled = false,
             )
         }
+    }
+
+    private fun onAddToListSuccess() {
+        updateState {
+            copy(
+                isUploading = false,
+                isLoading = false,
+                isAddButtonEnabled = false,
+                snackBarData = SnackData(
+                    message = stringProvider.addToListSuccess,
+                    isError = false,
+                ),
+                selectedListsIds = mutableListOf(),
+                mediaId = null
+            )
+        }
+        emitEffect(SaveToListBottomSheetEffect.DismissBottomSheet)
     }
 }
