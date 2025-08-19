@@ -18,7 +18,7 @@ import com.sanaa.feature.authentication.presentation.R
 @Composable
 fun LoginHeader(modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
             .padding(top=12.dp, start = 16.dp,end=16.dp)
     ) {
         Image(

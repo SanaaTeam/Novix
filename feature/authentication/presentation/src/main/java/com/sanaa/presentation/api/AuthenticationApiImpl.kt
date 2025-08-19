@@ -4,14 +4,20 @@ import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.navigation.AuthNavHost
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -42,8 +48,22 @@ class AuthActivity : AppCompatActivity() {
             intent.getStringExtra(EXTRA_START_ROUTE)?.let { AuthStartRoute.valueOf(it) }
 
         setContent {
+            val view = LocalView.current
+            val activity = view.context as? ComponentActivity
+
             val state = viewModel.state.collectAsStateWithLifecycle()
             NovixTheme(isDarkMode = state.value.isDarkTheme) {
+                val navColor = Theme.colors.surface
+                LaunchedEffect(state.value.isDarkTheme) {
+                    activity?.window?.also { window ->
+                        WindowInsetsControllerCompat(window, view).apply {
+                            window.navigationBarColor = navColor.toArgb()
+                            isAppearanceLightStatusBars = !state.value.isDarkTheme
+                            isAppearanceLightNavigationBars = !state.value.isDarkTheme
+                        }
+                    }
+                }
+
                 AuthNavHost(startRoute = startRoute ?: AuthStartRoute.Welcome)
             }
         }
