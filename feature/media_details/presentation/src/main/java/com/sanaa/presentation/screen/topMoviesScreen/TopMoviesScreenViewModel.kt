@@ -39,9 +39,6 @@ class TopMoviesScreenViewModel @Inject constructor(
         if (!state.value.userIsLoggedIn) {
             updateState { copy(showLoginBottomSheet = true) }
             return
-        }
-
-        if (movie.isSaved) {
         } else {
             updateState {
                 copy(
