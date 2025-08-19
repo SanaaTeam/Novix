@@ -1,5 +1,6 @@
 package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 
+import android.util.Log
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.screen.movieDetails.SnackData
@@ -8,6 +9,7 @@ import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import service.VodStringProvider
+import timber.log.Timber
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
@@ -80,7 +82,8 @@ class SaveToListBottomSheetViewModel @Inject constructor(
         )
     }
 
-    private fun onErrorAccrue(exception: NovixAppException): () -> Unit = {
+    private fun onErrorAccrue(exception: NovixAppException) {
+        Timber.d("onErrorAccrue: $exception")
         updateState {
             copy(
                 isLoading = false,
