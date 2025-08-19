@@ -6,7 +6,6 @@ import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import com.sanaa.tvapp.base.BasePagingSource
 import com.sanaa.tvapp.base.BaseViewModel
-import com.sanaa.tvapp.presentation.screens.HomeScreenInteractionListener
 import com.sanaa.tvapp.state.MediaItemUiState
 import com.sanaa.tvapp.state.MediaTypeUiState
 import com.sanaa.tvapp.state.mapper.toState
@@ -42,7 +41,7 @@ class HomeScreenViewModel @Inject constructor(
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
     defaultDispatcher = dispatcher
-), HomeScreenInteractionListener {
+) {
 
     init {
         updateUserLoggingStatus()

@@ -27,7 +27,7 @@ class MovieDetailsViewModel @Inject constructor(
 ) : BaseViewModel<MovieDetailsScreenUiState, MovieDetailsScreenUiEffect>(
     initialState = MovieDetailsScreenUiState(),
     defaultDispatcher = dispatcher
-), MovieDetailsScreenInteractionListener {
+) {
 
     private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
         "movieId is required in SavedStateHandle"
