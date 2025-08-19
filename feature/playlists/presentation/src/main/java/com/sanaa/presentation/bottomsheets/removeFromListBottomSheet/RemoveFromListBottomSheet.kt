@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -83,94 +84,94 @@ private fun RemoveFromListBottomSheetContent(
     interactionListener: RemoveFromListInteractionListener,
     modifier: Modifier = Modifier,
 ) {
-    BaseBottomSheet(
-        isVisible = isVisible,
-        onDismiss = {
-            interactionListener.onBottomSheetDismiss()
-            onDismiss()
-        },
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .statusBarsPadding(),
     ) {
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
+        BaseBottomSheet(
+            isVisible = isVisible,
+            onDismiss = {
+                interactionListener.onBottomSheetDismiss()
+                onDismiss()
+            },
         ) {
-            TopBar(
-                screenTitle = stringResource(R.string.remove_from_list),
-                rightContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_cancel),
-                        onClick = {
-                            interactionListener.onBottomSheetDismiss()
-                            onDismiss()
-                        }
-                    )
-                }
-            )
-            AppText(
-                text =  stringResource(R.string.remove_from_list_caption),
-                style = Theme.textStyle.body.small,
-                color = Theme.colors.body,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-            )
-
-            AppText(
-                text = mediaTitle,
-                style = Theme.textStyle.body.small,
-                color = Theme.colors.body,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
+            Column(
+                modifier = modifier
                     .fillMaxWidth()
-                    .background(Theme.colors.surfaceHigh, RoundedCornerShape(8.dp))
-                    .padding(vertical = 2.dp),
-                textAlign = TextAlign.Center
-            )
-
-            if (state.isLoading && state.selectedLists.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .height(200.dp)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    WavyProgressIndicator()
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .heightIn(max = 350.dp)
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(state.selectedLists, key = { it.id }) { playlist ->
-                        PlaylistItem(
-                            title = playlist.title,
-                            itemCount = playlist.itemCount,
-                            isSelected = state.deselectedListsIds.contains(playlist.id),
-                            onClick = { interactionListener.onPlaylistClick(playlist.id) }
+                    .padding(bottom = 24.dp),
+            ) {
+                TopBar(
+                    screenTitle = stringResource(R.string.remove_from_list),
+                    rightContent = {
+                        TopBarClickableIcon(
+                            icon = painterResource(id = R.drawable.icon_cancel),
+                            onClick = {
+                                interactionListener.onBottomSheetDismiss()
+                                onDismiss()
+                            }
                         )
                     }
-                }
-            }
+                )
+                AppText(
+                    text = stringResource(R.string.remove_from_list_caption),
+                    style = Theme.textStyle.body.small,
+                    color = Theme.colors.body,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                )
 
-            PrimaryButton(
-                text = stringResource(R.string.remove),
-                onClick = interactionListener::onRemoveClick,
-                isEnabled = state.isRemoveButtonEnabled,
-                isLoading = state.isUploading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(48.dp)
-            )
+                AppText(
+                    text = mediaTitle,
+                    style = Theme.textStyle.body.small,
+                    color = Theme.colors.body,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                        .background(Theme.colors.surfaceHigh, RoundedCornerShape(8.dp))
+                        .padding(vertical = 2.dp),
+                    textAlign = TextAlign.Center
+                )
+
+                if (state.isLoading && state.selectedLists.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .height(200.dp)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        WavyProgressIndicator()
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .heightIn(max = 350.dp)
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(state.selectedLists, key = { it.id }) { playlist ->
+                            PlaylistItem(
+                                title = playlist.title,
+                                itemCount = playlist.itemCount,
+                                isSelected = state.deselectedListsIds.contains(playlist.id),
+                                onClick = { interactionListener.onPlaylistClick(playlist.id) }
+                            )
+                        }
+                    }
+                }
+
+                PrimaryButton(
+                    text = stringResource(R.string.remove),
+                    onClick = interactionListener::onRemoveClick,
+                    isEnabled = state.isRemoveButtonEnabled,
+                    isLoading = state.isUploading,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .height(48.dp)
+                )
+            }
         }
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.TopCenter
-    ){
+
         NovixAnimatedSnackBarHost(
             data = state.snackBarData, onDismiss = interactionListener::onSnackBarDismiss
         )

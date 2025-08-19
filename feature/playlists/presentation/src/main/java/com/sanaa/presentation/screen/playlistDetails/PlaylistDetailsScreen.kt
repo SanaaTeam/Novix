@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -109,27 +108,26 @@ fun PlaylistDetailsContent(
                     onSaveIconClick = { interactionListener.onDeleteIconClick(it) }
                 )
 
-                RemoveFromListBottomSheet(
-                    isVisible = state.showRemoveFromListBottomSheet,
-                    mediaId = state.selectedMediaToRemove?.id ?: 0,
-                    mediaTitle = state.selectedMediaToRemove?.title.orEmpty(),
-                    onDismiss = interactionListener::onDismissRemoveFromListBottomSheet,
-                    onDismissAfterRemoveSuccess = interactionListener::onDismissListBottomSheetAfterRemoveSuccess,
-                )
-
-                DeleteConfirmationBottomSheet(
-                    isVisible = state.showListDeletionConfirmationBottomSheet,
-                    isLoading = state.isLoading,
-                    onDismiss = interactionListener::onDismissConfirmationBottomSheet,
-                    onConfirm = interactionListener::onDeleteListConfirmed
-                )
                 if (movieList.loadState.hasError) {
                     RefreshButton(onRetryClick = interactionListener::onRetryClick)
                 }
             }
         }
     }
+    RemoveFromListBottomSheet(
+        isVisible = state.showRemoveFromListBottomSheet,
+        mediaId = state.selectedMediaToRemove?.id ?: 0,
+        mediaTitle = state.selectedMediaToRemove?.title.orEmpty(),
+        onDismiss = interactionListener::onDismissRemoveFromListBottomSheet,
+        onDismissAfterRemoveSuccess = interactionListener::onDismissListBottomSheetAfterRemoveSuccess,
+    )
 
+    DeleteConfirmationBottomSheet(
+        isVisible = state.showListDeletionConfirmationBottomSheet,
+        isLoading = state.isLoading,
+        onDismiss = interactionListener::onDismissConfirmationBottomSheet,
+        onConfirm = interactionListener::onDeleteListConfirmed
+    )
 }
 
 @Composable

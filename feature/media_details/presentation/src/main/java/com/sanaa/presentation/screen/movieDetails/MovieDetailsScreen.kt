@@ -264,44 +264,28 @@ private fun MovieDetailsBottomSheets(
     state: MovieDetailsUiState,
     interactionListener: MovieDetailsScreenInteractionListener,
 ) {
-    AnimatedVisibility(
-        visible = state.showSaveToListBottomSheet,
-        enter = FadeSlideInVertically,
-        exit = FadeSlideOutVertically
-    ) {
-        SaveToListBottomSheet(
-            isVisible = state.showSaveToListBottomSheet,
-            mediaId = state.selectedMediaId ?: 0,
-            onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-            onCreateNewListClick = interactionListener::onCreateNewListClick,
-        )
-    }
 
-    AnimatedVisibility(
-        visible = state.showAddListBottomSheet && state.selectedMediaId != null,
-        enter = FadeSlideInVertically,
-        exit = FadeSlideOutVertically
-    ) {
-        AddBookmarkListBottomSheet(
-            isVisible = true,
-            onDismiss = interactionListener::onDismissAddListBottomSheet,
-        )
-    }
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaId ?: 0,
+        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionListener::onCreateNewListClick,
+    )
 
-    AnimatedVisibility(
-        visible = state.showRateBottomSheet,
-        enter = FadeSlideInVertically,
-        exit = FadeSlideOutVertically
-    ) {
-        RateBottomSheet(
-            isRateSelected = state.hasUserSelectedRate,
-            imdbRating = state.imdbRating,
-            onDismiss = interactionListener::onDismissRateBottomSheet,
-            isVisible = true,
-            onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
-            onRatingChanged = interactionListener::onRatingChanged
-        )
-    }
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+    )
+
+    RateBottomSheet(
+        isRateSelected = state.hasUserSelectedRate,
+        imdbRating = state.imdbRating,
+        onDismiss = interactionListener::onDismissRateBottomSheet,
+        isVisible = state.showRateBottomSheet,
+        onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
+        onRatingChanged = interactionListener::onRatingChanged
+    )
+
 
     AnimatedVisibility(
         visible = state.showLoginBottomSheet,

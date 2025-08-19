@@ -193,7 +193,7 @@ class SearchViewModel @Inject constructor(
 
     override fun onClearRecentSearchClicked() {
         tryToExecute(
-            manageSearchHistoryUseCase::clearSearchHistory,
+            block = manageSearchHistoryUseCase::clearSearchHistory,
             onError = ::onDataLoadError
         )
     }

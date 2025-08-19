@@ -124,7 +124,8 @@ private fun WatchingHistoryScreenContent(
                 data = state.snackBarData,
                 onDismiss = interactionListener::onDismissSnack
             )
-        }) {
+        }
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
