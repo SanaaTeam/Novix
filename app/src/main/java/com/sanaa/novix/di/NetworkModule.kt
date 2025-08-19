@@ -2,6 +2,7 @@ package com.sanaa.novix.di
 
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.sanaa.identity.dataSoruce.local.dataStore.LocalUserPreferenceDataSource
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.novix.BuildConfig
 import com.sanaa.vod.network.interceptor.APIKeyInterceptor
@@ -52,8 +53,16 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideLanguageInterceptor(): LanguageInterceptor {
-        return LanguageInterceptor()
+    fun provideLanguageInterceptor(
+        localUserPreferenceDataSource: LocalUserPreferenceDataSource
+    ): LanguageInterceptor {
+        return LanguageInterceptor(
+            getLanguage = {
+                runBlocking {
+                    localUserPreferenceDataSource.getLanguage().firstOrNull()
+                }
+            }
+        )
     }
 
     @Provides
