@@ -75,7 +75,7 @@ class SaveToListViewModel @Inject constructor(
         )
     }
 
-    private fun onErrorAccrue(exception: NovixAppException): () -> Unit = {
+    private fun onErrorAccrue(exception: NovixAppException) {
         updateState {
             copy(
                 isLoading = false,
