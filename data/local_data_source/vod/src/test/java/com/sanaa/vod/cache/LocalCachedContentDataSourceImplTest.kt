@@ -187,8 +187,8 @@ class LocalCachedContentDataSourceImplTest {
     private companion object {
         const val FAKE_LANGUAGE = "en"
 
-        val dummyMovie1 = MovieLocalDto(1, "Movie 1", "url", "2020-01-01", 8.5f)
-        val dummyMovie2 = MovieLocalDto(1, "Test Movie", "url", null, 7.0f)
+        val dummyMovie1 = MovieLocalDto(1, "Movie 1", "overview","url", "2020-01-01", 8.5f)
+        val dummyMovie2 = MovieLocalDto(1, "Test Movie", "overview","url", null, 7.0f)
         val movies = listOf(dummyMovie1, dummyMovie2)
 
         val dummyTvShow1 = TvShowLocalDto(1, "TV Show", "url", null, 8.0f)
