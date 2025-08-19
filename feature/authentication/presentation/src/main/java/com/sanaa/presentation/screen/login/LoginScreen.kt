@@ -82,7 +82,6 @@ fun LoginScreen(
 private fun LoginContent(
     state: LoginUiState,
     listener: LoginScreenInteractionListener,
-    modifier: Modifier = Modifier,
 ) {
     NovixScaffold(
         topBar = {
@@ -106,7 +105,7 @@ private fun LoginContent(
         modifier = Modifier.navigationBarsPadding()
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(
                     rememberScrollState()
@@ -170,7 +169,6 @@ fun PreviewLoginScreen() {
                 override fun onBackClicked() {}
                 override fun onSnackBarDismiss() {}
             },
-            modifier = Modifier.fillMaxSize()
         )
     }
 }
