@@ -64,7 +64,7 @@ import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.util.DateTimeUtils.getCurrentLocale
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as dR
 
@@ -84,7 +84,7 @@ fun MovieDetailsScreen(
 
 @Composable
 private fun MovieDetailsEffectsHandler(
-    effects: SharedFlow<MovieDetailsUiEffect>,
+    effects: Flow<MovieDetailsUiEffect>,
 ) {
     val navController = LocalNavControllerProvider.current
     val context = LocalContext.current
