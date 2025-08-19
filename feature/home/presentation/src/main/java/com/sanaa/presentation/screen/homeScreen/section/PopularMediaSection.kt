@@ -55,6 +55,7 @@ import com.sanaa.designsystem.design_system.component.section_header.SectionHead
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.designsystem.R as designSystemR
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
@@ -136,7 +137,7 @@ private fun RatingChip(
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Image(
-            painter = painterResource(R.drawable.icon_star),
+            painter = painterResource(designSystemR.drawable.icon_star),
             contentDescription = null,
             modifier = Modifier.size(12.dp),
             colorFilter = ColorFilter.tint(Theme.colors.statusColors.yellowAccent)

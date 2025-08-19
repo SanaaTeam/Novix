@@ -13,6 +13,8 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.authentication.presentation.R
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.designsystem.R as designSystemR
+
 
 @Composable
 fun WebViewScreen(url: String) {
@@ -29,7 +31,7 @@ fun WebViewScreen(url: String) {
             screenTitle = stringResource(R.string.sign_up),
             leftContent = {
                 TopBarClickableIcon(
-                    icon = painterResource(id = R.drawable.icon_back),
+                    icon = painterResource(id = designSystemR.drawable.icon_back),
                     onClick = { navController.popBackStack() },
                     contentDescription = "icon_cancel"
                 )

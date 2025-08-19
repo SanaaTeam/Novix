@@ -13,5 +13,4 @@ data class MovieUiModel(
     val genres: List<GenreUiModel> = emptyList(),
     val trailerUrl: String? = null,
     val posterUrl: String? = null,
-    val isSaved: Boolean = false
 )

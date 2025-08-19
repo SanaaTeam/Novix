@@ -196,7 +196,6 @@ class ActorViewModelTest {
             genres = emptyList(),
             trailerUrl = null,
             posterUrl = "poster.jpg",
-            isSaved = false
         )
 
         private val dummyGallery = listOf("/g1.jpg", "/g2.jpg")
