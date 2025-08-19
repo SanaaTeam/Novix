@@ -27,12 +27,12 @@ import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvTabs
 fun CategoryTopBar(
     modifier: Modifier = Modifier,
     selectedTabIndex: Int,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp, horizontal = 36.dp),
+            .padding(vertical = 16.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         TvTabs(

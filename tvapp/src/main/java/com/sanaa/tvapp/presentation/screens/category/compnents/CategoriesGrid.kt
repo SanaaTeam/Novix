@@ -1,5 +1,7 @@
 package com.sanaa.tvapp.presentation.screens.category.compnents
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -16,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Surface
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -33,10 +36,11 @@ fun CategoriesGrid(
         contentPadding = PaddingValues(
             start = 16.dp,
             end = 16.dp,
-            bottom = 12.dp
+            bottom = 12.dp,
+            top = 8.dp
         ),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         itemsIndexed(
             items = categories,
@@ -45,26 +49,28 @@ fun CategoriesGrid(
 
             val interactionSource = remember { MutableInteractionSource() }
             val isFocused by interactionSource.collectIsFocusedAsState()
+            val scale by animateFloatAsState(
+                targetValue = if (isFocused) 1.1f else 1f,
+                animationSpec = tween(durationMillis = 300)
+            )
 
             Surface(
                 modifier = Modifier
                     .focusable(interactionSource = interactionSource)
+                    .graphicsLayer(scaleX = scale, scaleY = scale)
+                    .clip(RoundedCornerShape(12.dp))
                     .border(
                         width = if (isFocused) 3.dp else 1.dp,
                         color = if (isFocused) Theme.colors.primary else Theme.colors.stroke,
                         shape = RoundedCornerShape(12.dp)
                     )
-                    .clip(RoundedCornerShape(12.dp))
                     .clickable(
                         interactionSource = interactionSource,
                         indication = null,
                         onClick = { onCategoryClick(category) }
                     )
             ) {
-                CategoryCard(
-                    category = category,
-                    onClick = { onCategoryClick(category) }
-                )
+                CategoryCard(category)
             }
         }
     }

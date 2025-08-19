@@ -1,12 +1,13 @@
-package com.sanaa.presentation.screen.genreMovies
+package com.sanaa.tvapp.presentation.screens.genreMovies
 
 import androidx.paging.PagingData
-import com.sanaa.presentation.model.MovieUiModel
+import com.sanaa.tvapp.presentation.screens.searchScreen.MovieUiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 data class GenreMoviesScreenUiState(
     val title: String? = null,
+    val genreid: Int = 0,
     val movies: Flow<PagingData<MovieUiModel>> = flowOf(PagingData.empty()),
     val isLoading: Boolean = false,
     val error: String? = null,
@@ -17,10 +18,5 @@ data class GenreMoviesScreenUiState(
     val selectedMovieToSave: MovieUiModel? = null,
     val showAddListBottomSheet: Boolean = false,
 )
-enum class ScreenState {
-    LOADING,
-    NO_INTERNET,
-    CONTENT
-}
 
 

@@ -6,12 +6,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.sanaa.tvapp.presentation.screens.category.CategoriesScreen
+import com.sanaa.tvapp.presentation.screens.genreMovies.GenreMoviesScreen
+import com.sanaa.tvapp.presentation.screens.genreTvShows.GenreTvShowsScreen
 import com.sanaa.tvapp.presentation.screens.home.HomeScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.actorScreen.ActorScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.episodeScreen.EpisodeDetailsScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen.MovieDetailsScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.TvShowScreen
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreen
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.GenreMovieScreenRoute
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.GenreTvShowsScreenRoute
 import com.sanaa.tvapp.presentation.screens.searchScreen.SearchScreen
 
 @Composable
@@ -33,6 +37,16 @@ fun TvNavGraph(navController: NavHostController, startDestination: Any) {
 
         composable<ScreensRoute.ActorDetailsRoute> { navBackStackEntry ->
             ActorScreen()
+        }
+
+        composable<GenreMovieScreenRoute> { backStackEntry ->
+            val args = backStackEntry.toRoute<GenreMovieScreenRoute>()
+            GenreMoviesScreen()
+        }
+
+        composable<GenreTvShowsScreenRoute> { backStackEntry ->
+            val args = backStackEntry.toRoute<GenreTvShowsScreenRoute>()
+            GenreTvShowsScreen()
         }
     }
 }

@@ -14,7 +14,9 @@ data class MovieDetailsScreenUiState(
     val cast: List<ActorUiModel> = emptyList(),
     val imagesUrls: List<String> = emptyList(),
     val noInternetConnection: Boolean = false,
-    val imdbRating: Int = 0,
+    val rating: Int = 0,
     val isUserLoggedIn: Boolean = false,
     val isRatingSubmitted: Boolean = false,
+    val showRateDialog: Boolean = false,
+    val showLoginDialog: Boolean = false,
 )

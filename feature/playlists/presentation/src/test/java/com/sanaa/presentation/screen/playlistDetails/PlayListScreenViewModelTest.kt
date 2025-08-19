@@ -4,22 +4,18 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.playlist.PlayListScreenEffect
 import com.sanaa.presentation.screen.playlist.PlayListScreenViewModel
-import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.custom_list.custom_list_param.SavedList
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class PlayListScreenViewModelTest {
 
     private lateinit var viewModel: PlayListScreenViewModel

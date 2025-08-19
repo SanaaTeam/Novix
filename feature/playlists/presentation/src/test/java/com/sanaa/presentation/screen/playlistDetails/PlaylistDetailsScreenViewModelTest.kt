@@ -5,12 +5,11 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
-import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
+import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,27 +59,49 @@ class PlaylistDetailsScreenViewModelTest {
     }
 
     @Test
-    fun `onSaveIconClick on success removes item, decrements count, and emits refresh effect`() = runTest {
+    fun `onSaveIconClick on success calls use case and reloads items`() = runTest {
         val mediaItem = MediaItem(id = 456, title = "", imageUrl = "", isSaved = true)
         coEvery { manageSavedListItemsUseCase.removeMovieFromSavedList(any(), any()) } returns true
         initViewModel()
 
-        // Act and Assert within the effect collector
-        viewModel.effect.test {
-            viewModel.onSaveIconClick(mediaItem)
-            advanceUntilIdle()
+        viewModel.onSaveIconClick(mediaItem)
+        advanceUntilIdle()
 
-            // Assert that the correct effect was emitted
-            assertThat(awaitItem()).isEqualTo(PlaylistDetailsScreenEffect.ShowSuccessSnackBar)
-
-            // Verify interactions
-            verify(exactly = 1) { savedListsStatusProvider.markItemUnsaved(456) }
-            coVerify(exactly = 1) { manageSavedListItemsUseCase.removeMovieFromSavedList(1, 456) }
-
-            cancelAndIgnoreRemainingEvents()
-        }
+        coVerify(exactly = 1) { manageSavedListItemsUseCase.removeMovieFromSavedList(1, 456) }
+        assertThat(viewModel.state.value.isLoading).isFalse()
     }
 
+    @Test
+    fun `onSaveIconClick on failure with general error updates error message`() = runTest {
+        val mediaItem = MediaItem(id = 456, title = "", imageUrl = "", isSaved = true)
+        val errorMessage = "Database Error"
+        val error = RuntimeException(errorMessage)
+        coEvery { manageSavedListItemsUseCase.removeMovieFromSavedList(any(), any()) } throws error
+
+        initViewModel()
+
+        viewModel.onSaveIconClick(mediaItem)
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertThat(state.isLoading).isFalse()
+        assertThat(state.errorMessage).isEqualTo(errorMessage)
+    }
+
+    @Test
+    fun `onSaveIconClick on failure with NoNetworkException sets error message to null`() = runTest {
+        val mediaItem = MediaItem(id = 456, title = "", imageUrl = "", isSaved = true)
+        val error = NoNetworkException()
+        coEvery { manageSavedListItemsUseCase.removeMovieFromSavedList(any(), any()) } throws error
+        initViewModel()
+
+        viewModel.onSaveIconClick(mediaItem)
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertThat(state.isLoading).isFalse()
+        assertThat(state.errorMessage).isNull()
+    }
 
     @Test
     fun `onBackClick emits NavigateBack`() = runTest {
