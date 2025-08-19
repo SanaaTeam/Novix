@@ -13,11 +13,9 @@ import entity.Actor
 import entity.Movie
 import entity.TvShow
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -26,7 +24,6 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageActorUseCase
 import kotlin.time.Duration.Companion.minutes
@@ -39,7 +36,6 @@ class ActorViewModelTest {
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private lateinit var viewModel: ActorScreenViewModel
     private val actorId = 77
-    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
     @BeforeEach
     fun setUp() {
@@ -126,9 +122,6 @@ class ActorViewModelTest {
         coEvery { manageActorDetailsUseCase.getActorTopTvShows(actorId) } returns dummyTvShow
         coEvery { manageActorDetailsUseCase.getGalleryImages(actorId) } returns dummyGallery
         coEvery { manageActorDetailsUseCase.getProfileImages(actorId) } returns dummyProfiles
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
 
         val savedStateHandle = SavedStateHandle(mapOf("actorId" to actorId))
 
@@ -136,7 +129,6 @@ class ActorViewModelTest {
             savedStateHandle,
             manageActorDetailsUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedListsStatusProvider
         )
     }
 
@@ -204,7 +196,6 @@ class ActorViewModelTest {
             genres = emptyList(),
             trailerUrl = null,
             posterUrl = "poster.jpg",
-            isSaved = false
         )
 
         private val dummyGallery = listOf("/g1.jpg", "/g2.jpg")

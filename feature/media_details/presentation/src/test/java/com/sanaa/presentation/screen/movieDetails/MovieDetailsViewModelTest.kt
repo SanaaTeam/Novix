@@ -10,11 +10,9 @@ import entity.Actor
 import entity.Genre
 import entity.Movie
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -25,7 +23,6 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -43,7 +40,6 @@ class MovieDetailsViewModelTest {
         mockk(relaxed = true)
     private lateinit var viewModel: MovieDetailsViewModel
     private val movieId = 10
-    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
 
     @BeforeEach
@@ -75,9 +71,6 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieImagesUrl(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
         val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
 
         viewModel = MovieDetailsViewModel(
@@ -86,7 +79,6 @@ class MovieDetailsViewModelTest {
             checkUserLogin,
             manageWatchedMediaHistoryUseCase,
             getUser,
-            savedListsStatusProvider,
             stringProvider
             )
         advanceUntilIdle()
@@ -220,7 +212,6 @@ class MovieDetailsViewModelTest {
         viewModel.onSubmitRateBottomSheet()
         advanceUntilIdle()
 
-        assertThat(viewModel.state.value.errorMessage).isEqualTo("Something went wrong")
         assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
     }
 
@@ -233,7 +224,6 @@ class MovieDetailsViewModelTest {
         advanceUntilIdle()
 
         assertThat(viewModel.state.value.isLoading).isFalse()
-        assertThat(viewModel.state.value.errorMessage).isNull()
         assertThat(viewModel.state.value.noInternetConnection).isFalse()
     }
 
@@ -243,9 +233,7 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieImagesUrl(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
+
         val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
 
         viewModel = MovieDetailsViewModel(
@@ -254,7 +242,6 @@ class MovieDetailsViewModelTest {
             checkUserLogin,
             manageWatchedMediaHistoryUseCase,
             getUser,
-            savedListsStatusProvider,
             stringProvider,
             dispatcher = testDispatcher,
 
@@ -303,7 +290,6 @@ class MovieDetailsViewModelTest {
         genres = emptyList(),
         trailerUrl = null,
         posterUrl = "poster.jpg",
-        isSaved = false
     )
 
 }

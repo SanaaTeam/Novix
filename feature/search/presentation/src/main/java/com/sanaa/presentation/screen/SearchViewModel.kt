@@ -27,13 +27,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import repository.ContentRestriction
-import repository.SavedListsStatusProvider
 import repository.Theme
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
@@ -53,7 +51,6 @@ class SearchViewModel @Inject constructor(
     private val manageSearchHistoryUseCase: ManageHistoryUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val mangeUserPreferenceUseCase: MangeUserPreferenceUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(
@@ -112,17 +109,11 @@ class SearchViewModel @Inject constructor(
             updateState { copy(showLoginBottomSheet = true) }
             return
         }
-
-        if (media.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(media.id)
-        } else {
-            savedListsStatusProvider.markItemSaved(media.id)
-            updateState {
-                copy(
-                    showSaveToListBottomSheet = true,
-                    selectedMediaToSave = media
-                )
-            }
+        updateState {
+            copy(
+                showSaveToListBottomSheet = true,
+                selectedMediaToSave = media
+            )
         }
     }
 
@@ -368,18 +359,10 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun loadMoviesOperation(query: String): Flow<PagingData<MovieUiModel>> {
-        val moviesPagingFlow = createPagingFlow(
+        return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingSource(query) },
             mapper = Movie::toUiState
-        )
-
-        return if (state.value.isUserLoggedIn) {
-            moviesPagingFlow.combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-                pagingData.map { movie -> movie.copy(isSaved = savedIds.contains(movie.id)) }
-            }
-        } else {
-            moviesPagingFlow
-        }.cachedIn(viewModelScope)
+        ).cachedIn(viewModelScope)
     }
 
     fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {

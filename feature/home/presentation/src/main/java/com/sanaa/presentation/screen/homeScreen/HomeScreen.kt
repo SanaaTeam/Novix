@@ -1,8 +1,5 @@
 package com.sanaa.presentation.screen.homeScreen
 
-import android.content.Intent
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.result.ActivityResult
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -30,9 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -257,29 +254,24 @@ private fun HomeScreenContent(
             RefreshButton(onRetryClick = interactionListener::onRetryClick)
         }
 
-
-        if (state.userIsLoggedIn) {
-            state.selectedMediaToSave?.let { mediaItem ->
-                SaveToListBottomSheet(
-                    isVisible = state.showSaveToListBottomSheet,
-                    mediaId = mediaItem.id.toLong(),
-                    onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-                    onCreateNewListClick = interactionListener::onCreateNewListClick,
-                )
-            }
-
-            AddBookmarkListBottomSheet(
-                isVisible = state.showAddListBottomSheet,
-                onDismiss = interactionListener::onDismissAddListBottomSheet,
-                mediaId = state.selectedMediaToSave?.id ?: 0
-            )
-        }
-        RequestToLoginBottomSheet(
-            isVisible = state.showLoginBottomSheet,
-            onDismiss = interactionListener::onDismissLoginBottomSheet,
-            onLoginButtonClick = interactionListener::onLoginButtonClick
-        )
     }
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0,
+        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionListener::onCreateNewListClick,
+    )
+
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+    )
+
+    RequestToLoginBottomSheet(
+        isVisible = state.showLoginBottomSheet,
+        onDismiss = interactionListener::onDismissLoginBottomSheet,
+        onLoginButtonClick = interactionListener::onLoginButtonClick
+    )
 }
 
 @Composable
@@ -302,9 +294,6 @@ private fun EffectHandler(
             HomeApiEntryPoint::class.java
         ).authenticationApi()
     }
-
-    val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
-        launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
         effect.collectLatest { effect ->
@@ -354,7 +343,7 @@ private fun EffectHandler(
                 }
 
                 HomeScreenEffect.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }

@@ -2,6 +2,7 @@ package service
 
 interface
 VodStringProvider {
+
     val noInternetConnectionError: String
     val somethingWentWrongError: String
     val addToListFailed: String
@@ -11,4 +12,7 @@ VodStringProvider {
     val createListSuccess: String
     val createListFailed: String
     val deleteListFailed: String
+    val deleteListSuccess: String
+    val deleteFromListFailed: String
+    val deleteFromListSuccess: String
 }

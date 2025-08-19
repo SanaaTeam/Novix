@@ -1,19 +1,26 @@
 package com.sanaa.presentation.app
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import repository.ContentRestriction
 import repository.Theme
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.MangeUserPreferenceUseCase
+import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class NovixAppViewModel @Inject constructor(
-    val mangeUserPreference: MangeUserPreferenceUseCase,
+    private val mangeUserPreference: MangeUserPreferenceUseCase,
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val mangeSavedListsUseCase: ManageSavedListsUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(NovixAppUiState())
@@ -21,7 +28,20 @@ class NovixAppViewModel @Inject constructor(
 
 
     init {
+        refreshListData()
         fetchUserPreference()
+    }
+
+    private fun refreshListData() {
+        viewModelScope.launch (Dispatchers.IO){
+            try {
+                checkIfUserIsLoggedInUseCase.isLoggedIn().collectLatest{logged->
+                    if (logged)mangeSavedListsUseCase.refreshSavedList()
+                }
+            }catch (e:Exception){
+                Log.d("NovixAppViewModel", "refreshListData: no internet keeping on local data e:$e")
+            }
+        }
     }
 
     private fun fetchUserPreference() {

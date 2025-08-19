@@ -7,7 +7,7 @@ import com.sanaa.vod.custom_list.response.ItemStatusResponseDto
 import com.sanaa.vod.custom_list.response.ListApiResponse
 import com.sanaa.vod.custom_list.response.TmdbStatusResponseDto
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDetailsDto
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListRemoteDto
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -22,7 +22,7 @@ interface SavedListApiService {
     suspend fun getUserLists(
         @Query("session_id") sessionId: String,
         @Query("page") page: Int? = null
-    ): ListApiResponse<SavedListDto>
+    ): ListApiResponse<SavedListRemoteDto>
 
     @Headers("Ignore-Language: true")
     @POST("list")

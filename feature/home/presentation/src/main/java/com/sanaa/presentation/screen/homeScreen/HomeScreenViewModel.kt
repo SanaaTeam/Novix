@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.homeScreen
 
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
@@ -234,6 +233,7 @@ class HomeScreenViewModel @Inject constructor(
         updateState {
             copy(
                 showSaveToListBottomSheet = true,
+                selectedMediaId = media.id.toLong(),
                 selectedMediaToSave = media
             )
         }

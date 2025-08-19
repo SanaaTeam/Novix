@@ -22,6 +22,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.api.AuthStartRoute
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -59,26 +61,25 @@ private fun GenreMoviesEffectsHandler(
 ) {
     val navController = LocalNavControllerProvider.current
     val context = LocalContext.current
-    val currentContext by rememberUpdatedState(context)
-    val currentNavController by rememberUpdatedState(navController)
+
     val authApi = EntryPointAccessors
-        .fromApplication(currentContext, DetailsApiEntryPoint::class.java)
-        .authenticationApi()
-    val launcher = launchAuthActivityForResult()
+        .fromApplication(
+            context, DetailsApiEntryPoint::class.java
+        ).authenticationApi()
 
     LaunchedEffect(Unit) {
         effects.collectLatest { effect ->
             when (effect) {
-                GenreMoviesEffects.NavigateBack -> if (!currentNavController.popBackStack()) {
-                    (currentNavController.context as Activity).finish()
+                GenreMoviesEffects.NavigateBack -> if (!navController.popBackStack()) {
+                    (navController.context as Activity).finish()
                 }
 
-                is GenreMoviesEffects.NavigateToMovieDetails -> currentNavController.navigate(
+                is GenreMoviesEffects.NavigateToMovieDetails -> navController.navigate(
                     MovieDetailsScreenRoute(effect.id)
                 )
 
                 GenreMoviesEffects.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(currentContext))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }
@@ -148,24 +149,19 @@ private fun GenreMoviesScreenContent(
                 state.selectedMovieToSave?.let { mediaItem ->
                     SaveToListBottomSheet(
                         isVisible = state.showSaveToListBottomSheet,
-                        mediaId = mediaItem.id.toLong(),
+                        mediaId = state.selectedMovieToSave?.id ?: 0,
                         onDismiss = interactionListener::onDismissSaveToListBottomSheet,
                         onCreateNewListClick = interactionListener::onCreateNewListClick,
                     )
                 }
 
-                AddBookmarkListBottomSheet(
-                    isVisible = state.showAddListBottomSheet,
-                    onDismiss = interactionListener::onDismissAddListBottomSheet,
-                    mediaId = state.selectedMovieToSave?.id ?: 0
-                )
-
-                RequestToLoginBottomSheet(
-                    onDismiss = interactionListener::onBottomSheetDismiss,
-                    onLoginButtonClick = interactionListener::onLoginButtonClick,
-                    isVisible = state.showBottomSheet
-                )
-            }
-        }
-    }
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+    )
+    RequestToLoginBottomSheet(
+        onDismiss = { interactionListener.onBottomSheetDismiss() },
+        onLoginButtonClick = { interactionListener.onLoginButtonClick() },
+        isVisible = state.showBottomSheet
+    )
 }

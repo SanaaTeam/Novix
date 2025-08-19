@@ -28,6 +28,7 @@ import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.model.ReviewUiModel
 import com.sanaa.presentation.shared_component.ExpandableText
 import com.sanaa.presentation.shared_component.IconWithText
+import com.sanaa.designsystem.R as designSystemR
 
 @Composable
 fun ReviewCard(
@@ -146,7 +147,7 @@ private fun ReviewRate(review: ReviewUiModel) {
             modifier = Modifier.padding(top = 4.dp),
             text = review.rating,
             textColor = Theme.colors.title,
-            iconRes = R.drawable.icon_star,
+            iconRes = designSystemR.drawable.icon_star,
             contentDescription = review.rating,
             tint = Theme.colors.statusColors.yellowAccent,
         )

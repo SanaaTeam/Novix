@@ -25,6 +25,7 @@ import com.sanaa.presentation.shared_component.DotSeparator
 import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.InfoSection
+import com.sanaa.designsystem.R as designSystemR
 
 @Composable
 fun TvShowHeaderSection(
@@ -98,7 +99,7 @@ fun TvShowHeaderSection(
                 ) {
                     rating?.let {
                         IconWithText(
-                            iconRes = R.drawable.icon_star,
+                            iconRes = designSystemR.drawable.icon_star,
                             text = rating,
                             textColor = Theme.colors.title,
                             contentDescription = rating,

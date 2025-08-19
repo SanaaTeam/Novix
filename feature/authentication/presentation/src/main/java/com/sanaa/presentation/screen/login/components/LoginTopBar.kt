@@ -8,13 +8,14 @@ import androidx.compose.ui.res.stringResource
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.authentication.presentation.R
+import com.sanaa.designsystem.R as designSystemR
 
 @Composable
 fun LoginTopBar(onBackClick: () -> Unit) {
     TopBar(
         leftContent = {
             TopBarClickableIcon(
-                icon = painterResource(id = R.drawable.icon_back),
+                icon = painterResource(id = designSystemR.drawable.icon_back),
                 onClick = onBackClick
             )
         },

@@ -30,7 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
@@ -67,7 +67,6 @@ fun GenreTvShowsScreen(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -81,7 +80,7 @@ fun GenreTvShowsScreen(
                 )
 
                 GenreTvShowsEffects.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }
