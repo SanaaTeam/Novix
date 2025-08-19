@@ -30,7 +30,6 @@ fun NovixAnimatedSnackBarHost(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 12.dp)
-            .statusBarsPadding()
     ) {
         if (data != null) {
             LaunchedEffect(data) {
