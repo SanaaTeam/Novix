@@ -19,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import service.VodStringProvider
@@ -49,6 +48,9 @@ class HomeScreenViewModel @Inject constructor(
     init {
         updateUserLoggingStatus()
         onLanguageChanges()
+        fetchPopularMediaData()
+        fetchTopRatedMediaData()
+        fetchUpcomingMovies()
     }
 
     private fun updateUserLoggingStatus() {
@@ -61,7 +63,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun onLanguageChanges(){
         tryToCollect(
-            block = { mangeUserPreference.getLanguage().distinctUntilChanged() },
+            block = { mangeUserPreference.getLanguage() },
             onCollect = { fetchMovieGenres() },
             onError = ::onDataLoadError
         )
