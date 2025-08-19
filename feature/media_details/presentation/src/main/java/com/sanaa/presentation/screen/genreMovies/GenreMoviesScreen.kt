@@ -30,7 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
@@ -69,7 +69,6 @@ fun GenreMoviesScreen(
             context, DetailsApiEntryPoint::class.java
         ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -83,7 +82,7 @@ fun GenreMoviesScreen(
                 )
 
                 GenreMoviesEffects.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }
@@ -136,109 +135,111 @@ fun GenreMoviesScreenContent(
                     targetState = screenState,
                     contentAlignment = Alignment.Center,
                     transitionSpec = { fadeIn() togetherWith fadeOut() })
-                {target ->
-                        when(target) {
-                            ScreenState.NO_INTERNET -> {
-                                NetworkDisconnectionContact(
-                                    onRetryClick = { interactionListener.onRetryClicked() },
-                                    modifier = Modifier.fillMaxSize(),
-                                    useDarkTheme = LocalThemeProvider.current
-                                )
-                            }
+                { target ->
+                    when (target) {
+                        ScreenState.NO_INTERNET -> {
+                            NetworkDisconnectionContact(
+                                onRetryClick = { interactionListener.onRetryClicked() },
+                                modifier = Modifier.fillMaxSize(),
+                                useDarkTheme = LocalThemeProvider.current
+                            )
+                        }
 
-                            ScreenState.LOADING -> {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    LoadingIndicator()
-                                }
+                        ScreenState.LOADING -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                LoadingIndicator()
                             }
+                        }
 
-                            ScreenState.CONTENT -> {
-                                LazyVerticalGrid(
-                                    modifier = Modifier.fillMaxSize(),
-                                    columns = GridCells.Adaptive(minSize = 140.dp),
-                                    contentPadding = PaddingValues(
-                                        start = 16.dp, end = 16.dp, bottom = 16.dp
-                                    ),
-                                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
-                                    items(pagedMovies.itemCount) { index ->
-                                        val movie = pagedMovies[index] ?: return@items
-                                        MediaPosterCard(
-                                            posterImage = {
-                                                RemoteBlurredSensitiveImage(
-                                                    imageUrl = movie.posterUrl.orEmpty(),
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    sensitiveContentThreshold = 0.2f,
-                                                    isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                                                    safeContentThreshold = LocalSafeContentThreshold.current,
-                                                    contentDescription = movie.title,
-                                                    placeholderContent = {
-                                                        RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                                    },
-                                                    errorContent = {
-                                                        RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                                    },
-                                                ) {
-                                                    OnBlurContent(
-                                                        hintText = stringResource(R.string.unsuitable_image),
-                                                        textStyle = Theme.textStyle.body.small.copy(
-                                                            color = Color(0x99FFFFFF)
-                                                        ),
-                                                        iconSize = 24.dp,
-                                                        icon = painterResource(designR.drawable.icon_eye_slash),
-                                                    )
-                                                }
-                                            },
-                                            topLeftContent = {
-                                                SaveIconChip(onClick = {
-                                                    interactionListener.onSaveIconClick(
-                                                        movie
-                                                    )
-                                                })
-                                            },
-                                            onCardClick = { interactionListener.onMovieClick(movie.id) })
+                        ScreenState.CONTENT -> {
+                            LazyVerticalGrid(
+                                modifier = Modifier.fillMaxSize(),
+                                columns = GridCells.Adaptive(minSize = 140.dp),
+                                contentPadding = PaddingValues(
+                                    start = 16.dp, end = 16.dp, bottom = 16.dp
+                                ),
+                                verticalArrangement = Arrangement.spacedBy(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                items(
+                                    count = pagedMovies.itemCount,
+                                    key = { index ->
+                                        "${index}_${pagedMovies[index]?.id}"
                                     }
-
-                                    if (pagedMovies.loadState.append is LoadState.Loading) {
-                                        item(span = { GridItemSpan(maxLineSpan) }) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(16.dp),
-                                                contentAlignment = Alignment.Center
+                                ) { index ->
+                                    val movie = pagedMovies[index] ?: return@items
+                                    MediaPosterCard(
+                                        posterImage = {
+                                            RemoteBlurredSensitiveImage(
+                                                imageUrl = movie.posterUrl.orEmpty(),
+                                                modifier = Modifier.fillMaxWidth(),
+                                                sensitiveContentThreshold = 0.2f,
+                                                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                                                safeContentThreshold = LocalSafeContentThreshold.current,
+                                                contentDescription = movie.title,
+                                                placeholderContent = {
+                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                                },
+                                                errorContent = {
+                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                                },
                                             ) {
-                                                LoadingIndicator()
+                                                OnBlurContent(
+                                                    hintText = stringResource(R.string.unsuitable_image),
+                                                    textStyle = Theme.textStyle.body.small.copy(
+                                                        color = Color(0x99FFFFFF)
+                                                    ),
+                                                    iconSize = 24.dp,
+                                                    icon = painterResource(designR.drawable.icon_eye_slash),
+                                                )
                                             }
+                                        },
+                                        topLeftContent = {
+                                            SaveIconChip(onClick = {
+                                                interactionListener.onSaveIconClick(
+                                                    movie
+                                                )
+                                            })
+                                        },
+                                        onCardClick = { interactionListener.onMovieClick(movie.id) })
+                                }
+
+                                if (pagedMovies.loadState.append is LoadState.Loading) {
+                                    item(span = { GridItemSpan(maxLineSpan) }) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            LoadingIndicator()
                                         }
                                     }
                                 }
                             }
                         }
-                    state.selectedMovieToSave?.let { mediaItem ->
-                        SaveToListBottomSheet(
-                            isVisible = state.showSaveToListBottomSheet,
-                            mediaId = mediaItem.id.toLong(),
-                            onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-                            onCreateNewListClick = interactionListener::onCreateNewListClick,
-                        )
                     }
-
-                    AddBookmarkListBottomSheet(
-                        isVisible = state.showAddListBottomSheet,
-                        onDismiss = interactionListener::onDismissAddListBottomSheet,
-                        mediaId = state.selectedMovieToSave?.id ?: 0
-                    )
-                    RequestToLoginBottomSheet(
-                        onDismiss = { interactionListener.onBottomSheetDismiss() },
-                        onLoginButtonClick = { interactionListener.onLoginButtonClick() },
-                        isVisible = state.showBottomSheet
-                    )
                 }
             }
         }
     }
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMovieToSave?.id ?: 0,
+        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionListener::onCreateNewListClick,
+    )
+
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+    )
+    RequestToLoginBottomSheet(
+        onDismiss = { interactionListener.onBottomSheetDismiss() },
+        onLoginButtonClick = { interactionListener.onLoginButtonClick() },
+        isVisible = state.showBottomSheet
+    )
 }

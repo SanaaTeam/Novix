@@ -7,7 +7,7 @@ import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.navigation.TvShowScreenRoute
-import com.sanaa.presentation.screen.movieDetails.LoginPromptType
+import com.sanaa.presentation.screen.movieDetails.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvShow
 import exceptions.NoNetworkException
@@ -16,11 +16,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
+
 
 @HiltViewModel
 class TvShowScreenViewModel @Inject constructor(
@@ -30,6 +32,7 @@ class TvShowScreenViewModel @Inject constructor(
     private val manageTvShowDetails: ManageTvShowUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TvShowScreenUiState, TvShowScreenEffects>(
     initialState = TvShowScreenUiState(),
@@ -41,7 +44,6 @@ class TvShowScreenViewModel @Inject constructor(
 
     init {
         loadTvShow()
-        fetchUserRating()
         updateUserLoginState()
     }
 
@@ -60,9 +62,9 @@ class TvShowScreenViewModel @Inject constructor(
     override fun onSeasonNumberClicked(seasonNumber: Int) {
         if (state.value.selectedSeason == seasonNumber) return
         tryToExecute(
-            callee = { fetchSeasonDetails(seasonNumber) },
+            block = { fetchSeasonDetails(seasonNumber) },
             onSuccess = { updateState { copy(isLoadingEpisodes = false) } },
-            onError = ::onErrorAccrue
+            onError = ::onErrorLoadingSeasonDetails
         )
     }
 
@@ -82,21 +84,12 @@ class TvShowScreenViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { copy(showRateBottomSheet = true) }
         } else {
-            promptLogin(LoginPromptType.RATE)
+            updateState { copy(showLoginBottomSheet = true) }
         }
     }
 
     override fun onDismissRateBottomSheet() {
-        updateState { copy(showRateBottomSheet = false) }
-    }
-
-    override fun onDismissAnyBottomSheet() {
-        updateState {
-            copy(
-                showRateBottomSheet = false,
-                showLoginBottomSheet = false
-            )
-        }
+        updateState { copy(showRateBottomSheet = false, imdbRating = 0) }
     }
 
     override fun onLoginButtonClick() {
@@ -114,28 +107,13 @@ class TvShowScreenViewModel @Inject constructor(
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
-            callee = ::submitTvShowRating,
-            onError = ::onSubmitRateBottomSheetFailed
+            block = ::submitTvShowRating,
+            onError = ::onSubmitRatingFailed,
         )
-        updateState {
-            copy(showRateBottomSheet = false)
-        }
     }
 
-    private fun onSubmitRateBottomSheetFailed(exception: NovixAppException) {
-        updateState {
-            copy(
-                error = exception.message,
-                showRateBottomSheet = false
-            )
-        }
-    }
-
-    override fun onSaveTvShowClicked() {
-        val isLoggIn = state.value.isUserLoggedIn
-        if (!isLoggIn) {
-            promptLogin(LoginPromptType.BOOKMARK)
-        }
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
     }
 
     override fun onGenreClicked(genre: GenreUiModel) {
@@ -146,7 +124,6 @@ class TvShowScreenViewModel @Inject constructor(
         updateState {
             copy(
                 isLoading = true,
-                error = null,
                 noInternetConnection = false
             )
         }
@@ -155,30 +132,29 @@ class TvShowScreenViewModel @Inject constructor(
 
     private fun loadTvShow() {
         tryToExecute(
-            callee = {
-                fetchShowDetails()
-            },
-            onSuccess = {
-                updateState { copy(isLoading = false) }
-            },
-            onError = ::onErrorAccrue
+            block = { fetchShowDetails() },
+            onSuccess = { updateState { copy(isLoading = false) } },
+            onError = ::onErrorFetchingData
         )
     }
 
     private fun fetchUserRating() {
-        if (state.value.isUserLoggedIn) {
-            tryToCollect(
-                callee = { getUser.getLoggedInUser() },
-                onCollect = { user ->
-                    tryToExecute(
-                        callee = { manageTvShowDetails.getTvShowRating(user.id, route.tvShowId) },
-                        onSuccess = { rating ->
-                            updateState { copy(imdbRating = rating) }
-                        },
-                    )
-                },
-            )
-        }
+        tryToCollect(
+            block = { getUser.getLoggedInUser() },
+            onCollect = { user ->
+                tryToExecute(
+                    block = { manageTvShowDetails.getTvShowRating(user.id, route.tvShowId) },
+                    onSuccess = { rating ->
+                        updateState {
+                            copy(
+                                imdbRating = rating,
+                                showRateButton = rating == 0
+                            )
+                        }
+                    },
+                )
+            },
+        )
     }
 
     private suspend fun fetchShowDetails() = coroutineScope {
@@ -189,7 +165,6 @@ class TvShowScreenViewModel @Inject constructor(
         val seasonDeferred = async { manageTvShowDetails.getTvShowSeasonDetails(route.tvShowId, 1) }
         val imagesDeferred = async { manageTvShowDetails.getTvShowImageUrls(route.tvShowId) }
         val trailerDeferred = async { manageTvShowDetails.getTvShowTrailer(route.tvShowId) }
-
 
         val tvShow = tvShowDeferred.await()
         val cast = castDeferred.await()
@@ -208,7 +183,6 @@ class TvShowScreenViewModel @Inject constructor(
         }
     }
 
-
     private suspend fun fetchSeasonDetails(seasonNumber: Int) {
         updateState { copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
 
@@ -217,42 +191,51 @@ class TvShowScreenViewModel @Inject constructor(
         updateState { copy(season = season.toState()) }
     }
 
-
     private suspend fun submitTvShowRating() {
         val isSendRateSuccess = manageTvShowDetails.addTvShowRate(
             tvShowId = route.tvShowId,
             rating = state.value.imdbRating.toFloat()
         )
         if (isSendRateSuccess) {
-            emitEffect(TvShowScreenEffects.ShowSuccessSnackBar)
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingSuccess,
+                        isError = false
+                    ),
+                    showRateBottomSheet = false,
+                    showRateButton = false
+                )
+            }
         } else {
-            emitEffect(TvShowScreenEffects.ShowErrorSnackBar)
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingFailed,
+                        isError = true
+                    )
+                )
+            }
         }
     }
 
     private fun updateUserLoginState() {
         tryToCollect(
-            callee = { checkUserLogin.isLoggedIn() },
+            block = { checkUserLogin.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
         )
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
-        updateState { copy(isUserLoggedIn = isLogged) }
-    }
-
-    private fun promptLogin(type: LoginPromptType) {
-        updateState {
-            copy(
-                showLoginBottomSheet = true,
-                loginPromptType = type
-            )
+        if (isLogged) {
+            fetchUserRating()
         }
+        updateState { copy(isUserLoggedIn = isLogged) }
     }
 
     private fun addTvShowToHistory(tvShow: TvShow) {
         tryToCollect(
-            callee = { getLoggedInUserUseCase.getLoggedInUser() },
+            block = { getLoggedInUserUseCase.getLoggedInUser() },
             onCollect = { user ->
                 manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
                     mediaHistoryItem = tvShow.toHistory(),
@@ -262,22 +245,66 @@ class TvShowScreenViewModel @Inject constructor(
         )
     }
 
-    private fun onErrorAccrue(exception: NovixAppException) {
+    private fun onErrorFetchingData(exception: NovixAppException) {
         if (exception is NoNetworkException) {
             updateState {
                 copy(
                     noInternetConnection = true,
-                    isLoadingEpisodes = false
+                    isLoadingEpisodes = false,
+                    isLoading = false,
+                    isError = true
                 )
             }
         } else {
             updateState {
                 copy(
-                    error = exception.message,
                     noInternetConnection = false,
-                    isLoadingEpisodes = false
+                    isLoading = false,
+                    isLoadingEpisodes = false,
+                    isError = true
                 )
             }
+        }
+    }
+
+    private fun onErrorLoadingSeasonDetails(
+        exception: NovixAppException
+    ) {
+        if (exception is NoNetworkException) {
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.noInternetConnectionError,
+                        isError = true
+                    ),
+                    isLoadingEpisodes = false,
+                    isLoading = false,
+                    isError = true
+                )
+            }
+        } else {
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.somethingWentWrongError,
+                        isError = true
+                    ),
+                    isLoadingEpisodes = false,
+                    isError = true
+                )
+            }
+        }
+
+    }
+
+    private fun onSubmitRatingFailed(exception: NovixAppException) {
+        updateState {
+            copy(
+                snackBarData = SnackData(
+                    message = stringProvider.deleteRatingFailed,
+                    isError = true
+                )
+            )
         }
     }
 }

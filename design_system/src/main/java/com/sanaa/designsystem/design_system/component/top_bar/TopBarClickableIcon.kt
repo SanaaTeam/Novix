@@ -29,6 +29,7 @@ fun TopBarClickableIcon(
     icon: Painter,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isClickable: Boolean = true,
     contentDescription: String? = "",
     tint: androidx.compose.ui.graphics.Color = Theme.colors.title
 
@@ -47,6 +48,7 @@ fun TopBarClickableIcon(
             )
             .clip(RoundedCornerShape(12.dp))
             .clickable(
+                enabled = isClickable,
                 onClick = onClick,
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }

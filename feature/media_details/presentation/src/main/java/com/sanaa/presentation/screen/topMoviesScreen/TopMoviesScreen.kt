@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
@@ -62,7 +62,6 @@ fun TopMoviesScreen(
         .fromApplication(context, DetailsApiEntryPoint::class.java)
         .authenticationApi()
 
-    val launcher = launchAuthActivityForResult()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val selectedMedia = uiState.selectedMediaToSave
 
@@ -77,24 +76,22 @@ fun TopMoviesScreen(
         isVisible = uiState.showLoginBottomSheet,
         onDismiss = viewModel::onDismissBottomSheet,
         onLoginButtonClick = {
-            launcher.launch(authApi.getLaunchIntent(context))
+            authApi.launch(context, AuthStartRoute.Login)
         }
     )
 
     SaveToListBottomSheet(
         isVisible = uiState.showSaveToListBottomSheet,
-        mediaId = selectedMedia?.id?.toLong() ?: 0,
+        mediaId = selectedMedia?.id ?: 0,
         onDismiss = viewModel::onDismissSaveToListBottomSheet,
         onCreateNewListClick = viewModel::onCreateNewListClick,
     )
 
-    if (uiState.showAddListBottomSheet && selectedMedia != null) {
-        AddBookmarkListBottomSheet(
-            isVisible = true,
-            onDismiss = viewModel::onDismissAddListBottomSheet,
-            mediaId = selectedMedia.id
-        )
-    }
+    AddBookmarkListBottomSheet(
+        isVisible = uiState.showAddListBottomSheet,
+        onDismiss = viewModel::onDismissAddListBottomSheet,
+    )
+
 }
 
 
@@ -187,7 +184,6 @@ private fun TopMoviesContent(
                                         },
                                         topLeftContent = {
                                             SaveIconChip(
-                                                isSaved = movie.isSaved,
                                                 onClick = { interactionListener.onSaveClicked(movie) }
                                             )
                                         },

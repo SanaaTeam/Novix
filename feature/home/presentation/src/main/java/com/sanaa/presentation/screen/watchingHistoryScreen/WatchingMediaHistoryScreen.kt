@@ -21,13 +21,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.designsystem.R as designSystemR
 import com.sanaa.presentation.api.HomeApiEntryPoint
 import com.sanaa.presentation.app.navigation.LocalMainNavController
 import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
@@ -67,7 +68,7 @@ private fun WatchingMediaHistoryScreenContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_back),
+                        icon = painterResource(id = designSystemR.drawable.icon_back),
                         onClick = interactionListener::onBackClick
                     )
                 },
@@ -117,30 +118,6 @@ private fun WatchingMediaHistoryScreenContent(
                             onSaveIconClick = interactionListener::onSaveIconClick,
                             modifier = Modifier.fillMaxSize()
                         )
-                        val selectedMedia = state.selectedMediaToSave
-                        if (state.userIsLoggedIn) {
-                            if (state.showSaveToListBottomSheet && selectedMedia != null) {
-                                SaveToListBottomSheet(
-                                    isVisible = true,
-                                    mediaId = selectedMedia.id.toLong(),
-                                    onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-                                    onCreateNewListClick = interactionListener::onCreateNewListClick
-                                )
-                            }
-                            if (state.showAddListBottomSheet && selectedMedia != null) {
-                                AddBookmarkListBottomSheet(
-                                    isVisible = true,
-                                    onDismiss = interactionListener::onDismissAddListBottomSheet,
-                                    mediaId = selectedMedia.id
-                                )
-                            }
-                        } else {
-                            RequestToLoginBottomSheet(
-                                isVisible = state.showLoginBottomSheet,
-                                onDismiss = interactionListener::onDismissLoginBottomSheet,
-                                onLoginButtonClick = interactionListener::onLoginButtonClick
-                            )
-                        }
                     }
 
                     MediaTypeUiState.TV_SHOW -> {
@@ -163,6 +140,24 @@ private fun WatchingMediaHistoryScreenContent(
             }
         }
     }
+
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0,
+        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionListener::onCreateNewListClick
+    )
+
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+    )
+
+    RequestToLoginBottomSheet(
+        isVisible = state.showLoginBottomSheet,
+        onDismiss = interactionListener::onDismissLoginBottomSheet,
+        onLoginButtonClick = interactionListener::onLoginButtonClick
+    )
 }
 
 @Composable
@@ -175,7 +170,6 @@ private fun EffectHandler(
         appContext,
         HomeApiEntryPoint::class.java
     ).authenticationApi()
-    val launcher = launchAuthActivityForResult()
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
@@ -191,7 +185,7 @@ private fun EffectHandler(
                 }
 
                 is WatchingMediaHistoryScreenEffect.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(appContext))
+                    authApi.launch(appContext, AuthStartRoute.Login)
                 }
 
                 is WatchingMediaHistoryScreenEffect.NavigateToMediaDetails -> {

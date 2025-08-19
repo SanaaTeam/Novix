@@ -1,5 +1,6 @@
 package com.sanaa.presentation.api
 
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -18,17 +19,18 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthenticationApiImpl @Inject constructor() : AuthenticationApi {
-    override fun getLaunchIntent(context: Context, startRoute: AuthStartRoute): Intent {
-        return Intent(context, AuthActivity::class.java).apply {
-            putExtra(AuthActivity.EXTRA_START_ROUTE, startRoute.name)
-        }
+    override fun launch(context: Context, startRoute: AuthStartRoute) {
+        val intent = AuthActivity.createIntent(context, startRoute)
+        context.startActivity(
+            intent,
+            ActivityOptions.makeSceneTransitionAnimation(context as? AppCompatActivity).toBundle()
+        )
     }
 }
 
 
 @AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
-
     private val viewModel: AuthenticationViewModel by viewModels()
 
 
@@ -42,23 +44,18 @@ class AuthActivity : AppCompatActivity() {
         setContent {
             val state = viewModel.state.collectAsStateWithLifecycle()
             NovixTheme(isDarkMode = state.value.isDarkTheme) {
-                AuthNavHost(
-                    startRoute = startRoute ?: AuthStartRoute.Welcome,
-                    onAuthResult = { code: Int ->
-                        finishWithResultCode(code)
-                    }
-                )
+                AuthNavHost(startRoute = startRoute ?: AuthStartRoute.Welcome)
             }
         }
     }
 
 
-    fun finishWithResultCode(code: Int) {
-        setResult(code)
-        finish()
-    }
-
     internal companion object {
         const val EXTRA_START_ROUTE = "extra_start_route"
+        fun createIntent(context: Context, startRoute: AuthStartRoute): Intent {
+            return Intent(context, AuthActivity::class.java).apply {
+                putExtra(EXTRA_START_ROUTE, startRoute.name)
+            }
+        }
     }
 }

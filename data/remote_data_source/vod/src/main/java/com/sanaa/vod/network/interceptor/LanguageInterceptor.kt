@@ -1,13 +1,10 @@
 package com.sanaa.vod.network.interceptor
 
-import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.Interceptor
 import okhttp3.Response
+import java.util.Locale
 
-class LanguageInterceptor(
-    @ApplicationContext private val context: Context
-) : Interceptor {
+class LanguageInterceptor() : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()
@@ -30,6 +27,6 @@ class LanguageInterceptor(
     }
 
     private fun getLanguageCode(): String {
-        return context.resources.configuration.locales[0].language
+        return Locale.getDefault().language
     }
 }

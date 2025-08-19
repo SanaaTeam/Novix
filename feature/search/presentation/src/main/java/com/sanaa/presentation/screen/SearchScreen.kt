@@ -15,9 +15,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.SearchNavigatorApi
 import com.sanaa.api.StartRoute
-import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
@@ -112,27 +112,23 @@ private fun SearchScreenContent(
                     )
                 }
             }
-            state.selectedMediaToSave?.let { mediaItem ->
-                SaveToListBottomSheet(
-                    isVisible = state.showSaveToListBottomSheet,
-                    mediaId = mediaItem.id.toLong(),
-                    onDismiss = {},
-                    onCreateNewListClick = {},
-                )
-            }
-            AddBookmarkListBottomSheet(
-                isVisible = state.showAddListBottomSheet,
-                interactionsListener = interactionsListener,
-                mediaId = state.selectedMediaToSave?.id ?: 0
-            )
-            RequestToLoginBottomSheet(
-                interactionsListener = interactionsListener,
-                isVisible = state.showLoginBottomSheet,
-            )
         }
     }
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0,
+        onDismiss = interactionsListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionsListener::onCreateNewListClick,
+    )
 
-
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        interactionsListener = interactionsListener,
+    )
+    RequestToLoginBottomSheet(
+        interactionsListener = interactionsListener,
+        isVisible = state.showLoginBottomSheet,
+    )
 }
 
 
@@ -143,8 +139,6 @@ fun EffectHandler(effect: Flow<SearchScreenEffects>, navigator: SearchNavigatorA
         context,
         SearchApiEntryPoint::class.java
     ).authenticationApi()
-
-    val launcher = launchAuthActivityForResult()
 
 
     LaunchedEffect(Unit) {
@@ -172,7 +166,7 @@ fun EffectHandler(effect: Flow<SearchScreenEffects>, navigator: SearchNavigatorA
                     )
 
                 SearchScreenEffects.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }
