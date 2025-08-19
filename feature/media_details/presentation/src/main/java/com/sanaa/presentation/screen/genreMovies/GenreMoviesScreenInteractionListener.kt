@@ -2,14 +2,16 @@ package com.sanaa.presentation.screen.genreMovies
 
 import com.sanaa.presentation.model.MovieUiModel
 
-interface GenreMoviesScreenInteractionListener {
-    fun onSaveIconClick(media: MovieUiModel)
-    fun onBackClick()
-    fun onMovieClick(id: Int)
-    fun onBottomSheetDismiss()
+interface GenreMoviesScreenInteractionListener:GenreMoviesGridInteractionListener {
     fun onRetryClicked()
+    fun onBackClick()
+    fun onBottomSheetDismiss()
     fun onLoginButtonClick()
     fun onDismissSaveToListBottomSheet()
     fun onDismissAddListBottomSheet()
     fun onCreateNewListClick()
+}
+interface GenreMoviesGridInteractionListener {
+    fun onMovieClick(id: Int)
+    fun onSaveIconClick(media: MovieUiModel)
 }
