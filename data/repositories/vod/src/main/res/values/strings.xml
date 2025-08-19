@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="no_internet_connection_error">No Internet Connection</string>
-    <string name="something_went_wrong_error">Something went wrong, please try again later</string>
+    <string name="something_went_wrong_error">Something went wrong</string>
     <string name="add_to_list_failed">Add to list failed</string>
     <string name="add_to_list_success">Added to list successfully</string>
     <string name="submit_rating_successfully">Submit rating successfully</string>

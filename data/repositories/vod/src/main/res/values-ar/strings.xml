@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="no_internet_connection_error">لا يوجد اتصال انترنت</string>
-    <string name="something_went_wrong_error">حدث خطأ ما، يرجى المحاولة لاحقًا</string>
+    <string name="something_went_wrong_error">حدث خطأ</string>
     <string name="add_to_list_failed">فشل الحفظ في القائمة</string>
     <string name="add_to_list_success">تم الحفظ في القائمة</string>
     <string name="submit_rating_successfully">تم إرسال التقييم بنجاح</string>
