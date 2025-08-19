@@ -107,9 +107,7 @@ fun GenreMoviesScreenContent(
         },
 
         ) {
-        Column(
-
-        ) {
+        Column {
 
             GenreMoviesTopBar(state.title.toString())
             Box(

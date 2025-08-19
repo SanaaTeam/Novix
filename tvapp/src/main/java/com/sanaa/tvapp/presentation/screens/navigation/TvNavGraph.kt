@@ -40,12 +40,12 @@ fun TvNavGraph(navController: NavHostController, startDestination: Any) {
         }
 
         composable<GenreMovieScreenRoute> { backStackEntry ->
-            val args = backStackEntry.toRoute<GenreMovieScreenRoute>()
+            backStackEntry.toRoute<GenreMovieScreenRoute>()
             GenreMoviesScreen()
         }
 
         composable<GenreTvShowsScreenRoute> { backStackEntry ->
-            val args = backStackEntry.toRoute<GenreTvShowsScreenRoute>()
+            backStackEntry.toRoute<GenreTvShowsScreenRoute>()
             GenreTvShowsScreen()
         }
     }
