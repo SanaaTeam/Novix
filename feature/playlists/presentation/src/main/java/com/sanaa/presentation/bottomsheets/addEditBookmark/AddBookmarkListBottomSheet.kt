@@ -31,7 +31,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.screen.playlistDetails.components.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.screen.playlistDetails.components.AnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -134,7 +134,7 @@ private fun AddBookmarkListBottomSheetContent(
             }
         }
 
-        NovixAnimatedSnackBarHost(
+        AnimatedSnackBarHost(
             data = state.snackBarData,
             onDismiss = interactionListener::onSnackBarDismiss
         )
