@@ -68,49 +68,48 @@ private fun CategoriesScreen(
     interactionListener: CategoriesScreenInteractionListener,
 ) {
     NovixScaffold(
-        topBar =
-
-            {
-                CategoryTopBar(
-                    selectedTabIndex = state.selectedTabIndex,
-                    onTabSelected = interactionListener::onTabChanged
-                )
-
-            }
-    ) {
-
-
-        if (state.isNoInternet) {
-            NetworkDisconnectionContact(
-                onRetryClick = interactionListener::onRetryClick,
+        topBar = {
+            CategoryTopBar(
+                selectedTabIndex = state.selectedTabIndex,
+                onTabSelected = interactionListener::onTabChanged
             )
-        } else {
-            Column(
-                modifier = Modifier.padding(top = 12.dp)
-            ) {
+        }
+    ) {
+        when {
+            state.isNoInternet -> {
+                NetworkDisconnectionContact(
+                    onRetryClick = interactionListener::onRetryClick,
+                )
+            }
 
-                Crossfade(
-                    targetState = state.isLoading,
+            else -> {
+                Column(
+                    modifier = Modifier.padding(top = 12.dp)
+                ) {
 
-                    ) { isLoading ->
-                    if (isLoading) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            LoadingIndicator()
-                        }
+                    Crossfade(
+                        targetState = state.isLoading,
 
-                    } else {
-                        CategoriesGrid(
-                            categories = if (state.selectedTabIndex ==
-                                CategoriesScreenUiState.MOVIE_TAB_INDEX
+                        ) { isLoading ->
+                        if (isLoading) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                LoadingIndicator()
+                            }
+
+                        } else {
+                            CategoriesGrid(
+                                categories = if (state.selectedTabIndex ==
+                                    CategoriesScreenUiState.MOVIE_TAB_INDEX
+                                )
+                                    state.movieCategories
+                                else
+                                    state.tvCategories,
+                                onCategoryClick = interactionListener::onGenreClicked
                             )
-                                state.movieCategories
-                            else
-                                state.tvCategories,
-                            onCategoryClick = interactionListener::onGenreClicked
-                        )
+                        }
                     }
                 }
             }

@@ -1,6 +1,5 @@
 package com.sanaa.tvapp.presentation.screens.home
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,13 +7,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -35,16 +30,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.tv.material3.Border
-import androidx.tv.material3.Card
-import androidx.tv.material3.CardDefaults
-import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Text
-import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
-import com.sanaa.tvapp.presentation.api.LocalSafeContentThreshold
 import com.sanaa.tvapp.presentation.components.MediaSection
 import com.sanaa.tvapp.presentation.screens.home.component.HomeScreenLoading
 import com.sanaa.tvapp.presentation.screens.home.component.MediaTab
@@ -53,8 +41,9 @@ import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
+import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
 import com.sanaa.tvapp.state.MediaItemUiState
-import com.sanaa.designsystem.R as dosingSystemResource
+import com.sanaa.tvapp.state.MediaTypeUiState
 import com.sanaa.tvapp.R as tvResource
 
 @Composable
@@ -92,7 +81,7 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
     val mainTvNavController = LocalAppNavController.current
     val navController = rememberNavController()
     val carouselFocusRequester = remember { FocusRequester() }
-    
+
     LaunchedEffect(Unit) {
         carouselFocusRequester.requestFocus()
     }
@@ -133,7 +122,12 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
                 .focusRequester(carouselFocusRequester),
 
             mediaItemUiStates = state.popularMedia,
-            onShowDetails = {}
+            onShowDetails = { it ->
+                if (it.mediaTypeUiState == MediaTypeUiState.MOVIE)
+                    mainTvNavController.navigate(ScreensRoute.MovieDetailsRoute(it.id))
+                else
+                    mainTvNavController.navigate(ScreensRoute.TvShowDetailsRoute(it.id))
+            }
         )
 
         MediaTab(sidePaddings, navController)
@@ -167,11 +161,10 @@ fun HomeMovies(
                 items = state.topRatingMovies,
                 key = { it.id }
             ) {
-                ImageList(
-                    it,
-                    onItemClick = { id ->
-                        onItemClick(id)
-                    }
+                FocusableMediaCard(
+                    imageUrl = it.imageUrl ?: "",
+                    titleText = it.title,
+                    onClick = { onItemClick(it.id) }
                 )
             }
         }
@@ -182,11 +175,10 @@ fun HomeMovies(
                     items = state.continueWatchingMovies,
                     key = { it.id }
                 ) {
-                    ImageList(
-                        it,
-                        onItemClick = { id ->
-                            onItemClick(id)
-                        }
+                    FocusableMediaCard(
+                        imageUrl = it.imageUrl ?: "",
+                        titleText = it.title,
+                        onClick = { onItemClick(it.id) }
                     )
                 }
             }
@@ -197,11 +189,10 @@ fun HomeMovies(
                 count = upcomingMovies.itemCount,
             ) { index ->
                 upcomingMovies[index]?.let {
-                    ImageList(
-                        it,
-                        onItemClick = { id ->
-                            onItemClick(id)
-                        }
+                    FocusableMediaCard(
+                        imageUrl = it.imageUrl ?: "",
+                        titleText = it.title,
+                        onClick = { onItemClick(it.id) }
                     )
                 }
             }
@@ -222,11 +213,10 @@ fun HomeTvShows(
                     items = state.topRatingTvShows,
                     key = { it.id }
                 ) {
-                    ImageList(
-                        it,
-                        onItemClick = { id ->
-                            onItemClick(id)
-                        }
+                    FocusableMediaCard(
+                        imageUrl = it.imageUrl ?: "",
+                        titleText = it.title,
+                        onClick = { onItemClick(it.id) }
                     )
                 }
             }
@@ -238,11 +228,10 @@ fun HomeTvShows(
                     items = state.continueWatchingTvShows,
                     key = { it.id }
                 ) {
-                    ImageList(
-                        it,
-                        onItemClick = { id ->
-                            onItemClick(id)
-                        }
+                    FocusableMediaCard(
+                        imageUrl = it.imageUrl ?: "",
+                        titleText = it.title,
+                        onClick = { onItemClick(it.id) }
                     )
                 }
             }
@@ -254,58 +243,14 @@ fun HomeTvShows(
                     count = upcomingMovies.itemCount,
                 ) { index ->
                     upcomingMovies[index]?.let {
-                        ImageList(
-                            it,
-                            onItemClick = { id ->
-                                onItemClick(id)
-                            }
+                        FocusableMediaCard(
+                            imageUrl = it.imageUrl ?: "",
+                            titleText = it.title,
+                            onClick = { onItemClick(it.id) }
                         )
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-@OptIn(ExperimentalTvMaterial3Api::class)
-fun ImageList(
-    item: MediaItemUiState,
-    onItemClick: (Int) -> Unit,
-) {
-    Card(
-        modifier = Modifier
-            .width(153.dp)
-            .height(231.dp),
-        colors = CardDefaults.colors(containerColor = Theme.colors.surfaceHigh),
-        onClick = {
-            onItemClick(item.id)
-        },
-        border = CardDefaults.border(
-            border = Border.None,
-            focusedBorder = Border(
-                border = BorderStroke(
-                    width = 3.dp,
-                    color = Theme.colors.primary,
-                ),
-                shape = RoundedCornerShape(12.dp),
-            ),
-        ),
-        scale = CardDefaults.scale(focusedScale = 1.05f),
-    ) {
-        RemoteBlurredSensitiveImage(
-            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-            imageUrl = item.imageUrl ?: "",
-            contentDescription = item.title
-        ) {
-            OnBlurContent(
-                hintText = stringResource(dosingSystemResource.string.unsuitable_image),
-                textStyle = Theme.textStyle.body.small.copy(
-                    color = Color(0x99FFFFFF)
-                ),
-                iconSize = 24.dp,
-                icon = painterResource(dosingSystemResource.drawable.icon_eye_slash),
-            )
         }
     }
 }

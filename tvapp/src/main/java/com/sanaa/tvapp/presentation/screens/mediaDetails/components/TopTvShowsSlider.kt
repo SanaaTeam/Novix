@@ -11,13 +11,13 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.TvShowDetailsUiModel
-import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvMediaPosterCard
+import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
 
 @Composable
 fun TopTvShowsSlider(
     title: String,
     tvShows: List<TvShowDetailsUiModel>,
-    onTvShowCardClicked: (Int) -> Unit = {}
+    onTvShowCardClicked: (Int) -> Unit = {},
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -34,13 +34,11 @@ fun TopTvShowsSlider(
             contentPadding = PaddingValues(horizontal = 36.dp)
         ) {
             items(tvShows.size) { index ->
-                val movie = tvShows[index]
-                TvMediaPosterCard(
-                    title = movie.title,
-                    imageUrl = movie.posterUrl.orEmpty(),
-                    onCardClick = {
-                        onTvShowCardClicked(movie.id)
-                    },
+                val tvShow = tvShows[index]
+                FocusableMediaCard(
+                    imageUrl = tvShow.posterUrl ?: "",
+                    titleText = tvShow.title,
+                    onClick = { onTvShowCardClicked(tvShow.id) }
                 )
             }
         }

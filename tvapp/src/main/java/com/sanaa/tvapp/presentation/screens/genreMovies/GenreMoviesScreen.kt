@@ -53,7 +53,7 @@ import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.category.util.getGenreImage
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
-import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvMediaPosterCard
+import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
 
 @Composable
 fun GenreMoviesScreen(
@@ -184,13 +184,11 @@ fun GenreMoviesScreenContent(
                                             }
                                         )
                                 ) {
-                                    TvMediaPosterCard(
-                                        title = movie.title,
+                                    FocusableMediaCard(
                                         imageUrl = movie.imageUrl,
-                                        onCardClick = {
-                                        },
+                                        titleText = movie.title,
+                                        onClick = {  }
                                     )
-
                                 }
                             }
 
