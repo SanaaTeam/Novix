@@ -2,7 +2,7 @@ package com.sanaa.presentation.util
 
 import com.sanaa.feature.category.presentation.R
 
-const val IMAGE_RAW_BASE_URL = "https://raw.githubusercontent.com/SanaaTeam/Novix/refs/heads/enhancement/decrease-app-size/feature/category/presentation/src/main/genre-images"
+const val IMAGE_RAW_BASE_URL = "https://raw.githubusercontent.com/SanaaTeam/Novix/refs/heads/development/feature/category/presentation/src/main/genre-images"
 // Movie genre IDs
 const val GENRE_MOVIE_ACTION = 28
 const val GENRE_MOVIE_ADVENTURE = 12
