@@ -13,13 +13,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.api.AuthenticationApi.Companion.RESULT_LOGGED_AS_GUEST
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.LoginRoute
+import com.sanaa.presentation.screen.login.SnackData
+import androidx.compose.runtime.getValue
+import com.sanaa.presentation.screen.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.screen.welcome.components.WelcomeFooter
 import com.sanaa.presentation.screen.welcome.components.WelcomeSection
+
 
 @Composable
 fun WelcomeScreen(
@@ -29,6 +34,7 @@ fun WelcomeScreen(
     viewModel: WelcomeViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavControllerProvider.current
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     BackHandler(onBack = viewModel::onExit)
 
@@ -40,7 +46,6 @@ fun WelcomeScreen(
                 }
 
                 WelcomeScreenEffects.ReturnGuestResultCode -> {
-
                     onFinish(RESULT_LOGGED_AS_GUEST)
                 }
 
@@ -56,6 +61,8 @@ fun WelcomeScreen(
         WelcomeContent(
             onLoginClicked = viewModel::onLoginClicked,
             onContinueClicked = viewModel::onContinueClicked,
+            onSnackBarDismiss = viewModel::onSnackBarDismiss,
+            snackBarData = uiState.snackBarData,
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -65,9 +72,19 @@ fun WelcomeScreen(
 fun WelcomeContent(
     onLoginClicked: () -> Unit,
     onContinueClicked: () -> Unit,
+    onSnackBarDismiss: () -> Unit,
+    snackBarData: SnackData?,
     modifier: Modifier = Modifier,
 ) {
-    NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
+    NovixScaffold(
+        backgroundShapes = { BackgroundShapes() },
+        snackBarHost = {
+            NovixAnimatedSnackBarHost(
+                data = snackBarData,
+                onDismiss = onSnackBarDismiss
+            )
+        }
+    ) {
         Column(
             modifier = modifier
                 .navigationBarsPadding()
