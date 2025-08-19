@@ -122,19 +122,22 @@ class GenreMoviesViewModel @Inject constructor(
     }
 
     private fun onFetchMoviesFailed(exception: Exception) {
-        if (exception is NoNetworkException) {
-            updateState {
+        when (exception) {
+            is NoNetworkException -> updateState {
                 copy(
                     noInternetConnection = true,
                     isLoading = false,
                     error = null
                 )
             }
-        } else {
-            updateState { copy(error = exception.message, isLoading = false) }
+            else -> updateState {
+                copy(
+                    error = exception.message,
+                    isLoading = false
+                )
+            }
         }
     }
-
 
     private fun createMoviesPagingDataSource(
         genreId: Int,

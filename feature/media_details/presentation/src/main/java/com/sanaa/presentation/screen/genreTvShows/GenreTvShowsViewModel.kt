@@ -5,9 +5,9 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import com.sanaa.presentation.model.TvShowUiState
 import com.sanaa.presentation.model.mapper.toState
+import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvShow
 import exceptions.NoNetworkException
@@ -107,10 +107,13 @@ class GenreTvShowsViewModel @Inject constructor(
     }
 
     private fun onGetShowsByGeneraIdFailed(exception: NovixAppException) {
-        if (exception is NoNetworkException) {
-            updateState { copy(noInternetConnection = true, isLoading = false, error = null) }
-        } else {
-            updateState { copy(error = exception.message, isLoading = false) }
+        when (exception) {
+            is NoNetworkException -> updateState {
+                copy(noInternetConnection = true, isLoading = false, error = null)
+            }
+            else -> updateState {
+                copy(error = exception.message, isLoading = false)
+            }
         }
     }
 
