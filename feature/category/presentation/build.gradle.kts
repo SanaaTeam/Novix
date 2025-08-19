@@ -16,6 +16,7 @@ android {
 
 
 dependencies {
+    implementation(projects.domain.identity)
     implementation(projects.domain.vod)
     implementation(projects.designSystem)
     implementation(projects.feature.category.api)

@@ -36,7 +36,7 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
                     backStackEntry?.savedStateHandle?.get<Boolean>("list_deleted") == true
                 if (deleted) {
                     viewModel.onListDeletedSuccessfully()
-                    backStackEntry.savedStateHandle.remove<Boolean>("list_deleted")
+                    backStackEntry?.savedStateHandle?.remove<Boolean>("list_deleted")
                 }
             }
     }

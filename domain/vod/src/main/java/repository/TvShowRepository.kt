@@ -27,7 +27,7 @@ interface TvShowRepository {
     suspend fun getTopRatedTvShows(page: Int, genreId: Int?): List<TvShow>
     suspend fun getTrendingTvShows(page: Int, genreId: Int?): List<TvShow>
     suspend fun getPopularTvShows(page: Int): List<TvShow>
-    suspend fun getTvShowGenres(): List<Genre>
+    suspend fun getTvShowGenres(refreshCash:Boolean = false): List<Genre>
     suspend fun getTvShowRate(accountId: Long, tvShowId: Int): Int?
     suspend fun getEpisodesRate(accountId: Long, seasonNumber: Int, episodeNumber: Int): Int?
     suspend fun addTvShowRate(tvShowId: Int, rating: Float): Boolean

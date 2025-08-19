@@ -44,8 +44,8 @@ class ManageTvShowUseCase @Inject constructor(
         return repository.getTrendingTvShows(page, genreId)
     }
 
-    suspend fun getTvShowGenres(): List<Genre> {
-        return repository.getTvShowGenres()
+    suspend fun getTvShowGenres(freshData: Boolean = false): List<Genre> {
+        return repository.getTvShowGenres(freshData)
     }
 
     suspend fun getTvShowRating(accountId: Long, tvShowId: Int): Int {
