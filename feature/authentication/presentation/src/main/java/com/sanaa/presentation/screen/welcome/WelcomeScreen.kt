@@ -4,23 +4,21 @@ import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.api.AuthenticationApi.Companion.RESULT_LOGGED_AS_GUEST
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.LoginRoute
-import com.sanaa.presentation.screen.login.SnackData
-import androidx.compose.runtime.getValue
 import com.sanaa.presentation.screen.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.screen.welcome.components.WelcomeFooter
 import com.sanaa.presentation.screen.welcome.components.WelcomeSection
@@ -59,34 +57,28 @@ fun WelcomeScreen(
 
     Box(modifier = modifier) {
         WelcomeContent(
-            onLoginClicked = viewModel::onLoginClicked,
-            onContinueClicked = viewModel::onContinueClicked,
-            onSnackBarDismiss = viewModel::onSnackBarDismiss,
-            snackBarData = uiState.snackBarData,
-            modifier = Modifier.fillMaxSize()
+            state = uiState,
+            interactionListener = viewModel
         )
     }
 }
 
 @Composable
 fun WelcomeContent(
-    onLoginClicked: () -> Unit,
-    onContinueClicked: () -> Unit,
-    onSnackBarDismiss: () -> Unit,
-    snackBarData: SnackData?,
-    modifier: Modifier = Modifier,
+    state: WelcomeScreenUiState,
+    interactionListener: WelcomeScreenInteractionListener
 ) {
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
         snackBarHost = {
             NovixAnimatedSnackBarHost(
-                data = snackBarData,
-                onDismiss = onSnackBarDismiss
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackBarDismiss
             )
         }
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())
         ) {
@@ -97,8 +89,8 @@ fun WelcomeContent(
             )
 
             WelcomeFooter(
-                onLoginClicked = onLoginClicked,
-                onContinueClicked = onContinueClicked
+                onLoginClicked = interactionListener::onLoginClicked,
+                onContinueClicked = interactionListener::onContinueClicked
             )
         }
     }
