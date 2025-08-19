@@ -228,7 +228,7 @@ class HistoryRepositoryImplTest {
         val mediaType = MediaType.MOVIE
         val genreId: Int? = null
         coEvery {
-            localDataSource.getWatchedMediaHistory(username, mediaType, genreId)
+            localDataSource.getWatchedMediaHistory(username, mediaType.name, genreId)
         } returns flowOf(givenWatchedMedia)
 
         val expected = givenWatchedMedia.map { it.toEntity() }

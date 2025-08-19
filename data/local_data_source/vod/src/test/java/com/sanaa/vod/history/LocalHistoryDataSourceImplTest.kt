@@ -10,7 +10,6 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import usecase.search.search_param.MediaType
 
 class LocalHistoryDataSourceImplTest {
     private lateinit var dataSource: LocalHistoryDataSourceImpl
@@ -114,12 +113,12 @@ class LocalHistoryDataSourceImplTest {
     @Test
     fun `getWatchedMedia should call getWatchedMediaHistory on watchedMediaHistoryDao`() = runTest {
         val username = "testUser"
-        val mediaType = MediaType.MOVIE
+        val mediaType = "MOVIE"
         val genre = null
 
         dataSource.getWatchedMediaHistory(username, mediaType, genre)
 
-        coVerify { watchedMediaHistoryDao.getWatchedMediaHistory(username, mediaType.name, genre) }
+        coVerify { watchedMediaHistoryDao.getWatchedMediaHistory(username, mediaType, genre) }
     }
 
     // ========== PAGINATION TESTS ==========
