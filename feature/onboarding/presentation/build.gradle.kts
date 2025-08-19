@@ -7,8 +7,8 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.onboarding.api)
     implementation(projects.designSystem)
+    implementation(projects.feature.onboarding.api)
     implementation(projects.feature.authentication.api)
 
     implementation(libs.hilt.android)

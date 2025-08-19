@@ -10,13 +10,13 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.authentication.api)
     implementation(projects.domain.identity)
-    implementation(projects.feature.mediaDetails.api)
     implementation(projects.domain.vod)
     implementation(projects.domain.identity)
     implementation(projects.designSystem)
     implementation(projects.imageViewer)
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.feature.authentication.api)
 
     implementation(libs.material3)
     implementation(libs.kotlinx.serialization.json)
@@ -42,12 +42,10 @@ dependencies {
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
 
-    // Paging 3
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.compose)
+    implementation(libs.bundles.paging)
+    testImplementation(libs.bundles.paging.testing)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
-    testImplementation(libs.androidx.paging.testing)
 }

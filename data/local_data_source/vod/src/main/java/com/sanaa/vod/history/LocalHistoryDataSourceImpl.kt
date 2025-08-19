@@ -8,7 +8,6 @@ import com.sanaa.vod.history.dao.QueryDao
 import com.sanaa.vod.history.dao.RecentViewedDao
 import com.sanaa.vod.history.dao.WatchedMediaHistoryDao
 import kotlinx.coroutines.flow.Flow
-import usecase.search.search_param.MediaType
 import javax.inject.Inject
 
 class LocalHistoryDataSourceImpl @Inject constructor(
@@ -53,10 +52,10 @@ class LocalHistoryDataSourceImpl @Inject constructor(
 
     override suspend fun getWatchedMediaHistory(
         username: String,
-        mediaType: MediaType?,
+        mediaType: String?,
         genreId: Int?
     ): Flow<List<WatchedMediaHistoryLocalDto>> {
-        return watchedMediaHistoryDao.getWatchedMediaHistory(username, mediaType?.name, genreId?.toString())
+        return watchedMediaHistoryDao.getWatchedMediaHistory(username, mediaType, genreId?.toString())
     }
 
 }

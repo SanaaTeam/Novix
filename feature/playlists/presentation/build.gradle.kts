@@ -10,13 +10,13 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.playlists.api)
     implementation(projects.designSystem)
-    implementation(projects.feature.authentication.api)
-    implementation(projects.feature.mediaDetails.api)
     implementation(projects.imageViewer)
     implementation(projects.domain.vod)
     implementation(projects.domain.identity)
+    implementation(projects.feature.playlists.api)
+    implementation(projects.feature.authentication.api)
+    implementation(projects.feature.mediaDetails.api)
 
     implementation(libs.androidx.material3.window.size.class1)
     implementation(libs.androidx.material3.adaptive.navigation.suite)
@@ -36,8 +36,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
 
     // Paging 3
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.compose)
+    implementation(libs.bundles.paging)
 
     testImplementation(libs.bundles.test)
     testImplementation(libs.bundles.test.runtime)

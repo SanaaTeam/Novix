@@ -10,14 +10,14 @@ android {
 }
 
 dependencies {
-    implementation(projects.data.repositories.identity)
-    implementation(projects.feature.userProfile.api)
-    implementation(projects.domain.vod)
     implementation(projects.designSystem)
     implementation(projects.imageViewer)
-    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.domain.vod)
     implementation(projects.domain.identity)
-    implementation(projects.designSystem)
+    implementation(projects.data.repositories.identity)
+    implementation(projects.feature.userProfile.api)
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.feature.authentication.api)
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -31,9 +31,7 @@ dependencies {
     implementation(libs.androidx.ui.compose.foundation)
     implementation(platform(libs.androidx.compose.bom))
 
-    // Paging 3
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.compose)
+    implementation(libs.bundles.paging)
 
     testImplementation(libs.bundles.test)
     testImplementation(libs.bundles.test.runtime)
@@ -41,13 +39,10 @@ dependencies {
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
 
-
     implementation(libs.timber)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.slf4j.api)
-
-    implementation(projects.feature.authentication.api)
 }
