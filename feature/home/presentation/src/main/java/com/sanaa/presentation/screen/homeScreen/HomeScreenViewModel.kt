@@ -2,8 +2,6 @@ package com.sanaa.presentation.screen.homeScreen
 
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import androidx.paging.cachedIn
-import androidx.paging.map
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.homeBase.BasePagingSourceForHome
 import com.sanaa.presentation.homeBase.BaseViewModel
@@ -49,7 +47,6 @@ class HomeScreenViewModel @Inject constructor(
         updateUserLoggingStatus()
         fetchPopularMediaData()
         fetchTopRatedMediaData()
-        fetchWatchedMediaData()
         fetchMovieGenres()
         fetchUpcomingMovies()
     }
@@ -63,7 +60,10 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
-        updateState { copy(userIsLoggedIn = isLogged, showLoginBottomSheet = false) }
+        if (isLogged != state.value.userIsLoggedIn) {
+            fetchWatchedMediaData()
+            updateState { copy(userIsLoggedIn = isLogged) }
+        }
     }
 
     private fun fetchPopularMediaData() {
@@ -122,7 +122,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchWatchedMediaData() {
         tryToCollect(
-            onStart = { updateState { copy(isLoadingHistory = false) } },
+            onStart = { updateState { copy(isLoadingHistory = true) } },
             block = ::loadWatchedMediaHistory,
             onCollect = ::onFetchWatchedMediaSuccess,
             onError = ::onDataLoadError
