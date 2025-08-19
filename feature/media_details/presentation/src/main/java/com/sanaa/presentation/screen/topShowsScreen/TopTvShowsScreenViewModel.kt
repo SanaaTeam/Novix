@@ -4,12 +4,14 @@ import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.navigation.TopTvShowsScreenRoute
+import com.sanaa.presentation.screen.movieDetails.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import exceptions.NovixAppException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import service.VodStringProvider
 import usecase.ManageActorUseCase
 import javax.inject.Inject
 
@@ -17,6 +19,7 @@ import javax.inject.Inject
 class TopTvShowsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
+    private val stringProvider: VodStringProvider,
 ) : BaseViewModel<TopTvShowsScreenUiState, Any>(
     initialState = TopTvShowsScreenUiState(),
     defaultDispatcher = Dispatchers.IO
@@ -34,8 +37,12 @@ class TopTvShowsScreenViewModel @Inject constructor(
     }
 
     override fun onRetryClicked() {
-        updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
+        updateState { copy(noInternetConnection = false, isLoading = true) }
         loadDetails()
+    }
+
+    override fun onSnackDismissRequested() {
+        updateState { copy(snackBarData = null) }
     }
 
     private fun loadDetails() {
@@ -51,11 +58,31 @@ class TopTvShowsScreenViewModel @Inject constructor(
 
     private fun onErrorAccrue(e: NovixAppException) {
         when (e) {
-            is NoNetworkException ->
-                updateState { copy(isLoading = false, noInternetConnection = true) }
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        noInternetConnection = true,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true,
+                        )
+                    )
+                }
+            }
 
-            else ->
-                updateState { copy(isLoading = false, error = e.message) }
+            else -> {
+                updateState {
+                    copy(
+                        noInternetConnection = false,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
+            }
         }
     }
 

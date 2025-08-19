@@ -8,6 +8,7 @@ import com.sanaa.presentation.screen.myRating.MediaTypeUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.MediaHistoryItem
 import exceptions.NoLoggedInUserException
+import exceptions.NoNetworkException
 import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -165,13 +166,31 @@ class WatchingHistoryViewModel @Inject constructor(
     }
 
     private fun onLoadDataError(exception: Throwable) {
-        updateState {
-            copy(
-                error = exception.message,
-                isLoading = false
-            )
+        when (exception) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true,
+                        )
+                    )
+                }
+            }
+
+            else -> {
+                updateState {
+                    copy(
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
+            }
         }
-        emitEffect(WatchingHistoryScreenEffect.ShowErrorSnackBar(stringProvider.somethingWentWrongError))
     }
 
     override fun onDismissSaveToListBottomSheet() {
@@ -182,13 +201,6 @@ class WatchingHistoryViewModel @Inject constructor(
         updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
 
-    override fun onSaveToListResult(success: Boolean) {
-        if (success) {
-            emitEffect(WatchingHistoryScreenEffect.ShowSuccessSnackBar(stringProvider.addToListSuccess))
-        } else {
-            emitEffect(WatchingHistoryScreenEffect.ShowErrorSnackBar(stringProvider.addToListFailed))
-        }
-    }
 
     override fun onDismissAddListBottomSheet() {
         updateState { copy(showAddListBottomSheet = false) }
@@ -198,13 +210,5 @@ class WatchingHistoryViewModel @Inject constructor(
         updateState {
             copy(snackBarData = null)
         }
-    }
-
-    override fun onShowSuccessSnackBar(message: String) {
-        updateState { copy(snackBarData = SnackData(message = message, isError = false)) }
-    }
-
-    override fun onShowErrorSnackBar(message: String) {
-        updateState { copy(snackBarData = SnackData(message = message, isError = true)) }
     }
 }

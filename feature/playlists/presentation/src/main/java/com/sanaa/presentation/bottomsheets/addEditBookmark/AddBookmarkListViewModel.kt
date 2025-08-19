@@ -3,7 +3,6 @@ package com.sanaa.presentation.bottomsheets.addEditBookmark
 import com.sanaa.presentation.savedBase.BaseViewModel
 import com.sanaa.presentation.screen.playlist.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import service.VodStringProvider
@@ -20,45 +19,47 @@ class AddBookmarkListViewModel @Inject constructor(
     dispatcher
 ), AddBookMarksInteractionsListener {
 
-    override fun onSnackBarDismiss() {
-        updateState { copy(snackBarData = null) }
-    }
-
     override fun onListTitleChanged(title: String) {
         updateState {
             copy(
                 listTitle = title,
-                isAddButtonEnabled = title.isNotBlank()
+                isAddButtonEnabled = title.isNotBlank() && !state.value.isLoading
             )
         }
     }
 
     override fun resetState() {
-        updateState { copy(listTitle = "", isLoading = false) }
+        updateState { copy(listTitle = "") }
     }
 
     override fun onAddClicked() {
         if (!state.value.isAddButtonEnabled) return
 
-        updateState { copy(isLoading = true) }
         val currentTitle = state.value.listTitle.trim()
-
         tryToExecute(
+            onStart = { updateState { copy(isLoading = true) } },
             block = { manageSavedListsUseCase.createSavedList(currentTitle) },
-            onSuccess = ::onAddBookmarkListSuccess,
-            onError = ::onErrorAccrue
+            onSuccess = { onAddBookmarkListSuccess() },
+            onError = { onErrorAccrue() }
         )
     }
 
-    private fun onAddBookmarkListSuccess(unit: Unit) {
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
+
+    private fun onAddBookmarkListSuccess() {
         resetState()
         emitEffect(AddBookMarksEffect.Dismiss)
         updateState {
-            copy(snackBarData = SnackData(message = stringProvider.createListSuccess, isError = false))
+            copy(
+                isLoading = false,
+                snackBarData = SnackData(message = stringProvider.createListSuccess, isError = false)
+            )
         }
     }
 
-    private fun onErrorAccrue(exception: NovixAppException) {
+    private fun onErrorAccrue() {
         updateState {
             copy(
                 isLoading = false,

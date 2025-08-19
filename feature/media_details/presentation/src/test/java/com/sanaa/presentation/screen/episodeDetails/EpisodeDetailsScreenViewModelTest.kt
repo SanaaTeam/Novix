@@ -10,7 +10,6 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -20,8 +19,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import service.VodStringProvider
-import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
 import usecase.ManageTvShowUseCase
 
@@ -29,8 +26,6 @@ import usecase.ManageTvShowUseCase
 class EpisodeDetailsScreenViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
-    private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase = mockk(relaxed = true)
     private val manageTvShowDetails: ManageTvShowUseCase = mockk(relaxed = true)
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
@@ -66,7 +61,6 @@ class EpisodeDetailsScreenViewModelTest {
         } returns dummyGuests
         coEvery { manageTvShowDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
         coEvery { manageTvShowDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
-        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -78,8 +72,6 @@ class EpisodeDetailsScreenViewModelTest {
 
         viewModel = EpisodeDetailsScreenViewModel(
             savedStateHandle,
-            getUser,
-            checkUserLogin,
             manageEpisodeDetails,
             manageTvShowDetails,
             stringProvider,

@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,10 +28,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.screen.actor.componants.GalleryCard
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.designsystem.R as designR
 
 @Composable
@@ -41,24 +45,43 @@ fun ActorGalleryScreen(
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                ActorGalleryScreenEffects.NavigateBack -> {
+                    navigateBack()
+                }
+            }
+        }
+    }
+
     ActorGalleryContent(
         state = uiState,
-        onBackClick = navigateBack,
-        modifier = Modifier.fillMaxSize()
+        interactionListener = viewModel
     )
 }
 
 @Composable
 private fun ActorGalleryContent(
     state: ActorGalleryScreenUiState,
-    modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
+    interactionListener: ActorGalleryInteractionListener,
 ) {
-    NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
+    NovixScaffold(
+        backgroundShapes = { BackgroundShapes() },
+        snackBarHost = {
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackBarDismiss,
+                modifier = Modifier.statusBarsPadding()
+            )
+        },
+    ) {
         Column(
-            modifier = modifier.navigationBarsPadding()
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
         ) {
-            ActorGalleryTopBar(onBackClick)
+            ActorGalleryTopBar(onBackClick = interactionListener::onBackClicked)
 
             Box(
                 modifier = Modifier
@@ -67,15 +90,18 @@ private fun ActorGalleryContent(
                 contentAlignment = Alignment.Center
             ) {
                 AnimatedContent(
-                    state.isLoading,
+                    state.isLoading to state.noInternetConnection,
                     modifier = Modifier.align(Alignment.Center),
                     contentAlignment = Alignment.Center
 
-                ) { loading ->
-                    if (loading)
+                ) { (loading, isNoInternet) ->
+                    if (loading) {
                         LoadingIndicator()
-                    else
+                    } else if (isNoInternet) {
+                        NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClicked)
+                    } else {
                         GalleryImages(state)
+                    }
                 }
             }
         }

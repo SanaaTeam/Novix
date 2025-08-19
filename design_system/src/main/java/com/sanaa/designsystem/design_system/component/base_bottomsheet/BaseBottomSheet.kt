@@ -55,7 +55,7 @@ fun BaseBottomSheet(
                             .width(32.dp)
                             .background(
                                 color = Theme.colors.body,
-                                shape = RoundedCornerShape(topStart = 100.dp, topEnd = 100.dp)
+                                shape = RoundedCornerShape(100.dp)
                             )
                     )
                 }

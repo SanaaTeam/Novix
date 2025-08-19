@@ -17,6 +17,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageTvShowUseCase
 import kotlin.test.assertEquals
@@ -28,6 +29,7 @@ class GenreTvShowsViewModelTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var viewModel: GenreTvShowsViewModel
+    private val stringProvider: VodStringProvider= mockk(relaxed = true)
 
     private val manageTvShowUseCase: ManageTvShowUseCase = mockk()
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
@@ -61,7 +63,8 @@ class GenreTvShowsViewModelTest {
             savedStateHandle,
             manageTvShowUseCase,
             checkIfUserIsLoggedInUseCase,
-            testDispatcher
+            stringProvider,
+            testDispatcher,
         )
 
         testDispatcher.scheduler.advanceUntilIdle()
@@ -86,7 +89,9 @@ class GenreTvShowsViewModelTest {
         viewModel = GenreTvShowsViewModel(
             savedStateHandle,
             manageTvShowUseCase,
-            checkIfUserIsLoggedInUseCase
+            checkIfUserIsLoggedInUseCase,
+            stringProvider,
+            testDispatcher
         )
 
         testDispatcher.scheduler.advanceUntilIdle()

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,6 +32,7 @@ import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBotto
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.screen.genreMovies.components.GenreMoviesGrid
 import com.sanaa.presentation.screen.genreMovies.components.GenreMoviesTopBar
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
@@ -88,7 +90,14 @@ private fun GenreMoviesScreenContent(
     interactionListener: GenreMoviesScreenInteractionListener,
 ) {
     NovixScaffold(
-        backgroundShapes = { BackgroundShapes() }
+        backgroundShapes = { BackgroundShapes() },
+        snackBarHost = {
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackDismissRequested,
+                modifier = Modifier.statusBarsPadding()
+            )
+        },
     ) {
         Column(
             modifier = Modifier.navigationBarsPadding()

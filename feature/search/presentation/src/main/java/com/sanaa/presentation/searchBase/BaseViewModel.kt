@@ -6,21 +6,13 @@ import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import timber.log.Timber
-import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<T, E>(
@@ -44,11 +36,13 @@ abstract class BaseViewModel<T, E>(
 
 
     protected fun <T> tryToExecute(
+        onStart: () -> Unit = {},
         block: suspend () -> T,
         onSuccess: (T) -> Unit = {},
         onError: (NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
+        onStart()
         val handler = createExceptionHandler(onError)
         viewModelScope.launch(dispatcher + handler) {
             val result = block()

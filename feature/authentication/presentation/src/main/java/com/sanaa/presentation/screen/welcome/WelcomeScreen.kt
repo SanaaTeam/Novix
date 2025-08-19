@@ -2,11 +2,11 @@ package com.sanaa.presentation.screen.welcome
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -26,7 +26,6 @@ import com.sanaa.presentation.screen.welcome.components.WelcomeSection
 
 @Composable
 fun WelcomeScreen(
-    modifier: Modifier = Modifier,
     viewModel: WelcomeViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavControllerProvider.current
@@ -52,12 +51,10 @@ fun WelcomeScreen(
         }
     }
 
-    Box(modifier = modifier) {
-        WelcomeContent(
-            state = uiState,
-            interactionListener = viewModel
-        )
-    }
+    WelcomeContent(
+        state = uiState,
+        interactionListener = viewModel
+    )
 }
 
 @Composable
@@ -70,12 +67,14 @@ fun WelcomeContent(
         snackBarHost = {
             NovixAnimatedSnackBarHost(
                 data = state.snackBarData,
-                onDismiss = interactionListener::onSnackBarDismiss
+                onDismiss = interactionListener::onSnackBarDismiss,
+                modifier = Modifier.statusBarsPadding()
             )
-        }
+        },
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())
         ) {

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -31,7 +30,6 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.designsystem.R as designSystemR
 import com.sanaa.presentation.api.HomeApiEntryPoint
 import com.sanaa.presentation.app.navigation.LocalMainNavController
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
@@ -41,6 +39,7 @@ import com.sanaa.presentation.providers.LocalThemeProvider
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import com.sanaa.designsystem.R as designSystemR
 
 
 @Composable
@@ -83,7 +82,8 @@ private fun TrendingPeopleScreenContent(
         snackBarHost = {
             NovixAnimatedSnackBarHost(
                 data = state.snackBarData,
-                onDismiss = interactionListener::onSnackBarDismiss
+                onDismiss = interactionListener::onSnackBarDismiss,
+                modifier = Modifier.statusBarsPadding()
             )
         },
     ) {
