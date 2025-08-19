@@ -2,9 +2,10 @@ package com.sanaa.vod.network.interceptor
 
 import okhttp3.Interceptor
 import okhttp3.Response
-import java.util.Locale
 
-class LanguageInterceptor() : Interceptor {
+class LanguageInterceptor(
+    private val getLanguage: () -> String?
+) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()
@@ -19,14 +20,10 @@ class LanguageInterceptor() : Interceptor {
         val originalUrl = original.url
 
         val newUrl = originalUrl.newBuilder()
-            .addQueryParameter("language", getLanguageCode()).build()
+            .addQueryParameter("language", getLanguage()).build()
 
         return chain.proceed(
             newRequest.newBuilder().url(newUrl).build()
         )
-    }
-
-    private fun getLanguageCode(): String {
-        return Locale.getDefault().language
     }
 }

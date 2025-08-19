@@ -157,7 +157,6 @@ class GenreMoviesViewModel @Inject constructor(
         }
     }
 
-
     private fun createMoviesPagingDataSource(
         genreId: Int,
     ): PagingSource<Int, Movie> {
