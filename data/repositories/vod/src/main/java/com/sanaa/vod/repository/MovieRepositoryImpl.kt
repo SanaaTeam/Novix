@@ -133,21 +133,36 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMovieGenres(): List<Genre> {
+    override suspend fun getMovieGenres(refreshCash:Boolean): List<Genre> {
         return safeCall("Failed to fetch movie genres") {
-            val cachedGenres = localCachedContentDataSource.getCachedGenres(category = Category.MOVIE_GENRES)
-            if (cachedGenres.isNotEmpty()) {
-                return cachedGenres.map { it.toEntity() }
+            return if (refreshCash){
+                 remote.fetchMovieGenres().map { it.toEntity() }
+                    .also {
+                        localCachedContentDataSource.cacheGenres(
+                            genres = it.map { it.toLocalDto() },
+                            category = Category.MOVIE_GENRES
+                        )
+                    }
+            }else{
+                val cachedGenres = localCachedContentDataSource.getCachedGenres(category = Category.MOVIE_GENRES)
+                if (cachedGenres.isNotEmpty()) {
+                     cachedGenres.map { it.toEntity() }
+                }else{
+                    remote.fetchMovieGenres().map { it.toEntity() }
+                        .also {
+                            localCachedContentDataSource.cacheGenres(
+                                genres = it.map { it.toLocalDto() },
+                                category = Category.MOVIE_GENRES
+                            )
+                        }
+                }
             }
 
-            return remote.fetchMovieGenres().map { it.toEntity() }.also {
-                localCachedContentDataSource.cacheGenres(
-                    genres = it.map { it.toLocalDto() },
-                    category = Category.MOVIE_GENRES
-                )
-            }
         }
     }
+
+
+
 
     override suspend fun addMovieRate(movieId: Int, rating: Float): Boolean {
         return safeCall("Failed to add movie rate") {

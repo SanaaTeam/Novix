@@ -43,8 +43,8 @@ class ManageMovieUseCase @Inject constructor(
     suspend fun getUpcomingMovies(page: Int, genreId: Int?): List<Movie> =
         movieRepo.getUpcomingMovies(page, genreId)
 
-    suspend fun getMovieGenres(): List<Genre> {
-        return movieRepo.getMovieGenres()
+    suspend fun getMovieGenres(freshData: Boolean = false): List<Genre> {
+        return movieRepo.getMovieGenres(freshData)
     }
 
     suspend fun getMovieRate(accountId: Long, movieId: Int): Int {
