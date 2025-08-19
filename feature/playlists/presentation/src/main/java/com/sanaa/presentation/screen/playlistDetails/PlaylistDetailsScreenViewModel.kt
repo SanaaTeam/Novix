@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import repository.ContentRestriction
-import repository.Theme
 import service.VodStringProvider
 import usecase.MangeUserPreferenceUseCase
 import usecase.custom_list.ManageSavedListItemsUseCase
@@ -49,20 +48,10 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
 
     init {
         updateState { copy(listId = listId, title = listTitle) }
-        getUserThemePreference()
         getUserContentRestrictionPreference()
         loadItemsInSavedList(listId)
     }
 
-    private fun getUserThemePreference() {
-        tryToCollect(
-            block = { manageUserPreferenceUseCase.getTheme() },
-            onCollect = { theme ->
-                updateState { copy(isDarkTheme = theme == Theme.DARK) }
-            },
-            onError = ::onDataLoadError
-        )
-    }
 
     private fun getUserContentRestrictionPreference() {
         tryToCollect(
@@ -84,8 +73,8 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     private fun loadItemsInSavedList(listId: Int) {
-        updateState { copy(isLoading = true) }
         tryToCollect(
+            onStart = { updateState { copy(isLoading = true) } },
             block = { loadSavedMovies(listId) },
             onCollect = { updateState { copy(movieList = flowOf(it), isLoading = false) } },
             onError = ::onDataLoadError
@@ -111,12 +100,11 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
 
     override fun onDismissListBottomSheetAfterRemoveSuccess(deselectedListIds: List<Int>) {
         if (listId in deselectedListIds) {
-            val value = state.value
             updateState {
                 copy(
-                    movieList = value.movieList.map { pagingData ->
+                    movieList = state.value.movieList.map { pagingData ->
                         pagingData.filter { mediaItem ->
-                            mediaItem.id != value.selectedMediaToRemove?.id
+                            mediaItem.id != state.value.selectedMediaToRemove?.id
                         }
                     }
                 )
@@ -143,9 +131,8 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onDeleteListConfirmed() {
-        updateState { copy(isLoading = true) }
-
         tryToExecute(
+            onStart = { updateState { copy(isLoading = true) } },
             block = { manageSavedListsUseCase.deleteSavedList(listId) },
             onSuccess = ::onListDeletionSuccess,
             onError = ::onListDeletionFailed,

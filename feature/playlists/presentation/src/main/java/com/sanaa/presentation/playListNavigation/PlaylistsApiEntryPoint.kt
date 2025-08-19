@@ -1,4 +1,4 @@
-package com.sanaa.presentation.api.navigationSaved
+package com.sanaa.presentation.playListNavigation
 
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.MediaDetailsApi

@@ -23,7 +23,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.playlists.presentation.R
 
 @Composable
-fun EmptyItemsScreen(
+fun EmptyStateComponent(
     messageText: String,
 ) {
     NovixScaffold {
@@ -54,13 +54,13 @@ fun EmptyItemsScreen(
 
 @PreviewLightDark
 @Composable
-private fun EmptyListScreenLightPreview() {
+private fun EmptyStateComponentLightPreview() {
     val isDarkTheme = isSystemInDarkTheme()
     NovixTheme(
         isDarkMode = isDarkTheme
     ) {
 
-        EmptyItemsScreen(
+        EmptyStateComponent(
             messageText = stringResource(R.string.the_list_is_empty),
         )
     }
@@ -68,13 +68,13 @@ private fun EmptyListScreenLightPreview() {
 
 @PreviewLightDark
 @Composable
-private fun EmptyListScreenDarkPreview() {
+private fun EmptyStateComponentDarkPreview() {
     val isDarkTheme = isSystemInDarkTheme()
     NovixTheme(
         isDarkMode = isDarkTheme
     ) {
 
-        EmptyItemsScreen(
+        EmptyStateComponent(
             messageText = stringResource(R.string.the_list_is_empty),
         )
     }

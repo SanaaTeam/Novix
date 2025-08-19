@@ -25,6 +25,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.playListProviders.LocalThemeProvider
 
 @Composable
 fun PlayListEmptyStateScreen(
@@ -93,24 +94,20 @@ fun PlayListEmptyStateScreen(
 @PreviewLightDark
 @Composable
 private fun EmptySavedListUserScreenContentPrev() {
-    val isDarkTheme = isSystemInDarkTheme()
-    NovixTheme(
-        isDarkMode = isDarkTheme
-    ) {
-        val myListImg = if (isDarkTheme) {
-            R.drawable.my_list_dark
-        } else {
-            R.drawable.my_list_light
-        }
-        PlayListEmptyStateScreen(
-            screenTitle = stringResource(R.string.saved_list),
-            messageText = stringResource(R.string.there_is_no_saved_list_yet_click_on_button_to_add_a_new_list),
-            imageRes = myListImg,
-            showFab = true,
-            onFabClick = {},
-        )
+    val myListImg = if (LocalThemeProvider.current) {
+        R.drawable.my_list_dark
+    } else {
+        R.drawable.my_list_light
     }
+    PlayListEmptyStateScreen(
+        screenTitle = stringResource(R.string.saved_list),
+        messageText = stringResource(R.string.there_is_no_saved_list_yet_click_on_button_to_add_a_new_list),
+        imageRes = myListImg,
+        showFab = true,
+        onFabClick = {},
+    )
 }
+
 
 @PreviewLightDark
 @Composable
