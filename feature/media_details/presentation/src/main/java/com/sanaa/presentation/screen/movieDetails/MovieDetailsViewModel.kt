@@ -12,7 +12,6 @@ import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toState
-import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import entity.User
@@ -134,7 +133,6 @@ class MovieDetailsViewModel @Inject constructor(
         updateState {
             copy(
                 isLoading = true,
-                errorMessage = null,
                 noInternetConnection = false
             )
         }
@@ -162,10 +160,9 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onShowRateBottomSheetFailed(exception: NovixAppException) {
         updateState {
             copy(
-                errorMessage = exception.message,
                 showRateBottomSheet = false,
                 snackBarData = SnackData(
-                    message = exception.message ?: stringProvider.somethingWentWrongError,
+                    message = stringProvider.somethingWentWrongError,
                     isError = true
                 )
             )
@@ -173,13 +170,13 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun fetchMovieDetails(movieId: Int) {
-        updateState { copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true) }
         tryToExecute(
             block = {
                 loadMovieDetails(movieId)
             },
             onSuccess = {
-                updateState { copy(isLoading = false, errorMessage = null) }
+                updateState { copy(isLoading = false) }
             },
             onError = ::onFetchMovieDetailsFailed,
             dispatcher = defaultDispatcher
@@ -193,7 +190,7 @@ class MovieDetailsViewModel @Inject constructor(
                     copy(
                         noInternetConnection = true,
                         isLoading = false,
-                        errorMessage = null
+                        isError = true,
                     )
                 }
             }
@@ -202,16 +199,8 @@ class MovieDetailsViewModel @Inject constructor(
                 updateState {
                     copy(
                         isLoading = false,
-                        errorMessage = exception.message,
-                        noInternetConnection = false
-                    )
-                }
-                updateState {
-                    copy(
-                        snackBarData = SnackData(
-                            message = exception.message ?: stringProvider.somethingWentWrongError,
-                            isError = true
-                        )
+                        isError = true,
+                        noInternetConnection = false,
                     )
                 }
             }
@@ -232,12 +221,17 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun fetchUserRating() {
-        if (state.value.isUserLoggedIn) {
-            tryToCollect(
-                block = { getCurrentUserRating(movieId) },
-                onCollect = { rating -> updateState { copy(imdbRating = rating) } },
-            )
-        }
+        tryToCollect(
+            block = { getCurrentUserRating(movieId) },
+            onCollect = { rating ->
+                updateState {
+                    copy(
+                        imdbRating = rating,
+                        showRateButton = rating == 0
+                    )
+                }
+            },
+        )
     }
 
 
@@ -294,9 +288,10 @@ class MovieDetailsViewModel @Inject constructor(
         if (isSendRateSuccess) {
             updateState {
                 copy(
+                    showRateButton = false,
                     snackBarData = SnackData(
                         message = stringProvider.deleteRatingSuccess,
-                        isError = false
+                        isError = false,
                     )
                 )
             }
@@ -321,6 +316,9 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged) {
+            fetchUserRating()
+        }
         updateState { copy(isUserLoggedIn = isLogged) }
     }
 

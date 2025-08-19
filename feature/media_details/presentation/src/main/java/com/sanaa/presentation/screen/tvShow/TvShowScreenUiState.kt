@@ -15,16 +15,17 @@ data class TvShowScreenUiState(
     val showLoginBottomSheet: Boolean = false,
     val showRateBottomSheet: Boolean = false,
     val isLoadingEpisodes: Boolean = false,
-    val error: String? = null,
+    val isError: Boolean = false,
     val selectedSeason: Int = 1,
     val noInternetConnection: Boolean = false,
     val imdbRating: Int = 0,
     val guestSessionId: String = "",
     val isUserLoggedIn: Boolean = false,
     val loginPromptType: LoginPromptType? = null,
-    val snackBarData: SnackData? = null
+    val snackBarData: SnackData? = null,
+    val showRateButton : Boolean = true,
 
-) {
+    ) {
     val hasUserSelectedRate: Boolean
         get() = imdbRating > 0
 }

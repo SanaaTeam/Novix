@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flowOf
 data class MovieDetailsUiState(
     val isLoading: Boolean = true,
     val movieDetails: MovieUiModel = MovieUiModel(),
-    val errorMessage: String? = null,
+    val isError: Boolean = false,
     val similarMovies: Flow<PagingData<MovieUiModel>> = flowOf(PagingData.empty()),
     val cast: List<ActorUiModel> = emptyList(),
     val imagesUrls: List<String> = emptyList(),
@@ -25,6 +25,7 @@ data class MovieDetailsUiState(
     val showAddListBottomSheet: Boolean = false,
     val selectedMediaId: Int? = null,
     val snackBarData: SnackData? = null,
+    val showRateButton: Boolean = true
 ) {
     val hasUserSelectedRate: Boolean
         get() = imdbRating > 0
