@@ -1,13 +1,11 @@
 package com.sanaa.presentation.screen.myAccount
 
-import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.profileBase.BaseViewModel
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.ContentRestrictionUiState
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.ThemeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.User
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.launch
 import repository.ContentRestriction
 import repository.Language
 import repository.Theme
@@ -35,7 +33,6 @@ class MyAccountScreenViewModel @Inject constructor(
         fetchContentRestriction()
         fetchTheme()
         checkUserLoggedIn()
-        fetchUserData()
         loadSavedLang()
     }
 
@@ -206,6 +203,7 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private fun onCheckUserLoginSuccess(isLogged: Boolean) {
+        if (isLogged) fetchUserData()
         updateState {
             copy(
                 isUserLoggedIn = isLogged
