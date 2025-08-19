@@ -21,12 +21,9 @@ import com.sanaa.tvapp.presentation.api.LocalSafeContentThreshold
 
 @Composable
 fun TvMediaPosterCard(
-    modifier: Modifier = Modifier,
     title: String = "",
     imageUrl:String="",
     onCardClick: () -> Unit = {},
-//    topLeftContent: @Composable () -> Unit = {},
-//    posterImage: @Composable () -> Unit = {}
 ) {
     Card(
         modifier = Modifier

@@ -77,7 +77,6 @@ fun EpisodeDetailsScreen(
                 }
 
                 EpisodeDetailsEffects.NavigateToLogin -> {
-//                    launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
         }

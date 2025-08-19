@@ -86,11 +86,6 @@ fun TvShowScreen(
                     navController.navigate(LoginRoute)
                 }
 
-                is TvShowDetailsScreenEffects.NavigateToMovieCategoriesScreen -> {
-//                    TODO()
-                }
-
-
                 is TvShowDetailsScreenEffects.PlayTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
                     context.startActivity(intent)

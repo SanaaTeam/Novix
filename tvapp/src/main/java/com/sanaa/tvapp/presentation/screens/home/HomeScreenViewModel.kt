@@ -188,7 +188,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun fetchUpcomingMovies(genreId: Int? = null) {
         tryToExecute(
             block = {
-                loadUpcomingMovies(genreId)                      // Flow<PagingData<MediaItemUiState>>
+                loadUpcomingMovies(genreId)
                     .combine(savedMovieStatusProvider.getSavedLists()) { pagingData, savedIds ->
                         pagingData
                     }

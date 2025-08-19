@@ -39,7 +39,6 @@ class MovieDetailsViewModel @Inject constructor(
 
     init {
         fetchMovieDetails(movieId)
-//        updateUserStatus()
     }
 
 

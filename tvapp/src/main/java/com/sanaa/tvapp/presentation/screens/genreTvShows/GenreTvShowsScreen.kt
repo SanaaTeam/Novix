@@ -193,7 +193,6 @@ fun GenreTvShowsScreenContent(
                                             title = movie.title,
                                             imageUrl = movie.imageUrl.orEmpty(),
                                             onCardClick = {
-                                                // interactionListener.onMovieClick(movie.id)
                                             },
                                         )
 

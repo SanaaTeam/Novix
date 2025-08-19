@@ -8,5 +8,4 @@ interface EpisodeDetailsInteractionListener {
     fun onRetryLoadDetails()
     fun onRatingChanged(newRating: Int)
     fun onDismissRateBottomSheet()
-    fun onSubmitRateBottomSheet()
 }

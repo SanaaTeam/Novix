@@ -4,7 +4,6 @@ import com.sanaa.tvapp.R
 
 
 private val genreImageMap = mapOf(
-    // Movies
     GENRE_MOVIE_ACTION to R.drawable.movie_action,
     GENRE_MOVIE_ADVENTURE to R.drawable.movie_adventure,
     GENRE_MOVIE_ANIMATION to R.drawable.movie_animation,
@@ -25,7 +24,6 @@ private val genreImageMap = mapOf(
     GENRE_MOVIE_WAR to R.drawable.movie_war,
     GENRE_MOVIE_WESTERN to R.drawable.movie_western,
 
-    // TV
     GENRE_TV_ACTION_ADVENTURE to R.drawable.tv_action_adventure,
     GENRE_TV_KIDS to R.drawable.tv_kids,
     GENRE_TV_NEWS to R.drawable.tv_news,
@@ -40,7 +38,6 @@ fun getGenreImage(genreId: Int): Int {
     return genreImageMap[genreId] ?: R.drawable.movie_tv_movie
 }
 
-// Movie genre IDs
 const val GENRE_MOVIE_ACTION = 28
 const val GENRE_MOVIE_ADVENTURE = 12
 const val GENRE_MOVIE_ANIMATION = 16
@@ -61,7 +58,6 @@ const val GENRE_MOVIE_THRILLER = 53
 const val GENRE_MOVIE_WAR = 10752
 const val GENRE_MOVIE_WESTERN = 37
 
-// TV genre IDs
 const val GENRE_TV_ACTION_ADVENTURE = 10759
 const val GENRE_TV_KIDS = 10762
 const val GENRE_TV_NEWS = 10763

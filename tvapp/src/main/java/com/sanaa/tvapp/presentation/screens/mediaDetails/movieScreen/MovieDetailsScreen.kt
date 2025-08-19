@@ -155,7 +155,6 @@ fun MovieDetailsContent(
                                     GenresRow(
                                         genres = state.movieDetails.genres,
                                         onGenreClicked = {
-//                                            interactionListener::onGenreClicked
                                         }
                                     )
                                     FlowRow(

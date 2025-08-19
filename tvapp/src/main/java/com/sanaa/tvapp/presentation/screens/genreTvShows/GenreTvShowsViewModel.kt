@@ -90,7 +90,6 @@ class GenreTvShowsViewModel @Inject constructor(
         tryToCollect(
             block = { loadTvShowsByGenreId(genreId) },
             onCollect = ::onCollectTvShowsByGenreId,
-            //     onError = ::onGetShowsByGeneraIdFailed
         )
     }
 

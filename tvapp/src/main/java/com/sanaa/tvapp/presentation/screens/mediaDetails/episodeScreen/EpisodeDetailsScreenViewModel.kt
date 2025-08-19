@@ -11,8 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
 import usecase.ManageTvShowUseCase
 import javax.inject.Inject
@@ -20,8 +18,6 @@ import javax.inject.Inject
 @HiltViewModel
 class EpisodeDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getUser: GetLoggedInUserUseCase,
-    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
     private val manageTvShowUseCase: ManageTvShowUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -43,7 +39,6 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     init {
         loadEpisode(seriesId, seasonNumber, episodeNumber)
-//        updateUserLoginState()
     }
 
 
@@ -75,23 +70,6 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     override fun onDismissRateBottomSheet() {
         updateState { copy(showRateBottomSheet = false) }
-    }
-
-    override fun onSubmitRateBottomSheet() {
-//        tryToExecute(
-//            callee = ::submitEpisodeRating,
-//            onError = { exception ->
-//                updateState {
-//                    copy(
-//                        error = exception.message,
-//                        showRateBottomSheet = false
-//                    )
-//                }
-//            }
-//        )
-//        updateState {
-//            copy(showRateBottomSheet = false)
-//        }
     }
 
     private fun loadEpisode(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
@@ -137,15 +115,11 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             }
             val imagesDeferred = async { manageTvShowUseCase.getTvShowImageUrls(seriesId) }
             val trailerDeferred = async { manageTvShowUseCase.getTvShowTrailer(seriesId) }
-//            val ratingDeferred = async {
-//                getCurrentUserRating()
-//            }
 
             val episode = episodeDeferred.await()
             val guests = guestsDeferred.await()
             val images = imagesDeferred.await()
             val trailerUrl = trailerDeferred.await()
-//            val currentEpisodesRating = ratingDeferred.await().first()
 
             updateState {
                 copy(
@@ -154,63 +128,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
                     seriesId = seriesId,
                     backgroundImageUrl = images.firstOrNull().orEmpty(),
                     trailerUrl = trailerUrl,
-//                    imdbRating = currentEpisodesRating
                 )
             }
         }
-
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    private fun getCurrentUserRating(): Flow<Int> {
-//        return getUser.getLoggedInUser()
-//            .flatMapLatest { user ->
-//                flow {
-//                    try {
-//                        val rating = manageTvSeriesDetails.getEpisodesRate(
-//                            user.id,
-//                            seasonNumber,
-//                            episodeNumber
-//                        )
-//                        emit(rating)
-//                    } catch (e: Exception) {
-//                        emit(0)
-//                    }
-//                }
-//            }
-//    }
-
-//    private suspend fun submitEpisodeRating() {
-//        val isSendRateSuccess = manageEpisodeDetails.addTvEpisodeRate(
-//            seriesId = tvShowId,
-//            episodeNumber = episodeNumber,
-//            seasonNumber = seasonNumber,
-//            rating = state.value.imdbRating.toFloat()
-//        )
-//        if (isSendRateSuccess) {
-//            emitEffect(EpisodeDetailsEffects.ShowSuccessSnackBar)
-//        } else {
-//            emitEffect(EpisodeDetailsEffects.ShowErrorSnackBar)
-//        }
-//    }
-
-//    private fun updateUserLoginState() {
-//        tryToCollect(
-//            callee = { checkUserLogin.isLoggedIn() },
-//            onCollect = { isLogged ->
-//                updateState {
-//                    copy(
-//                        isUserLoggedIn = isLogged
-//                    )
-//                }
-//            },
-//        )
-//    }
-
-//    private fun promptLogin(type: LoginPromptType) {
-//        updateState {
-//           copy(
-//                showLoginBottomSheet = true,
-//                loginPromptType = type
-//            )
-//        }
-//    }
 }

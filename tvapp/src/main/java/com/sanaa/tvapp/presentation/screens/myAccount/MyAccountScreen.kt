@@ -104,7 +104,6 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
                 }
 
                 NavigateToLogin -> {
-//                    navController.navigate(LoginRoute)
                 }
 
                 Recreate -> {

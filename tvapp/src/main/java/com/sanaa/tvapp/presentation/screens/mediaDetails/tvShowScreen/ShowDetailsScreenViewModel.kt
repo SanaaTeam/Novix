@@ -40,7 +40,6 @@ class ShowDetailsScreenViewModel @Inject constructor(
 
     init {
         loadSeries()
-//        updateUserStatus()
     }
 
 
@@ -192,15 +191,12 @@ class ShowDetailsScreenViewModel @Inject constructor(
         val seasonDeferred = async { manageTvShowDetails.getTvShowSeasonDetails(tvShowId, 1) }
         val imagesDeferred = async { manageTvShowDetails.getTvShowImageUrls(tvShowId) }
         val trailerDeferred = async { manageTvShowDetails.getTvShowTrailer(tvShowId) }
-//        val ratingDeferred = async { getCurrentUserRating(seriesId) }
 
         val series = seriesDeferred.await()
         val cast = castDeferred.await()
         val season = seasonDeferred.await()
         val images = imagesDeferred.await()
         val trailer = trailerDeferred.await()
-//        val currentSeriesRating = ratingDeferred.await()
-//        addTvShowToHistory(series)
 
         updateState {
             copy(
@@ -208,7 +204,6 @@ class ShowDetailsScreenViewModel @Inject constructor(
                 cast = cast.map { actor -> actor.toActorUiModel() },
                 season = season.toSeasonUiModel(),
                 backgroundImageUrl = images.firstOrNull() ?: "",
-//                imdbRating = currentSeriesRating
             )
         }
     }
@@ -220,17 +215,6 @@ class ShowDetailsScreenViewModel @Inject constructor(
 
         updateState { copy(season = season.toSeasonUiModel()) }
     }
-
-//    private suspend fun getCurrentUserRating(seriesId: Int): Int {
-//        val userId = getUser.getLoggedInUser().id
-//        return try {
-//            manageTvShowDetails.getSeriesRate(userId, seriesId)
-//
-//        } catch (_: Exception) {
-//            0
-//        }
-//
-//    }
 
     private suspend fun submitTvShowRating() {
         val isSendRateSuccess = manageTvShowDetails.addTvShowRate(
@@ -244,10 +228,6 @@ class ShowDetailsScreenViewModel @Inject constructor(
         }
     }
 
-//    private suspend fun updateUserLoginState() {
-//        val isUserLoggedIn = checkUserLogin.isLoggedIn()
-//        updateState { copy(isUserLoggedIn = isUserLoggedIn) }
-//    }
 
     private fun promptLogin(type: LoginPromptType) {
         updateState {
@@ -257,21 +237,4 @@ class ShowDetailsScreenViewModel @Inject constructor(
             )
         }
     }
-//
-//    fun updateUserStatus() {
-//        tryToExecute(callee = ::updateUserLoginState)
-//    }
-//
-//    private suspend fun addTvShowToHistory(TvShow: TvShow) {
-//        val user = try {
-//            getLoggedInUserUseCase.getLoggedInUser()
-//        } catch (_: NoLoggedInUserException) {
-//            null
-//        }
-//        if (user == null) return
-//        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
-//            mediaHistoryItem = TvShow.toHistory(),
-//            username = user.username
-//        )
-//    }
 }
