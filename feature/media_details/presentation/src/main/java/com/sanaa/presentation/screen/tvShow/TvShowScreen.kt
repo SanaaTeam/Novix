@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.tvShow
 import android.app.Activity
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
@@ -26,6 +27,8 @@ import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.AuthStartRoute
+import com.sanaa.designsystem.design_system.component.animation.FadeSlideInVertically
+import com.sanaa.designsystem.design_system.component.animation.FadeSlideOutVertically
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -124,22 +127,25 @@ private fun TvShowScreenContent(
                     }
 
                     else -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            contentAlignment = Alignment.BottomCenter
-                        )
-                        {
-                            TvShowDetailContent(state, interactionListener, scrollState)
-                            BottomContainer(
-                                modifier = Modifier.align(Alignment.BottomCenter),
-                                trailerUrl = state.tvShow.trailerUrl,
-                                onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
-                                onSetRateClicked = interactionListener::onRateClicked
-                            )
-                        }
+                        TvShowDetailContent(state, interactionListener, scrollState)
                     }
+
                 }
+            }
+            AnimatedVisibility(
+                !state.isLoading,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                enter = FadeSlideInVertically,
+                exit = FadeSlideOutVertically
+            ) {
+                BottomContainer(
+                    isRateButtonVisible = state.showRateButton,
+                    modifier = Modifier,
+                    trailerUrl = state.tvShow.trailerUrl,
+                    isRateButtonEnabled = state.isError.not(),
+                    onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
+                    onSetRateClicked = interactionListener::onRateClicked
+                )
             }
             RateBottomSheet(
                 isRateSelected = state.hasUserSelectedRate,

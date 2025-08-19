@@ -37,14 +37,13 @@ class TvShowScreenViewModel @Inject constructor(
 ) : BaseViewModel<TvShowScreenUiState, TvShowScreenEffects>(
     initialState = TvShowScreenUiState(),
     defaultDispatcher = dispatcher
-),TvShowScreenInteractionListener {
+), TvShowScreenInteractionListener {
     val route = TvShowScreenRoute(
         tvShowId = checkNotNull(savedStateHandle["tvShowId"]),
     )
 
     init {
         loadTvShow()
-        fetchUserRating()
         updateUserLoginState()
     }
 
@@ -65,7 +64,7 @@ class TvShowScreenViewModel @Inject constructor(
         tryToExecute(
             block = { fetchSeasonDetails(seasonNumber) },
             onSuccess = { updateState { copy(isLoadingEpisodes = false) } },
-            onError = ::onErrorAccrue
+            onError = ::onErrorLoadingSeasonDetails
         )
     }
 
@@ -135,24 +134,27 @@ class TvShowScreenViewModel @Inject constructor(
         tryToExecute(
             block = { fetchShowDetails() },
             onSuccess = { updateState { copy(isLoading = false) } },
-            onError = ::onErrorAccrue
+            onError = ::onErrorFetchingData
         )
     }
 
     private fun fetchUserRating() {
-        if (state.value.isUserLoggedIn) {
-            tryToCollect(
-                block = { getUser.getLoggedInUser() },
-                onCollect = { user ->
-                    tryToExecute(
-                        block = { manageTvShowDetails.getTvShowRating(user.id, route.tvShowId) },
-                        onSuccess = { rating ->
-                            updateState { copy(imdbRating = rating) }
-                        },
-                    )
-                },
-            )
-        }
+        tryToCollect(
+            block = { getUser.getLoggedInUser() },
+            onCollect = { user ->
+                tryToExecute(
+                    block = { manageTvShowDetails.getTvShowRating(user.id, route.tvShowId) },
+                    onSuccess = { rating ->
+                        updateState {
+                            copy(
+                                imdbRating = rating,
+                                showRateButton = rating == 0
+                            )
+                        }
+                    },
+                )
+            },
+        )
     }
 
     private suspend fun fetchShowDetails() = coroutineScope {
@@ -201,7 +203,8 @@ class TvShowScreenViewModel @Inject constructor(
                         message = stringProvider.deleteRatingSuccess,
                         isError = false
                     ),
-                   showRateBottomSheet = false
+                    showRateBottomSheet = false,
+                    showRateButton = false
                 )
             }
         } else {
@@ -224,6 +227,9 @@ class TvShowScreenViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged) {
+            fetchUserRating()
+        }
         updateState { copy(isUserLoggedIn = isLogged) }
     }
 
@@ -239,7 +245,31 @@ class TvShowScreenViewModel @Inject constructor(
         )
     }
 
-    private fun onErrorAccrue(exception: NovixAppException) {
+    private fun onErrorFetchingData(exception: NovixAppException) {
+        if (exception is NoNetworkException) {
+            updateState {
+                copy(
+                    noInternetConnection = true,
+                    isLoadingEpisodes = false,
+                    isLoading = false,
+                    isError = true
+                )
+            }
+        } else {
+            updateState {
+                copy(
+                    noInternetConnection = false,
+                    isLoading = false,
+                    isLoadingEpisodes = false,
+                    isError = true
+                )
+            }
+        }
+    }
+
+    private fun onErrorLoadingSeasonDetails(
+        exception: NovixAppException
+    ) {
         if (exception is NoNetworkException) {
             updateState {
                 copy(
@@ -247,8 +277,9 @@ class TvShowScreenViewModel @Inject constructor(
                         message = stringProvider.noInternetConnectionError,
                         isError = true
                     ),
-                    noInternetConnection = true,
-                    isLoadingEpisodes = false
+                    isLoadingEpisodes = false,
+                    isLoading = false,
+                    isError = true
                 )
             }
         } else {
@@ -258,11 +289,12 @@ class TvShowScreenViewModel @Inject constructor(
                         message = stringProvider.somethingWentWrongError,
                         isError = true
                     ),
-                    noInternetConnection = false,
-                    isLoadingEpisodes = false
+                    isLoadingEpisodes = false,
+                    isError = true
                 )
             }
         }
+
     }
 
     private fun onSubmitRatingFailed(exception: NovixAppException) {

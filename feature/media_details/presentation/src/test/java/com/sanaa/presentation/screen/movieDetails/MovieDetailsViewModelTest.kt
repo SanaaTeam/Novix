@@ -212,7 +212,6 @@ class MovieDetailsViewModelTest {
         viewModel.onSubmitRateBottomSheet()
         advanceUntilIdle()
 
-        assertThat(viewModel.state.value.errorMessage).isEqualTo("Something went wrong")
         assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
     }
 
@@ -225,7 +224,6 @@ class MovieDetailsViewModelTest {
         advanceUntilIdle()
 
         assertThat(viewModel.state.value.isLoading).isFalse()
-        assertThat(viewModel.state.value.errorMessage).isNull()
         assertThat(viewModel.state.value.noInternetConnection).isFalse()
     }
 
@@ -292,7 +290,6 @@ class MovieDetailsViewModelTest {
         genres = emptyList(),
         trailerUrl = null,
         posterUrl = "poster.jpg",
-        isSaved = false
     )
 
 }

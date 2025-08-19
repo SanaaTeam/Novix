@@ -48,7 +48,6 @@ import com.sanaa.presentation.screen.movieDetails.components.AnimatedSnackBarHos
 import com.sanaa.presentation.screen.tvShow.components.TvShowHeaderSection
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.OverviewSection
-import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
@@ -217,18 +216,9 @@ private fun EpisodeDetailsScreenContent(
                 trailerUrl = state.trailerUrl,
                 modifier = Modifier.align(Alignment.BottomCenter),
                 onPlayTrailerClicked = interactionListener::onPlayTrailerClick,
-                onSetRateClicked = interactionListener::onRateClicked
+                isRateButtonVisible = false
             )
-            if (state.showRateBottomSheet) {
-                RateBottomSheet(
-                    isRateSelected = state.hasUserSelectedRate,
-                    imdbRating = state.imdbRating,
-                    onDismiss = interactionListener::onDismissRateBottomSheet,
-                    isVisible = true,
-                    onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
-                    onRatingChanged = interactionListener::onRatingChanged
-                )
-            }
+
             if (state.showLoginBottomSheet) {
                 val title = when (state.loginPromptType) {
                     LoginPromptType.RATE -> stringResource(R.string.rate_it)
