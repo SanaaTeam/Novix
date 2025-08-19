@@ -5,71 +5,68 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.AuthStartRoute
-import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
+import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
-import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.TvShowScreenRoute
-import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
+import com.sanaa.presentation.screen.genreTvShows.components.GenreTvShowsGrid
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
-import com.sanaa.presentation.shared_component.cards.MediaPosterCard
-import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import dagger.hilt.android.EntryPointAccessors
-import com.sanaa.designsystem.R as designR
-
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun GenreTvShowsScreen(
     viewModel: GenreTvShowsViewModel = hiltViewModel(),
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    GenreTvShowsEffectsHandler(effects = viewModel.effect)
+
+    GenreTvShowsScreenContent(
+        state = state,
+        interactionListener = viewModel
+    )
+}
+@Composable
+private fun GenreTvShowsEffectsHandler(
+    effects: SharedFlow<GenreTvShowsEffects>,
+) {
     val navController = LocalNavControllerProvider.current
-
     val context = LocalContext.current
-    val authApi = EntryPointAccessors.fromApplication(
-        context,
-        DetailsApiEntryPoint::class.java
-    ).authenticationApi()
 
+    val authApi = EntryPointAccessors
+        .fromApplication(
+            context, DetailsApiEntryPoint::class.java
+        ).authenticationApi()
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
+        effects.collectLatest { effect ->
             when (effect) {
                 GenreTvShowsEffects.NavigateBack -> if (!navController.popBackStack()) {
                     (navController.context as Activity).finish()
@@ -85,54 +82,58 @@ fun GenreTvShowsScreen(
             }
         }
     }
-
-    GenreTvShowsScreenContent(
-        state = state.value, interactionListener = viewModel
-    )
 }
-
-
 @Composable
-fun GenreTvShowsScreenContent(
+private fun GenreTvShowsScreenContent(
     state: GenreTvShowsScreenUiState,
     interactionListener: GenreTvShowsScreenInteractionListener,
 ) {
-    val pagedTvShows = state.tvShows.collectAsLazyPagingItems()
-    val screenState = when {
-        pagedTvShows.loadState.refresh is LoadState.Loading -> ScreenState.LOADING
-        pagedTvShows.loadState.refresh is LoadState.Error -> ScreenState.NO_INTERNET
-        else -> ScreenState.CONTENT
-    }
-
     NovixScaffold(
-        backgroundShapes = { BackgroundShapes() },
+        backgroundShapes = { BackgroundShapes() }
     ) {
         Column(
             modifier = Modifier.navigationBarsPadding()
         ) {
-            TopBar(
-                leftContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(id = designR.drawable.icon_back),
-                        onClick = { interactionListener.onBackClick() })
-                },
-                screenTitle = state.title.orEmpty(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .systemBarsPadding()
-            )
-
+                TopBar(
+                    leftContent = {
+                        TopBarClickableIcon(
+                            icon = painterResource(id = R.drawable.icon_back),
+                            onClick = interactionListener::onBackClick
+                        )
+                    },
+                    screenTitle = state.title.orEmpty(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                )
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(), contentAlignment = Alignment.Center
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
+                val pagedTvShows = state.tvShows.collectAsLazyPagingItems()
+
+                val screenState = when {
+                    pagedTvShows.loadState.refresh is LoadState.Loading -> ScreenState.LOADING
+                    pagedTvShows.loadState.refresh is LoadState.Error -> ScreenState.NO_INTERNET
+                    else -> ScreenState.CONTENT
+                }
+
                 AnimatedContent(
                     targetState = screenState,
                     contentAlignment = Alignment.Center,
                     transitionSpec = { fadeIn() togetherWith fadeOut() }
-                ) { currentState ->
-                    when (currentState) {
+                ) { target ->
+                    when (target) {
+                        ScreenState.NO_INTERNET -> {
+                            NetworkDisconnectionContact(
+                                onRetryClick = interactionListener::onRetryClick,
+                                modifier = Modifier.fillMaxSize(),
+                                useDarkTheme = LocalThemeProvider.current
+                            )
+                        }
+
                         ScreenState.LOADING -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
@@ -142,79 +143,22 @@ fun GenreTvShowsScreenContent(
                             }
                         }
 
-                        ScreenState.NO_INTERNET -> {
-                            NetworkDisconnectionContact(
-                                onRetryClick = { interactionListener.onRetryClick() },
-                                modifier = Modifier.fillMaxSize(),
-                                useDarkTheme = LocalThemeProvider.current
-                            )
-                        }
-
                         ScreenState.CONTENT -> {
-                            LazyVerticalGrid(
-                                modifier = Modifier.fillMaxSize(),
-                                columns = GridCells.Adaptive(minSize = 140.dp),
-                                contentPadding = PaddingValues(
-                                    start = 16.dp, end = 16.dp, bottom = 16.dp
-                                ),
-                                verticalArrangement = Arrangement.spacedBy(12.dp),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                items(pagedTvShows.itemCount) { index ->
-                                    val tvShow = pagedTvShows[index] ?: return@items
-                                    MediaPosterCard(
-                                        posterImage = {
-                                            RemoteBlurredSensitiveImage(
-                                                imageUrl = tvShow.posterPath.orEmpty(),
-                                                modifier = Modifier.fillMaxWidth(),
-                                                sensitiveContentThreshold = 0.2f,
-                                                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                                                safeContentThreshold = LocalSafeContentThreshold.current,
-                                                contentDescription = tvShow.title,
-                                                placeholderContent = {
-                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                                },
-                                                errorContent = {
-                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                                },
-                                            ) {
-                                                OnBlurContent(
-                                                    hintText = stringResource(R.string.unsuitable_image),
-                                                    textStyle = Theme.textStyle.body.small.copy(
-                                                        color = Color(0x99FFFFFF)
-                                                    ),
-                                                    iconSize = 24.dp,
-                                                    icon = painterResource(designR.drawable.icon_eye_slash),
-                                                )
-                                            }
-                                        },
-                                        topLeftContent = { SaveIconChip(onClick = { interactionListener.onSaveIconClick() }) },
-                                        onCardClick = { interactionListener.onTvShowClick(tvShow.id) })
-                                }
-
-                                if (pagedTvShows.loadState.append is LoadState.Loading) {
-                                    item(span = { GridItemSpan(maxLineSpan) }) {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(16.dp),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            LoadingIndicator()
-                                        }
-                                    }
-                                }
-                            }
+                            GenreTvShowsGrid(
+                                pagedTvShows = pagedTvShows,
+                                onTvShowClick =interactionListener::onTvShowClick
+                            )
                         }
                     }
                 }
 
                 RequestToLoginBottomSheet(
-                    onDismiss = { interactionListener.onBottomSheetDismiss() },
-                    onLoginButtonClick = { interactionListener.onLoginButtonClick() },
+                    onDismiss = interactionListener::onBottomSheetDismiss,
+                    onLoginButtonClick = interactionListener::onLoginButtonClick,
                     isVisible = state.showBottomSheet
                 )
             }
         }
     }
 }
+
