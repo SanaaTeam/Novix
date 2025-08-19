@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen
 
+import android.util.Log
 import com.sanaa.presentation.categoryBase.BaseViewModel
 import com.sanaa.presentation.screen.CategoriesScreenUiState.Companion.MOVIE_TAB_INDEX
 import com.sanaa.presentation.state.CategoryUiState
@@ -11,12 +12,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
 import usecase.ManageTvShowUseCase
+import usecase.MangeUserPreferenceUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class CategoriesScreenViewModel @Inject constructor(
     private val getTvGenresUseCase: ManageTvShowUseCase,
     private val getMovieGenresUseCase: ManageMovieUseCase,
+    private val mangeUserPreference: MangeUserPreferenceUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<CategoriesScreenUiState, CategoriesScreenEffects>(
     CategoriesScreenUiState(),
@@ -24,10 +27,19 @@ class CategoriesScreenViewModel @Inject constructor(
 ), CategoriesScreenInteractionListener {
 
     init {
-        loadTvGenres()
-        loadMovieGenres()
+        onLanguageChanges()
     }
-
+    private fun onLanguageChanges(){
+        tryToCollect(
+            block = {
+                mangeUserPreference.getLanguage()
+                    },
+            onCollect = {
+                loadTvGenres(true)
+                loadMovieGenres(true)
+                        },
+        )
+    }
 
     override fun onGenreClicked(category: CategoryUiState) {
         emitEffect(
@@ -55,11 +67,11 @@ class CategoriesScreenViewModel @Inject constructor(
     }
 
 
-    private fun loadTvGenres() {
+    private fun loadTvGenres(freshData: Boolean = false) {
         updateState { copy(isLoading = true) }
         tryToExecute(
             block = {
-                getTvGenresUseCase.getTvShowGenres()
+                getTvGenresUseCase.getTvShowGenres(freshData)
             },
             onSuccess = ::onLoadTvGenresSuccess,
             onError = ::onErrorLoading
@@ -79,11 +91,11 @@ class CategoriesScreenViewModel @Inject constructor(
     }
 
 
-    private fun loadMovieGenres() {
+    private fun loadMovieGenres(freshData: Boolean = false) {
         updateState { copy(isLoading = true) }
         tryToExecute(
             block = {
-                getMovieGenresUseCase.getMovieGenres()
+                getMovieGenresUseCase.getMovieGenres(freshData)
             },
             onSuccess = ::onLoadMovieGenresSuccess,
             onError = ::onErrorLoading
