@@ -2,14 +2,18 @@ package com.sanaa.presentation.categoryBase
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -42,6 +46,33 @@ abstract class BaseViewModel<T, E>(
             }
         }
     }
+
+    protected fun <T> tryToCollect(
+        onStart: () -> Unit = {},
+        block: suspend () -> Flow<T>,
+        onCollect: suspend (T) -> Unit,
+        onError: (exception: NovixAppException) -> Unit = {},
+        dispatcher: CoroutineDispatcher = defaultDispatcher,
+    ) {
+        onStart()
+        val handler = createExceptionHandler(onError)
+
+        viewModelScope.launch(dispatcher + handler) {
+            block().collectLatest { result ->
+                onCollect(result)
+            }
+        }
+    }
+
+    private fun createExceptionHandler(onError: (NovixAppException) -> Unit) =
+        CoroutineExceptionHandler { _, exception ->
+            onError(
+                when (exception) {
+                    is NovixAppException -> exception
+                    else -> NovixAppException(exception.message)
+                }
+            )
+        }
 
     protected fun emitEffect(effect: E) {
         viewModelScope.launch {
