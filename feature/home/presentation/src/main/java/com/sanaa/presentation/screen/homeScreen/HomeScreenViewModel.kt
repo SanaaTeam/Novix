@@ -49,6 +49,7 @@ class HomeScreenViewModel @Inject constructor(
     init {
         updateUserLoggingStatus()
         onLanguageChanges()
+
     }
     private fun onLanguageChanges(){
         tryToCollect(
@@ -60,6 +61,9 @@ class HomeScreenViewModel @Inject constructor(
                 fetchTopRatedMediaData()
                 fetchMovieGenres()
                 fetchUpcomingMovies()
+                if (state.value.userIsLoggedIn) {
+                    fetchWatchedMediaData()
+                }
             },
             onError = {
                 updateState { copy(
@@ -72,7 +76,7 @@ class HomeScreenViewModel @Inject constructor(
         )
     }
 
-    fun updateUserLoggingStatus() {
+    private fun updateUserLoggingStatus() {
         tryToCollect(
             block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
