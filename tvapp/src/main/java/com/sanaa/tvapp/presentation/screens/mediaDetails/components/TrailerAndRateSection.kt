@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,7 +25,7 @@ fun TrailerAndRateSection(
     modifier: Modifier = Modifier,
     trailerUrl: String? = null,
     onPlayTrailerClicked: () -> Unit = {},
-    onRateClicked: () -> Unit = {}
+    onRateClicked: () -> Unit = {},
 ) {
     Row(
         modifier = modifier,
@@ -37,10 +36,6 @@ fun TrailerAndRateSection(
             onClick = {
                 onPlayTrailerClicked()
             },
-            modifier = Modifier
-                .onFocusChanged { focusState ->
-                    isFocused = focusState.isFocused
-                },
             enabled = trailerUrl != null,
             colors = ButtonDefaults.colors(
                 containerColor = Theme.colors.disable,
@@ -70,10 +65,6 @@ fun TrailerAndRateSection(
             onClick = {
                 onRateClicked()
             },
-            modifier = Modifier
-                .onFocusChanged { focusState ->
-                    isFocused = focusState.isFocused
-                },
             colors = ButtonDefaults.colors(
                 containerColor = Theme.colors.disable,
                 focusedContainerColor = Theme.colors.primary

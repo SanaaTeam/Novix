@@ -56,7 +56,6 @@ fun Modifier.shimmerEffect(
     )
 
     background(brush)
-        .onGloballyPositioned { size = it.size }
 }
 
 fun Modifier.handleDPadKeyEvents(
