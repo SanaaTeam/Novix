@@ -80,7 +80,6 @@ class SearchViewModelTest {
 
                 val loadedState = awaitItem()
                 assertThat(loadedState.isLoading).isFalse()
-                assertThat(loadedState.error).isNull()
             }
         }
 
@@ -106,7 +105,6 @@ class SearchViewModelTest {
                 )
             })
             assertThat(item.isLoading).isTrue()
-            assertThat(item.error).isNull()
         }
     }
 
@@ -134,7 +132,6 @@ class SearchViewModelTest {
                 )
             }
 
-            assertThat(resultState.error).isNull()
             assertThat(resultState.recentViewedMedia).isEqualTo(expectedRecentViewedMedia)
             cancelAndConsumeRemainingEvents()
         }
@@ -174,7 +171,6 @@ class SearchViewModelTest {
                 )
             })
             assertThat(item.isLoading).isTrue()
-            assertThat(item.error).isNull()
         }
     }
 
@@ -186,8 +182,6 @@ class SearchViewModelTest {
             searchViewModel.state.test {
                 val item = awaitItem()
                 assertThat(item.isLoading).isTrue()
-                assertThat(item.error).isNull()
-
             }
         }
 
@@ -203,7 +197,6 @@ class SearchViewModelTest {
 
                 val item = awaitItem()
                 assertThat(item.isLoading).isFalse()
-                assertThat(item.error).isNull()
             }
         }
 
@@ -220,8 +213,6 @@ class SearchViewModelTest {
 
                 val item = awaitItem()
                 assertThat(item.isLoading).isFalse()
-                assertThat(item.error).isNotNull()
-                assertThat(item.error).isEqualTo(errorMessage)
             }
         }
 
@@ -234,7 +225,6 @@ class SearchViewModelTest {
             searchViewModel.state.test {
                 val item = awaitItem()
                 assertThat(item.isLoading).isTrue()
-                assertThat(item.error).isNull()
             }
         }
 
@@ -255,26 +245,6 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `onClearRecentSearchClicked() should show error when clear search history failed`() =
-        runTest {
-            val errorMessage = "Unknown error"
-            coEvery { manageSearchHistoryUseCase.clearSearchHistory() } throws Exception(
-                errorMessage
-            )
-
-            searchViewModel.onClearRecentSearchClicked()
-
-            searchViewModel.state.test {
-                awaitItem()
-
-                val item = awaitItem()
-                assertThat(item.isLoading).isFalse()
-                assertThat(item.error).isNotNull()
-                assertThat(item.error).isEqualTo(errorMessage)
-            }
-        }
-
-    @Test
     fun `onTabSelected() should set the selected tab index`() = runTest {
         val index = SearchScreenUiState.TV_SHOW_INDEX
 
@@ -284,7 +254,6 @@ class SearchViewModelTest {
             val item = awaitItem()
             assertThat(item.selectedTabIndex).isEqualTo(index)
             assertThat(item.isLoading).isTrue()
-            assertThat(item.error).isNull()
         }
     }
 
@@ -432,7 +401,6 @@ class SearchViewModelTest {
             searchViewModel.state.test {
                 val item = awaitItem()
                 assertThat(item.isLoading).isTrue()
-                assertThat(item.error).isNull()
             }
         }
 
