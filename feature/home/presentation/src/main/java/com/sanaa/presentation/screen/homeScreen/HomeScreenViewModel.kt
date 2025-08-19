@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import service.VodStringProvider
@@ -26,6 +27,7 @@ import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvShowUseCase
+import usecase.MangeUserPreferenceUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
@@ -36,6 +38,7 @@ class HomeScreenViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val mangeUserPreference: MangeUserPreferenceUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
@@ -45,10 +48,28 @@ class HomeScreenViewModel @Inject constructor(
 
     init {
         updateUserLoggingStatus()
-        fetchPopularMediaData()
-        fetchTopRatedMediaData()
-        fetchMovieGenres()
-        fetchUpcomingMovies()
+        onLanguageChanges()
+    }
+    private fun onLanguageChanges(){
+        tryToCollect(
+            block = {
+                mangeUserPreference.getLanguage().distinctUntilChanged()
+            },
+            onCollect = {
+                fetchPopularMediaData()
+                fetchTopRatedMediaData()
+                fetchMovieGenres()
+                fetchUpcomingMovies()
+            },
+            onError = {
+                updateState { copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.somethingWentWrongError,
+                        isError = true
+                    ),
+                ) }
+            },
+        )
     }
 
     fun updateUserLoggingStatus() {
