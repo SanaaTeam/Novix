@@ -57,7 +57,6 @@ fun CategoryCard(
     ) {
         AsyncImage(
             model = category.imageRawUrl,
-//            model = "https://raw.githubusercontent.com/SanaaTeam/Novix/refs/heads/enhancement/decrease-app-size/feature/category/presentation/src/main/assets/genre-images/movie_action.webp",
             contentDescription = category.name,
             contentScale = ContentScale.Crop,
         )
@@ -76,35 +75,3 @@ fun CategoryCard(
         )
     }
 }
-
-//@PreviewLightDark
-//@Composable
-//private fun PreviewCategory() {
-//    NovixTheme(isSystemInDarkTheme()) {
-//        Row(
-//            modifier = Modifier
-//                .background(color = Theme.colors.surface)
-//                .padding(16.dp),
-//            horizontalArrangement = Arrangement.spacedBy(8.dp),
-//            verticalAlignment = Alignment.CenterVertically
-//
-//        ) {
-//            CategoryCard(
-//                modifier = Modifier.weight(1f),
-//                category = CategoryUiState(
-//                    id = 1,
-////                    imageResourceId = R.drawable.movie_war,
-//                    name = "War"
-//                )
-//            )
-//            CategoryCard(
-//                modifier = Modifier.weight(1f),
-//                category = CategoryUiState(
-//                    id = 1,
-//                    imageResourceId = R.drawable.movie_war,
-//                    name = "War"
-//                )
-//            )
-//        }
-//    }
-//}

@@ -2,7 +2,6 @@ package com.sanaa.presentation.state.mapper
 
 import com.sanaa.presentation.state.CategoryUiState
 import com.sanaa.presentation.util.getGenreImage
-//import com.sanaa.presentation.util.getGenreImage
 import entity.Genre
 
 
