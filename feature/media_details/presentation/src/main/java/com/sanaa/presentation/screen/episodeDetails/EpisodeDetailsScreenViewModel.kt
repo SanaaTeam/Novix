@@ -4,15 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toState
-import com.sanaa.presentation.screen.movieDetails.LoginPromptType
+import com.sanaa.presentation.screen.movieDetails.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import service.VodStringProvider
-import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
 import usecase.ManageTvShowUseCase
 import javax.inject.Inject
@@ -20,8 +18,6 @@ import javax.inject.Inject
 @HiltViewModel
 class EpisodeDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getUser: GetLoggedInUserUseCase,
-    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
     private val manageTvShowDetails: ManageTvShowUseCase,
     private val stringProvider: VodStringProvider,
@@ -37,7 +33,6 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     init {
         fetchEpisodeDetails()
-        updateUserLoginState()
     }
 
     private fun <T> fetchData(
@@ -54,17 +49,31 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     private fun handleError(exception: NovixAppException) {
         when (exception) {
             is NoNetworkException -> {
-                updateState { copy(noInternetConnection = true, isLoading = false, error = null) }
+                updateState {
+                    copy(
+                        snackBarData = SnackData(
+                            message = stringProvider.deleteRatingSuccess,
+                            isError = false,
+                        )
+                    )
+                }
             }
 
             else -> {
-                updateState { copy(error = exception.message, isLoading = false) }
+                updateState {
+                    copy(
+                        snackBarData = SnackData(
+                            message = stringProvider.deleteRatingFailed,
+                            isError = true
+                        )
+                    )
+                }
             }
         }
     }
 
     fun fetchEpisodeDetails() {
-        updateState { copy(isLoading = true, noInternetConnection = false, error = null) }
+        updateState { copy(isLoading = true, noInternetConnection = false) }
 
         fetchEpisode()
         fetchGuests()
@@ -125,7 +134,6 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     override fun onSnackDismissRequested() = updateState { copy(snackBarData = null) }
     override fun onDismissBottomSheet() = updateState { copy(showLoginBottomSheet = false) }
     override fun onSavedClick(tvShowId: Int) {
-        if (!state.value.isUserLoggedIn) promptLogin(LoginPromptType.BOOKMARK)
     }
 
 
@@ -142,16 +150,5 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     override fun onLoginButtonClick() {
         updateState { copy(showLoginBottomSheet = false) }
         emitEffect(EpisodeDetailsEffects.NavigateToLogin)
-    }
-
-    private fun updateUserLoginState() {
-        tryToCollect(
-            block = { checkUserLogin.isLoggedIn() },
-            onCollect = { isLogged -> updateState { copy(isUserLoggedIn = isLogged) } }
-        )
-    }
-
-    private fun promptLogin(type: LoginPromptType) {
-        updateState { copy(showLoginBottomSheet = true, loginPromptType = type) }
     }
 }

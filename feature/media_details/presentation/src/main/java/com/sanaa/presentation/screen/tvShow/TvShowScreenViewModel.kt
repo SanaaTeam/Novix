@@ -133,7 +133,7 @@ class TvShowScreenViewModel @Inject constructor(
     private fun loadTvShow() {
         tryToExecute(
             block = { fetchShowDetails() },
-            onSuccess = { updateState { copy(isLoading = false) } },
+            onSuccess = { updateState { copy(isLoading = false, isError = false) } },
             onError = ::onErrorFetchingData
         )
     }
@@ -246,23 +246,35 @@ class TvShowScreenViewModel @Inject constructor(
     }
 
     private fun onErrorFetchingData(exception: NovixAppException) {
-        if (exception is NoNetworkException) {
-            updateState {
-                copy(
-                    noInternetConnection = true,
-                    isLoadingEpisodes = false,
-                    isLoading = false,
-                    isError = true
-                )
+        when (exception) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        noInternetConnection = true,
+                        isLoadingEpisodes = false,
+                        isLoading = false,
+                        isError = true,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true,
+                        )
+                    )
+                }
             }
-        } else {
-            updateState {
-                copy(
-                    noInternetConnection = false,
-                    isLoading = false,
-                    isLoadingEpisodes = false,
-                    isError = true
-                )
+
+            else -> {
+                updateState {
+                    copy(
+                        noInternetConnection = false,
+                        isLoading = false,
+                        isLoadingEpisodes = false,
+                        isError = true,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
             }
         }
     }
