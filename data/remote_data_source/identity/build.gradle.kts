@@ -14,8 +14,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.retrofit)
-    implementation(libs.okhttp)
+    implementation(libs.bundles.retrofit)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.ktor.client.mock)
     implementation(libs.slf4j.api)

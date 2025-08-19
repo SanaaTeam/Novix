@@ -17,10 +17,7 @@ android {
 
 dependencies {
     implementation(projects.data.repositories.vod)
-    implementation(libs.retrofit)
-    implementation(libs.okhttp)
-    implementation(libs.logging.interceptor)
-    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.bundles.retrofit)
     implementation(libs.bundles.ktor)
     implementation(libs.ktor.client.mock)
     implementation(libs.hilt.android)

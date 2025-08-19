@@ -10,14 +10,14 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.mediaDetails.api)
-    implementation(projects.feature.category.api)
     implementation(projects.domain.identity)
     implementation(projects.domain.vod)
     implementation(projects.domain.identity)
     implementation(projects.designSystem)
     implementation(projects.imageViewer)
     implementation(projects.feature.home.api)
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.feature.category.api)
     implementation(projects.feature.search.api)
     implementation(projects.feature.userProfile.api)
     implementation(projects.feature.playlists.api)
@@ -45,9 +45,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     // Paging 3
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.compose)
-    testImplementation(libs.androidx.paging.testing)
+    implementation(libs.bundles.paging)
+    testImplementation(libs.bundles.paging.testing)
 
     testImplementation(libs.bundles.test)
     testImplementation(libs.bundles.test.runtime)

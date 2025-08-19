@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 
 class HistoryRepositoryImpl @Inject constructor(
-    private val local: LocalHistoryDataSource
+    private val local: LocalHistoryDataSource,
 ) : HistoryRepository {
 
     override suspend fun getSearchHistory(sizeLimit: Int): Flow<List<SearchHistory>> = safeCall(
@@ -69,7 +69,7 @@ class HistoryRepositoryImpl @Inject constructor(
 
     override suspend fun addWatchedMediaHistory(
         username: String,
-        media: MediaHistoryItem
+        media: MediaHistoryItem,
     ) = safeCall(
         errorMessage = "Failed to add watched media history for user $username",
     ) {
@@ -79,11 +79,11 @@ class HistoryRepositoryImpl @Inject constructor(
     override suspend fun getWatchedMediaHistory(
         username: String,
         mediaType: MediaType?,
-        genreId: Int?
+        genreId: Int?,
     ): Flow<List<MediaHistoryItem>> = safeCall(
         errorMessage = "Failed to retrieve watched media history for user $username"
     ) {
-        val watchedHistoryDots = local.getWatchedMediaHistory(username, mediaType, genreId)
+        val watchedHistoryDots = local.getWatchedMediaHistory(username, mediaType?.name, genreId)
         watchedHistoryDots.map {
             it.map { watchedHistory -> watchedHistory.toEntity() }
         }
