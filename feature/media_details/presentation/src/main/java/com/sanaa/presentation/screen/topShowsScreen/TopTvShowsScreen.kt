@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
@@ -59,7 +59,6 @@ fun TopTvShowsScreen(
     val authApi = EntryPointAccessors
         .fromApplication(context, DetailsApiEntryPoint::class.java)
         .authenticationApi()
-    val launcher = launchAuthActivityForResult()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     TopShowsContent(
@@ -72,7 +71,7 @@ fun TopTvShowsScreen(
         isVisible = uiState.showLoginBottomSheet,
         onDismiss = viewModel::onDismissBottomSheet,
         onLoginButtonClick = {
-            launcher.launch(authApi.getLaunchIntent(context))
+            authApi.launch(context, AuthStartRoute.Login)
         }
     )
 }

@@ -29,7 +29,7 @@ import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -67,8 +67,6 @@ fun EpisodeDetailsScreen(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult()
-
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
             when (it) {
@@ -86,7 +84,7 @@ fun EpisodeDetailsScreen(
                 }
 
                 EpisodeDetailsEffects.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }

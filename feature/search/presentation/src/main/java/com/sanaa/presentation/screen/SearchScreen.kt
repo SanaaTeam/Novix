@@ -15,9 +15,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.SearchNavigatorApi
 import com.sanaa.api.StartRoute
-import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
@@ -140,8 +140,6 @@ fun EffectHandler(effect: Flow<SearchScreenEffects>, navigator: SearchNavigatorA
         SearchApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult()
-
 
     LaunchedEffect(Unit) {
         effect.collectLatest { effect ->
@@ -168,7 +166,7 @@ fun EffectHandler(effect: Flow<SearchScreenEffects>, navigator: SearchNavigatorA
                     )
 
                 SearchScreenEffects.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
+                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }

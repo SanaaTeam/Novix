@@ -14,7 +14,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
-import com.sanaa.api.AuthenticationApi.Companion.RESULT_LOGGED_AS_GUEST
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.LoginRoute
@@ -25,7 +24,6 @@ import com.sanaa.presentation.screen.welcome.components.WelcomeSection
 fun WelcomeScreen(
     modifier: Modifier = Modifier,
     onExit: () -> Unit = {},
-    onFinish: (Int) -> Unit,
     viewModel: WelcomeViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavControllerProvider.current
@@ -40,8 +38,7 @@ fun WelcomeScreen(
                 }
 
                 WelcomeScreenEffects.ReturnGuestResultCode -> {
-
-                    onFinish(RESULT_LOGGED_AS_GUEST)
+                    (navController.context as? Activity)?.finish()
                 }
 
                 WelcomeScreenEffects.ExitApp -> {
