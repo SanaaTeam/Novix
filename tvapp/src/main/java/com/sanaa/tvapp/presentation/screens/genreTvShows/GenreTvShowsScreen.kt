@@ -160,41 +160,11 @@ fun GenreTvShowsScreenContent(
                                     }
                                 ) { index ->
                                     val movie = pagedTvShows[index] ?: return@items
-
-                                    val interactionSource = remember { MutableInteractionSource() }
-                                    val isFocused by interactionSource.collectIsFocusedAsState()
-                                    val scale by animateFloatAsState(
-                                        targetValue = if (isFocused) 1.1f else 1f,
-                                        animationSpec = tween(durationMillis = 300)
+                                    FocusableMediaCard(
+                                        imageUrl = movie.imageUrl,
+                                        titleText = movie.title,
+                                        onClick = { }
                                     )
-                                    Surface(
-                                        modifier = Modifier
-                                            .focusable(interactionSource = interactionSource)
-                                            .graphicsLayer(
-                                                scaleX = scale,
-                                                scaleY = scale
-                                            )
-                                            .border(
-                                                width = if (isFocused) 3.dp else 1.dp,
-                                                color = if (isFocused) Theme.colors.primary else Theme.colors.stroke,
-                                                shape = RoundedCornerShape(12.dp)
-                                            )
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .clickable(
-                                                interactionSource = interactionSource,
-                                                indication = null,
-
-                                                onClick = {
-                                                    interactionListener.onTvShowClick(movie.id)
-                                                }
-                                            )
-                                    ) {
-                                        FocusableMediaCard(
-                                            imageUrl = movie.imageUrl,
-                                            titleText = movie.title,
-                                            onClick = { }
-                                        )
-                                    }
                                 }
 
                                 if (pagedTvShows.loadState.append is LoadState.Loading) {
@@ -223,9 +193,7 @@ fun GenreTvShowsScreenContent(
 fun GenreTvShowsTopBar(
     genreName: String,
     modifier: Modifier = Modifier,
-
-
-    ) {
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
