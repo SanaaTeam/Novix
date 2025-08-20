@@ -69,54 +69,53 @@ fun ReviewCard(
 
 }
 
-
 @Composable
 private fun UserImage(review: ReviewUiModel) {
+    val avatarUrl = review.avatarUrl.orEmpty()
+    val hasAvatar = avatarUrl.isNotBlank()
+
     Box(
         modifier = Modifier
             .size(48.dp)
             .clip(shape = RoundedCornerShape(12.dp))
             .background(color = Theme.colors.iconBackgroundLow)
             .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp)),
-
         contentAlignment = Alignment.Center
     ) {
-        RemoteBlurredSensitiveImage(
-            imageUrl = review.avatarUrl.orEmpty(),
-            modifier = Modifier.fillMaxWidth(),
-            sensitiveContentThreshold = 0.2f,
-            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-            safeContentThreshold = LocalSafeContentThreshold.current,
-            contentDescription = review.authorName,
-            placeholderContent = {
-                Image(
-                    painter = painterResource(R.drawable.user_avater),
-                    contentDescription = stringResource(R.string.anonymous),
-                    modifier = Modifier
-                        .size(28.dp)
-                        .align(Alignment.Center),
-                    colorFilter = ColorFilter.tint(Theme.colors.hint)
-
+        if (hasAvatar) {
+            RemoteBlurredSensitiveImage(
+                imageUrl = avatarUrl,
+                modifier = Modifier.fillMaxWidth(),
+                sensitiveContentThreshold = 0.2f,
+                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                safeContentThreshold = LocalSafeContentThreshold.current,
+                contentDescription = review.authorName,
+                placeholderContent = {
+                    DefaultAvatar()
+                },
+                errorContent = {
+                    DefaultAvatar()
+                },
+            ) {
+                OnBlurContent(
+                    iconSize = 24.dp,
+                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
                 )
-            },
-            errorContent = {
-                Image(
-                    painter = painterResource(R.drawable.user_avater),
-                    contentDescription = stringResource(R.string.anonymous),
-                    modifier = Modifier
-                        .size(28.dp)
-                        .align(Alignment.Center),
-                    colorFilter = ColorFilter.tint(Theme.colors.hint)
-                )
-            },
-        ) {
-            OnBlurContent(
-                iconSize = 24.dp,
-                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
-            )
+            }
+        } else {
+            DefaultAvatar()
         }
-
     }
+}
+
+@Composable
+private fun DefaultAvatar() {
+    Image(
+        painter = painterResource(R.drawable.user_avater),
+        contentDescription = stringResource(R.string.anonymous),
+        modifier = Modifier.size(28.dp),
+        colorFilter = ColorFilter.tint(Theme.colors.hint)
+    )
 }
 
 @Composable
