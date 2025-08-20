@@ -89,7 +89,7 @@ fun GenreTvShowsScreenContent(
     NovixScaffold(
         backgroundShapes = {
             Image(
-                painter = painterResource(id = getGenreImage(state.genreId)),
+                painter = painterResource(id = getGenreImage(state.categoryId)),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop

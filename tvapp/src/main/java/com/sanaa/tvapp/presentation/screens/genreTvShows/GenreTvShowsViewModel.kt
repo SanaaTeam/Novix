@@ -72,7 +72,7 @@ class GenreTvShowsViewModel @Inject constructor(
         updateState {
             copy(
                 title = genreName,
-                genreId = genreId,
+                categoryId = genreId,
                 tvShows = flowOf(tvShows),
                 isLoading = false
             )
