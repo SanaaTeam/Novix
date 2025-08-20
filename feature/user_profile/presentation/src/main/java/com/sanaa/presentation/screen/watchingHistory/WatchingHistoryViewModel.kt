@@ -42,56 +42,23 @@ class WatchingHistoryViewModel @Inject constructor(
         fetchTvShows()
     }
 
-    private fun fetchMovies(genreId: Int? = null) {
-        tryToCollect(
-            block = { loadWatchedHistoryMovies(genreId) },
-            onCollect = ::onCollectMovies,
-            onError = ::onLoadDataError,
-        )
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
     }
 
-    private fun fetchTvShows(genreId: Int? = null) {
-        tryToCollect(
-            block = { loadWatchedHistoryTvShows(genreId) },
-            onCollect = ::onCollectTvShows,
-            onError = ::onLoadDataError
-        )
+    override fun onCreateNewListClick() {
+        updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
 
-    private fun onCollectMovies(mediaList: List<MediaHistoryItem>) {
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { copy(showAddListBottomSheet = false) }
+    }
+
+    override fun onDismissSnack() {
         updateState {
-            copy(
-                movieList = mediaList.map { it.toMediaItemUiModel() },
-                isLoading = false
-            )
+            copy(snackBarData = null)
         }
-    }
-    private fun onCollectTvShows(mediaList: List<MediaHistoryItem>) {
-        updateState {
-            copy(
-                tvShowList = mediaList.map { it.toMediaItemUiModel() },
-                isLoading = false
-            )
-        }
-    }
-    private fun fetchMovieGenres() {
-        tryToExecute(
-            block = {
-                manageMovieUseCase.getMovieGenres().map { it.toGenreUiState() }
-            },
-            onSuccess = { genres ->
-                updateState { copy(movieGenres = genres) }
-            },
-            onError = { ::onLoadDataError }
-        )
-    }
-
-    private fun fetchTvShowGenres() {
-        tryToExecute(
-            block = { manageTvShowUseCase.getTvShowGenres().map { it.toGenreUiState() } },
-            onSuccess = { genres -> updateState { copy(tvShowGenres = genres) } },
-            onError = { ::onLoadDataError }
-        )
     }
 
     override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
@@ -130,39 +97,75 @@ class WatchingHistoryViewModel @Inject constructor(
         emitEffect(WatchingHistoryScreenEffect.NavigateBack)
     }
 
-    private suspend fun loadWatchedHistoryMovies(
-        genreId: Int?,
-    ): Flow<List<MediaHistoryItem>> {
-        updateState { copy(isLoading = true) }
-        val user = try {
-            getLoggedInUserUseCase.getLoggedInUser()
-        } catch (_: NoLoggedInUserException) {
-            null
-        }
-        if (user == null) return flowOf(emptyList())
-        return manageWatchedMediaHistoryUseCase.getMediaHistory(
-            genreId = genreId,
-            mediaType = MediaType.MOVIE,
-            username = user.first().username
+    private fun fetchMovies(genreId: Int? = null) {
+        tryToCollect(
+            block = { loadMediaHistory(mediaType = MediaType.MOVIE, genreId = genreId) },
+            onCollect = ::onCollectMovies,
+            onError = ::onLoadDataError
         )
     }
 
-    private suspend fun loadWatchedHistoryTvShows(
-        genreId: Int?,
+    private fun fetchTvShows(genreId: Int? = null) {
+        tryToCollect(
+            block = { loadMediaHistory(mediaType = MediaType.TV_SHOW, genreId = genreId) },
+            onCollect = ::onCollectTvShows,
+            onError = ::onLoadDataError
+        )
+    }
+
+    private fun onCollectMovies(mediaList: List<MediaHistoryItem>) {
+        updateState {
+            copy(
+                movieList = mediaList.map { it.toMediaItemUiModel() },
+                isLoading = false
+            )
+        }
+    }
+
+    private fun onCollectTvShows(mediaList: List<MediaHistoryItem>) {
+        updateState {
+            copy(
+                tvShowList = mediaList.map { it.toMediaItemUiModel() },
+                isLoading = false
+            )
+        }
+    }
+
+    private fun fetchMovieGenres() {
+        tryToExecute(
+            block = manageMovieUseCase::getMovieGenres,
+            onSuccess = { genres ->
+                updateState { copy(movieGenres = genres.map { it.toGenreUiState() }) }
+            },
+            onError = ::onLoadDataError
+        )
+    }
+
+    private fun fetchTvShowGenres() {
+        tryToExecute(
+            block = manageTvShowUseCase::getTvShowGenres,
+            onSuccess = { genres -> updateState { copy(tvShowGenres = genres.map { it.toGenreUiState() }) } },
+            onError = ::onLoadDataError
+        )
+    }
+
+    private suspend fun loadMediaHistory(
+        mediaType: MediaType,
+        genreId: Int?
     ): Flow<List<MediaHistoryItem>> {
         updateState { copy(isLoading = true) }
-        val user = try {
-            getLoggedInUserUseCase.getLoggedInUser()
-        } catch (_: NoLoggedInUserException) {
-            null
-        }
-        if (user == null) return flowOf(emptyList())
+        return try {
+            return getLoggedInUserUseCase.getLoggedInUser().first().run {
+                manageWatchedMediaHistoryUseCase.getMediaHistory(
+                    genreId = genreId,
+                    mediaType = mediaType,
+                    username = username
+                )
+            }
 
-        return manageWatchedMediaHistoryUseCase.getMediaHistory(
-            genreId = genreId,
-            mediaType = MediaType.TV_SHOW,
-            username = user.first().username
-        )
+        } catch (_: NoLoggedInUserException) {
+            flowOf(emptyList())
+        }
     }
 
     private fun onLoadDataError(exception: Throwable) {
@@ -190,25 +193,6 @@ class WatchingHistoryViewModel @Inject constructor(
                     )
                 }
             }
-        }
-    }
-
-    override fun onDismissSaveToListBottomSheet() {
-        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
-    }
-
-    override fun onCreateNewListClick() {
-        updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
-    }
-
-
-    override fun onDismissAddListBottomSheet() {
-        updateState { copy(showAddListBottomSheet = false) }
-    }
-
-    override fun onDismissSnack() {
-        updateState {
-            copy(snackBarData = null)
         }
     }
 }

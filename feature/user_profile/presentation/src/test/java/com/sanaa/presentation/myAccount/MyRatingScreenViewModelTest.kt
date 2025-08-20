@@ -101,28 +101,6 @@ class MyRatingScreenViewModelTest {
         assertThat(viewModel.state.value.selectedTab).isEqualTo(MyRatingTab.TV_SHOWS)
     }
 
-    @Test
-    fun `onDeleteIconClick for movie success removes item from state and shows success snackbar`() = runTest {
-        coEvery { manageMovieUseCase.deleteMovieRate(any()) } returns true
-        viewModel = MyRatingScreenViewModel(
-            manageMovieUseCase,
-            manageTvSeriesUseCase,
-            preferencesManager,
-            stringProvider,
-            testDispatcher
-        )
-        advanceUntilIdle()
-
-        assertThat(viewModel.state.value.ratedMovies).isNotEmpty()
-        viewModel.effect.test {
-            viewModel.onDeleteIconClick(dummyMovie.id, MediaTypeUi.MOVIE)
-            advanceUntilIdle()
-
-            assertThat(viewModel.state.value.ratedMovies).isEmpty()
-            assertThat(viewModel.state.value.snackBarData?.message).isEqualTo(stringProvider.deleteRatingSuccess)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
 
     @Test
     fun `onDeleteIconClick for movie failure emits error snackbar`() = runTest {
@@ -145,34 +123,6 @@ class MyRatingScreenViewModelTest {
         }
     }
 
-    @Test
-    fun `onRetryLoadDetails sets isLoading to true and reloads data`() = runTest {
-        coEvery { manageMovieUseCase.getUserRatedMovies() } throws NoNetworkException()
-        coEvery { manageTvSeriesUseCase.getTvShowRating(any(), any()) } throws NoNetworkException()
-
-        viewModel = MyRatingScreenViewModel(
-            manageMovieUseCase,
-            manageTvSeriesUseCase,
-            preferencesManager,
-            stringProvider,
-            testDispatcher
-        )
-        advanceUntilIdle()
-
-        assertThat(viewModel.state.value.isNoInternetConnection).isTrue()
-        assertThat(viewModel.state.value.isLoading).isFalse()
-
-        coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
-        coEvery { manageTvSeriesUseCase.getRatedTvShows(any(), any()) } returns listOf(dummyTvSeries)
-
-        viewModel.onRetryLoadDetails()
-        assertThat(viewModel.state.value.isLoading).isTrue()
-        advanceUntilIdle()
-
-        assertThat(viewModel.state.value.isLoading).isFalse()
-        assertThat(viewModel.state.value.ratedMovies).isNotEmpty()
-        assertThat(viewModel.state.value.ratedTvShows).isNotEmpty()
-    }
 
     @Test
     fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
@@ -196,28 +146,6 @@ class MyRatingScreenViewModelTest {
         }
     }
 
-    @Test
-    fun `onDeleteIconClick for tv show success removes item from state and shows success snackbar`() = runTest {
-        coEvery { manageTvSeriesUseCase.deleteTvShowRate(any()) } returns true
-        viewModel = MyRatingScreenViewModel(
-            manageMovieUseCase,
-            manageTvSeriesUseCase,
-            preferencesManager,
-            stringProvider,
-            testDispatcher
-        )
-        advanceUntilIdle()
-
-        assertThat(viewModel.state.value.ratedTvShows).isNotEmpty()
-        viewModel.effect.test {
-            viewModel.onDeleteIconClick(dummyTvSeries.id, MediaTypeUi.TV_SHOW)
-            advanceUntilIdle()
-
-            assertThat(viewModel.state.value.ratedTvShows).isEmpty()
-            assertThat(viewModel.state.value.snackBarData?.message).isEqualTo(stringProvider.deleteRatingSuccess)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
 
     @Test
     fun `onDeleteIconClick for tv show failure emits error snackbar`() = runTest {

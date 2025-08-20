@@ -14,11 +14,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
-import com.sanaa.presentation.api.navigationSaved.PlayListApiEntryPoint
-import com.sanaa.presentation.api.navigationSaved.SavedDetailsScreenRoute
+import com.sanaa.presentation.playListNavigation.PlayListApiEntryPoint
+import com.sanaa.presentation.playListNavigation.SavedDetailsScreenRoute
+import com.sanaa.presentation.playListProviders.LocalNavControllerProvider
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
-import com.sanaa.presentation.screen.playlist.componants.PlayListGuestScreen
+import com.sanaa.presentation.screen.playlist.componants.PlayListGuestStateComponent
+import com.sanaa.presentation.screen.playlist.componants.PlayListWithItemsStateComponent
 import com.sanaa.presentation.screen.playlist.componants.PlaylistEmptyScreen
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +37,7 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
                     backStackEntry?.savedStateHandle?.get<Boolean>("list_deleted") == true
                 if (deleted) {
                     viewModel.onListDeletedSuccessfully()
-                    backStackEntry.savedStateHandle.remove<Boolean>("list_deleted")
+                    backStackEntry?.savedStateHandle?.remove<Boolean>("list_deleted")
                 }
             }
     }
@@ -51,31 +52,6 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
     )
 }
 
-@Composable
-private fun PlaylistEffectsHandler(
-    effect: Flow<PlayListScreenEffect>,
-) {
-    val navController = LocalNavControllerProvider.current
-    val context = LocalContext.current
-    val authApi = EntryPointAccessors.fromApplication(
-        context,
-        PlayListApiEntryPoint::class.java
-    ).authenticationApi()
-
-
-    LaunchedEffect(Unit) {
-       effect.collectLatest { effect ->
-            when (effect) {
-                PlayListScreenEffect.NavigateToLogin -> {
-                    authApi.launch(context, AuthStartRoute.Login)
-                }
-
-                is PlayListScreenEffect.NavigateToSavedDetails ->
-                    navController.navigate(SavedDetailsScreenRoute(effect.listId, effect.title).route())
-            }
-        }
-    }
-}
 @Composable
 private fun PlaylistScreenContent(
     state: PlayListScreenUiState,
@@ -107,7 +83,7 @@ private fun PlaylistScreenContent(
                 }
 
                 PlaylistScreenState.Guest -> {
-                    PlayListGuestScreen(onLoginClick = { interactionListener.onNavigateToLogin() })
+                    PlayListGuestStateComponent(onLoginClick = { interactionListener.onNavigateToLogin() })
                 }
 
                 PlaylistScreenState.Empty -> {
@@ -119,7 +95,7 @@ private fun PlaylistScreenContent(
                 }
 
                 PlaylistScreenState.WithItems -> {
-                    PlayListWithItemsScreen(
+                    PlayListWithItemsStateComponent(
                         isVisible = state.showAddBottomSheet,
                         lists = state.lists,
                         interactionListener = interactionListener,
@@ -127,7 +103,42 @@ private fun PlaylistScreenContent(
                 }
             }
         }
-        AnimatedSnackBarHost(data = state.snackData, onDismiss = interactionListener::onSnackBarDismiss)
+        AnimatedSnackBarHost(
+            data = state.snackData,
+            onDismiss = interactionListener::onSnackBarDismiss
+        )
+    }
+}
+
+
+@Composable
+private fun PlaylistEffectsHandler(
+    effect: Flow<PlayListScreenEffect>,
+) {
+    val navController = LocalNavControllerProvider.current
+    val context = LocalContext.current
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        PlayListApiEntryPoint::class.java
+    ).authenticationApi()
+
+
+    LaunchedEffect(Unit) {
+        effect.collectLatest { effect ->
+            when (effect) {
+                PlayListScreenEffect.NavigateToLogin -> {
+                    authApi.launch(context, AuthStartRoute.Login)
+                }
+
+                is PlayListScreenEffect.NavigateToSavedDetails ->
+                    navController.navigate(
+                        SavedDetailsScreenRoute(
+                            effect.listId,
+                            effect.title
+                        ).route()
+                    )
+            }
+        }
     }
 }
 

@@ -142,6 +142,7 @@ fun LogoutButton(modifier: Modifier = Modifier, onLogoutClick: () -> Unit = {}) 
             .border(
                 width = 1.dp,
                 color = Theme.colors.stroke,
+                shape = RoundedCornerShape(8.dp)
             )
             .padding(horizontal = 12.dp),
 

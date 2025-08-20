@@ -32,12 +32,12 @@ import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBotto
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
-import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.screen.genreMovies.components.GenreMoviesGrid
 import com.sanaa.presentation.screen.genreMovies.components.GenreMoviesTopBar
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -56,7 +56,7 @@ fun GenreMoviesScreen(
 
 @Composable
 private fun GenreMoviesEffectsHandler(
-    effects: SharedFlow<GenreMoviesEffects>,
+    effects: Flow<GenreMoviesEffects>,
 ) {
     val navController = LocalNavControllerProvider.current
     val context = LocalContext.current
@@ -84,13 +84,13 @@ private fun GenreMoviesEffectsHandler(
         }
     }
 }
+
 @Composable
 private fun GenreMoviesScreenContent(
     state: GenreMoviesScreenUiState,
     interactionListener: GenreMoviesScreenInteractionListener,
 ) {
     NovixScaffold(
-        backgroundShapes = { BackgroundShapes() },
         snackBarHost = {
             NovixAnimatedSnackBarHost(
                 data = state.snackBarData,
@@ -151,16 +151,9 @@ private fun GenreMoviesScreenContent(
                         }
                     }
                 }
-
-                state.selectedMovieToSave?.let { mediaItem ->
-                    SaveToListBottomSheet(
-                        isVisible = state.showSaveToListBottomSheet,
-                        mediaId = state.selectedMovieToSave?.id ?: 0,
-                        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-                        onCreateNewListClick = interactionListener::onCreateNewListClick,
-                    )
-                }
-            }}}
+            }
+        }
+    }
 
     AddBookmarkListBottomSheet(
         isVisible = state.showAddListBottomSheet,
@@ -170,5 +163,11 @@ private fun GenreMoviesScreenContent(
         onDismiss = { interactionListener.onBottomSheetDismiss() },
         onLoginButtonClick = { interactionListener.onLoginButtonClick() },
         isVisible = state.showBottomSheet
+    )
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMovieToSave?.id ?: 0,
+        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionListener::onCreateNewListClick,
     )
 }

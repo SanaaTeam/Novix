@@ -12,6 +12,7 @@ import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -31,8 +33,12 @@ abstract class BaseViewModel<T, E>(
     private val _state: MutableStateFlow<T> by lazy { MutableStateFlow(initialState) }
     val state: StateFlow<T> by lazy { _state.asStateFlow() }
 
-    private val _effect = MutableSharedFlow<E>()
-    val effect: SharedFlow<E> = _effect.asSharedFlow()
+    private val _effectChannel = Channel<E>(Channel.BUFFERED)
+    val effect: Flow<E> = _effectChannel.receiveAsFlow()
+
+    private var lastEffect: E? = null
+    private var lastTime = 0L
+    private val effectDebounceMs = 500L
 
     internal fun updateState(updater: T.() -> T) {
         _state.update(updater)
@@ -54,8 +60,18 @@ abstract class BaseViewModel<T, E>(
     }
 
     protected fun emitEffect(effect: E) {
+        val now = System.currentTimeMillis()
+
+        val effectType = effect!!::class
+        val lastEffectType = lastEffect?.let { it::class }
+
+        if (effectType == lastEffectType && now - lastTime < effectDebounceMs) return
+
+        lastEffect = effect
+        lastTime = now
+
         viewModelScope.launch {
-            _effect.emit(effect)
+            _effectChannel.send(effect)
         }
     }
 

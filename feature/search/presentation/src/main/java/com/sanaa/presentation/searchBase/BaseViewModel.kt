@@ -51,13 +51,14 @@ abstract class BaseViewModel<T, E>(
     }
 
 
-
     protected fun <R> tryToCollect(
+        onStart: () -> Unit = {},
         block: suspend () -> Flow<R>,
         onCollect: suspend (R) -> Unit,
         onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher
     ) {
+        onStart()
         viewModelScope.launch(dispatcher) {
             try {
                 block().collect { value ->

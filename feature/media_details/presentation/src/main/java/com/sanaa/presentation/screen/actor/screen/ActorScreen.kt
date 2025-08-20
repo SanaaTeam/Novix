@@ -54,6 +54,7 @@ import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.TopMoviesScreenRoute
 import com.sanaa.presentation.navigation.TopTvShowsScreenRoute
 import com.sanaa.presentation.navigation.TvShowScreenRoute
+import com.sanaa.presentation.screen.actor.ActorScreenEffects
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateBack
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToGallery
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToLogin
@@ -74,6 +75,7 @@ import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.Flow
 import com.sanaa.designsystem.R as designR
 
 @Composable
@@ -81,49 +83,8 @@ fun ActorScreen(
     viewModel: ActorScreenViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val navController = LocalNavControllerProvider.current
-    val context = LocalContext.current
 
-    val authApi = EntryPointAccessors
-        .fromApplication(context, DetailsApiEntryPoint::class.java)
-        .authenticationApi()
-
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                NavigateBack -> {
-                    if (!navController.popBackStack()) {
-                        (navController.context as Activity).finish()
-                    }
-                }
-
-                is NavigateToTopMovies -> navController.navigate(
-                    TopMoviesScreenRoute(effect.actorId)
-                )
-
-                is NavigateToTopTvShows -> navController.navigate(
-                    TopTvShowsScreenRoute(effect.actorId)
-                )
-
-                is NavigateToGallery -> {
-                    navController.navigate(ActorGalleryScreenRoute(effect.actorId))
-                }
-
-                is NavigateToMovieDetails -> {
-                    navController.navigate(MovieDetailsScreenRoute(effect.movieId))
-                }
-
-                is NavigateToTvShowDetails -> {
-                    navController.navigate(TvShowScreenRoute(effect.tvShowId))
-                }
-
-                NavigateToLogin -> {
-                    authApi.launch(context, AuthStartRoute.Login)
-                }
-            }
-        }
-    }
+    EffectHandler(viewModel.effect)
 
     ActorScreenContent(state = uiState, interactionListener = viewModel)
 }
@@ -316,6 +277,53 @@ private fun ActorInfo(
                         listener.onTvShowClicked(tvShow.id)
                     },
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EffectHandler(
+    effect: Flow<ActorScreenEffects>,
+) {
+    val navController = LocalNavControllerProvider.current
+    val context = LocalContext.current
+
+    val authApi = EntryPointAccessors
+        .fromApplication(context, DetailsApiEntryPoint::class.java)
+        .authenticationApi()
+    LaunchedEffect(Unit) {
+        effect.collect { effect ->
+            when (effect) {
+                NavigateBack -> {
+                    if (!navController.popBackStack()) {
+                        (navController.context as Activity).finish()
+                    }
+                }
+
+                is NavigateToTopMovies -> navController.navigate(
+                    TopMoviesScreenRoute(effect.actorId)
+                )
+
+                is NavigateToTopTvShows -> navController.navigate(
+                    TopTvShowsScreenRoute(effect.actorId)
+                )
+
+                is NavigateToGallery -> {
+                    navController.navigate(ActorGalleryScreenRoute(effect.actorId))
+                }
+
+                is NavigateToMovieDetails -> {
+                    navController.navigate(MovieDetailsScreenRoute(effect.movieId))
+                }
+
+                is NavigateToTvShowDetails -> {
+                    navController.navigate(TvShowScreenRoute(effect.tvShowId))
+                }
+
+                NavigateToLogin -> {
+                    authApi.launch(context, AuthStartRoute.Login)
+                }
             }
         }
     }

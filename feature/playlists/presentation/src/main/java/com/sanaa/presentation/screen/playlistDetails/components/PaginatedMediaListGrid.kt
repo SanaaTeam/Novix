@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.playlistDetails.components
 
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +18,7 @@ import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.playListProviders.LocalThemeProvider
 import com.sanaa.presentation.screen.playlistDetails.components.chips.SaveIconChip
 import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 
@@ -29,7 +29,6 @@ fun PaginatedMediaListGrid(
     isScrollEnabled: Boolean = true,
     onMediaClick: (MediaItem) -> Unit = {},
     onSaveIconClick: (MediaItem) -> Unit = {},
-    isDarkTheme: Boolean = isSystemInDarkTheme(),
     safeContentThreshold: Float = 0.5f
 ) {
     LazyVerticalGrid(
@@ -48,14 +47,20 @@ fun PaginatedMediaListGrid(
                         imageUrl = media.imageUrl.orEmpty(),
                         modifier = Modifier.fillMaxWidth(),
                         sensitiveContentThreshold = 0.2f,
-                         isBlurEnabled = safeContentThreshold != 0f,
+                        isBlurEnabled = safeContentThreshold != 0f,
                         safeContentThreshold = safeContentThreshold,
                         contentDescription = media.title,
                         placeholderContent = {
-                            RemoteImagePlaceholder(Modifier.fillMaxSize(), isDarkTheme = isDarkTheme)
+                            RemoteImagePlaceholder(
+                                Modifier.fillMaxSize(),
+                                isDarkTheme = LocalThemeProvider.current
+                            )
                         },
                         errorContent = {
-                            RemoteImagePlaceholder(Modifier.fillMaxSize(), isDarkTheme = isDarkTheme)
+                            RemoteImagePlaceholder(
+                                Modifier.fillMaxSize(),
+                                isDarkTheme = LocalThemeProvider.current
+                            )
                         },
                     ) {
                         OnBlurContent(
@@ -68,7 +73,12 @@ fun PaginatedMediaListGrid(
                         )
                     }
                 },
-                topLeftContent = { SaveIconChip(onClick = { onSaveIconClick(media) }, isSaved = true) },
+                topLeftContent = {
+                    SaveIconChip(
+                        onClick = { onSaveIconClick(media) },
+                        isSaved = true
+                    )
+                },
                 onCardClick = { onMediaClick(media) })
         }
     }

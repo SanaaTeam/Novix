@@ -15,7 +15,7 @@ import com.sanaa.presentation.screen.myRating.MediaTypeUi
 @Composable
 fun RatedMediaListGrid(
     onCardClick: (mediaId: Int, mediaType: MediaTypeUi) -> Unit,
-    onDeleteIconClick: (mediaId: Int, mediaType: MediaTypeUi) -> Unit ,
+    onDeleteIconClick: (mediaId: Int, mediaType: MediaTypeUi) -> Unit,
     mediaList: List<RatedMediaUiModel>,
     modifier: Modifier = Modifier,
     isScrollEnabled: Boolean = true,
@@ -36,6 +36,7 @@ fun RatedMediaListGrid(
                 onCardClick = onCardClick,
                 onDeleteClick = onDeleteIconClick,
                 media = mediaItem,
+                modifier = Modifier.animateItem()
             )
         }
     }

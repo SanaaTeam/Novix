@@ -3,7 +3,6 @@ package com.sanaa.presentation.screen.bottomsheet.saveToBottomSheet
 import com.sanaa.presentation.profileBase.BaseViewModel
 import com.sanaa.presentation.screen.bottomsheet.components.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import service.VodStringProvider
@@ -20,7 +19,6 @@ class SaveToListViewModel @Inject constructor(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher),
     SaveToListInteractionsListener {
-
     fun getMediaId(mediaId: Int) {
         updateState { copy(mediaId = mediaId) }
         observePlaylists()
@@ -29,7 +27,7 @@ class SaveToListViewModel @Inject constructor(
     private fun observePlaylists() {
         updateState { copy(isLoading = true) }
         tryToCollect(
-            block = { mangeSavedListsUseCase.getSavedLists() },
+            block = mangeSavedListsUseCase::getSavedLists,
             onCollect = ::onCollectPlaylists,
         )
     }
@@ -64,7 +62,6 @@ class SaveToListViewModel @Inject constructor(
 
     }
 
-
     private suspend fun addMovieToSavedList(
         selectedListId: Int,
         mediaId: Int
@@ -75,7 +72,7 @@ class SaveToListViewModel @Inject constructor(
         )
     }
 
-    private fun onErrorAccrue(exception: NovixAppException) {
+    private fun onErrorAccrue() {
         updateState {
             copy(
                 isLoading = false,
@@ -107,28 +104,19 @@ class SaveToListViewModel @Inject constructor(
     override fun onAddClick() {
         val selectedListsIds: MutableList<Int> = state.value.selectedListsIds
         if (selectedListsIds.isEmpty()) return
-        updateState { copy(isUploading = true, isAddButtonEnabled = false) }
+
         tryToExecute(
+            onStart = { updateState { copy(isUploading = true, isAddButtonEnabled = false) } },
             block = {
                 selectedListsIds.forEach { listId ->
-                    addMovieToSavedList(listId, state.value.mediaId!!)
-                }
-                updateState {
-                    copy(
-                        isUploading = false,
-                        isLoading = false,
-                        isAddButtonEnabled = false,
-                        snackBarData = SnackData(
-                            message = stringProvider.addToListSuccess,
-                            isError = false,
-                        ),
-                        selectedListsIds = mutableListOf(),
-                        mediaId = null
+                    addMovieToSavedList(
+                        listId,
+                        state.value.mediaId!!
                     )
                 }
-                emitEffect(SaveToListEffect.DismissBottomSheet)
             },
-            onError = ::onErrorAccrue
+            onSuccess = { onAddToListSuccess() },
+            onError = { onErrorAccrue() }
         )
     }
 
@@ -153,6 +141,23 @@ class SaveToListViewModel @Inject constructor(
                 isAddButtonEnabled = false,
             )
         }
+    }
+
+    private fun onAddToListSuccess() {
+        updateState {
+            copy(
+                isUploading = false,
+                isLoading = false,
+                isAddButtonEnabled = false,
+                snackBarData = SnackData(
+                    message = stringProvider.addToListSuccess,
+                    isError = false,
+                ),
+                selectedListsIds = mutableListOf(),
+                mediaId = null
+            )
+        }
+        emitEffect(SaveToListEffect.DismissBottomSheet)
     }
 }
 

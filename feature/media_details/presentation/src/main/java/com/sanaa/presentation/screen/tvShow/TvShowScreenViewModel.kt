@@ -200,7 +200,7 @@ class TvShowScreenViewModel @Inject constructor(
             updateState {
                 copy(
                     snackBarData = SnackData(
-                        message = stringProvider.deleteRatingSuccess,
+                        message = stringProvider.submitRatingSuccess,
                         isError = false
                     ),
                     showRateBottomSheet = false,
@@ -211,7 +211,7 @@ class TvShowScreenViewModel @Inject constructor(
             updateState {
                 copy(
                     snackBarData = SnackData(
-                        message = stringProvider.deleteRatingFailed,
+                        message = stringProvider.submitRatingFailed,
                         isError = true
                     )
                 )
@@ -313,7 +313,7 @@ class TvShowScreenViewModel @Inject constructor(
         updateState {
             copy(
                 snackBarData = SnackData(
-                    message = stringProvider.deleteRatingFailed,
+                    message = stringProvider.submitRatingFailed,
                     isError = true
                 )
             )

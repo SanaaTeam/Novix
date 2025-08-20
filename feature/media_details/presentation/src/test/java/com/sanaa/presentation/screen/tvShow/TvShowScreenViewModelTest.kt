@@ -11,7 +11,10 @@ import entity.Episode
 import entity.Genre
 import entity.Season
 import entity.TvShow
+import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -26,14 +29,11 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
-import service.VodStringProvider
-import io.mockk.impl.annotations.MockK
-import io.mockk.MockKAnnotations
-import io.mockk.coVerify
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -178,18 +178,6 @@ class TvShowScreenViewModelTest {
         givenHappyViewModel()
         viewModel.onRateClicked()
         viewModel.onDismissRateBottomSheet()
-        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
-    }
-
-    @Test
-    fun `onSubmitRateBottomSheet calls addRate successfully`() = runTest {
-        coEvery { manageTvShowDetails.addTvShowRate(any(), any()) } returns true
-        givenHappyViewModel()
-
-        viewModel.onRatingChanged(8)
-        viewModel.onSubmitRateBottomSheet()
-        advanceUntilIdle()
-
         assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
     }
 

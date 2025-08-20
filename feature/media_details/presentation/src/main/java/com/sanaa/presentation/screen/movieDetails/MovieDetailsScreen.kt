@@ -64,7 +64,7 @@ import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.util.DateTimeUtils.getCurrentLocale
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as dR
 
@@ -80,64 +80,6 @@ fun MovieDetailsScreen(
         state = state,
         interactionListener = viewModel
     )
-}
-
-@Composable
-private fun MovieDetailsEffectsHandler(
-    effects: SharedFlow<MovieDetailsUiEffect>,
-) {
-    val navController = LocalNavControllerProvider.current
-    val context = LocalContext.current
-    val currentContext by rememberUpdatedState(context)
-    val currentNavController by rememberUpdatedState(navController)
-
-    val authApi = EntryPointAccessors.fromApplication(
-        context,
-        DetailsApiEntryPoint::class.java
-    ).authenticationApi()
-
-    LaunchedEffect(Unit) {
-        effects.collectLatest { effect ->
-            when (effect) {
-                is MovieDetailsUiEffect.OpenTrailer -> {
-                    effect.url?.toUri()?.let { uri ->
-                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                        currentContext.startActivity(intent)
-                    }
-                }
-
-                is NavigateBack -> {
-                    if (!currentNavController.popBackStack()) {
-                        (currentNavController.context as? Activity)?.finish()
-                    }
-                }
-
-                is NavigateToReviewsScreen -> {
-                    currentNavController.navigate(
-                        ReviewsScreenRoute(effect.movieId, MediaTypeUiModel.MOVIE)
-                    )
-                }
-
-                is MovieDetailsUiEffect.NavigateToAnotherMovieDetails -> {
-                    currentNavController.navigate(MovieDetailsScreenRoute(effect.movieId))
-                }
-
-                is MovieDetailsUiEffect.NavigateToActorScreen -> {
-                    currentNavController.navigate(ActorScreenRoute(effect.actorId))
-                }
-
-                is NavigateToMovieCategoriesScreen -> {
-                    currentNavController.navigate(
-                        GenreMovieScreenRoute(effect.categoryId, effect.categoryName)
-                    )
-                }
-
-                NavigateToLogin -> {
-                    authApi.launch(context, AuthStartRoute.Login)
-                }
-            }
-        }
-    }
 }
 
 @Composable
@@ -316,4 +258,63 @@ private fun MovieDetailsBottomSheets(
         )
     }
 }
+
+@Composable
+private fun MovieDetailsEffectsHandler(
+    effects: Flow<MovieDetailsUiEffect>,
+) {
+    val navController = LocalNavControllerProvider.current
+    val context = LocalContext.current
+    val currentContext by rememberUpdatedState(context)
+    val currentNavController by rememberUpdatedState(navController)
+
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        DetailsApiEntryPoint::class.java
+    ).authenticationApi()
+
+    LaunchedEffect(Unit) {
+        effects.collectLatest { effect ->
+            when (effect) {
+                is MovieDetailsUiEffect.OpenTrailer -> {
+                    effect.url?.toUri()?.let { uri ->
+                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                        currentContext.startActivity(intent)
+                    }
+                }
+
+                is NavigateBack -> {
+                    if (!currentNavController.popBackStack()) {
+                        (currentNavController.context as? Activity)?.finish()
+                    }
+                }
+
+                is NavigateToReviewsScreen -> {
+                    currentNavController.navigate(
+                        ReviewsScreenRoute(effect.movieId, MediaTypeUiModel.MOVIE)
+                    )
+                }
+
+                is MovieDetailsUiEffect.NavigateToAnotherMovieDetails -> {
+                    currentNavController.navigate(MovieDetailsScreenRoute(effect.movieId))
+                }
+
+                is MovieDetailsUiEffect.NavigateToActorScreen -> {
+                    currentNavController.navigate(ActorScreenRoute(effect.actorId))
+                }
+
+                is NavigateToMovieCategoriesScreen -> {
+                    currentNavController.navigate(
+                        GenreMovieScreenRoute(effect.categoryId, effect.categoryName)
+                    )
+                }
+
+                NavigateToLogin -> {
+                    authApi.launch(context, AuthStartRoute.Login)
+                }
+            }
+        }
+    }
+}
+
 

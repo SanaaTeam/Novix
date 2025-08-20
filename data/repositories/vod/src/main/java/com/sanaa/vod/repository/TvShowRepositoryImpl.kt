@@ -124,19 +124,27 @@ class TvShowRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getTvShowGenres(): List<Genre> {
+    override suspend fun getTvShowGenres(refreshCash:Boolean): List<Genre> {
         return safeCall("Genres not found") {
-            remoteDataSource.getTvShowGenres().map { it.toEntity() }
-            val cachedGenres = localCachedContentDataSource.getCachedGenres(category = Category.TV_SHOW_GENRES)
-            if (cachedGenres.isNotEmpty()) {
-                return cachedGenres.map { it.toEntity() }
-            }
-
-            return remoteDataSource.getTvShowGenres().map { it.toEntity() }.also {
-                localCachedContentDataSource.cacheGenres(
-                    genres = it.map { it.toLocalDto() },
-                    category = Category.TV_SHOW_GENRES
-                )
+            return if (refreshCash){
+                 remoteDataSource.getTvShowGenres().map { it.toEntity() }.also {
+                    localCachedContentDataSource.cacheGenres(
+                        genres = it.map { it.toLocalDto() },
+                        category = Category.TV_SHOW_GENRES
+                    )
+                }
+            }else{
+                val cachedGenres = localCachedContentDataSource.getCachedGenres(category = Category.TV_SHOW_GENRES)
+                if (cachedGenres.isNotEmpty()) {
+                     cachedGenres.map { it.toEntity() }
+                }else{
+                    remoteDataSource.getTvShowGenres().map { it.toEntity() }.also {
+                        localCachedContentDataSource.cacheGenres(
+                            genres = it.map { it.toLocalDto() },
+                            category = Category.TV_SHOW_GENRES
+                        )
+                    }
+                }
             }
         }
     }

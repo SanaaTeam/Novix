@@ -38,7 +38,7 @@ import com.sanaa.presentation.screen.genreTvShows.components.GenreTvShowsGrid
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -54,9 +54,10 @@ fun GenreTvShowsScreen(
         interactionListener = viewModel
     )
 }
+
 @Composable
 private fun GenreTvShowsEffectsHandler(
-    effects: SharedFlow<GenreTvShowsEffects>,
+    effects: Flow<GenreTvShowsEffects>,
 ) {
     val navController = LocalNavControllerProvider.current
     val context = LocalContext.current
@@ -84,6 +85,7 @@ private fun GenreTvShowsEffectsHandler(
         }
     }
 }
+
 @Composable
 private fun GenreTvShowsScreenContent(
     state: GenreTvShowsScreenUiState,
@@ -102,18 +104,18 @@ private fun GenreTvShowsScreenContent(
         Column(
             modifier = Modifier.navigationBarsPadding()
         ) {
-                TopBar(
-                    leftContent = {
-                        TopBarClickableIcon(
-                            icon = painterResource(id = R.drawable.icon_back),
-                            onClick = interactionListener::onBackClick
-                        )
-                    },
-                    screenTitle = state.title.orEmpty(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .statusBarsPadding()
-                )
+            TopBar(
+                leftContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(id = R.drawable.icon_back),
+                        onClick = interactionListener::onBackClick
+                    )
+                },
+                screenTitle = state.title.orEmpty(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+            )
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -154,19 +156,18 @@ private fun GenreTvShowsScreenContent(
                         ScreenState.CONTENT -> {
                             GenreTvShowsGrid(
                                 pagedTvShows = pagedTvShows,
-                                onTvShowClick =interactionListener::onTvShowClick
+                                onTvShowClick = interactionListener::onTvShowClick
                             )
                         }
                     }
                 }
-
-                RequestToLoginBottomSheet(
-                    onDismiss = interactionListener::onBottomSheetDismiss,
-                    onLoginButtonClick = interactionListener::onLoginButtonClick,
-                    isVisible = state.showBottomSheet
-                )
             }
         }
     }
+    RequestToLoginBottomSheet(
+        onDismiss = interactionListener::onBottomSheetDismiss,
+        onLoginButtonClick = interactionListener::onLoginButtonClick,
+        isVisible = state.showBottomSheet
+    )
 }
 

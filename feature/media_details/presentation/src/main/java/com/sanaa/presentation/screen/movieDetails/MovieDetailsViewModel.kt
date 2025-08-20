@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.movieDetails
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -145,25 +144,25 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onDismissRateBottomSheet() {
-        updateState { copy(showRateBottomSheet = false) }
+        updateState { copy(showRateBottomSheet = false, imdbRating = 0) }
     }
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
             block = ::submitMovieRating,
-            onError = ::onShowRateBottomSheetFailed,
+            onError = ::onSubmitRateFailed,
         )
         updateState {
             copy(showRateBottomSheet = false)
         }
     }
 
-    private fun onShowRateBottomSheetFailed(exception: NovixAppException) {
+    private fun onSubmitRateFailed(exception: NovixAppException) {
         updateState {
             copy(
                 showRateBottomSheet = false,
                 snackBarData = SnackData(
-                    message = stringProvider.somethingWentWrongError,
+                    message = stringProvider.submitRatingFailed,
                     isError = true
                 )
             )
@@ -295,7 +294,7 @@ class MovieDetailsViewModel @Inject constructor(
                 copy(
                     showRateButton = false,
                     snackBarData = SnackData(
-                        message = stringProvider.deleteRatingSuccess,
+                        message = stringProvider.submitRatingSuccess,
                         isError = false,
                     )
                 )
@@ -305,7 +304,7 @@ class MovieDetailsViewModel @Inject constructor(
             updateState {
                 copy(
                     snackBarData = SnackData(
-                        message = stringProvider.deleteRatingFailed,
+                        message = stringProvider.submitRatingFailed,
                         isError = true
                     )
                 )
