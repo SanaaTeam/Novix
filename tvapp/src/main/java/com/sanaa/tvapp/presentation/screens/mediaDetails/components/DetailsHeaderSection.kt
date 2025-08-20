@@ -71,10 +71,9 @@ fun DetailsHeaderSection(
             }
             val brushColor = listOf(
                 Color.Transparent,
-                Color.Transparent,
-                Color.Transparent,
-                Color.Transparent,
-                Color.Transparent,
+                Theme.colors.surface.copy(alpha = 0.9f)
+            )
+            val brushColor2 = listOf(
                 Color.Transparent,
                 Theme.colors.surface
             )
@@ -89,6 +88,12 @@ fun DetailsHeaderSection(
                 )
             }
 
+            Canvas(modifier = Modifier.matchParentSize()) {
+                drawRect(
+                    brush = Brush.verticalGradient(colors = brushColor2),
+                    size = size
+                )
+            }
 
             Column(
                 modifier = Modifier
