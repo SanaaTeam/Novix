@@ -42,7 +42,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.presentation.components.MediaSection
-import com.sanaa.tvapp.presentation.screens.home.ImageList
 import com.sanaa.tvapp.presentation.screens.home.component.MediaTabItem
 import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
@@ -64,6 +63,7 @@ import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ChangePasswordScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MyRatingScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.WatchingHistoryScreenRoute
+import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import kotlinx.coroutines.flow.collectLatest
 import repository.Language
@@ -249,7 +249,11 @@ fun MyAccountMovies(
         if (state.watchingHistoryMovies.isNotEmpty()) {
             MediaSection(title = stringResource(tvResource.string.watching_history)) {
                 items(items = state.watchingHistoryMovies, key = { it.id }) {
-                    ImageList(it, onItemClick = { id -> onItemClick(id) })
+                    FocusableMediaCard(
+                        imageUrl = it.imageUrl ?: "",
+                        titleText = it.title,
+                        onClick = { onItemClick(it.id) }
+                    )
                 }
             }
         }
@@ -257,7 +261,11 @@ fun MyAccountMovies(
         if (state.myRatingMovies.isNotEmpty()) {
             MediaSection(title = stringResource(designSystemResource.string.my_rating)) {
                 items(items = state.myRatingMovies, key = { it.id }) {
-                    ImageList(it, onItemClick = { id -> onItemClick(id) })
+                    FocusableMediaCard(
+                        imageUrl = it.imageUrl ?: "",
+                        titleText = it.title,
+                        onClick = { onItemClick(it.id) }
+                    )
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.searchScreen.componants
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,9 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
 import androidx.tv.material3.Card
@@ -35,10 +39,15 @@ fun FocusableMediaCard(
     imageUrl: String,
     titleText: String,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
+    val width: Dp = 153.dp
+    val height: Dp = 231.dp
     var isFocused by remember { mutableStateOf(false) }
-
+    val textTopPadding by animateDpAsState(
+        targetValue = if (isFocused) 16.dp else 8.dp,
+        label = "animatedWidth"
+    )
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -64,22 +73,22 @@ fun FocusableMediaCard(
                 isBlurEnabled = LocalSafeContentThreshold.current != 0f,
                 imageUrl = imageUrl,
                 modifier = Modifier
-                    .width(200.dp)
-                    .height(300.dp),
+                    .width(width)
+                    .height(height),
                 sensitiveContentThreshold = 0.2f,
                 safeContentThreshold = 0.7f,
                 placeholderContent = {
                     RemoteImagePlaceholder(
                         modifier = Modifier
-                            .width(200.dp)
-                            .height(300.dp)
+                            .width(width)
+                            .height(height)
                     )
                 },
                 errorContent = {
                     RemoteImagePlaceholder(
                         modifier = Modifier
-                            .width(200.dp)
-                            .height(300.dp)
+                            .width(width)
+                            .height(height)
                     )
                 },
                 contentDescription = titleText,
@@ -94,15 +103,17 @@ fun FocusableMediaCard(
                 )
             }
         }
-            Text(
-                text = titleText,
-                style = Theme.textStyle.label.large,
-                color = if (isFocused) Theme.colors.primary else Theme.colors.title,
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .align(Alignment.Start)
-                    .width(200.dp),
-                maxLines = 1
-            )
-        }
+
+        Text(
+            text = titleText,
+            style = Theme.textStyle.label.medium,
+            color = if (isFocused) Theme.colors.primary else Theme.colors.title,
+            modifier = Modifier
+                .width(width)
+                .padding(top = textTopPadding),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Start,
+        )
     }
+}

@@ -44,7 +44,7 @@ import com.sanaa.tvapp.state.SnackData
 
 @Composable
 fun ActorScreen(
-    viewModel: ActorViewModel = hiltViewModel()
+    viewModel: ActorViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
@@ -110,8 +110,7 @@ private fun ActorScreenContent(
                         DetailsHeaderSection(
                             state.actor.imageUrl.orEmpty(),
                             title = state.actor.name,
-                        )
-                        {
+                        ) {
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -150,7 +149,7 @@ private fun ActorScreenContent(
 @Composable
 private fun ActorScreenSliders(
     state: ActorScreenUiState,
-    listener: ActorsScreenInteractionListener
+    listener: ActorsScreenInteractionListener,
 ) {
     if (state.galleryImageUrls.isNotEmpty()) {
         ImagesSlider(
