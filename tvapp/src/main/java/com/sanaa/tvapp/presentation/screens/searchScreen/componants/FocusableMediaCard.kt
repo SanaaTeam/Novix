@@ -48,6 +48,11 @@ fun FocusableMediaCard(
         targetValue = if (isFocused) 16.dp else 8.dp,
         label = "animatedWidth"
     )
+
+    val textBottomPadding by animateDpAsState(
+        targetValue = if (isFocused) 8.dp else 16.dp,
+        label = "animatedWidth"
+    )
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -110,7 +115,7 @@ fun FocusableMediaCard(
             color = if (isFocused) Theme.colors.primary else Theme.colors.title,
             modifier = Modifier
                 .width(width)
-                .padding(top = textTopPadding),
+                .padding(top = textTopPadding, bottom = textBottomPadding),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Start,
