@@ -9,4 +9,5 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="empty_rating">There are no ratings yet!</string>
+    <string name="empty_watching_history">There is no watching history yet!</string>
 </resources>
