@@ -2,17 +2,10 @@ package com.sanaa.tvapp.presentation.screens.genreTvShows
 
 import android.app.Activity
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,16 +20,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -44,7 +32,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -160,41 +147,11 @@ fun GenreTvShowsScreenContent(
                                     }
                                 ) { index ->
                                     val movie = pagedTvShows[index] ?: return@items
-
-                                    val interactionSource = remember { MutableInteractionSource() }
-                                    val isFocused by interactionSource.collectIsFocusedAsState()
-                                    val scale by animateFloatAsState(
-                                        targetValue = if (isFocused) 1.1f else 1f,
-                                        animationSpec = tween(durationMillis = 300)
+                                    FocusableMediaCard(
+                                        imageUrl = movie.imageUrl,
+                                        titleText = movie.title,
+                                        onClick = { interactionListener.onTvShowClick(movie.id) }
                                     )
-                                    Surface(
-                                        modifier = Modifier
-                                            .focusable(interactionSource = interactionSource)
-                                            .graphicsLayer(
-                                                scaleX = scale,
-                                                scaleY = scale
-                                            )
-                                            .border(
-                                                width = if (isFocused) 3.dp else 1.dp,
-                                                color = if (isFocused) Theme.colors.primary else Theme.colors.stroke,
-                                                shape = RoundedCornerShape(12.dp)
-                                            )
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .clickable(
-                                                interactionSource = interactionSource,
-                                                indication = null,
-
-                                                onClick = {
-                                                    interactionListener.onTvShowClick(movie.id)
-                                                }
-                                            )
-                                    ) {
-                                        FocusableMediaCard(
-                                            imageUrl = movie.imageUrl,
-                                            titleText = movie.title,
-                                            onClick = { interactionListener.onTvShowClick(movie.id) }
-                                        )
-                                    }
                                 }
 
                                 if (pagedTvShows.loadState.append is LoadState.Loading) {
@@ -223,9 +180,7 @@ fun GenreTvShowsScreenContent(
 fun GenreTvShowsTopBar(
     genreName: String,
     modifier: Modifier = Modifier,
-
-
-    ) {
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
