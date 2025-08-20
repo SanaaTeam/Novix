@@ -30,4 +30,6 @@
     <string name="added_to_list_successfully">Added to list successfully</string>
     <string name="added_to_list_failed">Added to list failed</string>
     <string name="error_message">Something Went Wrong</string>
+    <string name="empty_watching_history">There is no watching history yet!</string>
+
 </resources>
