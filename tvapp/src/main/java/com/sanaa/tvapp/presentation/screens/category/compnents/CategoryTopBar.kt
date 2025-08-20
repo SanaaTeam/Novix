@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,7 +37,7 @@ fun CategoryTopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         TvTabs(
-            categories = listOf("Movies", "TV Shows"),
+            categories = listOf(stringResource(R.string.movies), stringResource(R.string.tv_shows)),
             selectedIndex = selectedTabIndex,
             onCategorySelected = onTabSelected
         )

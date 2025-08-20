@@ -8,18 +8,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 
 @Composable
 fun TvTabs(
+    spaceBetween: Dp = 12.dp,
     categories: List<String>,
     selectedIndex: Int,
     onCategorySelected: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(24.dp),
+        horizontalArrangement = Arrangement.spacedBy(spaceBetween),
         modifier = modifier
     ) {
         categories.forEachIndexed { index, title ->
@@ -33,7 +35,10 @@ fun TvTabs(
 }
 
 @Composable
-@androidx.compose.ui.tooling.preview.Preview(name = "TvTabs - First Selected", showBackground = true)
+@androidx.compose.ui.tooling.preview.Preview(
+    name = "TvTabs - First Selected",
+    showBackground = true
+)
 fun PreviewTvTabs_FirstSelected() {
     TvTabs(
         categories = listOf("Movies", "TV Shows", "Actors"),
@@ -43,7 +48,10 @@ fun PreviewTvTabs_FirstSelected() {
 }
 
 @Composable
-@androidx.compose.ui.tooling.preview.Preview(name = "TvTabs - Second Selected", showBackground = true)
+@androidx.compose.ui.tooling.preview.Preview(
+    name = "TvTabs - Second Selected",
+    showBackground = true
+)
 fun PreviewTvTabs_SecondSelected() {
     TvTabs(
         categories = listOf("Movies", "TV Shows", "Actors"),
@@ -53,7 +61,10 @@ fun PreviewTvTabs_SecondSelected() {
 }
 
 @Composable
-@androidx.compose.ui.tooling.preview.Preview(name = "TvTabs - Third Selected", showBackground = true)
+@androidx.compose.ui.tooling.preview.Preview(
+    name = "TvTabs - Third Selected",
+    showBackground = true
+)
 fun PreviewTvTabs_ThirdSelected() {
     TvTabs(
         categories = listOf("Movies", "TV Shows", "Actors"),
