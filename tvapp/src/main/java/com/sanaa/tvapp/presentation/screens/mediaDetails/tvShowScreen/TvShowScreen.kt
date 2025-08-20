@@ -106,7 +106,7 @@ fun TvShowScreen(
         }
     }
 
-    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
+    NovixTheme(isDarkMode = true) {
 
         Box(modifier = modifier.systemBarsPadding()) {
 

@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.isSystemInDarkTheme
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.tvapp.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,7 +18,7 @@ class LoginActivity : ComponentActivity() {
         actionBar?.hide()
 
         setContent {
-            NovixTheme(isSystemInDarkTheme()) {
+            NovixTheme(true) {
                 LoginScreenTv(
                     onFinish = {
                         navigateToMainApp()
