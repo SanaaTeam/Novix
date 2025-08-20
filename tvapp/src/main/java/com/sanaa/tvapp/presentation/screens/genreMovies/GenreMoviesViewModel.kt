@@ -73,10 +73,14 @@ class GenreMoviesViewModel @Inject constructor(
     }
 
     private fun onCollectMovies(): suspend (PagingData<MovieUiModel>) -> Unit = { movies ->
-        updateState { copy(movies = flowOf(movies),
-            title = genreName,
-            genreId = genreId,
-            isLoading = false) }
+        updateState {
+            copy(
+                movies = flowOf(movies),
+                title = genreName,
+                categoryId = genreId,
+                isLoading = false
+            )
+        }
     }
 
     private fun createMoviesPagingDataSource(
