@@ -72,7 +72,7 @@ private fun ImageCard(
         ),
         scale = CardDefaults.scale(
             scale = 1f,
-            focusedScale = 1.3f,
+            focusedScale = 1f,
         ),
         border = CardDefaults.border(
             focusedBorder = Border.None,
