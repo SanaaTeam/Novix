@@ -59,7 +59,6 @@ class MovieRepositoryImpl @Inject constructor(
             remote.fetchMovieTrailerUrl(id).toEntity()
         }
 
-
     override suspend fun getPopularMovies(page: Int): List<Movie> =
         safeCall("Failed to fetch movie Popular") {
             if (page == 1) {
@@ -79,7 +78,6 @@ class MovieRepositoryImpl @Inject constructor(
                 }
             }
         }
-
 
     override suspend fun getTopRatedMovies(page: Int, genreId: Int?): List<Movie> =
         safeCall("Failed to fetch movie TopRated") {
@@ -157,12 +155,8 @@ class MovieRepositoryImpl @Inject constructor(
                         }
                 }
             }
-
         }
     }
-
-
-
 
     override suspend fun addMovieRate(movieId: Int, rating: Float): Boolean {
         return safeCall("Failed to add movie rate") {

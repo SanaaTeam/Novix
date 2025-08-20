@@ -59,8 +59,6 @@ class PlaylistDetailsScreenViewModelTest {
         }
     }
 
-
-
     @Test
     fun `onDeleteListClick on failure with general error updates error message`() = runTest {
         val mediaItem = MediaItem(id = 456, title = "", imageUrl = "", isSaved = true)

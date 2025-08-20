@@ -185,7 +185,6 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         updateState { copy(showLoginBottomSheet = false) }
     }
 
-
     override fun onBackClick() {
         emitEffect(WatchingMediaHistoryScreenEffect.NavigateBack)
     }

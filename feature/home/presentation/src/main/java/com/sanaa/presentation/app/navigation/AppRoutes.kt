@@ -2,10 +2,7 @@ package com.sanaa.presentation.app.navigation
 
 import kotlinx.serialization.Serializable
 
-
 open class AppRoute
-
-
 
 @Serializable
 object HomeScreenRoute : AppRoute()

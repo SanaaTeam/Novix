@@ -9,5 +9,6 @@ fun SeasonDto.toEntity(): Season {
         title = name,
         overview = overview,
         number = seasonNumber,
-        episodes = episodes.map { it.toEntity() })
+        episodes = episodes.map { it.toEntity() }
+    )
 }

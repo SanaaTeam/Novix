@@ -1,6 +1,5 @@
 package com.sanaa.vod.repository.mapper.media
 
-
 import com.sanaa.vod.dataSource.remote.dto.actor.ActorCastCreditDto
 import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
 import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
@@ -20,7 +19,6 @@ fun ActorDto.toEntity(): Actor = Actor(
     placeOfBirth = placeOfBirth.orEmpty(),
     biography = biography.orEmpty()
 )
-
 
 fun ActorCastCreditDto.toMovie(): Movie = Movie(
     id = id,

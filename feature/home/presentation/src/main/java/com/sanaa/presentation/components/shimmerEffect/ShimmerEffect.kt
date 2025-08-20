@@ -65,7 +65,6 @@ private fun Preview() {
     }
 }
 
-
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun PopularMediaSectionPlaceholder(
@@ -176,11 +175,9 @@ fun PopularMediaSectionPlaceholder(
                     }
                 }
             }
-
         }
     }
 }
-
 
 @Composable
 fun MediaSliderSectionPlaceholder(modifier: Modifier = Modifier) {
@@ -209,7 +206,6 @@ fun MediaSliderSectionPlaceholder(modifier: Modifier = Modifier) {
                 cornerRadius = 8.dp,
                 borderColor = Color.Transparent,
             )
-
         }
         LazyRow(
             modifier = Modifier
@@ -231,7 +227,6 @@ fun MediaSliderSectionPlaceholder(modifier: Modifier = Modifier) {
         }
     }
 }
-
 
 fun LazyGridScope.upComingGenresLoadingPlaceholder(modifier: Modifier = Modifier) {
     item(span = { GridItemSpan(maxLineSpan) }) {
@@ -268,14 +263,12 @@ fun LazyGridScope.upComingTitlePlaceholder(modifier: Modifier = Modifier) {
         )
     }
 
-
     items(10) {
         PlaceholderWithShimmerEffect(
             modifier = Modifier.padding(bottom = 12.dp)
         )
     }
 }
-
 
 @Composable
 fun PlaceholderWithShimmerEffect(

@@ -75,6 +75,5 @@ fun PaginatedMediaListSectionContent(
                 isScrollEnabled = isScrollEnabled,
             )
         }
-
     }
 }

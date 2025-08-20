@@ -18,7 +18,6 @@ import androidx.compose.ui.zIndex
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.feature.mediadetails.presentation.R
 
-
 @Composable
 fun BottomContainer(
     modifier: Modifier = Modifier,
@@ -49,7 +48,6 @@ fun BottomContainer(
                 icon = painterResource(R.drawable.icon_star_outlined)
             )
         }
-
 
         PrimaryButton(
             text = stringResource(R.string.play_trailer),

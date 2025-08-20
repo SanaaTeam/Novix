@@ -182,7 +182,6 @@ class MovieDetailsViewModelTest {
         assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
     }
 
-
     @Test
     fun `onRatingChanged updates the rating`() = runTest {
         givenHappy()
@@ -291,5 +290,4 @@ class MovieDetailsViewModelTest {
         trailerUrl = null,
         posterUrl = "poster.jpg",
     )
-
 }

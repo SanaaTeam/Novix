@@ -40,5 +40,4 @@ private fun NovixTextFieldLabelPreview() {
             TextFieldLabel(text = "Title")
         }
     }
-
 }

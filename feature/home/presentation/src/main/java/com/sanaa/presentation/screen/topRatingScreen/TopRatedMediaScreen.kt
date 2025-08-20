@@ -44,7 +44,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designSystemR
 
-
 @Composable
 fun TopRatedMediaScreen(
     viewModel: TopRatedMediaScreenViewModel = hiltViewModel(),
@@ -58,7 +57,6 @@ fun TopRatedMediaScreen(
         interactionListener = viewModel,
     )
 }
-
 
 @Composable
 private fun TopRatedMediaScreenContent(
@@ -175,7 +173,6 @@ private fun TopRatedMediaScreenContent(
         onDismiss = interactionListener::onDismissLoginBottomSheet,
         onLoginButtonClick = interactionListener::onLoginButtonClick
     )
-
 }
 
 @Composable
@@ -228,4 +225,3 @@ private fun EffectHandler(
         }
     }
 }
-

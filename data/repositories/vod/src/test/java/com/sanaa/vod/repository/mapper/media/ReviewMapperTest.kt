@@ -7,7 +7,6 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.assertNotNull
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 class ReviewMapperTest {
 

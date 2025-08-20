@@ -173,7 +173,6 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         }
     }
 
-
     override fun onDismissSaveToListBottomSheet() {
         updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
     }
@@ -262,7 +261,6 @@ class TopRatedMediaScreenViewModel @Inject constructor(
             }
         }
     }
-
 
     private fun createMoviePagingDataSource(
         genreId: Int?,

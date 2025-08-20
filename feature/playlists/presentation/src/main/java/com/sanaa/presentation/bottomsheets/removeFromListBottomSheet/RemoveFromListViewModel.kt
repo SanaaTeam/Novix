@@ -51,7 +51,6 @@ class RemoveFromListViewModel @Inject constructor(
         }
     }
 
-
     private fun addUnSelectedList(selectedListsIds: List<Int>, listId: Int) {
         val updated = selectedListsIds.toMutableList().apply { add(listId) }
         updateState {
@@ -167,7 +166,6 @@ class RemoveFromListViewModel @Inject constructor(
         emitEffect(RemoveFromListEffect.DismissBottomSheet(deselectedListsIds))
     }
 }
-
 fun SavedList.toState(): PlaylistUiItem {
     return PlaylistUiItem(title = title, itemCount = itemCount, id = id, itemsIds = itemsIds)
 }

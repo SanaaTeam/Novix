@@ -131,7 +131,6 @@ private fun SearchScreenContent(
     )
 }
 
-
 @Composable
 fun EffectHandler(effect: Flow<SearchScreenEffects>, navigator: SearchNavigatorApi) {
     val context = LocalContext.current

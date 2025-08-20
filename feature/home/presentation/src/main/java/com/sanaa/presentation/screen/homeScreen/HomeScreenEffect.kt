@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen.homeScreen
 
 import com.sanaa.presentation.state.MediaTypeUiState
 
-
 sealed interface HomeScreenEffect {
     data class NavigateToMediaDetails(val id: Int, val mediaTypeUiState: MediaTypeUiState) :
         HomeScreenEffect

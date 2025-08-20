@@ -75,5 +75,4 @@ private fun PreviewViewAllIcon() {
             )
         }
     }
-
 }

@@ -172,5 +172,4 @@ class MyRatingScreenViewModel @Inject constructor(
         updateState { copy(ratedMovies = ratedMovies.filter { movie -> movie.id != mediaId }) }
         onShowSuccessSnackBar(stringProvider.deleteRatingSuccess)
     }
-
 }

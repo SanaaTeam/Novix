@@ -103,7 +103,6 @@ class SearchViewModel @Inject constructor(
         emitEffect(SearchScreenEffects.NavigateToLogin)
     }
 
-
     override fun onSaveIconClick(media: MovieUiModel) {
         if (!state.value.isUserLoggedIn) {
             updateState { copy(showLoginBottomSheet = true) }
@@ -427,7 +426,6 @@ class SearchViewModel @Inject constructor(
             onCollect = { isDarkMode -> updateState { copy(isDarkMode = isDarkMode == Theme.DARK) } },
             onError = ::onDataLoadError
         )
-
     }
 
     private fun observeContentRestriction() {

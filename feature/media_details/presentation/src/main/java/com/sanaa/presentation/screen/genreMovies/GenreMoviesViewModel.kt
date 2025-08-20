@@ -53,12 +53,10 @@ class GenreMoviesViewModel @Inject constructor(
         updateState { copy(userIsLoggedIn = isLogged) }
     }
 
-
     override fun onRetryClicked() {
         updateState { copy(noInternetConnection = false, isLoading = true) }
         fetchMovies(route.genreId)
     }
-
 
     override fun onBottomSheetDismiss() {
         updateState { copy(showBottomSheet = false) }
@@ -94,7 +92,6 @@ class GenreMoviesViewModel @Inject constructor(
             )
         }
     }
-
 
     override fun onBackClick() {
         emitEffect(GenreMoviesEffects.NavigateBack)

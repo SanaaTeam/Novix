@@ -45,7 +45,6 @@ import com.sanaa.presentation.screen.trendingTvShowScreen.TrendingTvShowsScreen
 import com.sanaa.presentation.screen.watchingHistoryScreen.WatchingMediaHistoryScreen
 import dagger.hilt.android.EntryPointAccessors
 
-
 @Composable
 fun MainNavHost() {
     val appContext = LocalContext.current.applicationContext
@@ -73,7 +72,6 @@ fun MainNavHost() {
     val navController = rememberNavController()
 
     val bottomBarVisible = remember { mutableStateOf(true) }
-
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     LaunchedEffect(navBackStackEntry) {
@@ -140,7 +138,6 @@ fun MainNavHost() {
     }
 }
 
-
 @Composable
 private fun AppBottomNavBar(navController: NavController) {
     val navItems = listOf(
@@ -171,7 +168,6 @@ private fun AppBottomNavBar(navController: NavController) {
         }
     }
 }
-
 
 private sealed class BottomNavItem(
     val route: AppRoute, val icon: Int, val selectedIcon: Int

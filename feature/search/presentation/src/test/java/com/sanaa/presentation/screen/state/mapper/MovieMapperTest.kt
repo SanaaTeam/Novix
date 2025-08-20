@@ -12,7 +12,6 @@ import kotlin.time.Duration.Companion.minutes
 
 class MovieMapperTest {
 
-
     @Test
     fun `toActorUiState should map Movie to MovieUiModel correctly`() {
         val movieOutput =

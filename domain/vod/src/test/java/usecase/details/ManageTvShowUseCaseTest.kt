@@ -318,7 +318,6 @@ class ManageTvShowUseCaseTest {
         assertThat(result).isEqualTo(expected)
     }
 
-
     @Test
     fun `getTvShowGenres should throw when repository fails`() = runTest {
         coEvery { tvShowRepository.getTvShowGenres() } throws NovixAppException("Error")
@@ -464,7 +463,6 @@ class ManageTvShowUseCaseTest {
         assertThat(result).isEmpty()
     }
 
-
     @Test
     fun `deleteTvShowRate should return true when deletion is successful`() = runTest {
         val tvShowId = 10
@@ -544,5 +542,4 @@ class ManageTvShowUseCaseTest {
             createdDate = LocalDate(2023, 5, 20)
         )
     }
-
 }

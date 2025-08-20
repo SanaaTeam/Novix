@@ -35,7 +35,6 @@ import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 
-
 @OptIn(ExperimentalCoroutinesApi::class)
 class TvShowScreenViewModelTest {
     private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)

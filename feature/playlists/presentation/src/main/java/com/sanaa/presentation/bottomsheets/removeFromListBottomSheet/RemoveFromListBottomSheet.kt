@@ -39,7 +39,6 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.screen.playlistDetails.components.AnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
-
 @Composable
 fun RemoveFromListBottomSheet(
     isVisible: Boolean,

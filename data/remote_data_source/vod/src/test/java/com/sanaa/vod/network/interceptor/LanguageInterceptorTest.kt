@@ -16,7 +16,6 @@ class LanguageInterceptorTest {
     private val chain = mockk<Interceptor.Chain>()
     private val interceptor = LanguageInterceptor({ "en" })
 
-
     @Test
     fun `adds language query parameter when Ignore-Language header not present`() {
         val originalUrl = HttpUrl.Builder()
@@ -46,7 +45,6 @@ class LanguageInterceptorTest {
 
         Truth.assertThat(proceededRequest.url.queryParameter("language")).isEqualTo("en")
     }
-
 
     @Test
     fun `does not add language query parameter when Ignore-Language header present`() {

@@ -63,7 +63,6 @@ fun PlayListWithItemsStateComponent(
                 )
             }
         }
-
     }
     AddBookmarkListBottomSheet(
         isVisible = isVisible,

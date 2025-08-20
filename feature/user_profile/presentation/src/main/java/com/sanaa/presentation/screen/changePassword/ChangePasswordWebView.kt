@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.changePassword
 
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.userprofile.presentation.R
-import com.sanaa.presentation.provider.LocalNavControllerProvider
+import com.sanaa.presentation.profileProvider.LocalNavControllerProvider
 
 @Composable
 fun ChangePasswordWebView(

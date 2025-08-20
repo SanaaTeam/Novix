@@ -20,7 +20,6 @@ import com.sanaa.presentation.screen.tvShow.TvShowScreenInteractionListener
 import com.sanaa.presentation.screen.tvShow.TvShowScreenUiState
 import com.sanaa.presentation.shared_component.OverviewSection
 
-
 @Composable
 fun TvShowDetailContent(
     state: TvShowScreenUiState,

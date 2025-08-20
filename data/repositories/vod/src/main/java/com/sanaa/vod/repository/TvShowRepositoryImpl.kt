@@ -79,13 +79,12 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun getTopRatedTvShows(page: Int, genreId: Int?): List<TvShow> =
         safeCall("Failed to fetch Tv Show TopRated") {
-           if (page == 1 && genreId == null) {
+            if (page == 1 && genreId == null) {
                 val cachedMovies =
                     localCachedContentDataSource.getCachedTvShows(category = Category.TOP_RATED_MEDIA)
                 if (cachedMovies.isNotEmpty()) {
                     return cachedMovies.map { it.toEntity() }
                 }
-
             }
 
             return remoteDataSource.fetchTopRatedTvShows(page, genreId).map { it.toEntity() }.also {
@@ -124,20 +123,21 @@ class TvShowRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getTvShowGenres(refreshCash:Boolean): List<Genre> {
+    override suspend fun getTvShowGenres(refreshCash: Boolean): List<Genre> {
         return safeCall("Genres not found") {
-            return if (refreshCash){
-                 remoteDataSource.getTvShowGenres().map { it.toEntity() }.also {
+            return if (refreshCash) {
+                remoteDataSource.getTvShowGenres().map { it.toEntity() }.also {
                     localCachedContentDataSource.cacheGenres(
                         genres = it.map { it.toLocalDto() },
                         category = Category.TV_SHOW_GENRES
                     )
                 }
-            }else{
-                val cachedGenres = localCachedContentDataSource.getCachedGenres(category = Category.TV_SHOW_GENRES)
+            } else {
+                val cachedGenres =
+                    localCachedContentDataSource.getCachedGenres(category = Category.TV_SHOW_GENRES)
                 if (cachedGenres.isNotEmpty()) {
-                     cachedGenres.map { it.toEntity() }
-                }else{
+                    cachedGenres.map { it.toEntity() }
+                } else {
                     remoteDataSource.getTvShowGenres().map { it.toEntity() }.also {
                         localCachedContentDataSource.cacheGenres(
                             genres = it.map { it.toLocalDto() },

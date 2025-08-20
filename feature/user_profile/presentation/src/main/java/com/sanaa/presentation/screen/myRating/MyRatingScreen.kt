@@ -28,8 +28,8 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.userprofile.presentation.R
 import com.sanaa.presentation.navigation.ProfileApiEntryPoint
+import com.sanaa.presentation.profileProvider.LocalNavControllerProvider
 import com.sanaa.presentation.profileProvider.LocalThemeMode
-import com.sanaa.presentation.provider.LocalNavControllerProvider
 import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect.NavigateBack
 import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect.NavigateToMediaDetails
 import com.sanaa.presentation.screen.myRating.component.AnimatedSnackBarHost

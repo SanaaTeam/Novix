@@ -8,7 +8,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-
 @OptIn(ExperimentalCoroutinesApi::class)
 class OnboardingViewModelTest {
 

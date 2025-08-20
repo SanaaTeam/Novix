@@ -34,11 +34,9 @@ class AuthenticationApiImpl @Inject constructor() : AuthenticationApi {
     }
 }
 
-
 @AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
     private val viewModel: AuthenticationViewModel by viewModels()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +66,6 @@ class AuthActivity : AppCompatActivity() {
             }
         }
     }
-
 
     internal companion object {
         const val EXTRA_START_ROUTE = "extra_start_route"

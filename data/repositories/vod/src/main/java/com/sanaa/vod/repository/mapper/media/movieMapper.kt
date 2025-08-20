@@ -19,5 +19,3 @@ fun MovieDto.toEntity(): Movie {
         trailerUrl = "",
     )
 }
-
-

@@ -48,7 +48,6 @@ class BaseViewModelTest {
         }
     }
 
-
     @Test
     fun `multiple effects are emitted in sequence`() = runTest {
         // When
@@ -96,7 +95,6 @@ class BaseViewModelTest {
         // When & Then - Should not throw
         testViewModel.executeTestWithoutCallbacks { "success" }
     }
-
 
     private class TestBaseViewModel(
         dispatcher: kotlinx.coroutines.CoroutineDispatcher = Dispatchers.IO

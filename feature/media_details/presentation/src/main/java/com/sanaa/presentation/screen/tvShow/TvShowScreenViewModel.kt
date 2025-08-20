@@ -23,7 +23,6 @@ import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
-
 @HiltViewModel
 class TvShowScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -306,7 +305,6 @@ class TvShowScreenViewModel @Inject constructor(
                 )
             }
         }
-
     }
 
     private fun onSubmitRatingFailed(exception: NovixAppException) {

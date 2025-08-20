@@ -20,5 +20,3 @@ data class ActorScreenUiState(
     val selectedMediaToSave: MovieUiModel? = null,
     val snackBarData: SnackData? = null
 )
-
-

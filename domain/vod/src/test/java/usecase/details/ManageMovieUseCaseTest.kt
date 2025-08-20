@@ -316,7 +316,6 @@ class ManageMovieUseCaseTest {
         assertThat(result).isEqualTo(expected)
     }
 
-
     @Test
     fun `getUpcomingMovies should throw when repository fails`() = runTest {
         coEvery {
@@ -445,7 +444,6 @@ class ManageMovieUseCaseTest {
 
         assertThat(result).isFalse()
     }
-
 
     val dummyGenre = Genre(
         id = 1, name = "Action"

@@ -94,6 +94,7 @@ class MyAccountScreenViewModelTest {
             viewModel.onClickContentRestriction()
             assertThat(viewModel.state.value.showContentRestrictionBottomSheet).isTrue()
         }
+
     @Test
     fun `should call mangeUserPreference setLanguage and emit UpdateAppLanguage when onSaveLanguageClick is called`() =
         runTest {

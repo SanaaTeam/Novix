@@ -68,7 +68,6 @@ class ManageHistoryUseCaseTest {
             }
         }
 
-
     @Test
     fun `removeSearchHistory() should call removeSearchHistoryById() from SearchHistoryRepository when remove item form the search history`() =
         runTest {
@@ -130,6 +129,5 @@ class ManageHistoryUseCaseTest {
             SearchHistory(1, "Search Query 1", timestamp = LocalDateTime.now()),
             SearchHistory(2, "Search Query 2", timestamp = LocalDateTime.now()),
         )
-
     }
 }

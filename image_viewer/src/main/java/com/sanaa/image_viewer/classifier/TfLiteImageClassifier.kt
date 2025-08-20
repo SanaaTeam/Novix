@@ -22,7 +22,6 @@ internal class TfLiteImageClassifier(private val context: Context) {
         return (sfwScore < sfwThreshold || nsfwScore > nsfwThreshold)
     }
 
-
     private val tensorImage = TensorImage(DataType.UINT8)
 
     private fun classify(bitmap: Bitmap): List<Classification> {
@@ -78,4 +77,3 @@ internal class TfLiteImageClassifier(private val context: Context) {
         private const val BITMAP_SCALE = 224
     }
 }
-

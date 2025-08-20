@@ -15,7 +15,6 @@ import com.sanaa.feature.authentication.presentation.R
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.designsystem.R as designSystemR
 
-
 @Composable
 fun WebViewScreen(url: String) {
     val navController = LocalNavControllerProvider.current

@@ -41,7 +41,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designSystemR
 
-
 @Composable
 fun TrendingPeopleScreen(
     viewModel: TrendingPeopleScreenViewModel = hiltViewModel(),

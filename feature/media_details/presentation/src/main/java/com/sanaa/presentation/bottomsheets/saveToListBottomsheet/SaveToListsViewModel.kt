@@ -45,7 +45,6 @@ class SaveToListBottomSheetViewModel @Inject constructor(
         updateState { copy(playlists = tempPlayList, isLoading = false) }
     }
 
-
     private fun removeUnSelectedList(selectedListsIds: List<Int>, listId: Int) {
         val updated = selectedListsIds.toMutableList().apply { remove(listId) }
         updateState {
@@ -64,7 +63,6 @@ class SaveToListBottomSheetViewModel @Inject constructor(
                 isAddButtonEnabled = updated.isNotEmpty()
             )
         }
-
     }
 
     private suspend fun addMovieToSavedList(

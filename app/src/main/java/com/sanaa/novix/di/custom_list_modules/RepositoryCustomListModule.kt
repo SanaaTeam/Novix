@@ -25,5 +25,4 @@ abstract class RepositoryCustomListModule {
     abstract fun bindLocalSavedMovieDataSource(
         impl: LocalSavedMovieDataSourceImpl,
     ): LocalSavedMovieDataSource
-
 }

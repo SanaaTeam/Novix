@@ -15,4 +15,3 @@ data class SignUpWebViewRoute(val url: String) : Destination {
 data class ForgetPasswordWebViewRoute(val url: String) : Destination {
     override fun route(): String = "forget_password?url=$url"
 }
-

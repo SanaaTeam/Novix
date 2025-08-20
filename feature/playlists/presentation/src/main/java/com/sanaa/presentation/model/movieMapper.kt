@@ -8,4 +8,3 @@ fun Movie.toUiModel() = MediaItem(
     title = title,
     imageUrl = posterImageUrl,
 )
-

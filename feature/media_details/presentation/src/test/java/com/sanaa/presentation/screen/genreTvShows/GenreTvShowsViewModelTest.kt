@@ -34,7 +34,6 @@ class GenreTvShowsViewModelTest {
     private val manageTvShowUseCase: ManageTvShowUseCase = mockk()
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
 
-
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
@@ -73,7 +72,6 @@ class GenreTvShowsViewModelTest {
         assertTrue(viewModel.state.value.showBottomSheet)
     }
 
-
     @Test
     fun `onTvShowClick should emit NavigateToTvShowDetails effect`() = runTest {
         val category = genreList[0]
@@ -109,7 +107,6 @@ class GenreTvShowsViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
-
 
     private companion object {
         val genreList = listOf(

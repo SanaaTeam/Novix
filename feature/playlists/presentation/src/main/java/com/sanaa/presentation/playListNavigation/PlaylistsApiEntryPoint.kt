@@ -11,5 +11,4 @@ import dagger.hilt.components.SingletonComponent
 interface PlaylistsApiEntryPoint {
     fun detailsApi(): MediaDetailsApi
     fun authenticationApi(): AuthenticationApi
-
 }

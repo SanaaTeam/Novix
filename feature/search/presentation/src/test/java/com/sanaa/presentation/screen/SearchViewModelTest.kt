@@ -83,7 +83,6 @@ class SearchViewModelTest {
             }
         }
 
-
     @Test
     fun `observeRecentViewedItems()  when start clear recent viewed item`() = runTest {
         val viewedMedias = listOf(
@@ -137,7 +136,6 @@ class SearchViewModelTest {
         }
     }
 
-
     @Test
     fun `observeRecentSearchHistory() should first stop loading when start clear recent viewed item`() =
         runTest {
@@ -147,7 +145,6 @@ class SearchViewModelTest {
                 assertThat(item.isLoading).isTrue()
             }
         }
-
 
     @Test
     fun `observeRecentSearchHistory()  when start clear recent viewed item`() = runTest {
@@ -216,7 +213,6 @@ class SearchViewModelTest {
             }
         }
 
-
     @Test
     fun `onClearRecentSearchClicked() should first stop loading when start clear recent search`() =
         runTest {
@@ -227,7 +223,6 @@ class SearchViewModelTest {
                 assertThat(item.isLoading).isTrue()
             }
         }
-
 
     @Test
     fun `onClearRecentSearchClicked() stop loading when clear search history success`() = runTest {
@@ -403,7 +398,6 @@ class SearchViewModelTest {
                 assertThat(item.isLoading).isTrue()
             }
         }
-
 
     @Test
     fun `onRecentSearchItemClicked() should set state search query`() = runTest {

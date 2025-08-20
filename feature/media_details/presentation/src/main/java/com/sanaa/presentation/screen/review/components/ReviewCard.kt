@@ -67,8 +67,8 @@ fun ReviewCard(
             tint = Theme.colors.body
         )
     }
-
 }
+
 @Composable
 private fun UserImage(review: ReviewUiModel) {
     val avatarUrl = review.avatarUrl.orEmpty()
@@ -115,6 +115,7 @@ private fun DefaultAvatar() {
         colorFilter = ColorFilter.tint(Theme.colors.hint)
     )
 }
+
 @Composable
 private fun RowScope.UserInfo(review: ReviewUiModel) {
     Column(modifier = Modifier

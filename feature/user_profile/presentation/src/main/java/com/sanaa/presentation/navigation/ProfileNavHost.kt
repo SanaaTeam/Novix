@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.sanaa.designsystem.design_system.component.api.LocalBottomBarVisibility
 import com.sanaa.presentation.ProfileViewModel
 import com.sanaa.presentation.profileProvider.LocalSaveContentThreshold
-import com.sanaa.presentation.provider.LocalNavControllerProvider
+import com.sanaa.presentation.profileProvider.LocalNavControllerProvider
 import com.sanaa.presentation.profileProvider.LocalThemeMode
 import com.sanaa.presentation.screen.changePassword.ChangePasswordWebView
 import com.sanaa.presentation.screen.myAccount.MyAccountScreen

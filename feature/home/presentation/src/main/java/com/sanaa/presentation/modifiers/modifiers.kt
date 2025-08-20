@@ -46,7 +46,6 @@ fun Modifier.shimmerEffect(
 
     val transition = rememberInfiniteTransition()
 
-
     val translateAnimation = transition.animateFloat(
         initialValue = 0f,
         targetValue = (durationMillis + widthOfShadowBrush).toFloat(),

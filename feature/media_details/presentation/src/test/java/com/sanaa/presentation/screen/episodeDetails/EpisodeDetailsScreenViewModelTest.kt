@@ -113,7 +113,6 @@ class EpisodeDetailsScreenViewModelTest {
         }
     }
 
-
     @Test
     fun `onDismissBottomSheet sets showLoginBottomSheet to false`() = runTest {
         givenHappyViewModel()
@@ -121,7 +120,6 @@ class EpisodeDetailsScreenViewModelTest {
         viewModel.onDismissBottomSheet()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
-
 
     @Test
     fun `onLoginButtonClick emits NavigateToLogin and hides BottomSheet`() = runTest {
@@ -134,7 +132,6 @@ class EpisodeDetailsScreenViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
-
 
     companion object {
         private val dummyEpisode = Episode(

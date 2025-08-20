@@ -87,7 +87,6 @@ fun NavBarItem(
                             modifier = Modifier.size(24.dp)
                         )
                     }
-
                 }
             } else {
                 Box(
@@ -125,7 +124,6 @@ private fun OvalShapeBlur(
         }
     }
 }
-
 
 @Preview
 @Composable

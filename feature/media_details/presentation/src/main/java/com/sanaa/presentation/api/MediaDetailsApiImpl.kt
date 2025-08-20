@@ -99,14 +99,12 @@ class MediaDetailsActivity : AppCompatActivity() {
         }
     }
 
-
     companion object {
         private const val EXTRA_START_ROUTE = "extra_start_route"
         private const val EXTRA_MEDIA_ID = "extra_media_id"
         private const val EXTRA_GENRE_ID = "extra_genre_id"
         private const val EXTRA_GENRE_NAME = "extra_genre_name"
         private const val EXTRA_IS_TV_GENRE = "extra_is_tv_genre"
-
 
         fun createIntent(context: Context, startRoute: StartRoute, id: Int): Intent {
             return Intent(context, MediaDetailsActivity::class.java).apply {
@@ -131,5 +129,4 @@ class MediaDetailsActivity : AppCompatActivity() {
             }
         }
     }
-
 }

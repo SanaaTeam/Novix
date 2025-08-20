@@ -58,13 +58,11 @@ fun CategoriesScreen(
         }
     }
 
-
     CategoriesScreen(
         state = state.value,
         interactionListener = viewModel
     )
 }
-
 
 @Composable
 private fun CategoriesScreen(

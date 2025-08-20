@@ -28,7 +28,6 @@ import com.sanaa.image_viewer.transformation.BlurTransformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
 /**
  * A composable executes an [ImageRequest] asynchronously and
  * analyse the image to blur sensitive content.

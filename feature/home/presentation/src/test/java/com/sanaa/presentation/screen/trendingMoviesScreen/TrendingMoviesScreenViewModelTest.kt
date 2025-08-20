@@ -26,7 +26,6 @@ import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import kotlin.time.Duration.Companion.minutes
 
-
 class TrendingMoviesScreenViewModelTest {
     private lateinit var viewModel: TrendingMoviesScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
