@@ -13,13 +13,13 @@ import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
-import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvMediaPosterCard
+import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
 
 @Composable
 fun TopMoviesSlider(
     movies: List<MovieDetailsUiModel>,
-    onMovieCardClicked:(Int)->Unit,
-    modifier: Modifier = Modifier
+    onMovieCardClicked: (Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -30,18 +30,17 @@ fun TopMoviesSlider(
             color = Theme.colors.title,
             modifier = Modifier.padding(horizontal = 36.dp, vertical = 8.dp)
         )
-        LazyRow (
+        LazyRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 36.dp, vertical = 8.dp)
         ) {
             items(movies.size) { index ->
                 val movie = movies[index]
-                TvMediaPosterCard(
-                    title = movie.title,
-                    imageUrl = movie.posterUrl.orEmpty(),
-                    onCardClick = {
-                        onMovieCardClicked(movie.id)
-                    },
+
+                FocusableMediaCard(
+                    imageUrl = movie.posterUrl ?: "",
+                    titleText = movie.title,
+                    onClick = { onMovieCardClicked(movie.id) }
                 )
             }
         }

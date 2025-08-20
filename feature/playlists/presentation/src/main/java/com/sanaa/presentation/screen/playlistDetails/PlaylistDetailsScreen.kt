@@ -1,10 +1,6 @@
 package com.sanaa.presentation.screen.playlistDetails
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,6 +19,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
+import com.sanaa.designsystem.design_system.component.animation.FadeInOut150
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -30,9 +27,9 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.playlists.presentation.R
-import com.sanaa.presentation.playListProviders.LocalNavControllerProvider
-import com.sanaa.presentation.playListNavigation.PlaylistsApiEntryPoint
 import com.sanaa.presentation.bottomsheets.removeFromListBottomSheet.RemoveFromListBottomSheet
+import com.sanaa.presentation.playListNavigation.PlaylistsApiEntryPoint
+import com.sanaa.presentation.playListProviders.LocalNavControllerProvider
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlistDetails.components.DeleteConfirmationBottomSheet
 import com.sanaa.presentation.screen.playlistDetails.components.RefreshButton
@@ -92,39 +89,40 @@ fun PlaylistDetailsContent(
         },
     ) {
         AnimatedContent(
-            targetState = state.noInternetConnection to movieList.loadState.refresh,
-            transitionSpec = {
-                fadeIn(animationSpec = tween(150, delayMillis = 150))
-                    .togetherWith(fadeOut(animationSpec = tween(150)))
-            },
-        ) { (isNoInternetConnection, inLoading) ->
-
-            if (isNoInternetConnection && (movieList.itemCount == 0)) {
-                NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
-            } else if (inLoading is LoadState.Loading && movieList.itemCount == 0) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .statusBarsPadding(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    LoadingIndicator()
+            targetState = Triple(state.noInternetConnection, movieList.loadState.refresh, movieList.itemCount),
+            transitionSpec = { FadeInOut150 },
+        ) { (isNoInternet, refresh, count) ->
+            when {
+                isNoInternet && count == 0 -> {
+                    NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
                 }
-            } else {
-                SavedDetailsListSectionContent(
-                    mediaList = movieList,
-                    onMediaClick = { interactionListener.onMediaClick(it.id, MediaTypeUi.MOVIE) },
-                    onSaveIconClick = { interactionListener.onDeleteIconClick(it) },
-                    safeContentThreshold = state.safeContentThreshold,
-                )
 
-                if (movieList.loadState.hasError) {
-                    RefreshButton(onRetryClick = interactionListener::onRetryClick)
+                refresh is LoadState.Loading && count == 0 -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .statusBarsPadding(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        LoadingIndicator()
+                    }
+                }
+
+                else -> {
+                    SavedDetailsListSectionContent(
+                        mediaList = movieList,
+                        onMediaClick = { interactionListener.onMediaClick(it.id, MediaTypeUi.MOVIE) },
+                        onSaveIconClick = { interactionListener.onDeleteIconClick(it) },
+                        safeContentThreshold = state.safeContentThreshold,
+                    )
+
+                    if (refresh is LoadState.Error && count == 0) {
+                        RefreshButton(onRetryClick = interactionListener::onRetryClick)
+                    }
                 }
             }
-        }
-    }
-    RemoveFromListBottomSheet(
+        }}
+        RemoveFromListBottomSheet(
         isVisible = state.showRemoveFromListBottomSheet,
         mediaId = state.selectedMediaToRemove?.id ?: 0,
         mediaTitle = state.selectedMediaToRemove?.title.orEmpty(),

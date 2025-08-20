@@ -1,18 +1,15 @@
 package com.sanaa.tvapp.presentation.screens.category.compnents
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -31,8 +28,7 @@ val boxOverlayBackgroundColor = Brush.horizontalGradient(
         Color(0xCC0D0608),
         Color(0xB20D0608),
         Color(0x000D0608),
-
-        )
+    )
 )
 
 
@@ -42,15 +38,7 @@ fun CategoryCard(
     modifier: Modifier = Modifier,
 ) {
 
-    Box(
-        modifier = modifier
-            .aspectRatio(160 / 68f)
-            .border(
-                width = 1.dp, color = Theme.colors.stroke, shape = RoundedCornerShape(12.dp)
-            )
-            .clip(RoundedCornerShape(12.dp))
-
-    ) {
+    Box(modifier = modifier.aspectRatio(160 / 68f)) {
         AsyncImage(
             modifier = Modifier
                 .matchParentSize(),

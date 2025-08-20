@@ -14,7 +14,7 @@ import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.ActorUiModel
-import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvMediaPosterCard
+import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
 
 
 @Composable
@@ -23,7 +23,7 @@ fun CastSlider(
     modifier: Modifier = Modifier,
     title: String = stringResource(R.string.cast),
     onActorCardClicked: (Int) -> Unit,
-    ) {
+) {
     Column(
         modifier = modifier
     ) {
@@ -39,12 +39,10 @@ fun CastSlider(
             contentPadding = PaddingValues(horizontal = 36.dp, vertical = 8.dp)
         ) {
             items(cast) { actor ->
-                TvMediaPosterCard(
-                    title = actor.name,
+                FocusableMediaCard(
                     imageUrl = actor.imageUrl ?: "",
-                    onCardClick = {
-                        onActorCardClicked(actor.id)
-                    },
+                    titleText = actor.name,
+                    onClick = { onActorCardClicked(actor.id) }
                 )
             }
         }

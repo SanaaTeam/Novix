@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.util.modifier
 
+import android.util.Log
 import android.view.KeyEvent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -14,7 +15,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.layout.onGloballyPositioned
 
 
 fun Modifier.shimmerEffect(
@@ -61,6 +61,7 @@ fun Modifier.shimmerEffect(
 fun Modifier.handleDPadKeyEvents(
     onLeft: (() -> Unit)? = null,
     onRight: (() -> Unit)? = null,
+    onPress: (() -> Unit)? = null,
     onEnter: (() -> Unit)? = null,
     onUp: (() -> Unit)? = null,
     onDown: (() -> Unit)? = null,
@@ -100,6 +101,13 @@ fun Modifier.handleDPadKeyEvents(
 
         KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
             onEnter?.apply {
+                onActionUp(::invoke)
+                return@onPreviewKeyEvent true
+            }
+        }
+
+        KeyEvent.ACTION_DOWN -> {
+            onPress?.apply {
                 onActionUp(::invoke)
                 return@onPreviewKeyEvent true
             }

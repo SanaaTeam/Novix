@@ -34,6 +34,16 @@ Over eight weeks, we combined hard work, creativity, and collaboration to bring 
 | **Offline Mode**     | Access cached data for browsing without an internet connection     |
 | **Content Safety**   | ML-powered moderation with parental controls for safe viewing      |
 
+## TV App Version
+
+Novix is available on both Android Mobile and Android TV. With the TV version, you can search, discover, and rate your favorite movies and TV shows directly from your TV.
+
+The TV app is a lighter version of the mobile app, and some features (such as signup, password reset, or watchlist management) are not available.
+
+Visually, the TV version follows Novix’s color scheme and text styles, but its UI components are built with Material TV Components to ensure smooth navigation and a seamless experience with the TV remote.
+
+![Tv App](https://github.com/user-attachments/assets/0839c76b-8cf1-4533-97b0-5ec2832ead4b)
+
 
 ## Setup
 

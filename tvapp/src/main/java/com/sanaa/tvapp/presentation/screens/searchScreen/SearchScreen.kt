@@ -41,8 +41,6 @@ fun SearchScreen(
     val actorsPagingData = uiState.actors.collectAsLazyPagingItems()
     val navController = LocalAppNavController.current
 
-
-
     LaunchedEffect(Unit) {
         searchViewModel.effect.collect {
             when(it){

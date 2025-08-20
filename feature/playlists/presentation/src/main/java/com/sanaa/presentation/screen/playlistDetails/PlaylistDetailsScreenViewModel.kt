@@ -120,6 +120,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
                 )
             )
         }
+        loadItemsInSavedList(listId)
     }
 
     override fun onBackClick() {
