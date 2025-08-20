@@ -26,7 +26,7 @@ fun MediaSection(
     LazyRow(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            start = sidePaddings, end = sidePaddings, bottom = 12.dp
+            start = sidePaddings, end = sidePaddings
         ),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         content = content

@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
             CompositionLocalProvider(
                 LocalSafeContentThreshold provides state.safeContentThreshold
             ) {
-                NovixTheme(isSystemInDarkTheme()) {
+                NovixTheme(true) {
                     val navController = rememberNavController()
                     val startDestination = NavBarRoute.Home
 
