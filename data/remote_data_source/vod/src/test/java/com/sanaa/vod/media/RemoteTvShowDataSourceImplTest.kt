@@ -132,6 +132,4 @@ class RemoteTvShowDataSourceImplTest {
 
         assertThat(result.size == dummyTvShowGenresResponse.genres.size)
     }
-
-
 }

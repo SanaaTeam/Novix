@@ -48,10 +48,8 @@ class HomeScreenViewModelTest {
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private val mangeUserPreference: MangeUserPreferenceUseCase = mockk(relaxed = true)
 
-
     private lateinit var viewModel: HomeScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
-
 
     @BeforeEach
     fun setUp() {
@@ -81,7 +79,6 @@ class HomeScreenViewModelTest {
             testDispatcher,
         )
     }
-
 
     @Test
     fun `init should fetch popular media and update state on success`() = runTest(testDispatcher) {
@@ -133,7 +130,6 @@ class HomeScreenViewModelTest {
                 assertThat(state.topRatingMedia).hasSize(1)
             }
         }
-
 
     @Ignore
     @Test
@@ -267,7 +263,6 @@ class HomeScreenViewModelTest {
         viewModel.onMovieGenreClick(newGenreId)
         assertThat(viewModel.state.value.movieSelectedGenreId).isEqualTo(newGenreId)
     }
-
 
     @Test
     fun `onDismissBottomSheet should set showBottomSheet to false`() = runTest(testDispatcher) {

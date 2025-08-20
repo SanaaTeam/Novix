@@ -14,5 +14,4 @@ sealed class TvShowScreenEffects {
     data class PlayTrailer(val trailerUrl: String?) : TvShowScreenEffects()
     data class NavigateToMovieCategoriesScreen(val category: GenreUiModel) : TvShowScreenEffects()
     object NavigateToLogin : TvShowScreenEffects()
-
 }

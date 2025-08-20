@@ -10,7 +10,6 @@ interface PlaylistDestination {
     fun route(): String
 }
 
-
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface PlayListApiEntryPoint {

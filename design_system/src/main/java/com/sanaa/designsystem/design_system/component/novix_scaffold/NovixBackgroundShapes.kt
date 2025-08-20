@@ -60,7 +60,6 @@ fun BackgroundShapes(modifier: Modifier = Modifier) {
     }
 }
 
-
 @Composable
 internal fun GlowingEquilateralTriangle(
     modifier: Modifier = Modifier,

@@ -21,7 +21,6 @@ class SaveToListViewModel @Inject constructor(
 ) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher),
     SaveToListInteractionListener {
 
-
     fun getMediaId(mediaId: Int) {
         updateState { copy(mediaId = mediaId) }
         observePlaylists()
@@ -43,7 +42,6 @@ class SaveToListViewModel @Inject constructor(
         updateState { copy(playlists = tempPlayList, isLoading = false) }
     }
 
-
     private fun removeUnSelectedList(selectedListsIds: List<Int>, listId: Int) {
         val updated = selectedListsIds.toMutableList().apply { remove(listId) }
         updateState {
@@ -62,7 +60,6 @@ class SaveToListViewModel @Inject constructor(
                 isAddButtonEnabled = updated.isNotEmpty()
             )
         }
-
     }
 
     private suspend fun addMovieToSavedList(
@@ -128,7 +125,6 @@ class SaveToListViewModel @Inject constructor(
             copy(snackBarData = null)
         }
     }
-
 
     override fun onCreateNewListClick() {
         emitEffect(SaveToListEffect.CreateNewList)

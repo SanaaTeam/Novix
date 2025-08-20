@@ -16,7 +16,6 @@ import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
-
 @Composable
 fun NetworkDisconnectionContact(
     onRetryClick: () -> Unit,

@@ -34,7 +34,6 @@ abstract class BaseViewModel<T, E>(
         _state.update(updater)
     }
 
-
     protected fun <T> tryToExecute(
         onStart: () -> Unit = {},
         block: suspend () -> T,
@@ -49,7 +48,6 @@ abstract class BaseViewModel<T, E>(
             onSuccess(result)
         }
     }
-
 
     protected fun <R> tryToCollect(
         onStart: () -> Unit = {},
@@ -91,7 +89,6 @@ abstract class BaseViewModel<T, E>(
         }
     }
 
-
     private fun createExceptionHandler(onError: (NovixAppException) -> Unit) =
         CoroutineExceptionHandler { _, exception ->
             onError(exception.toNovixAppException())
@@ -101,5 +98,4 @@ abstract class BaseViewModel<T, E>(
         is NovixAppException -> this
         else -> NovixAppException(message ?: "Unknown error")
     }
-
 }

@@ -7,7 +7,6 @@ import repository.Theme
 import repository.UserPreferencesRepository
 import javax.inject.Inject
 
-
 class MangeUserPreferenceUseCase @Inject constructor(
     private val userPreference: UserPreferencesRepository
 ) {

@@ -34,9 +34,7 @@ class AuthenticationViewModel @Inject constructor(
     private fun updateState(block: AuthenticationUiState.() -> AuthenticationUiState) {
         _state.value = block(_state.value)
     }
-
 }
-
 
 data class AuthenticationUiState(
     val isDarkTheme: Boolean = false,

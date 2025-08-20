@@ -250,7 +250,6 @@ class HistoryRepositoryImplTest {
         }
     }
 
-
     private companion object {
         val givenRecentViewed = listOf(
             RecentViewedLocalDto(
@@ -271,7 +270,6 @@ class HistoryRepositoryImplTest {
             QueryLocalDto(id = 1, query = "query1", timestamp = 1L),
             QueryLocalDto(id = 2, query = "query2", timestamp = 2L)
         )
-
 
         val givenWatchedMedia = listOf(
             WatchedMediaHistoryLocalDto(

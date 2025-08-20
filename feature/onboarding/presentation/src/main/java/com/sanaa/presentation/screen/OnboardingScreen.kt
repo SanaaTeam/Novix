@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,7 +39,6 @@ import com.sanaa.feature.onboarding.presentation.R
 import com.sanaa.presentation.component.CircleShapeBlur
 import com.sanaa.presentation.component.DialogContainer
 import com.sanaa.presentation.component.OnBoardingPageContentItem
-
 
 @Composable
 fun OnboardingScreen(

@@ -24,6 +24,7 @@ object TvShowDtoDummyData {
         posterPath = "posterPath",
         voteAverage = 1f,
     )
+
     val dummyTvShowImagesResponse = TvShowImagesResponse(
         backdrops = listOf(
             ImageDto(
@@ -31,6 +32,7 @@ object TvShowDtoDummyData {
             )
         )
     )
+
     val dummyGenreTvShowResponse = GenreTvShowResponse(
         results = listOf(
             TvShowDto(
@@ -40,6 +42,7 @@ object TvShowDtoDummyData {
             )
         ), page = 1
     )
+
     val dummyTvShowReviewsResponse = TvShowReviewsResponse(
         results = listOf(
             ReviewDto(
@@ -51,6 +54,7 @@ object TvShowDtoDummyData {
 
         ), id = 1, page = 1
     )
+
     val dummyTvShowCastResponse = TvShowCastResponse(
         cast = listOf(
             ActorDto(
@@ -59,10 +63,12 @@ object TvShowDtoDummyData {
             )
         )
     )
+
     val dummyEpisodeDto = EpisodeDto(
         id = 1,
         name = "name",
     )
+
     val dummyGuestOfHonor = TvShowGuestOfStarsResponse(
         guestStars = listOf(
             ActorDto(
@@ -71,6 +77,7 @@ object TvShowDtoDummyData {
             )
         )
     )
+
     val dummyTvShowVideosResponse = TvShowVideosResponse(
         id = 1, results = listOf(
             VideoDto(

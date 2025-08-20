@@ -25,7 +25,7 @@ import com.sanaa.presentation.navigation.ChangePasswordScreenRoute
 import com.sanaa.presentation.navigation.MyRatingScreenRoute
 import com.sanaa.presentation.navigation.ProfileApiEntryPoint
 import com.sanaa.presentation.navigation.WatchingHistoryScreenRoute
-import com.sanaa.presentation.provider.LocalNavControllerProvider
+import com.sanaa.presentation.profileProvider.LocalNavControllerProvider
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToChangePasswordSetting
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToMyRating
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToWatchingHistory
@@ -49,7 +49,6 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
     EffectHandler(viewModel.effect)
     MyAccountScreenContent(state, viewModel)
 }
-
 
 @Composable
 private fun MyAccountScreenContent(
@@ -173,13 +172,10 @@ private fun EffectHandler(
     val activity = view.context as? AppCompatActivity
     val context = LocalContext.current
 
-
     val authApi = EntryPointAccessors.fromApplication(
         context,
         ProfileApiEntryPoint::class.java
     ).authenticationApi()
-
-
 
     LaunchedEffect(Unit) {
         effects.collectLatest {

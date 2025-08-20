@@ -34,6 +34,4 @@ class MovieMapperTest {
         assertEquals(listOf(Genre(28, "Action"), Genre(12, "Adventure")), movie.genres)
         assertEquals(LocalDate(2010, 7, 16), movie.releaseDate)
     }
-
-
 }

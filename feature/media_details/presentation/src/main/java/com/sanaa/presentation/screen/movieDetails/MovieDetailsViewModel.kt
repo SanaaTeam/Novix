@@ -238,7 +238,6 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
-
     private suspend fun loadMovieDetails(movieId: Int) = coroutineScope {
         val movieDeferred = async { manageMovieDetails.getMovieDetails(movieId) }
         val castDeferred = async { manageMovieDetails.getMovieCast(movieId) }
@@ -252,7 +251,6 @@ class MovieDetailsViewModel @Inject constructor(
         val trailerUrl = trailerDeferred.await()
         val similar = similarDeferred.await()
 
-
         addMovieToHistory(movie)
         updateState {
             copy(
@@ -263,7 +261,6 @@ class MovieDetailsViewModel @Inject constructor(
             )
         }
     }
-
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getCurrentUserRating(movieId: Int): Flow<Int> {

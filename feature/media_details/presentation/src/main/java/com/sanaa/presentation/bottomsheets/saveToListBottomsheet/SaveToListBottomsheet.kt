@@ -45,7 +45,6 @@ import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designSystemR
 
-
 @Composable
 fun SaveToListBottomSheet(
     isVisible: Boolean,
@@ -213,7 +212,6 @@ private fun PlaylistItem(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

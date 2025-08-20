@@ -12,6 +12,5 @@ interface LocalCachedContentDataSource {
     suspend fun getCachedTvShows(category: Category): List<TvShowLocalDto>
     suspend fun cacheGenres(genres: List<GenreLocalDto>, category: Category)
     suspend fun getCachedGenres(category: Category): List<GenreLocalDto>
-
     suspend fun clearExpiredCache()
 }

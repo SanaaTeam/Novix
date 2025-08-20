@@ -42,14 +42,12 @@ class ActorRepositoryImpl @Inject constructor(
             }.take(20)
         }
 
-
     override suspend fun getActorTopTvShows(id: Int): List<TvShow> =
         safeCall("Failed to retrieve top TV show for actor ID: $id") {
             remoteDataSource.getActorTvShows(id).map {
                 it.toTvShow()
             }.take(20)
         }
-
 
     override suspend fun getTrendingActors(page: Int): List<Actor> {
         safeCall("Failed to fetch Trending People ") {

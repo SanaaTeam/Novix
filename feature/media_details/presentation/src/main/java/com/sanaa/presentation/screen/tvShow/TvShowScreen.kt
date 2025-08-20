@@ -56,7 +56,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designR
 
-
 @Composable
 fun TvShowScreen(
     viewModel: TvShowScreenViewModel = hiltViewModel()
@@ -126,7 +125,6 @@ private fun TvShowScreenContent(
                     else -> {
                         TvShowDetailContent(state, interactionListener, scrollState)
                     }
-
                 }
             }
             AnimatedVisibility(

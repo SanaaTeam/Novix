@@ -93,9 +93,7 @@ fun TopMoviesScreen(
         isVisible = uiState.showAddListBottomSheet,
         onDismiss = viewModel::onDismissAddListBottomSheet,
     )
-
 }
-
 
 @Composable
 private fun TopMoviesContent(
@@ -208,4 +206,3 @@ private fun TopMoviesContent(
         }
     }
 }
-

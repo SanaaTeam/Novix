@@ -102,7 +102,6 @@ abstract class BaseViewModel<T, E>(
             )
         }
 
-
     companion object {
         private const val PAGE_SIZE = 20
     }

@@ -11,7 +11,6 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 
-
 @Composable
 fun CircleShapeBlur(
     modifier: Modifier = Modifier,

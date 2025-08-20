@@ -37,7 +37,6 @@ class TopRatedMediaScreenViewModelTest {
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
 
-
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)

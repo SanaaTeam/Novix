@@ -7,7 +7,6 @@ data class MediaItem(
     val isSaved: Boolean = false,
 )
 
-
 enum class MediaTypeUi {
     MOVIE, TV_SHOW
 }

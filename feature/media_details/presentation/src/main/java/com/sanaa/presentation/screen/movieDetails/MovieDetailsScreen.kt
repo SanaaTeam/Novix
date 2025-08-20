@@ -229,7 +229,6 @@ private fun MovieDetailsBottomSheets(
         onRatingChanged = interactionListener::onRatingChanged
     )
 
-
     AnimatedVisibility(
         visible = state.showLoginBottomSheet,
         enter = FadeSlideInVertically,
@@ -316,5 +315,3 @@ private fun MovieDetailsEffectsHandler(
         }
     }
 }
-
-

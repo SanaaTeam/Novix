@@ -67,8 +67,6 @@ class PlayListScreenViewModelTest {
         }
     }
 
-
-
     private fun initViewModel() {
         viewModel = PlayListScreenViewModel(
             checkUserLogin = checkIfUserIsLoggedInUseCase,

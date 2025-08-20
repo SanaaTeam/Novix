@@ -54,7 +54,6 @@ class ManageRecentViewedUseCaseTest {
             }
         }
 
-
     @Test
     fun `getRecentViewed() should return recent viewed list when available`() =
         runTest {

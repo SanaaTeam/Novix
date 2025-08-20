@@ -48,7 +48,6 @@ fun EmptyStateComponent(
     }
 }
 
-
 @PreviewLightDark
 @Composable
 private fun EmptyStateComponentLightPreview() {
@@ -75,5 +74,4 @@ private fun EmptyStateComponentDarkPreview() {
             messageText = stringResource(R.string.the_list_is_empty),
         )
     }
-
 }

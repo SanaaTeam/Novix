@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test
 import service.IdentityStringProvider
 import usecase.CreateGuestSessionUseCase
 
-
 @OptIn(ExperimentalCoroutinesApi::class)
 class WelcomeViewModelTest {
     @MockK

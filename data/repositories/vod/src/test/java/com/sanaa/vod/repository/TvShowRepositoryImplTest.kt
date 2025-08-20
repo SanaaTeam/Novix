@@ -35,14 +35,12 @@ import repository.TvShowRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-
 class TvShowRepositoryImplTest {
 
     private lateinit var repository: TvShowRepository
     private val preferences: PreferencesManager = mockk()
     private val remote: RemoteTvShowDataSource = mockk(relaxed = true)
     private val local: LocalCachedContentDataSource = mockk(relaxed = true)
-
 
     @BeforeEach
     fun setup() {
@@ -105,13 +103,11 @@ class TvShowRepositoryImplTest {
         assertThrows<NoNetworkException> { repository.getTvShowReviews(1, 1) }
     }
 
-
     @Test
     fun `getTvShowImageUrls throws NoNetworkException on ConnectionException`() = runTest {
         coEvery { remote.getTvShowImageUrls(any()) } throws ConnectionException()
         assertThrows<NoNetworkException> { repository.getTvShowImageUrls(1, 3) }
     }
-
 
     @Test
     fun `getTvShowsByGenre throws NoNetworkException on ConnectionException`() = runTest {
@@ -137,7 +133,6 @@ class TvShowRepositoryImplTest {
         assertThrows<NoNetworkException> { repository.getEpisodeDetails(1, 1, 1) }
     }
 
-
     @Test
     fun `getEpisodeImageUrls throws NoNetworkException on ConnectionException`() = runTest {
         coEvery { remote.getEpisodeImageUrls(any(), any(), any()) } throws ConnectionException()
@@ -154,13 +149,11 @@ class TvShowRepositoryImplTest {
         assertThrows<NoNetworkException> { repository.getEpisodeGuestsOfHonor(1, 1, 1) }
     }
 
-
     @Test
     fun `getTvShowVideosUrls throws NoNetworkException on ConnectionException`() = runTest {
         coEvery { remote.getTvShowVideosUrls(any()) } throws ConnectionException()
         assertThrows<NoNetworkException> { repository.getTvShowTrailer(1) }
     }
-
 
     @Test
     fun `getTvShowSeasonDetails returns season entity`() = runTest {
@@ -301,7 +294,6 @@ class TvShowRepositoryImplTest {
 
         coVerify(exactly = 0) { local.cacheTvShow(any(), any()) }
     }
-
 
     @Test
     fun `getTopRatedTvShows should return cached data if available when page is 1 and genreId is null`() =

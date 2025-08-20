@@ -72,7 +72,6 @@ class GenreMoviesViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
     }
 
-
     @Test
     fun `onBackClick emits NavigateBack effect`() = runTest {
         createViewModelWithMovies(movies)
@@ -103,8 +102,6 @@ class GenreMoviesViewModelTest {
         val state = viewModel.state.value
         assertThat(state.userIsLoggedIn).isTrue()
     }
-
-
 
     private companion object {
         val genreList = listOf(

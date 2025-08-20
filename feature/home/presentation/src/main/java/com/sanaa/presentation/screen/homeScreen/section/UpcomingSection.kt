@@ -126,7 +126,8 @@ fun LazyGridScope.upcomingSection(
                         icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
                     )
                 }
-            }, topLeftContent = {
+            },
+            topLeftContent = {
                 if (item.mediaTypeUiState == MediaTypeUiState.MOVIE) {
                     SaveIconChip(
                         onClick = { onSaveIconClick(item) },
@@ -148,6 +149,4 @@ fun LazyGridScope.upcomingSection(
             )
         }
     }
-
-
 }

@@ -110,7 +110,6 @@ private fun PlaylistScreenContent(
     }
 }
 
-
 @Composable
 private fun PlaylistEffectsHandler(
     effect: Flow<PlayListScreenEffect>,
@@ -121,7 +120,6 @@ private fun PlaylistEffectsHandler(
         context,
         PlayListApiEntryPoint::class.java
     ).authenticationApi()
-
 
     LaunchedEffect(Unit) {
         effect.collectLatest { effect ->
@@ -141,4 +139,3 @@ private fun PlaylistEffectsHandler(
         }
     }
 }
-

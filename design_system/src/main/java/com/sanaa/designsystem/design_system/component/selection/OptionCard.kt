@@ -9,10 +9,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -47,7 +45,6 @@ fun OptionCard(
         targetValue = if (isSelected) 1.5.dp else 1.dp,
         animationSpec = tween(durationMillis = 20)    )
 
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -81,7 +78,6 @@ fun OptionCard(
         }
     }
 }
-
 
 @PreviewLightDark
 @Composable

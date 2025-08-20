@@ -14,13 +14,11 @@ fun SavedListLocalDto.toEntity():SavedList{
     )
 }
 
-
 fun List<SavedListLocalDto>.toEntity():List<SavedList>{
     return map {savedListLocalDto ->
         savedListLocalDto.toEntity()
     }
 }
-
 
 fun SavedList.toLocalDto(): SavedListLocalDto {
     return SavedListLocalDto(

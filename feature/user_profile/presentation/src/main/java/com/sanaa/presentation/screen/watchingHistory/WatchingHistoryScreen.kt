@@ -26,7 +26,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.presentation.navigation.ProfileApiEntryPoint
-import com.sanaa.presentation.provider.LocalNavControllerProvider
+import com.sanaa.presentation.profileProvider.LocalNavControllerProvider
 import com.sanaa.presentation.screen.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.screen.bottomsheet.saveToBottomSheet.SaveToListBottomSheet
 import com.sanaa.presentation.screen.myRating.MediaTypeUi
@@ -146,13 +146,11 @@ private fun WatchingHistoryScreenContent(
         onCreateNewListClick = interactionListener::onCreateNewListClick,
     )
 
-
     AddBookmarkListBottomSheet(
         isVisible = state.showAddListBottomSheet,
         onDismiss = interactionListener::onDismissAddListBottomSheet,
     )
 }
-
 
 @Composable
 private fun WatchingHistoryScreenEffectsHandler(

@@ -60,7 +60,6 @@ class RemoteActorDataSourceImplTest {
         assertThat(result.size == dummyActorTopTvShowsResponse.cast.size)
     }
 
-
     private companion object {
         val dummyActorDto = ActorDto(
             id = 1,

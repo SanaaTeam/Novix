@@ -4,7 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import com.sanaa.vod.custom_list.request.AddOrRemoveItemBody
 import com.sanaa.vod.custom_list.request.CreateListBody
 import com.sanaa.vod.custom_list.response.CreateListResponseDto
-import com.sanaa.vod.custom_list.response.ItemStatusResponseDto
 import com.sanaa.vod.custom_list.response.ListApiResponse
 import com.sanaa.vod.custom_list.response.TmdbStatusResponseDto
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
@@ -12,7 +11,6 @@ import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemRemoteDto
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDetailsDto
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListRemoteDto
 import io.mockk.coEvery
-import io.mockk.coJustRun
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -124,10 +122,6 @@ class RemoteSavedListDataSourceImplTest {
 
         assertThat(success).isTrue()
     }
-
-
-
-
 
     private companion object {
         const val SESSION_ID = "session-123"

@@ -3,7 +3,6 @@ package com.sanaa.vod.dataSource.remote.dto.tvShow
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class EpisodeDto(
     @SerialName("id")

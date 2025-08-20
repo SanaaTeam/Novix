@@ -125,7 +125,6 @@ class SearchUseCaseTest {
             }
         }
 
-
     @Test
     fun `searchActors() should call addSearchHistory() from SearchHistoryRepository when search an actor`() =
         runTest {
@@ -141,7 +140,6 @@ class SearchUseCaseTest {
                 historyRepository.addSearchHistory(query)
             }
         }
-
 
     @Test
     fun `searchActors() should return actor search result when search`() =
@@ -173,7 +171,6 @@ class SearchUseCaseTest {
                 searchUseCase.searchActors(query, page)
             }
         }
-
 
     private companion object {
         private val dummyActor = listOf(

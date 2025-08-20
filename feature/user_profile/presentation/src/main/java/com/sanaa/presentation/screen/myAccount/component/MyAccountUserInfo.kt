@@ -113,9 +113,7 @@ fun MyAccountUserInfo(user: UserUiState, onLogoutClick: () -> Unit = {}) {
             }
         }
     }
-
 }
-
 
 @PreviewLightDark
 @Composable
@@ -160,8 +158,5 @@ fun LogoutButton(modifier: Modifier = Modifier, onLogoutClick: () -> Unit = {}) 
             color = Theme.colors.statusColors.redAccent,
             style = Theme.textStyle.title.medium
         )
-
-
     }
 }
-

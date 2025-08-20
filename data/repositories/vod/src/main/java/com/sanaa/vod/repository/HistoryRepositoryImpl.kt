@@ -32,20 +32,17 @@ class HistoryRepositoryImpl @Inject constructor(
         local.insertQuery(query)
     }
 
-
     override suspend fun clearSearchHistory() = safeCall(
         errorMessage = "Failed to clear search history",
     ) {
         local.deleteAllQueries()
     }
 
-
     override suspend fun removeSearchHistoryById(id: Int) = safeCall(
         errorMessage = "Failed to remove search history",
     ) {
         local.deleteQueryById(id)
     }
-
 
     override suspend fun getRecentViewed(sizeLimit: Int): Flow<List<RecentViewedMedia>> = safeCall(
         errorMessage = "Failed to retrieve recent viewed"
@@ -88,5 +85,4 @@ class HistoryRepositoryImpl @Inject constructor(
             it.map { watchedHistory -> watchedHistory.toEntity() }
         }
     }
-
 }

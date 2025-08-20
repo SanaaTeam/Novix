@@ -13,6 +13,3 @@ object WatchingHistoryScreenRoute : ProfileRouts()
 
 @Serializable
 object ChangePasswordScreenRoute: ProfileRouts()
-
-
-

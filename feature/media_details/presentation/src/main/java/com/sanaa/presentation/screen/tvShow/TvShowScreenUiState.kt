@@ -29,4 +29,3 @@ data class TvShowScreenUiState(
     val hasUserSelectedRate: Boolean
         get() = imdbRating > 0
 }
-

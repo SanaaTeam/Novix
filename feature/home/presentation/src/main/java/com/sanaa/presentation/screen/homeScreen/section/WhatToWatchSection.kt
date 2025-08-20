@@ -81,10 +81,8 @@ fun WhatToWatchSection(
                 modifier = Modifier.weight(1f)
             )
         }
-
     }
 }
-
 
 @Composable
 private fun WantToWatchCard(
@@ -131,7 +129,6 @@ private fun WantToWatchCard(
     }
 }
 
-
 @PreviewLightDark
 @Composable
 private fun WhatToWatchSectionPreview(modifier: Modifier = Modifier) {
@@ -144,5 +141,4 @@ private fun WhatToWatchSectionPreview(modifier: Modifier = Modifier) {
             WhatToWatchSection(onMoviesClicked = {}, onTvShowsClicked = {}, onPeopleClicked = {})
         }
     }
-
 }

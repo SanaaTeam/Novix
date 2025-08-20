@@ -75,7 +75,6 @@ class ResetPasswordWebViewScreenTest {
         repeat(3) {
             composeTestRule.onNode(hasContentDescription("icon_cancel")).performClick()
         }
-
         verify(exactly = 3) { navController.popBackStack() }
     }
 }

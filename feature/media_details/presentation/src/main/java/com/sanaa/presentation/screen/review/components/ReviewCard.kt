@@ -66,9 +66,7 @@ fun ReviewCard(
             tint = Theme.colors.body
         )
     }
-
 }
-
 
 @Composable
 private fun UserImage(review: ReviewUiModel) {
@@ -115,7 +113,6 @@ private fun UserImage(review: ReviewUiModel) {
                 icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
             )
         }
-
     }
 }
 

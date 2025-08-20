@@ -45,6 +45,4 @@ class AuthenticationApiImplTest {
         assertThat(implementationMethod.returnType).isEqualTo(interfaceMethod.returnType)
         assertThat(implementationMethod.parameterTypes).isEqualTo(interfaceMethod.parameterTypes)
     }
-
-
 }

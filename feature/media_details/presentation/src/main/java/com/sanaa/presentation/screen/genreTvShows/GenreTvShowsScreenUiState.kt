@@ -20,6 +20,3 @@ enum class ScreenState {
     NO_INTERNET,
     CONTENT
 }
-
-
-

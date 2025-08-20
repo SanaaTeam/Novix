@@ -48,7 +48,6 @@ class ActorScreenViewModel @Inject constructor(
         updateState { copy(userIsLoggedIn = isLogged) }
     }
 
-
     override fun onBackClicked() {
         emitEffect(ActorScreenEffects.NavigateBack)
     }

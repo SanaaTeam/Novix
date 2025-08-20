@@ -6,5 +6,4 @@ sealed class SearchScreenEffects {
     data class NavigateToActorDetails(val id: Int) : SearchScreenEffects()
 
     object NavigateToLogin : SearchScreenEffects()
-
 }

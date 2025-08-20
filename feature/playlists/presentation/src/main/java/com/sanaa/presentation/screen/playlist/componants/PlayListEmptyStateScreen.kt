@@ -90,7 +90,6 @@ fun PlayListEmptyStateScreen(
     )
 }
 
-
 @PreviewLightDark
 @Composable
 private fun EmptySavedListUserScreenContentPrev() {
@@ -107,7 +106,6 @@ private fun EmptySavedListUserScreenContentPrev() {
         onFabClick = {},
     )
 }
-
 
 @PreviewLightDark
 @Composable
@@ -129,5 +127,4 @@ private fun EmptySavedListGuestScreenContentPrev() {
             onLoginClick = {},
         )
     }
-
 }

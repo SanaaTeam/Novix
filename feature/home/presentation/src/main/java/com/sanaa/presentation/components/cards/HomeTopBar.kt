@@ -72,5 +72,4 @@ private fun PreviewHomeTopBar() {
             HomeTopBar()
         }
     }
-
 }

@@ -45,7 +45,6 @@ fun TopBar(
     }
 }
 
-
 @PreviewLightDark
 @Composable
 private fun AppTopBarPreview() {

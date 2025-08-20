@@ -131,7 +131,6 @@ private fun Star(
     }
 }
 
-
 @PreviewLightDark
 @Composable
 fun IMDbRatingSelectorPreview() {

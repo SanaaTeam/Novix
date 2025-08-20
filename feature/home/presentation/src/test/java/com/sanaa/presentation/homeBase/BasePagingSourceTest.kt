@@ -67,7 +67,6 @@ class BasePagingSourceTest {
         assertThat(refreshKey).isEqualTo(1)
     }
 
-
     @Test
     fun `load() should return Page with data`() = runTest {
         val params = getPagingParams(key = 1)
@@ -99,7 +98,6 @@ class BasePagingSourceTest {
         assertThat(error.throwable.message).isEqualTo("Failure")
     }
     // Helper methods
-
 
     private fun getPageState(
         anchorPosition: Int? = null,

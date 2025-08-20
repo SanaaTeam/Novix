@@ -127,7 +127,6 @@ fun MixedMediaSection(
     }
 }
 
-
 @PreviewLightDark
 @Composable
 fun MixedMediaSectionPreview(modifier: Modifier = Modifier) {
@@ -142,10 +141,8 @@ fun MixedMediaSectionPreview(modifier: Modifier = Modifier) {
                 onSaveIconClicked = { }
             )
         }
-
     }
 }
-
 
 val demoMediaList = listOf(
     MediaItemUiState(
@@ -177,4 +174,3 @@ val demoMediaList = listOf(
         mediaTypeUiState = MediaTypeUiState.TV_SHOW
     ),
 )
-

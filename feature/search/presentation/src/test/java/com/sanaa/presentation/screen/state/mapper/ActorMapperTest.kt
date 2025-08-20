@@ -22,7 +22,6 @@ class ActorMapperTest {
             biography = ""
         )
 
-
         val result = dummyActor.toUiState()
 
 

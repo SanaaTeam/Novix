@@ -25,5 +25,4 @@ interface ActorApiService {
 
     @GET("trending/person/day")
     suspend fun fetchTrendingPeople(@Query("page") page: Int): PaginatedResponse<ActorDto>
-
 }

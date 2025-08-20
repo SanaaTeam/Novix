@@ -65,7 +65,6 @@ fun OverviewSection(
     }
 }
 
-
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ExpandableText(

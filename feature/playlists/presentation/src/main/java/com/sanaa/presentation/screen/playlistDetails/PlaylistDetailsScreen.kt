@@ -56,7 +56,6 @@ fun PlaylistDetailsScreen(
     )
 }
 
-
 @Composable
 fun PlaylistDetailsContent(
     state: SavedDetailsScreenUiState,

@@ -42,7 +42,6 @@ abstract class BaseViewModel<T, E>(
         }
     }
 
-
     protected fun emitEffect(effect: E) {
         viewModelScope.launch {
             _effect.emit(effect)

@@ -36,7 +36,6 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         apiService.fetchReviewsByMovieId(id, page).results.distinctBy { it.id }
     }
 
-
     override suspend fun fetchMoviesByCategory(category: Int, page: Int): List<MovieDto> =
         wrapApiCall {
             apiService.fetchMoviesByCategory(
@@ -90,5 +89,4 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         wrapApiCall {
             apiService.deleteMovieRating(movieId, sessionId)
         }
-
 }

@@ -84,7 +84,6 @@ fun RateBottomSheet(
     )
 }
 
-
 @Preview(showBackground = true)
 @Composable
 private fun RateBottomSheetPreview() {

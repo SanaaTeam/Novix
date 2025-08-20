@@ -1,6 +1,5 @@
 package com.sanaa.vod.util
 
-import android.util.Log
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
 import exceptions.NovixAppException
