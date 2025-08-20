@@ -16,8 +16,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.tv.material3.Border
+import androidx.tv.material3.Card
+import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -60,33 +64,49 @@ private fun ImageCard(
     modifier: Modifier = Modifier
 ) {
 
-    Box(
-        modifier = modifier
-            .size(88.dp)
-            .border(
-                BorderStroke(1.dp, Theme.colors.stroke),
-                RoundedCornerShape(12.dp)
-            )
-            .clip(RoundedCornerShape(12.dp))
-    ) {
-
-        RemoteBlurredSensitiveImage(
-            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-            imageUrl = imageUrl.orEmpty(),
-            modifier = Modifier.fillMaxWidth(),
-            sensitiveContentThreshold = 0.2f,
-            contentDescription = null,
-            placeholderContent = {
-                RemoteImagePlaceholder(Modifier.fillMaxSize())
-            },
-            errorContent = {
-                RemoteImagePlaceholder(Modifier.fillMaxSize())
-            },
+    Card(
+        modifier =  Modifier.fillMaxWidth(),
+        onClick = {},
+        colors = CardDefaults.colors(
+            containerColor = Color.Transparent,
+        ),
+        scale = CardDefaults.scale(
+            scale = 1f,
+            focusedScale = 1f,
+        ),
+        border = CardDefaults.border(
+            focusedBorder = Border.None,
+            pressedBorder = Border.None
+        )
+    ){
+        Box(
+            modifier = modifier
+                .size(88.dp)
+                .border(
+                    BorderStroke(1.dp, Theme.colors.stroke),
+                    RoundedCornerShape(12.dp)
+                )
+                .clip(RoundedCornerShape(12.dp))
         ) {
-            OnBlurContent(
-                iconSize = 24.dp,
-                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
-            )
+            RemoteBlurredSensitiveImage(
+                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                imageUrl = imageUrl.orEmpty(),
+                modifier = Modifier.fillMaxWidth(),
+                sensitiveContentThreshold = 0.2f,
+                contentDescription = null,
+                placeholderContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
+                errorContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
+            ) {
+                OnBlurContent(
+                    iconSize = 24.dp,
+                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                )
+            }
         }
     }
+
 }

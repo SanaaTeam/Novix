@@ -18,10 +18,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.tv.material3.Border
+import androidx.tv.material3.Card
+import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -54,7 +58,9 @@ fun ActorScreen(
             when (effect) {
                 is ActorScreenEffects.NavigateToMovieDetails -> navController.navigate(MovieDetailsRoute(effect.movieId))
                 is ActorScreenEffects.NavigateToSeriesDetails -> navController.navigate(ScreensRoute.TvShowDetailsRoute(effect.seriesId))
-                ActorScreenEffects.NavigateToLogin -> TODO()
+                ActorScreenEffects.NavigateToLogin -> {
+
+                }
             }
         }
     }
@@ -111,26 +117,45 @@ private fun ActorScreenContent(
                             state.actor.imageUrl.orEmpty(),
                             title = state.actor.name,
                         ) {
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            Card(
+                                modifier =  Modifier.fillMaxWidth(),
+                                onClick = {},
+                                colors = CardDefaults.colors(
+                                    containerColor = Color.Transparent,
+                                ),
+                                scale = CardDefaults.scale(
+                                    scale = 1f,
+                                    focusedScale = 1f,
+                                    pressedScale = 1.2f
+                                ),
+                                border = CardDefaults.border(
+                                    focusedBorder = Border.None,
+                                    pressedBorder = Border.None
+                                )
                             ) {
-                                FlowRow(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                                ) {
-                                    ActorInfo(state)
-                                }
+                                )
+                                {
+                                    FlowRow(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    ) {
+                                        ActorInfo(state)
+                                    }
 
-                                state.actor.biography?.let { bio ->
-                                    Text(
-                                        text = bio,
-                                        style = Theme.textStyle.body.small,
-                                        color = Theme.colors.body,
-                                        maxLines = 7
-                                    )
+                                    state.actor.biography?.let { bio ->
+                                        Text(
+                                            text = bio,
+                                            style = Theme.textStyle.body.small,
+                                            color = Theme.colors.body,
+                                            maxLines = 7
+                                        )
+                                    }
                                 }
                             }
+
                         }
 
                         ActorScreenSliders(state, listener)

@@ -40,7 +40,6 @@ abstract class RemoteDetailsDataSourceModule {
     ): RemoteTvShowDataSource
 
     companion object {
-
         @Provides
         @Singleton
         fun provideMovieApiService(retrofit: Retrofit): MovieApiService =
