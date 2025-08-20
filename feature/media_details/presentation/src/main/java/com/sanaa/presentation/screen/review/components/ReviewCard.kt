@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -68,7 +69,6 @@ fun ReviewCard(
     }
 
 }
-
 @Composable
 private fun UserImage(review: ReviewUiModel) {
     val avatarUrl = review.avatarUrl.orEmpty()
@@ -77,33 +77,31 @@ private fun UserImage(review: ReviewUiModel) {
     Box(
         modifier = Modifier
             .size(48.dp)
-            .clip(shape = RoundedCornerShape(12.dp))
-            .background(color = Theme.colors.iconBackgroundLow)
+            .clip(RoundedCornerShape(12.dp))
+            .background(Theme.colors.iconBackgroundLow)
             .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp)),
         contentAlignment = Alignment.Center
     ) {
+        DefaultAvatar()
+
         if (hasAvatar) {
             RemoteBlurredSensitiveImage(
                 imageUrl = avatarUrl,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.matchParentSize(),
                 sensitiveContentThreshold = 0.2f,
                 isBlurEnabled = LocalSafeContentThreshold.current != 0f,
                 safeContentThreshold = LocalSafeContentThreshold.current,
                 contentDescription = review.authorName,
-                placeholderContent = {
-                    DefaultAvatar()
-                },
+                placeholderContent = {},
                 errorContent = {
-                    DefaultAvatar()
-                },
+                    Spacer(modifier = Modifier.matchParentSize())
+                }
             ) {
                 OnBlurContent(
                     iconSize = 24.dp,
                     icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
                 )
             }
-        } else {
-            DefaultAvatar()
         }
     }
 }
@@ -117,7 +115,6 @@ private fun DefaultAvatar() {
         colorFilter = ColorFilter.tint(Theme.colors.hint)
     )
 }
-
 @Composable
 private fun RowScope.UserInfo(review: ReviewUiModel) {
     Column(modifier = Modifier
