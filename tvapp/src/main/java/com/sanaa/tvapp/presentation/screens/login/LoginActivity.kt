@@ -21,18 +21,23 @@ class LoginActivity : ComponentActivity() {
             NovixTheme(true) {
                 LoginScreenTv(
                     onFinish = {
-                        navigateToMainApp()
+                        onLoginSuccess()
                     }
                 )
             }
         }
     }
 
-    private fun navigateToMainApp() {
-        val intent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    private fun onLoginSuccess() {
+        if (callingActivity != null) {
+            setResult(RESULT_OK)
+            finish()
+        } else {
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            startActivity(intent)
+            finish()
         }
-        startActivity(intent)
-        finish()
     }
 }
