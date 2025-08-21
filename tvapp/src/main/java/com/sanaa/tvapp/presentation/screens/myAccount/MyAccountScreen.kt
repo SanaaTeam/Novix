@@ -1,6 +1,5 @@
 package com.sanaa.tvapp.presentation.screens.myAccount
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,7 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -65,6 +64,7 @@ import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MyRatingScre
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.WatchingHistoryScreenRoute
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 import repository.Language
 import com.sanaa.designsystem.R as designSystemResource
@@ -74,8 +74,16 @@ import com.sanaa.tvapp.R as tvResource
 fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
-    val view = LocalView.current
-    val activity = view.context as? AppCompatActivity
+    val context = LocalContext.current
+    val appContext = context.applicationContext
+
+    val loginApi = remember {
+        EntryPointAccessors.fromApplication(
+            appContext,
+            MyAccountApiEntryPoint::class.java
+        ).loginApi()
+
+    }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
@@ -106,7 +114,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
                 }
 
                 Recreate -> {
-                     activity?.recreate()
+                    loginApi.launch(context = context)
                 }
             }
         }

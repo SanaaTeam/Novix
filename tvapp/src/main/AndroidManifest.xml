@@ -19,7 +19,7 @@
         android:supportsRtl="true">
 
         <activity
-            android:name=".RouterActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.StartingScreen">
             <intent-filter>
@@ -34,11 +34,6 @@
             android:name=".presentation.screens.login.LoginActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:theme="@style/Theme.StartingScreen">
-        </activity>
 
     </application>
 

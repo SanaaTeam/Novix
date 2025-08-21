@@ -5,23 +5,33 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.tvapp.presentation.api.LocalSafeContentThreshold
+import com.sanaa.tvapp.presentation.screens.login.api.LoginApi
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.NavBarRoute
 import com.sanaa.tvapp.presentation.screens.navigation.TvNavGraph
 import com.sanaa.tvapp.presentation.screens.navigation.TvNavigation
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
+
+    @Inject
+    lateinit var preferencesManager: PreferencesManager
+
+    @Inject
+    lateinit var loginApi: LoginApi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -33,21 +43,29 @@ class MainActivity : AppCompatActivity() {
             !viewModel.state.value.isReady
         }
 
-        setContent {
-            val state by viewModel.state.collectAsStateWithLifecycle()
-            CompositionLocalProvider(
-                LocalSafeContentThreshold provides state.safeContentThreshold
-            ) {
-                NovixTheme(true) {
-                    val navController = rememberNavController()
-                    val startDestination = NavBarRoute.Home
+        val sessionId = runBlocking {
+            preferencesManager.sessionId.firstOrNull()
+        }
+        if (sessionId.isNullOrBlank()) {
+            loginApi.launch(this)
+        } else {
 
-                    CompositionLocalProvider(LocalAppNavController provides navController) {
-                        TvNavigation {
-                            TvNavGraph(
-                                navController = navController,
-                                startDestination = startDestination
-                            )
+            setContent {
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                CompositionLocalProvider(
+                    LocalSafeContentThreshold provides state.safeContentThreshold
+                ) {
+                    NovixTheme(true) {
+                        val navController = rememberNavController()
+                        val startDestination = NavBarRoute.Home
+
+                        CompositionLocalProvider(LocalAppNavController provides navController) {
+                            TvNavigation {
+                                TvNavGraph(
+                                    navController = navController,
+                                    startDestination = startDestination
+                                )
+                            }
                         }
                     }
                 }
