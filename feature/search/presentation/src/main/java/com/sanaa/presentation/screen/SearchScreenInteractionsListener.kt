@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen
 
-import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 
 interface SearchScreenInteractionsListener:
@@ -13,7 +12,6 @@ interface SearchScreenInteractionsListener:
     fun retrySearch()
     fun onActorClicked(id: Int)
     fun onSearchResultMediaClicked(viewed: RecentViewedUiModel)
-    fun onSaveIconClick(media: MovieUiModel)
     fun onSnackBarDismiss()
 }
 
@@ -35,4 +33,5 @@ interface RecentViewListener{
     fun onDeleteRecentSearchItem(id: Int)
     fun onRecentSearchItemClicked(query: String)
     fun onRecentViewedMediaClicked(viewed: RecentViewedUiModel)
+    fun onSaveIconClick(id: Int)
 }

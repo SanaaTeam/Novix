@@ -104,7 +104,7 @@ class SearchViewModel @Inject constructor(
     }
 
 
-    override fun onSaveIconClick(media: MovieUiModel) {
+    override fun onSaveIconClick(id: Int) {
         if (!state.value.isUserLoggedIn) {
             updateState { copy(showLoginBottomSheet = true) }
             return
@@ -112,13 +112,13 @@ class SearchViewModel @Inject constructor(
         updateState {
             copy(
                 showSaveToListBottomSheet = true,
-                selectedMediaToSave = media
+                selectedMediaToSaveId = id
             )
         }
     }
 
     override fun onDismissSaveToListBottomSheet() {
-        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSaveId = null) }
     }
 
     override fun onCreateNewListClick() {

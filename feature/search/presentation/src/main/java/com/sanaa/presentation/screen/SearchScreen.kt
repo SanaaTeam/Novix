@@ -116,7 +116,7 @@ private fun SearchScreenContent(
     }
     SaveToListBottomSheet(
         isVisible = state.showSaveToListBottomSheet,
-        mediaId = state.selectedMediaToSave?.id ?: 0,
+        mediaId = state.selectedMediaToSaveId ?: 0,
         onDismiss = interactionsListener::onDismissSaveToListBottomSheet,
         onCreateNewListClick = interactionsListener::onCreateNewListClick,
     )
