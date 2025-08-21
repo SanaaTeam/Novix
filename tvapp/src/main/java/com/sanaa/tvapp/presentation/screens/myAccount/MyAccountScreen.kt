@@ -1,5 +1,9 @@
 package com.sanaa.tvapp.presentation.screens.myAccount
 
+import android.app.Activity
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.Image
@@ -28,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,6 +51,7 @@ import com.sanaa.tvapp.presentation.screens.home.component.MediaTabItem
 import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
+import com.sanaa.tvapp.presentation.screens.login.LoginActivity
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.NavigateToChangePasswordSetting
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.NavigateToLogin
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.NavigateToMyRating
@@ -75,7 +81,16 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
     val view = LocalView.current
+    val context = LocalContext.current
     val activity = view.context as? AppCompatActivity
+
+    val loginLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            activity?.recreate()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
@@ -103,10 +118,12 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
                 }
 
                 NavigateToLogin -> {
+                    val intent = Intent(context, LoginActivity::class.java)
+                    loginLauncher.launch(intent)
                 }
 
                 Recreate -> {
-                     activity?.recreate()
+                    activity?.recreate()
                 }
             }
         }
