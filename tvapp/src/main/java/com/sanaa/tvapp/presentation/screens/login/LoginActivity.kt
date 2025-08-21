@@ -16,10 +16,12 @@ class LoginActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         actionBar?.hide()
+        val showGuestButton = callingActivity == null
 
         setContent {
             NovixTheme(true) {
                 LoginScreenTv(
+                    showGuestButton = showGuestButton,
                     onFinish = {
                         onLoginSuccess()
                     }
