@@ -136,7 +136,7 @@ private fun TvShowScreenContent(
                 exit = FadeSlideOutVertically
             ) {
                 BottomContainer(
-                    isRateButtonVisible = state.showRateButton,
+                    isFilledStarIcon = state.isRatingSubmitted,
                     modifier = Modifier,
                     trailerUrl = state.tvShow.trailerUrl,
                     isRateButtonEnabled = state.isError.not(),
@@ -146,7 +146,7 @@ private fun TvShowScreenContent(
             }
             RateBottomSheet(
                 isRateSelected = state.hasUserSelectedRate,
-                imdbRating = state.imdbRating,
+                imdbRating = state.filledStarsCount,
                 onDismiss = interactionListener::onDismissRateBottomSheet,
                 isVisible = state.showRateBottomSheet,
                 onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,

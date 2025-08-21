@@ -3,7 +3,6 @@ package com.sanaa.presentation.screen.tvShow
 import com.sanaa.presentation.model.ActorUiModel
 import com.sanaa.presentation.model.SeasonUiState
 import com.sanaa.presentation.model.TvShowUiState
-import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
 
 data class TvShowScreenUiState(
@@ -18,15 +17,14 @@ data class TvShowScreenUiState(
     val isError: Boolean = false,
     val selectedSeason: Int = 1,
     val noInternetConnection: Boolean = false,
-    val imdbRating: Int = 0,
     val guestSessionId: String = "",
     val isUserLoggedIn: Boolean = false,
-    val loginPromptType: LoginPromptType? = null,
     val snackBarData: SnackData? = null,
-    val showRateButton : Boolean = true,
-
+    val isRatingSubmitted: Boolean = false,
+    val imdbRating: Int = 0,
+    val filledStarsCount: Int = 0,
     ) {
     val hasUserSelectedRate: Boolean
-        get() = imdbRating > 0
+        get() = filledStarsCount > 0 && (imdbRating == 0 || filledStarsCount != imdbRating)
 }
 

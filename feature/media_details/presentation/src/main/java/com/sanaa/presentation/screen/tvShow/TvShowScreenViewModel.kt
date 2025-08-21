@@ -89,16 +89,15 @@ class TvShowScreenViewModel @Inject constructor(
     }
 
     override fun onDismissRateBottomSheet() {
-        updateState { copy(showRateBottomSheet = false, imdbRating = 0) }
+        updateState { copy(showRateBottomSheet = false, filledStarsCount = imdbRating) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { copy(showLoginBottomSheet = false) }
         emitEffect(TvShowScreenEffects.NavigateToLogin)
     }
 
     override fun onRatingChanged(newRating: Int) {
-        updateState { copy(imdbRating = newRating) }
+        updateState { copy(filledStarsCount = newRating) }
     }
 
     override fun onDismissLoginBottomSheet() {
@@ -148,7 +147,8 @@ class TvShowScreenViewModel @Inject constructor(
                         updateState {
                             copy(
                                 imdbRating = rating,
-                                showRateButton = rating == 0
+                                filledStarsCount = rating,
+                                isRatingSubmitted = rating != 0
                             )
                         }
                     },
@@ -192,9 +192,10 @@ class TvShowScreenViewModel @Inject constructor(
     }
 
     private suspend fun submitTvShowRating() {
+        val rating = state.value.filledStarsCount
         val isSendRateSuccess = manageTvShowDetails.addTvShowRate(
             tvShowId = route.tvShowId,
-            rating = state.value.imdbRating.toFloat()
+            rating = rating.toFloat()
         )
         if (isSendRateSuccess) {
             updateState {
@@ -204,7 +205,8 @@ class TvShowScreenViewModel @Inject constructor(
                         isError = false
                     ),
                     showRateBottomSheet = false,
-                    showRateButton = false
+                    isRatingSubmitted = true,
+                    imdbRating = rating,
                 )
             }
         } else {
@@ -229,6 +231,14 @@ class TvShowScreenViewModel @Inject constructor(
     private fun onCollectLoggedFlag(isLogged: Boolean) {
         if (isLogged) {
             fetchUserRating()
+            if (state.value.showLoginBottomSheet) {
+                updateState {
+                    copy(
+                        showLoginBottomSheet = false,
+                        showRateBottomSheet = true,
+                    )
+                }
+            }
         }
         updateState { copy(isUserLoggedIn = isLogged) }
     }
