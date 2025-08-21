@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ShowDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageTvShowDetails: ManageTvShowUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TvShowDetailsScreenUiState, TvShowDetailsScreenEffects>(
@@ -33,6 +35,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
 
     init {
         loadSeries()
+        updateUserLoginState()
     }
 
 
@@ -149,5 +152,60 @@ class ShowDetailsScreenViewModel @Inject constructor(
         val season = manageTvShowDetails.getTvShowSeasonDetails(tvShowId, seasonNumber)
 
         updateState { copy(season = season.toSeasonUiModel()) }
+    }
+
+    override fun onRateMovieClick() {
+        if (state.value.isUserLoggedIn) {
+            updateState {
+                copy(showRateDialog = true)
+            }
+        } else {
+            updateState {
+                copy(showLoginDialog = true)
+            }
+        }
+    }
+
+    override fun onRatingChange(rating: Int) {
+        updateState { copy(rating = rating) }
+    }
+
+    override fun onDismissRateDialog() {
+        updateState { copy(showLoginDialog = false) }
+    }
+
+    override fun onSummitRateClick() {
+        tryToExecute(
+            block = ::submitMovieRating,
+        )
+    }
+
+    override fun onLoginButtonClick() {
+        emitEffect(TvShowDetailsScreenEffects.NavigateToLogin)
+    }
+
+    override fun onDismissLoginBottomSheet() {
+        updateState { copy(showLoginDialog = false) }
+    }
+
+    private fun updateUserLoginState() {
+        tryToCollect(
+            block = checkUserLogin::isLoggedIn,
+            onCollect = { loggedIn ->
+                updateState { copy(isUserLoggedIn = loggedIn) }
+            },
+        )
+    }
+
+
+    private suspend fun submitMovieRating() {
+        val rating = state.value.rating
+        val isSendRateSuccess = manageTvShowDetails.addTvShowRate(
+            tvShowId = tvShowId,
+            rating = rating.toFloat()
+        )
+        if (isSendRateSuccess) {
+            updateState { copy(showRateDialog = false) }
+        }
     }
 }

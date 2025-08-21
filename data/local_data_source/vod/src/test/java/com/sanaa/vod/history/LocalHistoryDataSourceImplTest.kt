@@ -93,7 +93,6 @@ class LocalHistoryDataSourceImplTest {
         coVerify { queryDao.deleteAllQueries() }
     }
 
-
     @Test
     fun `upsertWatchedMedia should call upsert on watchedMediaHistoryDao`() = runTest {
         // Given

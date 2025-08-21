@@ -20,7 +20,6 @@ import usecase.ManageActorUseCase
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-
 @OptIn(ExperimentalCoroutinesApi::class)
 class TrendingPeopleScreenViewModelTest {
 

@@ -21,5 +21,4 @@ interface SearchRemoteDataSource {
         query: String,
         page: Int = 1,
     ): SearchResponse<MovieSearchDto>
-
 }

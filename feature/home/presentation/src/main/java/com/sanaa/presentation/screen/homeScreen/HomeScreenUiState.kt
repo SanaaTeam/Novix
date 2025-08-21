@@ -7,7 +7,6 @@ import com.sanaa.presentation.state.MediaItemUiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-
 data class HomeScreenUiState(
     val popularMedia: List<MediaItemUiState> = emptyList(),
     val topRatingMedia: List<MediaItemUiState> = emptyList(),

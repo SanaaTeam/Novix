@@ -2,7 +2,6 @@ package com.sanaa.tvapp.presentation.screens.mediaDetails.episodeScreen
 
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.ActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.EpisodeUiModel
-import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.LoginPromptType
 
 
 data class EpisodeDetailsScreenUiState(
@@ -18,6 +17,5 @@ data class EpisodeDetailsScreenUiState(
     val noInternetConnection: Boolean = false,
     val imdbRating: Int = 0,
     val guestSessionId: String = "",
-    val loginPromptType: LoginPromptType? = null,
     val isUserLoggedIn: Boolean = false
 )

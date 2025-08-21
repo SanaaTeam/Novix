@@ -108,7 +108,6 @@ class MyAccountScreenViewModel @Inject constructor(
 
     }
 
-
     override fun onClickAppearance() {
         updateState { copy(showChangeThemeBottomSheet = true) }
     }
@@ -143,7 +142,6 @@ class MyAccountScreenViewModel @Inject constructor(
             onCollect = ::onLoadContentRestrictionSuccess
         )
     }
-
 
     private fun fetchTheme() {
         tryToCollect(
@@ -209,7 +207,6 @@ class MyAccountScreenViewModel @Inject constructor(
                 isUserLoggedIn = isLogged
             )
         }
-
     }
 
     private fun onSaveContentRestrictionSuccess() {

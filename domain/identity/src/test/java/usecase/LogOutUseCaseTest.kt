@@ -15,5 +15,4 @@ class LogOutUseCaseTest {
         logoutUseCase.logout()
         coVerify(exactly = 1) { authenticationRepository.logout() }
     }
-
 }

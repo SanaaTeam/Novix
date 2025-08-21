@@ -29,8 +29,4 @@ data class MyAccountScreenUiState(
         UNRESTRICTED,
         MODERATE_RESTRICTION
     }
-
 }
-
-
-

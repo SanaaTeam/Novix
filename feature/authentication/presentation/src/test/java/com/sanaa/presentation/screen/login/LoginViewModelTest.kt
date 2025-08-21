@@ -134,7 +134,6 @@ class LoginViewModelTest {
             assertThat(viewModel.state.value.canSubmit).isTrue()
         }
 
-
     @Test
     fun `initial state has correct default values`() = runTest {
         assertThat(viewModel.state.value.username).isEmpty()
@@ -143,7 +142,6 @@ class LoginViewModelTest {
         assertThat(viewModel.state.value.isLoading).isFalse()
         assertThat(viewModel.state.value.canSubmit).isFalse()
     }
-
 
     @Test
     fun `canSubmit is true after fixing invalid input`() = runTest {
@@ -156,5 +154,4 @@ class LoginViewModelTest {
 
         assertThat(viewModel.state.value.canSubmit).isTrue()
     }
-
 }

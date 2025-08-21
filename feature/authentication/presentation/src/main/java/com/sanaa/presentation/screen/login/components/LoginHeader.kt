@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.authentication.presentation.R
 
-
 @Composable
 fun LoginHeader(modifier: Modifier = Modifier) {
     Column(

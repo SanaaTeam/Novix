@@ -71,7 +71,6 @@ class MyRatingScreenViewModelTest {
         }
     }
 
-
     @Test
     fun `onBackClick should emit NavigateBack effect`() = runTest {
         viewModel = MyRatingScreenViewModel(
@@ -101,7 +100,6 @@ class MyRatingScreenViewModelTest {
         assertThat(viewModel.state.value.selectedTab).isEqualTo(MyRatingTab.TV_SHOWS)
     }
 
-
     @Test
     fun `onDeleteIconClick for movie failure emits error snackbar`() = runTest {
         coEvery { manageMovieUseCase.deleteMovieRate(any()) } throws RuntimeException("Deletion failed")
@@ -122,7 +120,6 @@ class MyRatingScreenViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
-
 
     @Test
     fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
@@ -145,7 +142,6 @@ class MyRatingScreenViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
-
 
     @Test
     fun `onDeleteIconClick for tv show failure emits error snackbar`() = runTest {

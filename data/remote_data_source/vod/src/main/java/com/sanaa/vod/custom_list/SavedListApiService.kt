@@ -65,5 +65,4 @@ interface SavedListApiService {
         @Query("movie_id") movieId: Int,
         @Query("session_id") sessionId: String
     ): ItemStatusResponseDto
-
 }

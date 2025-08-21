@@ -50,7 +50,6 @@ class WatchingHistoryViewModel @Inject constructor(
         updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
 
-
     override fun onDismissAddListBottomSheet() {
         updateState { copy(showAddListBottomSheet = false) }
     }
@@ -64,7 +63,6 @@ class WatchingHistoryViewModel @Inject constructor(
     override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
         updateState { copy(selectedMediaTypeUi = mediaTypeUi) }
     }
-
 
     override fun onMovieGenreClick(genreId: Int?) {
         if (genreId != state.value.movieSelectedGenreId) {

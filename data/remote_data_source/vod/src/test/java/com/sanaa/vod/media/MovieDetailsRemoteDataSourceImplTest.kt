@@ -106,7 +106,6 @@ class MovieDetailsRemoteDataSourceImplTest {
         assertThat(dto.size).isEqualTo(2)
     }
 
-
     val dummyMovie = MovieDto(
         id = 1, title = "A", posterImagePath = "/p.jpg", duration = 100
     )
@@ -147,5 +146,4 @@ class MovieDetailsRemoteDataSourceImplTest {
     )
 
     val dummyGenreDto = listOf(GenreDto(id = 1, name = "A"), GenreDto(id = 2, name = "B"))
-
 }

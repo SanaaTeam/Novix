@@ -65,7 +65,6 @@ fun DetailsNavHost(
         }
     }
 
-
     CompositionLocalProvider(
         LocalNavControllerProvider provides navController
     ) {

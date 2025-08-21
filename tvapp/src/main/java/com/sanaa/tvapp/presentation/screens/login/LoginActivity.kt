@@ -16,23 +16,30 @@ class LoginActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         actionBar?.hide()
+        val showGuestButton = callingActivity == null
 
         setContent {
             NovixTheme(true) {
                 LoginScreenTv(
+                    showGuestButton = showGuestButton,
                     onFinish = {
-                        navigateToMainApp()
+                        onLoginSuccess()
                     }
                 )
             }
         }
     }
 
-    private fun navigateToMainApp() {
-        val intent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    private fun onLoginSuccess() {
+        if (callingActivity != null) {
+            setResult(RESULT_OK)
+            finish()
+        } else {
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            startActivity(intent)
+            finish()
         }
-        startActivity(intent)
-        finish()
     }
 }

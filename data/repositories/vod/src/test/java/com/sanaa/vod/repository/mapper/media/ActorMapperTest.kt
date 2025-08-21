@@ -87,5 +87,4 @@ class ActorMapperTest {
         assertEquals("", getFullImageUrl(null))
         assertEquals("", getFullImageUrl(""))
     }
-
 }

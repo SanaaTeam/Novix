@@ -20,7 +20,6 @@ import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
-
 import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUiState
 

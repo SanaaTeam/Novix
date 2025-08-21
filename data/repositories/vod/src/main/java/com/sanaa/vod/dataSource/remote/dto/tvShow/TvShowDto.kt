@@ -1,6 +1,5 @@
 package com.sanaa.vod.dataSource.remote.dto.tvShow
 
-
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

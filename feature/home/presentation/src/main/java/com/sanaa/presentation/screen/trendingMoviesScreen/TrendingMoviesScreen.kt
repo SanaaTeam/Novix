@@ -112,8 +112,6 @@ private fun TrendingMoviesScreenContent(
                     if (trendingMedia.loadState.hasError) {
                         RefreshButton(onRetryClick = interactionListener::onRetryClick)
                     }
-
-
                 }
             }
         }

@@ -39,6 +39,3 @@ fun NovixApp(
         MainNavHost()
     }
 }
-
-
-

@@ -25,7 +25,6 @@ class SearchRepositoryImplTest {
         searchRepository = SearchRepositoryImpl(remoteDataSource)
     }
 
-
     @Test
     fun `searchActors() should fetch data from remote when available`() =
         runTest {
@@ -62,7 +61,6 @@ class SearchRepositoryImplTest {
             }
         }
 
-
     @Test
     fun `searchMovies() should fetch from remote when available`() =
         runTest {
@@ -74,7 +72,6 @@ class SearchRepositoryImplTest {
 
             assertThat(result).isEqualTo(MovieSearchResponse.results.map { it.toEntity() })
         }
-
 
     @Test
     fun `searchMovies() should throw NoNetworkException when a ConnectionException occurs`() =

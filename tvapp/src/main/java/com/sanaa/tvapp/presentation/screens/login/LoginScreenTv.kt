@@ -47,6 +47,7 @@ import com.sanaa.tvapp.state.SnackData
 
 @Composable
 fun LoginScreenTv(
+    showGuestButton: Boolean,
     onFinish: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
@@ -75,6 +76,7 @@ fun LoginScreenTv(
             LoginContentTv(
                 state = uiState,
                 listener = viewModel,
+                showGuestButton = showGuestButton,
             )
 
             NovixAnimatedSnackBarHost(
@@ -91,6 +93,7 @@ fun LoginScreenTv(
 private fun LoginContentTv(
     state: LoginUiState,
     listener: LoginScreenInteractionListener,
+    showGuestButton: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -155,29 +158,30 @@ private fun LoginContentTv(
                 }
             }
         }
-
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp),
-            scale = ButtonDefaults.scale(focusedScale = 1.03f),
-            shape = ButtonDefaults.shape(RoundedCornerShape(12.dp)),
-            onClick = { listener.onContinueClicked() },
-            colors = ButtonDefaults.colors(
-                containerColor = Theme.colors.surface,
-                focusedContainerColor = Theme.colors.primaryVariant
-            ),
-            border = ButtonDefaults.border(
-                border = Border(BorderStroke(width = 1.dp, color = Theme.colors.stroke))
-            ),
-        ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(R.string.continue_as_guest),
-                style = Theme.textStyle.label.large,
-                color = Theme.colors.onPrimary,
-                textAlign = TextAlign.Center
-            )
+        if (showGuestButton) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
+                scale = ButtonDefaults.scale(focusedScale = 1.03f),
+                shape = ButtonDefaults.shape(RoundedCornerShape(12.dp)),
+                onClick = { listener.onContinueClicked() },
+                colors = ButtonDefaults.colors(
+                    containerColor = Theme.colors.surface,
+                    focusedContainerColor = Theme.colors.primaryVariant
+                ),
+                border = ButtonDefaults.border(
+                    border = Border(BorderStroke(width = 1.dp, color = Theme.colors.stroke))
+                ),
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.continue_as_guest),
+                    style = Theme.textStyle.label.large,
+                    color = Theme.colors.onPrimary,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
@@ -202,7 +206,8 @@ fun PreviewLoginScreenTv() {
                         override fun onTogglePasswordVisibility() {}
                         override fun onLoginClicked() {}
                         override fun onContinueClicked() {}
-                    }
+                    },
+                    showGuestButton = true
                 )
             }
         }

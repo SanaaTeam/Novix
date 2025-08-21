@@ -17,13 +17,10 @@ data class TvShowDetailsScreenUiState(
     val error: String? = null,
     val selectedSeason: Int = 1,
     val noInternetConnection: Boolean = false,
-    val imdbRating: Int = 0,
     val guestSessionId: String = "",
     val isUserLoggedIn: Boolean = false,
-    val loginPromptType: LoginPromptType? = null,
-)
+    val showLoginDialog: Boolean = false,
+    val showRateDialog: Boolean = false,
+    val rating: Int = 0,
 
-enum class LoginPromptType {
-    RATE,
-    BOOKMARK
-}
+    )

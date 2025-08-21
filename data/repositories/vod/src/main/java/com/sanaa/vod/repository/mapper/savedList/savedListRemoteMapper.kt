@@ -23,4 +23,3 @@ fun SavedItemRemoteDto.toEntity() = Movie(
     trailerUrl = "",
     rating = -1
 )
-

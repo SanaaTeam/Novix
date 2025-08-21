@@ -9,7 +9,6 @@ import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListRemoteDto
 import com.sanaa.vod.dataSource.remote.dto.movie.MovieDto
 import com.sanaa.vod.repository.mapper.savedList.toEntity
 import com.sanaa.vod.repository.mapper.savedList.toLocalDto
-import entity.Movie
 import io.mockk.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -17,7 +16,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import usecase.custom_list.custom_list_param.SavedList
 
 class SavedListRepositoryImplTest {
 

@@ -1,6 +1,5 @@
 package com.sanaa.presentation.main
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,7 +46,6 @@ class DetailsViewModel @Inject constructor(
     private fun updateState(block:DetailsUiState.() -> DetailsUiState) {
         _state.value = block(_state.value)
     }
-
 
     private companion object {
         const val STRICT_CONTENT_THRESHOLD = 0.9f

@@ -1,6 +1,9 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
 
+import android.app.Activity
 import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,6 +39,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.components.LoginDialog
 import com.sanaa.tvapp.presentation.components.RateDialog
+import com.sanaa.tvapp.presentation.screens.login.LoginActivity
 import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
@@ -48,7 +52,6 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRa
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetailsRoute
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.LoginRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
 import com.sanaa.tvapp.state.SnackData
 
@@ -62,6 +65,15 @@ fun MovieDetailsScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
     val context = LocalContext.current
+
+    val loginLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            (context as? Activity)?.recreate()
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
@@ -73,7 +85,11 @@ fun MovieDetailsScreen(
                     MovieDetailsRoute(it.movieId)
                 )
 
-                MovieDetailsScreenUiEffect.NavigateToLogin -> navController.navigate(LoginRoute)
+                MovieDetailsScreenUiEffect.NavigateToLogin -> {
+                    val intent = Intent(context, LoginActivity::class.java)
+                    loginLauncher.launch(intent)
+                }
+
                 is MovieDetailsScreenUiEffect.OpenTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.url?.toUri())
                     context.startActivity(intent)
@@ -240,7 +256,7 @@ fun MovieDetailsContent(
                     onSubmitRating = interactionListener::onSummitRateClick
                 )
             }
-            if (state.showLoginDialog) {
+            if (state.showLoginDialog && !state.isUserLoggedIn) {
                 LoginDialog(
                     onDismissRequest = interactionListener::onDismissLoginBottomSheet,
                     onLoginClicked = interactionListener::onLoginButtonClick

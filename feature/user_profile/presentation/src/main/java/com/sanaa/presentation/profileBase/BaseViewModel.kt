@@ -32,7 +32,6 @@ abstract class BaseViewModel<T, E>(
         _state.update(updater)
     }
 
-
     protected fun <T> tryToExecute(
         onStart: () -> Unit = {},
         block: suspend () -> T,

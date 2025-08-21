@@ -29,7 +29,6 @@ class SearchActorMapperTest {
         Truth.assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/chris.jpg")
     }
 
-
     @Test
     fun `should return empty imageUrl when path is null`() {
         val result = getFullImageUrl(null)

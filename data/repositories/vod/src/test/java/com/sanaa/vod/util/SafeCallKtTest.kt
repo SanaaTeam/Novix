@@ -18,7 +18,6 @@ class SafeCallTest {
         assertThat(result.getOrNull()).isEqualTo("Success")
     }
 
-
     @Test
     fun `throws NovixAppException when block throws Exception`() {
         val result = runCatching {
@@ -28,7 +27,6 @@ class SafeCallTest {
         assertThat(result.exceptionOrNull()).isInstanceOf(NovixAppException::class.java)
     }
 
-
     @Test
     fun `throws NoNetworkException when catch ConnectionException`() {
         val result = runCatching {
@@ -37,6 +35,4 @@ class SafeCallTest {
 
         assertThat(result.exceptionOrNull()).isInstanceOf(NoNetworkException::class.java)
     }
-
-
 }

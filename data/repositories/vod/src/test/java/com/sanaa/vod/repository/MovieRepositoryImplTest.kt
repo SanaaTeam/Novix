@@ -109,7 +109,6 @@ class MovieRepositoryImplTest {
         assertThat(result).isNotEmpty()
     }
 
-
     @Test
     fun `getMovieTrailer returns null when no YouTube trailer found`() = runTest {
         coEvery { remote.fetchMovieTrailerUrl(1) } returns trailers
@@ -328,7 +327,6 @@ class MovieRepositoryImplTest {
         assertThat(result).isEqualTo(movies.map { it.toEntity() })
     }
 
-
     @Test
     fun `getTrendingMovies returns empty list`() = runTest {
         val result = repository.getTrendingMovies(page = 1, genreId = 1)
@@ -363,6 +361,7 @@ class MovieRepositoryImplTest {
 
         coVerify(exactly = 1) { local.cacheGenres(any(), any()) }
     }
+
     @Test
     fun `getMovieRate should return rating if movie is rated`() = runTest {
         coEvery { preferences.sessionId } returns flowOf("abc123")
@@ -374,6 +373,7 @@ class MovieRepositoryImplTest {
 
         assertThat(result).isEqualTo(7)
     }
+
     @Test
     fun `addMovieRate should returns true on success`() = runTest {
         coEvery { preferences.sessionId } returns flowOf("session")

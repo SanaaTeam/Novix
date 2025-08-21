@@ -103,5 +103,4 @@ class AuthenticationRepositoryImplTest {
             coVerify(exactly = 1) { userLocalDataSource.deleteUser() }
             coVerify(exactly = 1) { preferencesManager.clearSession() }
         }
-
 }

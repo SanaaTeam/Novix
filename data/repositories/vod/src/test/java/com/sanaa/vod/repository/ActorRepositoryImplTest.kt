@@ -53,7 +53,6 @@ class ActorRepositoryImplTest {
         }
     }
 
-
     @Test
     fun `getGalleryImages throws NoNetworkException when network is down`() = runTest {
         coEvery { remoteDataSource.getActorImages(any()) } throws ConnectionException()
@@ -221,5 +220,4 @@ class ActorRepositoryImplTest {
             profileImagePath = "/path/to/profile.jpg"
         )
     }
-
 }

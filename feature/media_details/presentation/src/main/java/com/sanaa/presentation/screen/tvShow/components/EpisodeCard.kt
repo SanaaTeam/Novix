@@ -116,6 +116,5 @@ fun EpisodeCard(
                 }
             }
         }
-
     }
 }

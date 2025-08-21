@@ -51,7 +51,6 @@ class SearchMediaMapperTest {
             .isEqualTo("https://image.tmdb.org/t/p/w500/loki.jpg")
     }
 
-
     private fun createMovieSearchDto(
         id: Int = 1,
         title: String? = null,

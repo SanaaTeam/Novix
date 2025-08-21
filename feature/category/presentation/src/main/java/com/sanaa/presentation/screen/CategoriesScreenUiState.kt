@@ -13,4 +13,3 @@ data class CategoriesScreenUiState(
         const val MOVIE_TAB_INDEX = 0
     }
 }
-

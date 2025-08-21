@@ -4,7 +4,6 @@ import com.sanaa.presentation.state.CategoryUiState
 import com.sanaa.presentation.util.getGenreImage
 import entity.Genre
 
-
 fun Genre.toUiState(): CategoryUiState {
     return CategoryUiState(
         id = id,
@@ -12,4 +11,3 @@ fun Genre.toUiState(): CategoryUiState {
         imageRawUrl = getGenreImage(id)
     )
 }
-

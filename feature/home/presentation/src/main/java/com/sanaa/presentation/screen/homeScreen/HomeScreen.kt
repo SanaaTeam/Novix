@@ -96,7 +96,6 @@ private fun HomeScreenContent(
         }
     }
 
-
     val showNoInternetScreen = (state.isNoInternetConnection
             && upcomingMovies.itemCount == 0
             && state.popularMedia.isEmpty()
@@ -256,7 +255,6 @@ private fun HomeScreenContent(
         if (upcomingMovies.loadState.hasError && !showNoInternetScreen) {
             RefreshButton(onRetryClick = interactionListener::onRetryClick)
         }
-
     }
     SaveToListBottomSheet(
         isVisible = state.showSaveToListBottomSheet,

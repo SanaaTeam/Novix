@@ -62,7 +62,6 @@ fun NovixScaffold(
     }
 }
 
-
 @Preview
 @Composable
 private fun PreviewNovixScaffold() {

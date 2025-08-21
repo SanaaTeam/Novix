@@ -1,6 +1,5 @@
 package com.sanaa.vod.repository
 
-import android.util.Log
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.local.cache.LocalSavedMovieDataSource
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
@@ -10,13 +9,11 @@ import com.sanaa.vod.repository.mapper.savedList.toLocalDto
 import com.sanaa.vod.util.safeCall
 import entity.Movie
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import repository.SavedListRepository
 import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
-
 
 class SavedListRepositoryImpl @Inject constructor(
     private val remoteSavedListDataSource: RemoteSavedListDataSource,
@@ -43,8 +40,6 @@ class SavedListRepositoryImpl @Inject constructor(
                 savedList
             }
 
-
-
             override suspend fun refreshSavedLists() {
                 val remoteLists: List<SavedList> = fetchRemoteSaveLists()
                 clearAllLists()
@@ -58,7 +53,6 @@ class SavedListRepositoryImpl @Inject constructor(
                     }
                 }
             }
-
 
             override suspend fun createSavedList(title: String) {
                 safeCall("Failed to create list") {
@@ -103,7 +97,6 @@ class SavedListRepositoryImpl @Inject constructor(
                         }
                 }
             }
-
 
             override suspend fun removeMovieFromList(listId: Int, movieId: Int) {
                 safeCall("Failed to remove movie from list") {

@@ -15,5 +15,4 @@ data class VideoDto(
     val site: String = "",
     @SerialName("type")
     val type: String = ""
-
 )

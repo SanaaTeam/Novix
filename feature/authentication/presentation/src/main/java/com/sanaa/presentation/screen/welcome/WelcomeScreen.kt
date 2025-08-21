@@ -23,7 +23,6 @@ import com.sanaa.presentation.screen.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.screen.welcome.components.WelcomeFooter
 import com.sanaa.presentation.screen.welcome.components.WelcomeSection
 
-
 @Composable
 fun WelcomeScreen(
     viewModel: WelcomeViewModel = hiltViewModel(),

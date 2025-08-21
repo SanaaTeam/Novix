@@ -172,7 +172,6 @@ class HomeScreenViewModel @Inject constructor(
         )
     }
 
-
     private fun loadUpcomingMovies(
         genreId: Int?,
     ): Flow<PagingData<MediaItemUiState>> {
@@ -185,7 +184,6 @@ class HomeScreenViewModel @Inject constructor(
     private fun onFetchUpcomingMoviesSuccess(pagingData: PagingData<MediaItemUiState>) {
         updateState { copy(upcomingMovies = flowOf(pagingData), isNoInternetConnection = false) }
     }
-
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun loadWatchedMediaHistory(): Flow<List<MediaHistoryItem>> {

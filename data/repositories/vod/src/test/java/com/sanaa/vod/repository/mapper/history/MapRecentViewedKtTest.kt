@@ -39,7 +39,6 @@ class MapRecentViewedKtTest {
         Assertions.assertEquals(1234567890L, dto.timestamp)
     }
 
-
     @Test
     fun `given RecentViewedMedia when toDto called without timestamp should map id correctly`() {
         val result = createRecentViewedMedia().toDto()
@@ -113,5 +112,4 @@ class MapRecentViewedKtTest {
             timestamp = timestamp
         )
     }
-
 }

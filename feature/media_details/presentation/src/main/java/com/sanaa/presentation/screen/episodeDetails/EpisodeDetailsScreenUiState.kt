@@ -5,7 +5,6 @@ import com.sanaa.presentation.model.EpisodeUiState
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
 
-
 data class EpisodeDetailsScreenUiState(
     val isLoading: Boolean = false,
     val episode: EpisodeUiState = EpisodeUiState(),

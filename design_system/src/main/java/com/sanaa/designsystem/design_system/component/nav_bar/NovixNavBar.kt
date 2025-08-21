@@ -51,7 +51,6 @@ fun NavBar(
     }
 }
 
-
 @PreviewLightDark
 @Composable
 private fun PreviewNovixNavBar() {
@@ -103,5 +102,4 @@ private fun PreviewNovixNavBar() {
             }
         }
     }
-
 }

@@ -3,12 +3,8 @@ package com.sanaa.presentation.screen.compnents
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -18,13 +14,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.sanaa.designsystem.design_system.component.text.AppText
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.feature.category.presentation.R
 import com.sanaa.presentation.state.CategoryUiState
 
 val boxOverlayBackgroundColor = Brush.horizontalGradient(
@@ -46,7 +39,7 @@ fun CategoryCard(
 
     Box(
         modifier = modifier
-            .aspectRatio(160/68f)
+            .aspectRatio(160 / 68f)
             .border(
                 width = 1.dp, color = Theme.colors.stroke, shape = RoundedCornerShape(12.dp)
             )

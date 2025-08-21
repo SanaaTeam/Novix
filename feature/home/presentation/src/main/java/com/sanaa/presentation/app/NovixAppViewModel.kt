@@ -26,7 +26,6 @@ class NovixAppViewModel @Inject constructor(
     private val _state = MutableStateFlow(NovixAppUiState())
     val state = _state.asStateFlow()
 
-
     init {
         refreshListData()
         fetchUserPreference()
@@ -61,7 +60,6 @@ class NovixAppViewModel @Inject constructor(
                     updateState { copy(safeContentThreshold = threshold) }
                 }
             }
-
         }
     }
 
