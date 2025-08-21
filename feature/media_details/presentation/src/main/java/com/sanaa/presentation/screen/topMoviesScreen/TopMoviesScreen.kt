@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen.topMoviesScreen
 
-import androidx.activity.compose.BackHandler
+import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
@@ -50,50 +50,22 @@ import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TopMoviesScreen(
     viewModel: TopMoviesScreenViewModel = hiltViewModel(),
 ) {
-    val navController = LocalNavControllerProvider.current
-    BackHandler(onBack = { navController.popBackStack() })
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val context = LocalContext.current
-    val authApi = EntryPointAccessors
-        .fromApplication(context, DetailsApiEntryPoint::class.java)
-        .authenticationApi()
-
-    val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val selectedMedia = uiState.selectedMediaToSave
-
+    TopMoviesEffectsHandler(effects = viewModel.effect)
     TopMoviesContent(
-        state = uiState,
+        state = state,
         modifier = Modifier.fillMaxSize(),
         interactionListener = viewModel,
-        navController = navController,
     )
-
-    RequestToLoginBottomSheet(
-        isVisible = uiState.showLoginBottomSheet,
-        onDismiss = viewModel::onDismissBottomSheet,
-        onLoginButtonClick = {
-            authApi.launch(context, AuthStartRoute.Login)
-        }
-    )
-
-    SaveToListBottomSheet(
-        isVisible = uiState.showSaveToListBottomSheet,
-        mediaId = selectedMedia?.id ?: 0,
-        onDismiss = viewModel::onDismissSaveToListBottomSheet,
-        onCreateNewListClick = viewModel::onCreateNewListClick,
-    )
-
-    AddBookmarkListBottomSheet(
-        isVisible = uiState.showAddListBottomSheet,
-        onDismiss = viewModel::onDismissAddListBottomSheet,
-    )
-
 }
 
 
@@ -102,7 +74,6 @@ private fun TopMoviesContent(
     state: TopMoviesScreenUiState,
     modifier: Modifier = Modifier,
     interactionListener: TopMoviesScreenInteractionListener,
-    navController: NavController,
 ) {
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
@@ -121,7 +92,7 @@ private fun TopMoviesContent(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = designR.drawable.icon_back),
-                        onClick = { navController.popBackStack() }
+                        onClick = interactionListener::onBackClick
                     )
                 },
                 screenTitle = stringResource(R.string.top_movie_picks),
@@ -196,9 +167,8 @@ private fun TopMoviesContent(
                                                 onClick = { interactionListener.onSaveClicked(movie) }
                                             )
                                         },
-                                        onCardClick = {
-                                            navController.navigate(MovieDetailsScreenRoute(movie.id))
-                                        })
+                                        onCardClick = { interactionListener.onMovieClick(movie.id) }
+                                    )
                                 }
                             }
                         }
@@ -207,5 +177,52 @@ private fun TopMoviesContent(
             }
         }
     }
+    RequestToLoginBottomSheet(
+        isVisible = state.showLoginBottomSheet,
+        onDismiss = interactionListener::onDismissLoginBottomSheet,
+        onLoginButtonClick = interactionListener::onLoginButtonClick
+    )
+
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0,
+        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionListener::onCreateNewListClick,
+    )
+
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+    )
 }
 
+@Composable
+private fun TopMoviesEffectsHandler(
+    effects: Flow<TopMoviesScreenEffect>,
+) {
+    val navController = LocalNavControllerProvider.current
+    val context = LocalContext.current
+
+    val authApi = EntryPointAccessors
+        .fromApplication(
+            context, DetailsApiEntryPoint::class.java
+        ).authenticationApi()
+
+    LaunchedEffect(Unit) {
+        effects.collectLatest { effect ->
+            when (effect) {
+                TopMoviesScreenEffect.NavigateBack -> if (!navController.popBackStack()) {
+                    (navController.context as Activity).finish()
+                }
+
+                is TopMoviesScreenEffect.NavigateToMovieDetails -> navController.navigate(
+                    MovieDetailsScreenRoute(effect.id)
+                )
+
+                TopMoviesScreenEffect.NavigateToLogin -> {
+                    authApi.launch(context, AuthStartRoute.Login)
+                }
+            }
+        }
+    }
+}
