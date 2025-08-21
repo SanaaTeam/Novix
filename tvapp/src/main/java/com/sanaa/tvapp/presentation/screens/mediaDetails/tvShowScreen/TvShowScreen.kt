@@ -178,7 +178,8 @@ fun TvShowScreenContent(
                             DetailsHeaderSection(
                                 backgroundImageUrl = state.backgroundImageUrl,
                                 title = state.tvShows.title,
-                            ) {
+                            )
+                            {
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -252,7 +253,6 @@ fun TvShowScreenContent(
                                 onClick = interactionListener::onSeasonNumberClicked,
                                 seasonCounts = state.tvShows.seasonsCount,
                                 currentSeason = state.selectedSeason,
-                                modifier = Modifier.padding(horizontal = 36.dp)
                             )
                             AnimatedContent(state.isLoadingEpisodes) { isLoadingEpisodes ->
                                 if (isLoadingEpisodes) {
