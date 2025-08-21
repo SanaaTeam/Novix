@@ -38,6 +38,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     init {
         fetchMovieDetails(movieId)
+        updateUserLoginState()
     }
 
 
@@ -161,10 +162,6 @@ class MovieDetailsViewModel @Inject constructor(
             },
             onError = { },
         )
-    }
-
-    fun updateUserStatus() {
-        tryToExecute(block = ::updateUserLoginState)
     }
 
 
