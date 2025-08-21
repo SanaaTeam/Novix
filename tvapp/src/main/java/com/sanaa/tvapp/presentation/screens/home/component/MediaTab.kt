@@ -22,6 +22,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.tv.material3.Text
@@ -30,6 +31,7 @@ import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import com.sanaa.designsystem.R as dosingSystemResource
+import androidx.compose.ui.platform.LocalLayoutDirection
 
 
 data class MediaTabItem(
@@ -45,6 +47,7 @@ fun MediaTab(
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
+    val layoutDirection = LocalLayoutDirection.current
 
     var selectedTab by remember {
         mutableIntStateOf(0)
@@ -65,23 +68,46 @@ fun MediaTab(
         modifier = Modifier
             .focusable(enabled = true, interactionSource)
             .padding(top = 12.dp, start = sidePaddings, end = sidePaddings)
-            .handleDPadKeyEvents(onLeft = {
-                if (selectedTab != 0) {
-                    selectedTab -= 1
-                    tabs[selectedTab].onFocus()
-                }else{
-                    focusManager.moveFocus(FocusDirection.Left)
+            .handleDPadKeyEvents(
+                onLeft = {
+                    if (layoutDirection == LayoutDirection.Ltr) {
+                        if (selectedTab != 0) {
+                            selectedTab--
+                            tabs[selectedTab].onFocus()
+                        } else {
+                            focusManager.moveFocus(FocusDirection.Left)
+                        }
+                    } else {
+                        if (selectedTab != tabs.lastIndex) {
+                            selectedTab++
+                            tabs[selectedTab].onFocus()
+                        } else {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                    }
+                },
+                onRight = {
+                    if (layoutDirection == LayoutDirection.Ltr) {
+                        if (selectedTab != tabs.lastIndex) {
+                            selectedTab++
+                            tabs[selectedTab].onFocus()
+                        } else {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                    } else {
+                        if (selectedTab != 0) {
+                            selectedTab--
+                            tabs[selectedTab].onFocus()
+                        } else {
+                            focusManager.moveFocus(FocusDirection.Left)
+                        }
+                    }
                 }
-            }, onRight = {
-                if (selectedTab != tabs.lastIndex) {
-                    selectedTab += 1
-                    tabs[selectedTab].onFocus()
-                }else{
-                    focusManager.moveFocus(FocusDirection.Down)
-                }
-            }),
+            ),
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             tabs.forEachIndexed { index, tabItem ->
                 Column {
                     val isSelected = selectedTab == index
