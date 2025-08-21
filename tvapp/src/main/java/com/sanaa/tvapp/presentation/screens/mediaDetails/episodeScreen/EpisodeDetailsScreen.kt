@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.episodeScreen
 
+import android.content.Context
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -56,6 +58,24 @@ fun EpisodeDetailsScreen(
     val navController = LocalAppNavController.current
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
+    EffectHandler(viewModel, navController, context)
+    Box(modifier = Modifier.systemBarsPadding()) {
+        EpisodeDetailsScreenContent(
+            interactionListener = viewModel, state = state.value
+        )
+        NovixAnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null }
+        )
+    }
+}
+
+@Composable
+private fun EffectHandler(
+    viewModel: EpisodeDetailsScreenViewModel,
+    navController: NavHostController,
+    context: Context
+) {
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
             when (it) {
@@ -77,18 +97,10 @@ fun EpisodeDetailsScreen(
                 }
 
                 EpisodeDetailsEffects.NavigateToLogin -> {
+
                 }
             }
         }
-    }
-    Box(modifier = Modifier.systemBarsPadding()) {
-        EpisodeDetailsScreenContent(
-            interactionListener = viewModel, state = state.value
-        )
-        NovixAnimatedSnackBarHost(
-            data = snack,
-            onDismiss = { snack = null }
-        )
     }
 }
 
@@ -103,7 +115,6 @@ private fun EpisodeDetailsScreenContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-
             AnimatedContent(
                 targetState = state.isLoading || state.noInternetConnection,
                 modifier = Modifier.align(Alignment.Center),
@@ -133,7 +144,8 @@ private fun EpisodeDetailsScreenContent(
                                     R.string.episode_number,
                                     state.episode.number
                                 ) + " - ${state.episode.title}",
-                            ) {
+                            )
+                            {
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -193,7 +205,9 @@ private fun EpisodeDetailsScreenContent(
                                 CastSlider(
                                     cast = state.guestOfHonor,
                                     title = stringResource(R.string.guest_of_honor),
-                                    onActorCardClicked = {}
+                                    onActorCardClicked = {
+
+                                    }
                                 )
                             }
                         }
