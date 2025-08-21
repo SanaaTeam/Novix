@@ -6,7 +6,8 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiMod
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-data class MovieDetailsScreenUiState(
+data class
+MovieDetailsScreenUiState(
     val isLoading: Boolean = true,
     val movieDetails: MovieDetailsUiModel = MovieDetailsUiModel(),
     val errorMessage: String? = null,

@@ -9,4 +9,11 @@ interface TvShowScreenInteractionListener {
     fun onPlayTrailerClicked()
     fun onGenreClicked(genre: GenreUiModel)
     fun onRetryLoadDetails()
+    fun onRateMovieClick()
+    fun onRatingChange(rating:Int)
+    fun onDismissRateDialog()
+    fun onSummitRateClick()
+    fun onLoginButtonClick()
+    fun onDismissLoginBottomSheet()
+
 }
