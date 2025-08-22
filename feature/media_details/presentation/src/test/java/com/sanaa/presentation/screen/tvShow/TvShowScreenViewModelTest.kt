@@ -222,7 +222,7 @@ class TvShowScreenViewModelTest {
         viewModel.onRatingChanged(newRating)
 
         // Then
-        assertThat(viewModel.state.value.imdbRating).isEqualTo(newRating)
+        assertThat(viewModel.state.value.filledStarsCount).isEqualTo(newRating)
     }
 
     @Test
