@@ -28,7 +28,6 @@ class MyAccountScreenViewModel @Inject constructor(
         fetchLanguage()
         fetchContentRestriction()
         checkUserLoggedIn()
-        fetchUserData()
         loadSavedLang()
     }
 
@@ -48,7 +47,7 @@ class MyAccountScreenViewModel @Inject constructor(
         if (state.value.savedContentRestriction?.name == state.value.selectedContentRestriction?.name)
             return
 
-        tryToExecute(block = { saveContentRestriction() })
+        tryToExecute(block =:: saveContentRestriction)
     }
 
     override fun onLoginButtonClick() {
@@ -56,12 +55,21 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     override fun onLogoutButtonClick() {
+        updateState { copy(showLogoutDialog = true) }
+    }
+
+    override fun onConfirmLogoutButtonClick() {
         tryToExecute(
             block = logOutUseCase::logout,
             onSuccess = {
-                emitEffect(MyAccountScreenEffect.Recreate)
+                updateState { copy(showLogoutDialog = false) }
+                emitEffect(MyAccountScreenEffect.NavigateToLogin)
             }
         )
+    }
+
+    override fun onDismissLogoutDialog() {
+        updateState { copy(showLogoutDialog = false) }
     }
 
     private fun fetchLanguage() {
@@ -119,6 +127,7 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private fun onCheckUserLoginSuccess(isLogged: Boolean) {
+        if (isLogged)   fetchUserData()
         updateState { copy(isUserLoggedIn = isLogged) }
     }
 
