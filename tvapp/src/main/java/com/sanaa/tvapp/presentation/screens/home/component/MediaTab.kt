@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -22,6 +24,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -30,9 +33,9 @@ import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
+import com.sanaa.tvapp.presentation.screens.searchScreen.SearchTvScreenUiState
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import com.sanaa.designsystem.R as dosingSystemResource
-
 
 data class MediaTabItem(
     val title: String,
@@ -40,18 +43,11 @@ data class MediaTabItem(
 )
 
 @Composable
-fun MediaTab(
+fun HomeTaps(
+    modifier: Modifier = Modifier,
     sidePaddings: Dp,
     navController: NavHostController,
 ) {
-    val focusManager = LocalFocusManager.current
-    val interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
-    val layoutDirection = LocalLayoutDirection.current
-
-    var selectedTab by remember {
-        mutableIntStateOf(0)
-    }
 
     val tabs = listOf(
         MediaTabItem(
@@ -64,12 +60,115 @@ fun MediaTab(
         ),
     )
 
+    MediaTab(
+        tabs = tabs,
+        sidePaddings = sidePaddings,
+        textStyle = Theme.textStyle.title.medium
+    )
+}
+
+@Composable
+fun SearchTaps(
+    modifier: Modifier = Modifier,
+    sidePaddings: Dp,
+    onFocus: (Int) -> Unit,
+) {
+    val tabs = listOf(
+        MediaTabItem(
+            title = stringResource(dosingSystemResource.string.movies),
+            onFocus = { onFocus(SearchTvScreenUiState.MOVIE_INDEX) }
+        ),
+        MediaTabItem(
+            title = stringResource(dosingSystemResource.string.tv_shows),
+            onFocus = { onFocus(SearchTvScreenUiState.TV_SHOW_INDEX) }
+        ),
+        MediaTabItem(
+            title = stringResource(dosingSystemResource.string.actors),
+            onFocus = { onFocus(SearchTvScreenUiState.ACTOR_INDEX) }
+        ),
+    )
+
+    MediaTab(
+        modifier = modifier,
+        tabs = tabs,
+        sidePaddings = sidePaddings,
+        textStyle = Theme.textStyle.label.medium
+    )
+}
+
+@Composable
+fun GenreTaps(
+    sidePaddings: Dp = 0.dp,
+    onFocus: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val tabs = listOf(
+        MediaTabItem(
+            title = stringResource(dosingSystemResource.string.movies),
+            onFocus = { onFocus(0) }
+        ),
+        MediaTabItem(
+            title = stringResource(dosingSystemResource.string.tv_shows),
+            onFocus = { onFocus(1) }
+        ),
+    )
+
+    MediaTab(
+        modifier = modifier,
+        tabs = tabs,
+        sidePaddings = sidePaddings,
+        textStyle = Theme.textStyle.label.medium,
+    )
+}
+
+@Composable
+fun MediaTab(
+    textStyle: TextStyle,
+    tabs: List<MediaTabItem>,
+    sidePaddings: Dp,
+    modifier: Modifier = Modifier,
+) {
+    val focusManager = LocalFocusManager.current
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    var alreadyFocused by remember {
+        mutableStateOf(false)
+    }
+    val layoutDirection = LocalLayoutDirection.current
+
+    var selectedTab by remember {
+        mutableIntStateOf(0)
+    }
+
+    LaunchedEffect(isFocused) {
+        if (isFocused.not())
+            alreadyFocused = isFocused
+    }
+
     Box(
-        modifier = Modifier
+        modifier = modifier
             .focusable(enabled = true, interactionSource)
-            .padding(top = 12.dp, start = sidePaddings, end = sidePaddings)
+            .padding(start = sidePaddings, end = sidePaddings)
             .handleDPadKeyEvents(
+                onUp = {
+                    if (alreadyFocused.not()) {
+                        alreadyFocused = true
+                        return@handleDPadKeyEvents
+                    }
+                    focusManager.moveFocus(FocusDirection.Up)
+                },
+                onDown = {
+                    if (alreadyFocused.not()) {
+                        alreadyFocused = true
+                        return@handleDPadKeyEvents
+                    }
+                    focusManager.moveFocus(FocusDirection.Down)
+                },
                 onLeft = {
+                    if (alreadyFocused.not()) {
+                        alreadyFocused = true
+                        return@handleDPadKeyEvents
+                    }
                     if (layoutDirection == LayoutDirection.Ltr) {
                         if (selectedTab != 0) {
                             selectedTab--
@@ -87,6 +186,11 @@ fun MediaTab(
                     }
                 },
                 onRight = {
+                    if (alreadyFocused.not()) {
+                        alreadyFocused = true
+                        return@handleDPadKeyEvents
+                    }
+
                     if (layoutDirection == LayoutDirection.Ltr) {
                         if (selectedTab != tabs.lastIndex) {
                             selectedTab++
@@ -127,10 +231,13 @@ fun MediaTab(
                                         RoundedCornerShape(100.dp)
                                     ) else Modifier
                             )
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                            .padding(
+                                horizontal = 24.dp,
+                                vertical = 8.dp
+                            ),
                         text = tabItem.title,
                         color = if (isSelected) Theme.colors.onPrimary else Theme.colors.title,
-                        style = Theme.textStyle.title.medium
+                        style = textStyle,
                     )
                 }
             }

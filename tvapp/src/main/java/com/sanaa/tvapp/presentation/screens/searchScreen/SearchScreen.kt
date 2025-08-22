@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,7 +22,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.screens.home.component.SearchTaps
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.MovieTvContent
@@ -32,7 +31,6 @@ import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvEmptySearchContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvErrorStateContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvShowTvContent
-import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvTabs
 import com.sanaa.tvapp.presentation.screens.sharedComponents.TvLoadingIndicator
 
 
@@ -125,17 +123,10 @@ fun SearchScreenContent(
             },
         )
 
-        TvTabs(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp, start = 36.dp),
-            categories = listOf(
-                stringResource(R.string.movies),
-                stringResource(R.string.tv_shows),
-                stringResource(R.string.actors)
-            ),
-            selectedIndex = uiState.selectedTabIndex,
-            onCategorySelected = searchListener::onTabSelected
+        SearchTaps(
+            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+            sidePaddings = 36.dp,
+            { searchListener.onTabSelected(it) }
         )
 
         when (uiState.selectedTabIndex) {

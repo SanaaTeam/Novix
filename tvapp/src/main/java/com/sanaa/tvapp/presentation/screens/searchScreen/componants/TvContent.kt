@@ -15,7 +15,7 @@ fun TvContent(
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(20.dp),
-        contentPadding = PaddingValues(horizontal = 36.dp, vertical = 24.dp)
+        contentPadding = PaddingValues(horizontal = 36.dp, vertical = 12.dp)
     ) {
         items(actors.itemCount) { index ->
             actors[index]?.let { actor ->

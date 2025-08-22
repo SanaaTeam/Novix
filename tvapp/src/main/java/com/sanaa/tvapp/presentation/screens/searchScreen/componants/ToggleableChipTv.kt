@@ -4,7 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
@@ -27,7 +27,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun ToggleableChipTv(
     text: String,
-    onClick: () -> Unit,
+    onFocusChanged: () -> Unit = {},
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
     animateWidth: Boolean = true,
@@ -57,21 +57,20 @@ fun ToggleableChipTv(
         modifier = modifier
             .onFocusChanged { focusState ->
                 isFocused = focusState.isFocused
+                onFocusChanged()
             }
             .background(
                 color = animateBackgroundColor,
                 shape = RoundedCornerShape(100.dp)
             )
             .border(
-                width = 3.dp,
+                width = 2.dp,
                 color = borderColor,
                 shape = RoundedCornerShape(100.dp)
             )
             .height(37.dp)
-            .clickable(
-                onClick = onClick,
-                onClickLabel = text,
-                indication = null,
+            .focusable(
+                enabled = true,
                 interactionSource = remember { MutableInteractionSource() }
             )
             .padding(horizontal = animatedHorizontalPadding, vertical = 8.dp),
@@ -90,7 +89,6 @@ fun ToggleableChipTv(
 fun PreviewToggleableChip_NotSelected() {
     ToggleableChipTv(
         text = "Category",
-        onClick = {},
         isSelected = false
     )
 }
@@ -100,7 +98,6 @@ fun PreviewToggleableChip_NotSelected() {
 fun PreviewToggleableChip_Selected() {
     ToggleableChipTv(
         text = "Category",
-        onClick = {},
         isSelected = true
     )
 }

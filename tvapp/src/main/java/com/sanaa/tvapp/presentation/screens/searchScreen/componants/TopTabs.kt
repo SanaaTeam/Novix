@@ -28,7 +28,7 @@ fun TvTabs(
             ToggleableChipTv(
                 text = title,
                 isSelected = selectedIndex == index,
-                onClick = { onCategorySelected(index) }
+                onFocusChanged = { onCategorySelected(index) }
             )
         }
     }
