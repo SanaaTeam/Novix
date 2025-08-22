@@ -364,7 +364,8 @@ class HomeScreenViewModelTest {
             posterImageUrl = "",
             mediaType = MediaType.MOVIE,
             genres = emptyList(),
-            lastWatchedAt = 0L
+            lastWatchedAt = 0L,
+            title = "Dummy Movie",
         )
     }
 }
