@@ -154,6 +154,14 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
+    override fun onSimilarMovieClick(movieId: Int) {
+        emitEffect(MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails(movieId))
+    }
+
+    override fun onActorCardClick(actorId: Int) {
+        emitEffect(MovieDetailsScreenUiEffect.NavigateToActorScreen(actorId))
+    }
+
     private fun updateUserLoginState() {
         tryToCollect(
             block = { checkUserLogin.isLoggedIn() },

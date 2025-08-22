@@ -3,6 +3,7 @@ package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
 import androidx.paging.PagingData
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.ActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
+import com.sanaa.tvapp.state.SnackData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -20,4 +21,5 @@ MovieDetailsScreenUiState(
     val isRatingSubmitted: Boolean = false,
     val showRateDialog: Boolean = false,
     val showLoginDialog: Boolean = false,
-)
+    val snackBarData: SnackData? = null,
+    )

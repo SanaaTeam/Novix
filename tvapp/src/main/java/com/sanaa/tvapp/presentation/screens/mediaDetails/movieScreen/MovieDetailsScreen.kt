@@ -1,8 +1,12 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Text
@@ -53,11 +58,11 @@ import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetailsRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
 import com.sanaa.tvapp.state.SnackData
+import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
 fun MovieDetailsScreen(
-    modifier: Modifier = Modifier,
     viewModel: MovieDetailsViewModel = hiltViewModel(),
 ) {
     var snack by remember { mutableStateOf<SnackData?>(null) }
@@ -73,34 +78,9 @@ fun MovieDetailsScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect {
-            when (it) {
-                is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(
-                    ActorDetailsRoute(it.actorId)
-                )
+    MovieDetailsEffectsHandler(viewModel, navController, context, loginLauncher)
 
-                is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> navController.navigate(
-                    MovieDetailsRoute(it.movieId)
-                )
-
-                MovieDetailsScreenUiEffect.NavigateToLogin -> {
-                    val intent = Intent(context, LoginActivity::class.java)
-                    loginLauncher.launch(intent)
-                }
-
-                is MovieDetailsScreenUiEffect.OpenTrailer -> {
-                    val intent = Intent(Intent.ACTION_VIEW, it.url?.toUri())
-                    context.startActivity(intent)
-                }
-
-                MovieDetailsScreenUiEffect.ShowErrorSnackBar -> TODO()
-                MovieDetailsScreenUiEffect.ShowSuccessSnackBar -> TODO()
-            }
-        }
-    }
-
-    Box(modifier = modifier.systemBarsPadding()) {
+    Box(modifier = Modifier.systemBarsPadding()) {
         MovieDetailsContent(
             state = state.value,
             interactionListener = viewModel
@@ -113,15 +93,46 @@ fun MovieDetailsScreen(
 }
 
 @Composable
+private fun MovieDetailsEffectsHandler(
+    viewModel: MovieDetailsViewModel,
+    navController: NavHostController,
+    context: Context,
+    loginLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>
+) {
+    LaunchedEffect(Unit) {
+        viewModel.effect.collectLatest {
+            when (it) {
+                is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(
+                    ActorDetailsRoute(it.actorId)
+                )
+
+                is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> {
+                    navController.navigate(MovieDetailsRoute(it.movieId))
+                }
+
+                MovieDetailsScreenUiEffect.NavigateToLogin -> {
+                    val intent = Intent(context, LoginActivity::class.java)
+                    loginLauncher.launch(intent)
+                }
+
+                is MovieDetailsScreenUiEffect.OpenTrailer -> {
+                    val intent = Intent(Intent.ACTION_VIEW, it.url?.toUri())
+                    context.startActivity(intent)
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun MovieDetailsContent(
     state: MovieDetailsScreenUiState,
     interactionListener: MovieDetailsViewModel,
-    modifier: Modifier = Modifier,
 ) {
     val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> =
         state.similarMovies.collectAsLazyPagingItems()
-    val navController = LocalAppNavController.current
-    NovixScaffold(modifier = modifier) {
+
+    NovixScaffold(modifier = Modifier) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -226,16 +237,12 @@ fun MovieDetailsContent(
                             if (state.cast.isNotEmpty()) {
                                 CastSlider(
                                     cast = state.cast,
-                                    onActorCardClicked = { id ->
-                                        navController.navigate(ActorDetailsRoute(id))
-                                    }
+                                    onActorCardClicked = interactionListener::onActorCardClick
                                 )
                             }
                             SimilarMoviesSlider(
                                 moviesPagingData = moviesPagingData,
-                                onMovieCardClicked = { id ->
-                                    navController.navigate(MovieDetailsRoute(id))
-                                }
+                                onMovieCardClicked = interactionListener::onSimilarMovieClick
                             )
                         }
 
