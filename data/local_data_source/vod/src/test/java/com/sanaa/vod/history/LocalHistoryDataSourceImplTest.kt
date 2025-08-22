@@ -102,6 +102,7 @@ class LocalHistoryDataSourceImplTest {
             mediaType = "test mediaType",
             username = "username",
             genres = "",
+            title = "title",
         )
         // When
         dataSource.insertWatchedMediaHistory(watchedMedia)

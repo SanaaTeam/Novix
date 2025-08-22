@@ -278,6 +278,7 @@ class HistoryRepositoryImplTest {
                 mediaType = MediaType.MOVIE.name,
                 username = "zack",
                 genres = "11,12",
+                title = "title",
             ),
             WatchedMediaHistoryLocalDto(
                 id = 2,
@@ -285,6 +286,7 @@ class HistoryRepositoryImplTest {
                 mediaType = MediaType.TV_SHOW.name,
                 username = "mark",
                 genres = "15,20",
+                title = "title",
             )
         )
 
@@ -293,7 +295,8 @@ class HistoryRepositoryImplTest {
             posterImageUrl = "imageUrl1",
             mediaType = MediaType.MOVIE,
             genres = emptyList(),
-            lastWatchedAt = 1L
+            lastWatchedAt = 1L,
+            title = "title",
         )
     }
 }
