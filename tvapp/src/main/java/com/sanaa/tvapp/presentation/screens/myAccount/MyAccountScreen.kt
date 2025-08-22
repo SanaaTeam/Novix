@@ -277,39 +277,6 @@ private fun MyAccountScreenContent(
 }
 
 @Composable
-fun MyAccountMovies(
-    state: MyAccountScreenUiState,
-    onItemClick: (Int) -> Unit,
-) {
-    Column {
-        if (state.watchingHistoryMovies.isNotEmpty()) {
-            MediaSection(title = stringResource(tvResource.string.watching_history)) {
-                items(items = state.watchingHistoryMovies, key = { it.id }) {
-                    FocusableMediaCard(
-                        imageUrl = it.imageUrl ?: "",
-                        titleText = it.title,
-                        onClick = { onItemClick(it.id) }
-                    )
-                }
-            }
-        }
-
-        if (state.myRatingMovies.isNotEmpty()) {
-            MediaSection(title = stringResource(designSystemResource.string.my_rating)) {
-                items(items = state.myRatingMovies, key = { it.id }) {
-                    FocusableMediaCard(
-                        imageUrl = it.imageUrl ?: "",
-                        titleText = it.title,
-                        onClick = { onItemClick(it.id) }
-                    )
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
 fun MyAccountMediaTab(
     state: MyAccountScreenUiState,
     navController: NavHostController,
