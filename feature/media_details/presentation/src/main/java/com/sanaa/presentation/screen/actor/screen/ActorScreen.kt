@@ -162,7 +162,7 @@ private fun ActorScreenContent(
     }
     RequestToLoginBottomSheet(
         isVisible = state.showLoginBottomSheet,
-        onDismiss = interactionListener::onDismissBottomSheet,
+        onDismiss = interactionListener::onDismissLoginBottomSheet,
         onLoginButtonClick = interactionListener::onLoginButtonClick
     )
 

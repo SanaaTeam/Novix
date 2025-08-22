@@ -258,7 +258,7 @@ private fun HomeScreenContent(
     }
     SaveToListBottomSheet(
         isVisible = state.showSaveToListBottomSheet,
-        mediaId = state.selectedMediaToSave?.id ?: 0,
+        mediaId = state.selectedMediaToSaveId ?: 0,
         onDismiss = interactionListener::onDismissSaveToListBottomSheet,
         onCreateNewListClick = interactionListener::onCreateNewListClick,
     )

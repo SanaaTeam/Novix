@@ -74,6 +74,14 @@ class HomeScreenViewModel @Inject constructor(
             fetchWatchedMediaData()
             updateState { copy(userIsLoggedIn = isLogged) }
         }
+        if (isLogged && state.value.showLoginBottomSheet) {
+            updateState {
+                copy(
+                    showLoginBottomSheet = false,
+                    showSaveToListBottomSheet = true,
+                )
+            }
+        }
     }
 
     private fun fetchPopularMediaData() {
@@ -234,17 +242,11 @@ class HomeScreenViewModel @Inject constructor(
 
     override fun onSaveIconClick(media: MediaItemUiState) {
         if (state.value.userIsLoggedIn.not()) {
-            updateState { copy(showLoginBottomSheet = true) }
+            updateState { copy(showLoginBottomSheet = true, selectedMediaToSaveId = media.id) }
             return
         }
 
-        updateState {
-            copy(
-                showSaveToListBottomSheet = true,
-                selectedMediaId = media.id.toLong(),
-                selectedMediaToSave = media
-            )
-        }
+        updateState { copy(showSaveToListBottomSheet = true, selectedMediaToSaveId = media.id)        }
     }
 
     override fun onDismissLoginBottomSheet() {
@@ -258,7 +260,8 @@ class HomeScreenViewModel @Inject constructor(
     override fun onSaveToListSuccess() {
         updateState {
             copy(
-                snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false)
+                snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false),
+                showSaveToListBottomSheet = false
             )
         }
     }

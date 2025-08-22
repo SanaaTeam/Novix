@@ -38,4 +38,7 @@
     <string name="failed_to_create_list">فشل في إنشاء القائمة</string>
     <string name="added_to_list_successfully">تمت الإضافة إلى القائمة بنجاح</string>
     <string name="added_to_list_failed">فشلت الإضافة إلى القائمة</string>
+
+    <string name="list_items_count">%s عناصر</string>
+
 </resources>

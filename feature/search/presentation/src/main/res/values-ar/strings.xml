@@ -9,4 +9,7 @@
     <string name="actors">الممثلين</string>
     <string name="error_general_title">عذرًا! حدث خطأ.</string>
     <string name="error_general_message">تحقق من الاتصال وحاول مرة أخرى، نحن بانتظارك مع الأفلام والفشار</string>
+
+    <string name="list_items_count">%s عناصر</string>
+
 </resources>

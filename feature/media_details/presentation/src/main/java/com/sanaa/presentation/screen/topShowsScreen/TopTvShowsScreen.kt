@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen.topShowsScreen
 
-import androidx.activity.compose.BackHandler
+import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,18 +15,16 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
@@ -40,41 +38,26 @@ import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.model.TvShowUiState
-import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.TvShowScreenRoute
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
-import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
-import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TopTvShowsScreen(
     viewModel: TopTvShowsScreenViewModel = hiltViewModel(),
 ) {
-    val navController = LocalNavControllerProvider.current
-    BackHandler(onBack = { navController.popBackStack() })
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val context = LocalContext.current
-    val authApi = EntryPointAccessors
-        .fromApplication(context, DetailsApiEntryPoint::class.java)
-        .authenticationApi()
-    val uiState by viewModel.state.collectAsStateWithLifecycle()
+    TopTvShowsEffectsHandler(viewModel.effect)
 
     TopShowsContent(
-        state = uiState,
-        navController = navController,
+        state = state,
         interactionListener = viewModel
-    )
-
-    RequestToLoginBottomSheet(
-        isVisible = uiState.showLoginBottomSheet,
-        onDismiss = viewModel::onDismissBottomSheet,
-        onLoginButtonClick = {
-            authApi.launch(context, AuthStartRoute.Login)
-        }
     )
 }
 
@@ -82,7 +65,6 @@ fun TopTvShowsScreen(
 private fun TopShowsContent(
     state: TopTvShowsScreenUiState,
     interactionListener: TopTvShowsScreenInteractionListener,
-    navController: NavHostController,
 ) {
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
@@ -103,7 +85,7 @@ private fun TopShowsContent(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = designR.drawable.icon_back),
-                        onClick = { navController.popBackStack() }
+                        onClick = interactionListener::onBackClick
                     )
                 },
                 screenTitle = stringResource(R.string.top_tv_shows_picks),
@@ -135,7 +117,7 @@ private fun TopShowsContent(
                         }
 
                         else -> {
-                            TvShowList(state, navController)
+                            TvShowList(state, interactionListener)
                         }
                     }
                 }
@@ -147,7 +129,7 @@ private fun TopShowsContent(
 @Composable
 private fun TvShowList(
     state: TopTvShowsScreenUiState,
-    navController: NavHostController,
+    interactionListener: TopTvShowsScreenInteractionListener,
 ) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
@@ -165,9 +147,7 @@ private fun TvShowList(
                     PosterImage(tvShow)
                 },
                 onCardClick = {
-                    navController.navigate(
-                        TvShowScreenRoute(tvShow.id)
-                    )
+                    interactionListener.onTvShowClick(tvShow.id)
                 }
             )
         }
@@ -198,5 +178,26 @@ private fun PosterImage(tvShow: TvShowUiState) {
             iconSize = 24.dp,
             icon = painterResource(designR.drawable.icon_eye_slash),
         )
+    }
+}
+
+@Composable
+private fun TopTvShowsEffectsHandler(
+    effects: Flow<TopTvShowsScreenEffect>,
+) {
+    val navController = LocalNavControllerProvider.current
+
+    LaunchedEffect(Unit) {
+        effects.collectLatest { effect ->
+            when (effect) {
+                TopTvShowsScreenEffect.NavigateBack -> if (!navController.popBackStack()) {
+                    (navController.context as Activity).finish()
+                }
+
+                is TopTvShowsScreenEffect.NavigateToTvShowDetails -> navController.navigate(
+                    TvShowScreenRoute(effect.id)
+                )
+            }
+        }
     }
 }

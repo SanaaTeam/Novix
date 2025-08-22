@@ -6,7 +6,6 @@ import com.sanaa.presentation.screen.movieDetails.SnackData
 data class TopTvShowsScreenUiState(
     val topTvShows: List<TvShowUiState> = emptyList(),
     val isLoading: Boolean = false,
-    val showLoginBottomSheet: Boolean = false,
     val noInternetConnection: Boolean = false,
     val snackBarData: SnackData? = null
 )
