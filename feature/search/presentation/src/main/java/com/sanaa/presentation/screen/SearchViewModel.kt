@@ -64,7 +64,7 @@ class SearchViewModel @Inject constructor(
         observeRecentSearchHistory()
         observeSelectedTheme()
         observeContentRestriction()
-        getUserState()
+        updateUserLoggedInState()
     }
 
     override fun onSearchQueryChanged(query: String) {
@@ -99,22 +99,16 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onLoginButtonClick() {
-        updateState { copy(showLoginBottomSheet = false) }
         emitEffect(SearchScreenEffects.NavigateToLogin)
     }
 
 
     override fun onSaveIconClick(id: Int) {
         if (!state.value.isUserLoggedIn) {
-            updateState { copy(showLoginBottomSheet = true) }
+            updateState { copy(selectedMediaToSaveId = id, showLoginBottomSheet = true) }
             return
         }
-        updateState {
-            copy(
-                showSaveToListBottomSheet = true,
-                selectedMediaToSaveId = id
-            )
-        }
+        updateState { copy(showSaveToListBottomSheet = true, selectedMediaToSaveId = id) }
     }
 
     override fun onDismissSaveToListBottomSheet() {
@@ -450,7 +444,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun getUserState() {
+    private fun updateUserLoggedInState() {
         tryToCollect(
             block = { checkUserLogin.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
@@ -458,6 +452,14 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged && state.value.showLoginBottomSheet) {
+            updateState {
+                copy(
+                    showLoginBottomSheet = false,
+                    showSaveToListBottomSheet = true,
+                )
+            }
+        }
         updateState { copy(isUserLoggedIn = isLogged) }
     }
 

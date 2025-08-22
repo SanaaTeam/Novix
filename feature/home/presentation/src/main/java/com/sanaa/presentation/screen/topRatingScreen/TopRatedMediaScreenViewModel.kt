@@ -52,6 +52,14 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged && state.value.showLoginBottomSheet) {
+            updateState {
+                copy(
+                    showLoginBottomSheet = false,
+                    showSaveToListBottomSheet = true,
+                )
+            }
+        }
         updateState { copy(userIsLoggedIn = isLogged) }
     }
 
@@ -154,7 +162,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         updateState {
             copy(
                 showSaveToListBottomSheet = true,
-                selectedMediaToSave = media
+                selectedMediaToSaveId = media.id
             )
         }
     }
@@ -162,7 +170,8 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     override fun onSaveToListSuccess() {
         updateState {
             copy(
-                snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false)
+                snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false),
+                showSaveToListBottomSheet = false
             )
         }
     }
@@ -175,7 +184,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
 
     override fun onDismissSaveToListBottomSheet() {
-        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSaveId = null) }
     }
 
     override fun onCreateNewListClick() {

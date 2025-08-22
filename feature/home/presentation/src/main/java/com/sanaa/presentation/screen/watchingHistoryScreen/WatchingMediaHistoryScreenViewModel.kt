@@ -56,6 +56,14 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged && state.value.showLoginBottomSheet) {
+            updateState {
+                copy(
+                    showLoginBottomSheet = false,
+                    showSaveToListBottomSheet = true,
+                )
+            }
+        }
         updateState { copy(userIsLoggedIn = isLogged) }
     }
 
@@ -153,20 +161,20 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     override fun onSaveIconClick(media: MediaItemUiState) {
         if (!state.value.userIsLoggedIn) {
-            updateState { copy(showLoginBottomSheet = true) }
+            updateState { copy(showLoginBottomSheet = true, selectedMediaToSaveId = media.id) }
             return
         }
 
         updateState {
             copy(
                 showSaveToListBottomSheet = true,
-                selectedMediaToSave = media
+                selectedMediaToSaveId = media.id
             )
         }
     }
 
     override fun onDismissSaveToListBottomSheet() {
-        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSaveId = null) }
     }
 
     override fun onCreateNewListClick() {

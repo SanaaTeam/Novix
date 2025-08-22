@@ -43,7 +43,7 @@ class WatchingHistoryViewModel @Inject constructor(
     }
 
     override fun onDismissSaveToListBottomSheet() {
-        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSaveId = null) }
     }
 
     override fun onCreateNewListClick() {
@@ -88,7 +88,7 @@ class WatchingHistoryViewModel @Inject constructor(
         updateState {
             copy(
                 showSaveToListBottomSheet = true,
-                selectedMediaToSave = mediaItem
+                selectedMediaToSaveId = mediaItem.id
             )
         }
     }
