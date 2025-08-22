@@ -7,4 +7,6 @@ interface MyAccountScreenInteractionsListener {
     fun onSelectContentRestriction(contentRestriction: ContentRestrictionUiState?)
     fun onLoginButtonClick()
     fun onLogoutButtonClick()
+    fun onConfirmLogoutButtonClick()
+    fun onDismissLogoutDialog()
 }
