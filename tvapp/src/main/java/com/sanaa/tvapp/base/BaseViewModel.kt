@@ -41,11 +41,13 @@ abstract class BaseViewModel<T, E>(
     }
 
     protected fun <T> tryToExecute(
+        onStart: () -> Unit = {},
         block: suspend () -> T,
         onSuccess: (T) -> Unit = {},
         onError: (exception: Exception) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
+        onStart()
         viewModelScope.launch(dispatcher) {
             try {
                 val result = block()

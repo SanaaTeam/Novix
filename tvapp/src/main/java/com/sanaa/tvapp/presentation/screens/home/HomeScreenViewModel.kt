@@ -39,14 +39,13 @@ class HomeScreenViewModel @Inject constructor(
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
     defaultDispatcher = dispatcher
-) {
+), HomeScreenInteractionListener {
 
     init {
         updateUserLoggingStatus()
         fetchPopularMediaData()
         fetchTopRatedMovieData()
         fetchTopRatedTvShowData()
-        fetchMovieGenres()
         fetchUpcomingMovies()
         loadRatedMedia()
     }
@@ -67,68 +66,67 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun fetchPopularMediaData() {
-        updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            block = {
-                val popularMovies = manageMovieUseCase
-                    .getPopularMovies(1).map { it.toState() }
-                val popularTvSeries = manageTvShowsUseCase
-                    .getPopularTvShows(1).map { it.toState() }
-                (popularMovies + popularTvSeries).shuffled()
-            },
-            onSuccess = { popularMediaList ->
-                updateState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = null,
-                        popularMedia = popularMediaList.take(10)
-                    )
-                }
-            },
+            onStart = { updateState { copy(isLoading = true) } },
+            block = ::loadPopularMediaOperation,
+            onSuccess = ::onFetchPopularMediaSuccess,
             onError = ::onErrorLoadingData
         )
     }
 
+    private suspend fun loadPopularMediaOperation(): List<MediaItemUiState> {
+        val popularMovies = manageMovieUseCase.getPopularMovies(1).map { it.toState() }.take(5)
+        val popularTvShows = manageTvShowsUseCase.getPopularTvShows(1).map { it.toState() }.take(5)
+
+        return (popularMovies + popularTvShows).sortedByDescending { media -> media.rating }
+    }
+
+    private fun onFetchPopularMediaSuccess(mediaList: List<MediaItemUiState>) {
+        updateState {
+            copy(
+                isLoading = false,
+                isNoInternet = false,
+                popularMedia = mediaList
+            )
+        }
+    }
+
     private fun fetchTopRatedMovieData() {
-        updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            block = {
-                val topRatedMovies = manageMovieUseCase
-                    .getTopRatedMovies(1, null).map { it.toState() }
-                val topRatedTvSeries = manageTvShowsUseCase
-                    .getTopRatedTvShows(1, null).map { it.toState() }
-                (topRatedMovies + topRatedTvSeries).shuffled()
-            },
-            onSuccess = { topRatedMediaList ->
-                updateState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = null,
-                        topRatingMovies = topRatedMediaList.take(10)
-                    )
-                }
-            },
+            onStart = { updateState { copy(isLoading = true, errorMessage = null) } },
+            block = { manageMovieUseCase.getTopRatedMovies(1, null).map { it.toState() } },
+            onSuccess = ::onFetchTopRatedMoviesSuccess,
             onError = ::onErrorLoadingData,
         )
+    }
+
+    private fun onFetchTopRatedMoviesSuccess(movies: List<MediaItemUiState>) {
+        updateState {
+            copy(
+                isLoading = false,
+                errorMessage = null,
+                topRatingMovies = movies
+            )
+        }
     }
 
     private fun fetchTopRatedTvShowData() {
         updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            block = {
-                manageTvShowsUseCase.getTopRatedTvShows(1, null).map { it.toState() }
-            },
-            onSuccess = { topRatedMediaList ->
-                updateState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = null,
-                        topRatingTvShows = topRatedMediaList.take(10)
-                    )
-                }
-            },
+            block = { manageTvShowsUseCase.getTopRatedTvShows(1, null).map { it.toState() } },
+            onSuccess = ::onFetchTopRatedTvShowsSuccess,
             onError = ::onErrorLoadingData,
         )
+    }
+
+    private fun onFetchTopRatedTvShowsSuccess(tvShows: List<MediaItemUiState>) {
+        updateState {
+            copy(
+                isLoading = false,
+                errorMessage = null,
+                topRatingTvShows = tvShows
+            )
+        }
     }
 
     private fun fetchWatchedMediaData() {
@@ -154,34 +152,23 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-    private fun fetchMovieGenres() {
-        tryToExecute(
-            block = {
-                updateState {
-                    copy(isLoading = true)
-                }
-                manageMovieUseCase.getMovieGenres().map { it.toState() }
-            },
-            onSuccess = { genres ->
-                updateState {
-                    copy(movieGenres = genres, isLoading = false)
-                }
-            },
-            onError = ::onErrorLoadingData,
-        )
-    }
-
-
     private fun fetchUpcomingMovies(genreId: Int? = null) {
         tryToExecute(
+            onStart = { updateState { copy(isLoading = true) } },
             block = { loadUpcomingMovies(genreId) },
-            onSuccess = { flowWithSaved ->
-                updateState { copy(upcomingMovies = flowWithSaved) }
-            },
+            onSuccess = ::onFetchUpcomingMoviesSuccess,
             onError = ::onErrorLoadingData
         )
     }
 
+    private fun onFetchUpcomingMoviesSuccess(movies: Flow<PagingData<MediaItemUiState>>) {
+        updateState {
+            copy(
+                upcomingMovies = movies,
+                isLoading = false
+            )
+        }
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun loadWatchedMediaHistory(): Flow<List<MediaHistoryItem>> {
@@ -237,18 +224,6 @@ class HomeScreenViewModel @Inject constructor(
         )
     }
 
-    private fun loadRatedTvShows() {
-        tryToExecute(
-            block = {
-                val accountId = preferencesManager.accountId.first()
-                val sessionId = preferencesManager.sessionId.first()
-                manageTvShowsUseCase.getRatedTvShows(accountId, sessionId)
-            },
-            onSuccess = ::onLoadTvShowsSuccess,
-            onError = ::onErrorLoadingData
-        )
-    }
-
     private fun onLoadMoviesSuccess(movies: List<Movie>) {
         updateState {
             copy(
@@ -256,6 +231,14 @@ class HomeScreenViewModel @Inject constructor(
                 isLoading = false
             )
         }
+    }
+
+    private fun loadRatedTvShows() {
+        tryToExecute(
+            block = ::loadRatedTvShowsOperation,
+            onSuccess = ::onLoadTvShowsSuccess,
+            onError = ::onErrorLoadingData
+        )
     }
 
     private fun onLoadTvShowsSuccess(tvShows: List<TvShow>) {
@@ -267,11 +250,43 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    private suspend fun loadRatedTvShowsOperation(): List<TvShow> {
+        val accountId = preferencesManager.accountId.first()
+        val sessionId = preferencesManager.sessionId.first()
+        return manageTvShowsUseCase.getRatedTvShows(accountId, sessionId)
+    }
 
     private fun onErrorLoadingData(e: Throwable) {
         when (e) {
             is NoNetworkException -> updateState { copy(isNoInternet = true, isLoading = false) }
-            else -> updateState { copy(errorMessage = e.message, isLoading = false) }
+            else -> updateState {
+                copy(
+                    errorMessage = e.message,
+                    isNoInternet = false,
+                    isLoading = false
+                )
+            }
         }
+    }
+
+    override fun onMediaClick(id: Int, mediaTypeUiState: MediaTypeUiState) {
+        emitEffect(HomeScreenEffect.NavigateToMediaDetails(id, mediaTypeUiState))
+    }
+
+    override fun onTabClick(selectedTab: SelectedHomeTab) {
+        updateState { copy(selectedTab = selectedTab) }
+    }
+
+    override fun onRetryClick() {
+        updateUserLoggingStatus()
+        fetchPopularMediaData()
+        fetchTopRatedMovieData()
+        fetchTopRatedTvShowData()
+        fetchUpcomingMovies()
+        loadRatedMedia()
+    }
+
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
     }
 }

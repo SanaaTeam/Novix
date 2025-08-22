@@ -8,11 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,19 +16,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -42,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.tv.material3.Border
 import androidx.tv.material3.Button
@@ -51,10 +40,7 @@ import androidx.tv.material3.Text
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.tvapp.presentation.components.MediaSection
-import com.sanaa.tvapp.presentation.screens.home.component.MediaTabItem
 import com.sanaa.tvapp.presentation.screens.home.component.Title
-import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
 import com.sanaa.tvapp.presentation.screens.login.LoginActivity
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.NavigateToChangePasswordSetting
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.NavigateToLogin
@@ -72,8 +58,6 @@ import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ChangePasswordScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MyRatingScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.WatchingHistoryScreenRoute
-import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
-import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import kotlinx.coroutines.flow.collectLatest
 import repository.Language
 import com.sanaa.designsystem.R as designSystemResource
@@ -236,8 +220,6 @@ private fun MyAccountScreenContent(
             )
         }
 
-        MyAccountMediaTab(state, navController)
-
         Button(
             modifier = Modifier,
             shape = ButtonDefaults.shape(RoundedCornerShape(8.dp)),
@@ -272,84 +254,6 @@ private fun MyAccountScreenContent(
                 color = Theme.colors.statusColors.redAccent,
                 style = Theme.textStyle.label.medium
             )
-        }
-    }
-}
-
-@Composable
-fun MyAccountMediaTab(
-    state: MyAccountScreenUiState,
-    navController: NavHostController,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
-
-    var selectedTab by remember {
-        mutableIntStateOf(0)
-    }
-    val tabs = mutableListOf<MediaTabItem>()
-    if (state.watchingHistoryMovies.isNotEmpty() && state.myRatingMovies.isNotEmpty()) {
-        tabs.add(
-            MediaTabItem(
-                title = stringResource(designSystemResource.string.movies),
-                onFocus = { navController.navigate(HomeMoviesTapRoute) }
-            )
-        )
-    }
-
-    if (state.watchingHistoryTvShows.isNotEmpty() && state.myRatingTvShows.isNotEmpty()) {
-        tabs.add(
-            MediaTabItem(
-                title = stringResource(designSystemResource.string.tv_shows),
-                onFocus = { navController.navigate(HomeMoviesTapRoute) }
-            )
-        )
-    }
-
-    if (tabs.isEmpty())
-        return
-
-    Box(
-        modifier = Modifier
-            .focusable(enabled = true, interactionSource)
-            .handleDPadKeyEvents(onLeft = {
-                if (selectedTab != 0) {
-                    selectedTab -= 1
-                    tabs[selectedTab].onFocus()
-                }
-            }, onRight = {
-                if (selectedTab != tabs.lastIndex) {
-                    selectedTab += 1
-                    tabs[selectedTab].onFocus()
-                }
-            }),
-    ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            tabs.forEachIndexed { index, tabItem ->
-                Column {
-                    val isSelected = selectedTab == index
-                    Text(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(
-                                if (isSelected)
-                                    Theme.colors.primary.copy(alpha = if (isFocused) 0.5f else 1f)
-                                else Theme.colors.surface
-                            )
-                            .then(
-                                if (isFocused && isSelected) Modifier.border(
-                                    3.dp,
-                                    Theme.colors.primary,
-                                    RoundedCornerShape(12.dp)
-                                ) else Modifier
-                            )
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                        text = tabItem.title,
-                        color = if (isSelected) Theme.colors.onPrimary else Theme.colors.title,
-                        style = Theme.textStyle.title.medium
-                    )
-                }
-            }
         }
     }
 }

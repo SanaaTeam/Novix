@@ -114,7 +114,7 @@ fun FocusableMediaCard(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
+                        .padding(8.dp),
                     contentAlignment = Alignment.TopEnd
                 ) {
                     topCornerContent?.invoke()
