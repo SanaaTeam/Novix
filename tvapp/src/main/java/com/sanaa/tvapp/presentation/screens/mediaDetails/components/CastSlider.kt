@@ -22,7 +22,7 @@ fun CastSlider(
     cast: List<ActorUiModel>,
     modifier: Modifier = Modifier,
     title: String = stringResource(R.string.cast),
-    onActorCardClicked: (Int) -> Unit,
+    onActorCardClicked: (Int) -> Unit = {},
 ) {
     Column(
         modifier = modifier

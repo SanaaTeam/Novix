@@ -12,10 +12,5 @@ data class EpisodeDetailsScreenUiState(
     val error: String? = null,
     val seriesId: Int = 0,
     val trailerUrl: String? = null,
-    val showLoginBottomSheet: Boolean = false,
-    val showRateBottomSheet: Boolean = false,
     val noInternetConnection: Boolean = false,
-    val imdbRating: Int = 0,
-    val guestSessionId: String = "",
-    val isUserLoggedIn: Boolean = false
 )
