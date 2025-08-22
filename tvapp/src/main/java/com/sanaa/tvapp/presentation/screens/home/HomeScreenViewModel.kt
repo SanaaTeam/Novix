@@ -2,6 +2,7 @@ package com.sanaa.tvapp.presentation.screens.home
 
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.tvapp.base.BasePagingSource
 import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.state.MediaItemUiState
@@ -10,12 +11,14 @@ import com.sanaa.tvapp.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.MediaHistoryItem
 import entity.Movie
+import entity.TvShow
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -27,8 +30,9 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
-    private val manageTvSeriesUseCase: ManageTvShowUseCase,
+    private val manageTvShowsUseCase: ManageTvShowUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
+    private val preferencesManager: PreferencesManager,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -44,6 +48,7 @@ class HomeScreenViewModel @Inject constructor(
         fetchTopRatedTvShowData()
         fetchMovieGenres()
         fetchUpcomingMovies()
+        loadRatedMedia()
     }
 
     private fun updateUserLoggingStatus() {
@@ -67,7 +72,7 @@ class HomeScreenViewModel @Inject constructor(
             block = {
                 val popularMovies = manageMovieUseCase
                     .getPopularMovies(1).map { it.toState() }
-                val popularTvSeries = manageTvSeriesUseCase
+                val popularTvSeries = manageTvShowsUseCase
                     .getPopularTvShows(1).map { it.toState() }
                 (popularMovies + popularTvSeries).shuffled()
             },
@@ -90,7 +95,7 @@ class HomeScreenViewModel @Inject constructor(
             block = {
                 val topRatedMovies = manageMovieUseCase
                     .getTopRatedMovies(1, null).map { it.toState() }
-                val topRatedTvSeries = manageTvSeriesUseCase
+                val topRatedTvSeries = manageTvShowsUseCase
                     .getTopRatedTvShows(1, null).map { it.toState() }
                 (topRatedMovies + topRatedTvSeries).shuffled()
             },
@@ -111,7 +116,7 @@ class HomeScreenViewModel @Inject constructor(
         updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
             block = {
-                manageTvSeriesUseCase.getTopRatedTvShows(1, null).map { it.toState() }
+                manageTvShowsUseCase.getTopRatedTvShows(1, null).map { it.toState() }
             },
             onSuccess = { topRatedMediaList ->
                 updateState {
@@ -216,6 +221,52 @@ class HomeScreenViewModel @Inject constructor(
             )
         }
     }
+
+    private fun loadRatedMedia() {
+        updateState { copy(isLoading = true) }
+        loadRatedMovies()
+        loadRatedTvShows()
+    }
+
+
+    private fun loadRatedMovies() {
+        tryToExecute(
+            block = { manageMovieUseCase.getUserRatedMovies() },
+            onSuccess = ::onLoadMoviesSuccess,
+            onError = ::onErrorLoadingData
+        )
+    }
+
+    private fun loadRatedTvShows() {
+        tryToExecute(
+            block = {
+                val accountId = preferencesManager.accountId.first()
+                val sessionId = preferencesManager.sessionId.first()
+                manageTvShowsUseCase.getRatedTvShows(accountId, sessionId)
+            },
+            onSuccess = ::onLoadTvShowsSuccess,
+            onError = ::onErrorLoadingData
+        )
+    }
+
+    private fun onLoadMoviesSuccess(movies: List<Movie>) {
+        updateState {
+            copy(
+                ratedMovies = movies.map { it.toState() }.filter { it.rating != null },
+                isLoading = false
+            )
+        }
+    }
+
+    private fun onLoadTvShowsSuccess(tvShows: List<TvShow>) {
+        updateState {
+            copy(
+                ratedTvShows = tvShows.map { it.toState() }.filter { it.rating != null },
+                isLoading = false
+            )
+        }
+    }
+
 
     private fun onErrorLoadingData(e: Throwable) {
         when (e) {

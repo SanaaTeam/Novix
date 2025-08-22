@@ -2,6 +2,7 @@ package com.sanaa.tvapp.presentation.screens.searchScreen.componants
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,6 +41,7 @@ fun FocusableMediaCard(
     titleText: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
+    topCornerContent: @Composable (() -> Unit)? = null,
 ) {
     val width: Dp = 153.dp
     val height: Dp = 231.dp
@@ -75,41 +77,50 @@ fun FocusableMediaCard(
             ),
             shape = CardDefaults.shape(RoundedCornerShape(12.dp))
         ) {
-            RemoteBlurredSensitiveImage(
-                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                imageUrl = imageUrl,
-                modifier = Modifier
-                    .width(width)
-                    .height(height),
-                sensitiveContentThreshold = 0.2f,
-                safeContentThreshold = 0.7f,
-                placeholderContent = {
-                    RemoteImagePlaceholder(
-                        modifier = Modifier
-                            .width(width)
-                            .height(height)
+            Box(contentAlignment = Alignment.TopEnd) {
+                RemoteBlurredSensitiveImage(
+                    isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                    imageUrl = imageUrl,
+                    modifier = Modifier
+                        .width(width)
+                        .height(height),
+                    sensitiveContentThreshold = 0.2f,
+                    safeContentThreshold = 0.7f,
+                    placeholderContent = {
+                        RemoteImagePlaceholder(
+                            modifier = Modifier
+                                .width(width)
+                                .height(height)
+                        )
+                    },
+                    errorContent = {
+                        RemoteImagePlaceholder(
+                            modifier = Modifier
+                                .width(width)
+                                .height(height)
+                        )
+                    },
+                    contentDescription = titleText,
+                ) {
+                    OnBlurContent(
+                        hintText = stringResource(R.string.unsuitable_image),
+                        textStyle = Theme.textStyle.body.small.copy(
+                            color = Color(0x99FFFFFF)
+                        ),
+                        iconSize = 24.dp,
+                        icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
                     )
-                },
-                errorContent = {
-                    RemoteImagePlaceholder(
-                        modifier = Modifier
-                            .width(width)
-                            .height(height)
-                    )
-                },
-                contentDescription = titleText,
-            ) {
-                OnBlurContent(
-                    hintText = stringResource(R.string.unsuitable_image),
-                    textStyle = Theme.textStyle.body.small.copy(
-                        color = Color(0x99FFFFFF)
-                    ),
-                    iconSize = 24.dp,
-                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
-                )
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    topCornerContent?.invoke()
+                }
             }
         }
-
         Text(
             text = titleText,
             style = Theme.textStyle.label.medium,
