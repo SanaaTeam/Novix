@@ -1,6 +1,7 @@
 package com.sanaa.tvapp.base
 
 import android.nfc.tech.MifareUltralight.PAGE_SIZE
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -11,6 +12,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -33,19 +36,26 @@ abstract class BaseViewModel<T, E>(
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<T> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<E>()
-    val effect: SharedFlow<E> = _effect.asSharedFlow()
+    private val _effectChannel = Channel<E>(Channel.BUFFERED)
+    val effect: Flow<E> = _effectChannel.receiveAsFlow()
+
+    private var lastEffect: E? = null
+    private var lastTime = 0L
+    private val effectDebounceMs = 500L
+
 
     internal fun updateState(updater: T.() -> T) {
         _state.update(updater)
     }
 
     protected fun <T> tryToExecute(
+        onStart : ()->Unit = {},
         block: suspend () -> T,
         onSuccess: (T) -> Unit = {},
         onError: (exception: Exception) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
+        onStart()
         viewModelScope.launch(dispatcher) {
             try {
                 val result = block()
@@ -57,11 +67,14 @@ abstract class BaseViewModel<T, E>(
     }
 
     protected fun <T> tryToCollect(
+        onStart : ()->Unit = {},
         block: suspend () -> Flow<T>,
         onCollect: suspend (T) -> Unit,
         onError: (exception: Throwable) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
+
+        onStart()
         viewModelScope.launch(dispatcher) {
             try {
                 block().catch { onError(it) }
@@ -90,8 +103,20 @@ abstract class BaseViewModel<T, E>(
     }
 
     protected fun emitEffect(effect: E) {
+        val now = System.currentTimeMillis()
+
+        val effectType = effect!!::class
+        val lastEffectType = lastEffect?.let { it::class }
+
+        if (effectType == lastEffectType && now - lastTime < effectDebounceMs) {
+            return
+        }
+
+        lastEffect = effect
+        lastTime = now
+
         viewModelScope.launch {
-            _effect.emit(effect)
+            _effectChannel.send(effect)
         }
     }
 }
