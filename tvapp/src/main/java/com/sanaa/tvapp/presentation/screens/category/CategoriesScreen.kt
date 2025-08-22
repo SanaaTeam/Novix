@@ -67,14 +67,7 @@ private fun CategoriesScreen(
     state: CategoriesScreenUiState,
     interactionListener: CategoriesScreenInteractionListener,
 ) {
-    NovixScaffold(
-        topBar = {
-            CategoryTopBar(
-                selectedTabIndex = state.selectedTabIndex,
-                onTabSelected = interactionListener::onTabChanged
-            )
-        }
-    ) {
+    NovixScaffold {
         when {
             state.isNoInternet -> {
                 NetworkDisconnectionContact(
@@ -83,7 +76,12 @@ private fun CategoriesScreen(
             }
 
             else -> {
-                Column(modifier = Modifier.padding(top = 12.dp)) {
+                Column {
+                    CategoryTopBar(
+                        selectedTabIndex = state.selectedTabIndex,
+                        onTabSelected = interactionListener::onTabChanged
+                    )
+
                     Crossfade(targetState = state.isLoading) { isLoading ->
                         when {
                             isLoading -> {

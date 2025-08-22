@@ -112,7 +112,7 @@ fun FocusableMediaCard(
         Text(
             text = titleText,
             style = Theme.textStyle.label.medium,
-            color = if (isFocused) Theme.colors.primary else Theme.colors.title,
+            color = Theme.colors.title,
             modifier = Modifier
                 .width(width)
                 .padding(top = textTopPadding, bottom = textBottomPadding),

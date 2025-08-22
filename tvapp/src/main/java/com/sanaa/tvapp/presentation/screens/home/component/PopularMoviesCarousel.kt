@@ -77,14 +77,13 @@ fun PopularMoviesCarousel(
 ) {
     val carouselState = rememberSaveable(saver = CarouselSaver) { CarouselState(0) }
     var isFocused by remember { mutableStateOf(false) }
-    val alpha = if (isFocused) 1f else 0f
 
     Carousel(
         modifier = modifier
             .height(316.dp)
             .border(
-                width = 3.dp,
-                color = Theme.colors.primary.copy(alpha = alpha),
+                width = if (isFocused) 3.dp else 2.dp,
+                color = if (isFocused) Theme.colors.primary else Theme.colors.stroke,
                 shape = ShapeDefaults.Medium,
             )
             .clip(RoundedCornerShape(12.dp))

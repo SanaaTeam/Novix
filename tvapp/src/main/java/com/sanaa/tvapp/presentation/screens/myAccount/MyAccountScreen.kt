@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -41,16 +43,18 @@ import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.tv.material3.Border
+import androidx.tv.material3.Button
+import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
+import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.presentation.components.MediaSection
 import com.sanaa.tvapp.presentation.screens.home.component.MediaTabItem
 import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
-import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
 import com.sanaa.tvapp.presentation.screens.login.LoginActivity
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.NavigateToChangePasswordSetting
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.NavigateToLogin
@@ -65,7 +69,6 @@ import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingOptionIte
 import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingOptions
 import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingSection
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ChangePasswordScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MyRatingScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.WatchingHistoryScreenRoute
@@ -143,13 +146,12 @@ private fun MyAccountScreenContent(
     interactionsListener: MyAccountScreenInteractionsListener,
 ) {
     val scrollState = rememberScrollState()
-    val mainTvNavController = LocalAppNavController.current
     val navController = rememberNavController()
 
     Column(
         modifier = Modifier
             .padding(horizontal = 36.dp, vertical = 24.dp)
-            .fillMaxWidth()
+            .fillMaxSize()
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -157,12 +159,7 @@ private fun MyAccountScreenContent(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            MyAccountUserInfo(
-                state.currentUser,
-                onLogoutClick = {
-                    interactionsListener.onLogoutButtonClick()
-                }
-            )
+            MyAccountUserInfo(state.currentUser)
 
             Row(
                 modifier = Modifier
@@ -241,18 +238,40 @@ private fun MyAccountScreenContent(
 
         MyAccountMediaTab(state, navController)
 
-        NavHost(navController = navController, startDestination = HomeMoviesTapRoute) {
-            composable(route = HomeMoviesTapRoute::class) {
-                MyAccountMovies(state) { id ->
-                    mainTvNavController.navigate(ScreensRoute.MovieDetailsRoute(id))
-                }
+        Button(
+            modifier = Modifier,
+            shape = ButtonDefaults.shape(RoundedCornerShape(8.dp)),
+            colors = ButtonDefaults.colors(containerColor = Theme.colors.surfaceHigh),
+            border = ButtonDefaults.border(
+                border = Border(
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = Theme.colors.stroke
+                    ),
+                ),
+                focusedBorder = Border(
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = Theme.colors.statusColors.redAccent
+                    ),
+                )
+            ),
+            onClick = {
+                interactionsListener.onLogoutButtonClick()
             }
+        ) {
+            Image(
+                modifier = Modifier.size(20.dp),
+                painter = painterResource(R.drawable.icon_logout),
+                contentDescription = "logout button"
+            )
 
-            composable(route = HomeTvShowsTapRoute::class) {
-                MyAccountMovies(state) { id ->
-                    mainTvNavController.navigate(ScreensRoute.TvShowDetailsRoute(id))
-                }
-            }
+            AppText(
+                modifier = Modifier.padding(start = 8.dp),
+                text = stringResource(tvResource.string.logout),
+                color = Theme.colors.statusColors.redAccent,
+                style = Theme.textStyle.label.medium
+            )
         }
     }
 }

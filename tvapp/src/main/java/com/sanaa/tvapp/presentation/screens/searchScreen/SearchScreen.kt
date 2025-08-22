@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -12,6 +14,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -19,15 +23,16 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
-import com.sanaa.tvapp.presentation.screens.searchScreen.componants.ActorTvContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.MovieTvContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.SearchTextField
+import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvEmptySearchContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvErrorStateContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvShowTvContent
-import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvTopBar
+import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvTabs
 import com.sanaa.tvapp.presentation.screens.sharedComponents.TvLoadingIndicator
 
 
@@ -43,26 +48,40 @@ fun SearchScreen(
 
     LaunchedEffect(Unit) {
         searchViewModel.effect.collect {
-            when(it){
-                is SearchScreenEffect.NavigateToActorDetails -> navController.navigate(ScreensRoute.ActorDetailsRoute(it.id))
+            when (it) {
+                is SearchScreenEffect.NavigateToActorDetails -> navController.navigate(
+                    ScreensRoute.ActorDetailsRoute(
+                        it.id
+                    )
+                )
+
                 SearchScreenEffect.NavigateToLogin -> TODO()
-                is SearchScreenEffect.NavigateToMovieDetails -> navController.navigate(ScreensRoute.MovieDetailsRoute(it.id))
-                is SearchScreenEffect.NavigateToTvShowDetails -> navController.navigate(ScreensRoute.TvShowDetailsRoute(it.id))
+                is SearchScreenEffect.NavigateToMovieDetails -> navController.navigate(
+                    ScreensRoute.MovieDetailsRoute(
+                        it.id
+                    )
+                )
+
+                is SearchScreenEffect.NavigateToTvShowDetails -> navController.navigate(
+                    ScreensRoute.TvShowDetailsRoute(
+                        it.id
+                    )
+                )
             }
+        }
     }
-}
 
 
 
-NovixTheme(isSystemInDarkTheme()) {
-    SearchScreenContent(
-        uiState = uiState,
-        searchListener = searchViewModel,
-        moviesPagingData = moviesPagingData,
-        tvShowsPagingData = tvShowsPagingData,
-        actorsPagingData = actorsPagingData,
-    )
-}
+    NovixTheme(isSystemInDarkTheme()) {
+        SearchScreenContent(
+            uiState = uiState,
+            searchListener = searchViewModel,
+            moviesPagingData = moviesPagingData,
+            tvShowsPagingData = tvShowsPagingData,
+            actorsPagingData = actorsPagingData,
+        )
+    }
 }
 
 @Composable
@@ -98,17 +117,25 @@ fun SearchScreenContent(
             .background(Theme.colors.surface),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        TvTopBar(
-            selectedTabIndex = uiState.selectedTabIndex,
-            onTabSelected = searchListener::onTabSelected
-        )
-
         SearchTextField(
             text = text,
             onTextChange = {
                 text = it
                 searchListener.onSearchQueryChanged(it)
             },
+        )
+
+        TvTabs(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp, start = 36.dp),
+            categories = listOf(
+                stringResource(R.string.movies),
+                stringResource(R.string.tv_shows),
+                stringResource(R.string.actors)
+            ),
+            selectedIndex = uiState.selectedTabIndex,
+            onCategorySelected = searchListener::onTabSelected
         )
 
         when (uiState.selectedTabIndex) {
@@ -156,7 +183,7 @@ fun SearchScreenContent(
                     )
 
                     isActorEmpty -> TvEmptySearchContent()
-                    else -> ActorTvContent(actorsPagingData) {
+                    else -> TvContent(actorsPagingData) {
                         searchListener.onActorClicked(it.id)
                     }
                 }

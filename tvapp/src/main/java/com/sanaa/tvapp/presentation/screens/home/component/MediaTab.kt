@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
@@ -31,7 +32,6 @@ import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import com.sanaa.designsystem.R as dosingSystemResource
-import androidx.compose.ui.platform.LocalLayoutDirection
 
 
 data class MediaTabItem(
@@ -113,18 +113,19 @@ fun MediaTab(
                     val isSelected = selectedTab == index
                     Text(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
+                            .clip(RoundedCornerShape(100.dp))
                             .background(
                                 if (isSelected)
-                                    Theme.colors.primary.copy(alpha = if (isFocused) 0.5f else 1f)
+                                    Theme.colors.secondary
                                 else Theme.colors.surface
                             )
                             .then(
-                                if (isFocused && isSelected) Modifier.border(
-                                    3.dp,
-                                    Theme.colors.primary,
-                                    RoundedCornerShape(12.dp)
-                                ) else Modifier
+                                if (isFocused && isSelected)
+                                    Modifier.border(
+                                        2.dp,
+                                        Theme.colors.primary,
+                                        RoundedCornerShape(100.dp)
+                                    ) else Modifier
                             )
                             .padding(horizontal = 12.dp, vertical = 8.dp),
                         text = tabItem.title,

@@ -49,7 +49,6 @@ fun ImdbRatingSelector(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
         Box(
             modifier = Modifier
                 .onSizeChanged { rowSize = it },
@@ -57,7 +56,7 @@ fun ImdbRatingSelector(
         ) {
             Row(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 8.dp, vertical = 24.dp)
                     .fillMaxWidth()
                     .pointerInput(Unit) {
                         detectHorizontalDragGestures(

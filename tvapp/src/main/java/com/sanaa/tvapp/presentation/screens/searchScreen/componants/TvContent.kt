@@ -9,7 +9,7 @@ import androidx.paging.compose.LazyPagingItems
 import com.sanaa.tvapp.presentation.screens.searchScreen.ActorUiModel
 
 @Composable
-fun ActorTvContent(
+fun TvContent(
     actors: LazyPagingItems<ActorUiModel>,
     onClick: (ActorUiModel) -> Unit
 ) {

@@ -60,12 +60,12 @@ fun ToggleableChipTv(
             }
             .background(
                 color = animateBackgroundColor,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(100.dp)
             )
             .border(
                 width = 3.dp,
                 color = borderColor,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(100.dp)
             )
             .height(37.dp)
             .clickable(

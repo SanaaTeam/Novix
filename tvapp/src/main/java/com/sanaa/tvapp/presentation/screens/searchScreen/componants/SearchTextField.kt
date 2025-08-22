@@ -56,12 +56,12 @@ fun SearchTextField(
         hint = stringResource(R.string.search_hint),
         icon = painterResource(R.drawable.icon_search),
         modifier = Modifier
+            .padding(top = 24.dp, start = 36.dp, end = 36.dp)
             .height(42.dp)
             .onFocusChanged { focusState ->
                 isFocused = focusState.isFocused
             }
             .focusable()
-            .padding(horizontal = 36.dp)
             .fillMaxWidth()
             .border(
                 width = 3.dp,

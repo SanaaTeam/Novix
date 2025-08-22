@@ -44,7 +44,6 @@ import com.sanaa.tvapp.presentation.screens.login.LoginActivity
 import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
-import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsTopBar
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
@@ -277,7 +276,7 @@ fun TvShowScreenContent(
                     }
                 }
             }
-            DetailsTopBar()
+
             if (state.showRateDialog) {
                 RateDialog(
                     currentRating = state.rating,
