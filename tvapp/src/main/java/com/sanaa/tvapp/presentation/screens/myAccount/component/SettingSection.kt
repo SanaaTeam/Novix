@@ -97,7 +97,9 @@ fun <T> RowScope.ToggleableSettingChip(
     )
 
     val animateBackgroundColor by animateColorAsState(
-        targetValue = if (settingOptionItem.isSelected) Theme.colors.statusColors.greenVariant else Color.Transparent
+        targetValue = if (settingOptionItem.isSelected)
+            Theme.colors.primary.copy(alpha = 0.08f)
+        else Color.Transparent
     )
 
     Column(

@@ -35,7 +35,6 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
-import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsTopBar
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.ImagesSlider
@@ -56,8 +55,16 @@ fun ActorScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is ActorScreenEffects.NavigateToMovieDetails -> navController.navigate(MovieDetailsRoute(effect.movieId))
-                is ActorScreenEffects.NavigateToSeriesDetails -> navController.navigate(ScreensRoute.TvShowDetailsRoute(effect.seriesId))
+                is ActorScreenEffects.NavigateToMovieDetails -> navController.navigate(
+                    MovieDetailsRoute(effect.movieId)
+                )
+
+                is ActorScreenEffects.NavigateToSeriesDetails -> navController.navigate(
+                    ScreensRoute.TvShowDetailsRoute(
+                        effect.seriesId
+                    )
+                )
+
                 ActorScreenEffects.NavigateToLogin -> {
 
                 }
@@ -82,9 +89,7 @@ private fun ActorScreenContent(
 
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
-    NovixScaffold(
-        backgroundShapes = { },
-    ) {
+    NovixScaffold {
         Box(modifier = modifier.systemBarsPadding()) {
 
             AnimatedContent(
@@ -118,7 +123,7 @@ private fun ActorScreenContent(
                             title = state.actor.name,
                         ) {
                             Card(
-                                modifier =  Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                                 onClick = {},
                                 colors = CardDefaults.colors(
                                     containerColor = Color.Transparent,
@@ -161,7 +166,6 @@ private fun ActorScreenContent(
                         ActorScreenSliders(state, listener)
                     }
                 }
-                DetailsTopBar()
 
                 NovixAnimatedSnackBarHost(
                     data = snack, onDismiss = { snack = null }

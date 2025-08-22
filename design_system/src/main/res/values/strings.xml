@@ -26,6 +26,7 @@
     <string name="all">All</string>
     <string name="movies">Movies</string>
     <string name="tv_shows">TV Shows</string>
+    <string name="actors">Actors</string>
     <string name="movie_poster">Movie poster</string>
     <string name="my_rating">My rating</string>
     <string name="content_restriction">Content Restriction</string>

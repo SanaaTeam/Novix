@@ -19,16 +19,14 @@ fun RateDialog(
     onSubmitRating: () -> Unit = {},
     onRatingChanged: (Int) -> Unit = {},
 ) {
-    DialogBaseComponent(
-        onDismissRequest = onDismissRequest
-    ) {
-
+    DialogBaseComponent(onDismissRequest = onDismissRequest) {
         Text(
             text = stringResource(com.sanaa.tvapp.R.string.rate_it),
             style = Theme.textStyle.title.large,
             color = Theme.colors.title,
             textAlign = TextAlign.Center
         )
+
         ImdbRatingSelector(
             currentRating = currentRating,
             onRatingChanged = onRatingChanged

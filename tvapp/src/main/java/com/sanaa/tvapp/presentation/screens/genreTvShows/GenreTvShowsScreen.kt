@@ -25,7 +25,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,11 +33,11 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
-import com.sanaa.tvapp.presentation.screens.category.util.getGenreImage
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.TvShowDetailsRoute
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
@@ -87,14 +86,7 @@ fun GenreTvShowsScreenContent(
     }
 
     NovixScaffold(
-        backgroundShapes = {
-            Image(
-                painter = painterResource(id = getGenreImage(state.categoryId)),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-        },
+        backgroundShapes = { BackgroundShapes() },
     ) {
         Column(
             modifier = Modifier.navigationBarsPadding()
@@ -132,11 +124,8 @@ fun GenreTvShowsScreenContent(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(horizontal = 64.dp),
-
                                 columns = GridCells.Fixed(5),
-                                contentPadding = PaddingValues(
-                                    16.dp
-                                ),
+                                contentPadding = PaddingValues(16.dp),
                                 verticalArrangement = Arrangement.spacedBy(16.dp),
                                 horizontalArrangement = Arrangement.spacedBy(16.dp)
                             ) {

@@ -4,7 +4,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,26 +17,35 @@ import androidx.tv.material3.Border
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.tvapp.presentation.screens.category.CategoriesScreenInteractionListener
 import com.sanaa.tvapp.presentation.screens.category.state.CategoryUiState
+import com.sanaa.tvapp.presentation.screens.home.component.GenreTaps
 
 @Composable
 fun CategoriesGrid(
     categories: List<CategoryUiState>,
     onCategoryClick: (category: CategoryUiState) -> Unit,
+    interactionListener: CategoriesScreenInteractionListener,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
-        modifier = modifier,
+        modifier = modifier.padding(top = 24.dp),
         contentPadding = PaddingValues(
-            start = 16.dp,
-            end = 16.dp,
+            start = 24.dp,
+            end = 24.dp,
             bottom = 12.dp,
-            top = 8.dp
         ),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            GenreTaps(
+                modifier = Modifier,
+                onFocus = { interactionListener.onTabChanged(it) }
+            )
+        }
+
         itemsIndexed(
             items = categories,
             key = { _, category -> category.id }

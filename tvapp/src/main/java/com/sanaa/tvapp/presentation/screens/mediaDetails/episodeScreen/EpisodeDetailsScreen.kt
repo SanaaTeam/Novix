@@ -38,7 +38,6 @@ import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
-import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsTopBar
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
@@ -211,7 +210,6 @@ private fun EpisodeDetailsScreenContent(
                                 )
                             }
                         }
-                        DetailsTopBar()
                     }
                 }
             }

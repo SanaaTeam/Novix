@@ -15,6 +15,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onPreviewKeyEvent
+import kotlin.math.log
 
 
 fun Modifier.shimmerEffect(
@@ -61,7 +62,6 @@ fun Modifier.shimmerEffect(
 fun Modifier.handleDPadKeyEvents(
     onLeft: (() -> Unit)? = null,
     onRight: (() -> Unit)? = null,
-    onPress: (() -> Unit)? = null,
     onEnter: (() -> Unit)? = null,
     onUp: (() -> Unit)? = null,
     onDown: (() -> Unit)? = null,
@@ -70,44 +70,39 @@ fun Modifier.handleDPadKeyEvents(
         if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) block()
     }
 
+    Log.d("SLKDHF", "handleDPadKeyEvents: "+it.nativeKeyEvent.keyCode)
+
     when (it.nativeKeyEvent.keyCode) {
-        KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_SYSTEM_NAVIGATION_LEFT -> {
+        KeyEvent.KEYCODE_DPAD_LEFT -> {
             onLeft?.apply {
                 onActionUp(::invoke)
                 return@onPreviewKeyEvent true
             }
         }
 
-        KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_SYSTEM_NAVIGATION_RIGHT -> {
+        KeyEvent.KEYCODE_DPAD_RIGHT -> {
             onRight?.apply {
                 onActionUp(::invoke)
                 return@onPreviewKeyEvent true
             }
         }
 
-        KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_SYSTEM_NAVIGATION_UP -> {
+        KeyEvent.KEYCODE_DPAD_UP-> {
             onUp?.apply {
                 onActionUp(::invoke)
                 return@onPreviewKeyEvent true
             }
         }
 
-        KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_SYSTEM_NAVIGATION_DOWN -> {
+        KeyEvent.KEYCODE_DPAD_DOWN-> {
             onDown?.apply {
                 onActionUp(::invoke)
                 return@onPreviewKeyEvent true
             }
         }
 
-        KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
+        KeyEvent.KEYCODE_DPAD_CENTER-> {
             onEnter?.apply {
-                onActionUp(::invoke)
-                return@onPreviewKeyEvent true
-            }
-        }
-
-        KeyEvent.ACTION_DOWN -> {
-            onPress?.apply {
                 onActionUp(::invoke)
                 return@onPreviewKeyEvent true
             }
