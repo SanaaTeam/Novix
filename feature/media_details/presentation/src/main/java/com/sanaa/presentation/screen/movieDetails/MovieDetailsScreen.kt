@@ -248,7 +248,7 @@ private fun MovieDetailsBottomSheets(
         }
 
         RequestToLoginBottomSheet(
-            onDismiss = { interactionListener.onDismissLoginBottomSheet() },
+            onDismiss = interactionListener::onDismissLoginBottomSheet,
             isVisible = true,
             title = title,
             text = text,

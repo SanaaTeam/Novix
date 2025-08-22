@@ -155,7 +155,7 @@ private fun TvShowScreenContent(
 
             RequestToLoginBottomSheet(
                 onDismiss = interactionListener::onDismissLoginBottomSheet,
-                onLoginButtonClick = { interactionListener.onLoginButtonClick() },
+                onLoginButtonClick = interactionListener::onLoginButtonClick,
                 isVisible = state.showLoginBottomSheet,
                 text = stringResource(R.string.please_login_to_rate_your_favorite_items),
                 title = stringResource(R.string.rate_it)

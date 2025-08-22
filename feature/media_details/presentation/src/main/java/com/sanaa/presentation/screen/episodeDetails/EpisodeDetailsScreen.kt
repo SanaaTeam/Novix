@@ -30,7 +30,6 @@ import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -79,10 +78,6 @@ fun EpisodeDetailsScreen(
                 is EpisodeDetailsEffects.PlayTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
                     context.startActivity(intent)
-                }
-
-                EpisodeDetailsEffects.NavigateToLogin -> {
-                    authApi.launch(context, AuthStartRoute.Login)
                 }
             }
         }

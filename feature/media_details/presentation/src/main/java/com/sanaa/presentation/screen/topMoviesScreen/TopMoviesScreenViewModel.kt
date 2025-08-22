@@ -44,6 +44,14 @@ class TopMoviesScreenViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged && state.value.showLoginBottomSheet) {
+            updateState {
+                copy(
+                    showLoginBottomSheet = false,
+                    showSaveToListBottomSheet = true,
+                )
+            }
+        }
         updateState { copy(userIsLoggedIn = isLogged) }
     }
 
@@ -56,12 +64,7 @@ class TopMoviesScreenViewModel @Inject constructor(
             updateState { copy(selectedMediaToSave = movie, showLoginBottomSheet = true) }
             return
         } else {
-            updateState {
-                copy(
-                    showSaveToListBottomSheet = true,
-                    selectedMediaToSave = movie
-                )
-            }
+            updateState { copy(showSaveToListBottomSheet = true, selectedMediaToSave = movie) }
         }
     }
 
@@ -143,7 +146,6 @@ class TopMoviesScreenViewModel @Inject constructor(
 
     override fun onLoginButtonClick() {
         emitEffect(TopMoviesScreenEffect.NavigateToLogin)
-        updateState { copy(showLoginBottomSheet = false) }
     }
 
     override fun onMovieClick(id: Int) {

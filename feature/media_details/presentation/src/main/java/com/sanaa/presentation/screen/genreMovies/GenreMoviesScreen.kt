@@ -23,7 +23,6 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
-import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.presentation.api.LocalThemeProvider
@@ -160,9 +159,9 @@ private fun GenreMoviesScreenContent(
         onDismiss = interactionListener::onDismissAddListBottomSheet,
     )
     RequestToLoginBottomSheet(
-        onDismiss = { interactionListener.onBottomSheetDismiss() },
-        onLoginButtonClick = { interactionListener.onLoginButtonClick() },
-        isVisible = state.showBottomSheet
+        onDismiss = interactionListener::onLoginBottomSheetDismiss,
+        onLoginButtonClick = interactionListener::onLoginButtonClick,
+        isVisible = state.showLoginBottomSheet
     )
     SaveToListBottomSheet(
         isVisible = state.showSaveToListBottomSheet,

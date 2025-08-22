@@ -16,13 +16,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
@@ -31,13 +29,10 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.presentation.api.LocalThemeProvider
-import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.TvShowScreenRoute
 import com.sanaa.presentation.screen.genreTvShows.components.GenreTvShowsGrid
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
-import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
-import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
@@ -60,12 +55,6 @@ private fun GenreTvShowsEffectsHandler(
     effects: Flow<GenreTvShowsEffects>,
 ) {
     val navController = LocalNavControllerProvider.current
-    val context = LocalContext.current
-
-    val authApi = EntryPointAccessors
-        .fromApplication(
-            context, DetailsApiEntryPoint::class.java
-        ).authenticationApi()
 
     LaunchedEffect(Unit) {
         effects.collectLatest { effect ->
@@ -77,10 +66,6 @@ private fun GenreTvShowsEffectsHandler(
                 is GenreTvShowsEffects.NavigateToTvShowDetails -> navController.navigate(
                     TvShowScreenRoute(effect.id)
                 )
-
-                GenreTvShowsEffects.NavigateToLogin -> {
-                    authApi.launch(context, AuthStartRoute.Login)
-                }
             }
         }
     }
@@ -164,10 +149,5 @@ private fun GenreTvShowsScreenContent(
             }
         }
     }
-    RequestToLoginBottomSheet(
-        onDismiss = interactionListener::onBottomSheetDismiss,
-        onLoginButtonClick = interactionListener::onLoginButtonClick,
-        isVisible = state.showBottomSheet
-    )
 }
 

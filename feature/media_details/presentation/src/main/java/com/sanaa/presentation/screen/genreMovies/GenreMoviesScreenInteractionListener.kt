@@ -5,7 +5,7 @@ import com.sanaa.presentation.model.MovieUiModel
 interface GenreMoviesScreenInteractionListener:GenreMoviesGridInteractionListener {
     fun onRetryClicked()
     fun onBackClick()
-    fun onBottomSheetDismiss()
+    fun onLoginBottomSheetDismiss()
     fun onLoginButtonClick()
     fun onDismissSaveToListBottomSheet()
     fun onDismissAddListBottomSheet()
