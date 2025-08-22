@@ -161,6 +161,14 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
+    override fun onSimilarMovieClick(movieId: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onActorCardClick(actorId: Int) {
+        TODO("Not yet implemented")
+    }
+
     private fun addMovieToHistory(movie: Movie) {
         tryToCollect(
             block = { getLoggedInUserUseCase.getLoggedInUser() },
