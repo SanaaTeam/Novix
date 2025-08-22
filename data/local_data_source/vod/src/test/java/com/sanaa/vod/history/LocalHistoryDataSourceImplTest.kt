@@ -46,6 +46,7 @@ class LocalHistoryDataSourceImplTest {
     fun `deleteQueryById should call deleteQueryById on queryDao`() = runTest {
         // Given
         val id = 1
+
         // When
         dataSource.deleteQueryById(id)
         // Then
