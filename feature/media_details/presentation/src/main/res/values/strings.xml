@@ -38,4 +38,7 @@
     <string name="failed_to_create_list">Failed to create list</string>
     <string name="added_to_list_successfully">Added to list successfully</string>
     <string name="added_to_list_failed">Added to list failed</string>
+
+    <string name="list_items_count">%s items</string>
+
 </resources>

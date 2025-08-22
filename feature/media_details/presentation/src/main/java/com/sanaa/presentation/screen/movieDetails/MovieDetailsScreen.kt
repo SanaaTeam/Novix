@@ -193,7 +193,7 @@ private fun MovieDetailsScreenContent(
                         .navigationBarsPadding(),
                     isRateButtonEnabled = state.isError.not(),
                     onSetRateClicked = { interactionListener.onRateMovieClick() },
-                    isRateButtonVisible = state.showRateButton
+                    isFilledStarIcon = state.isRatingSubmitted
                 )
             }
         }
@@ -222,7 +222,7 @@ private fun MovieDetailsBottomSheets(
 
     RateBottomSheet(
         isRateSelected = state.hasUserSelectedRate,
-        imdbRating = state.imdbRating,
+        imdbRating = state.filledStarsCount,
         onDismiss = interactionListener::onDismissRateBottomSheet,
         isVisible = state.showRateBottomSheet,
         onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
@@ -247,13 +247,11 @@ private fun MovieDetailsBottomSheets(
         }
 
         RequestToLoginBottomSheet(
-            onDismiss = { interactionListener.onDismissLoginBottomSheet() },
+            onDismiss = interactionListener::onDismissLoginBottomSheet,
             isVisible = true,
             title = title,
             text = text,
-            onLoginButtonClick = {
-                interactionListener.onLoginButtonClick()
-            }
+            onLoginButtonClick = interactionListener::onLoginButtonClick
         )
     }
 }

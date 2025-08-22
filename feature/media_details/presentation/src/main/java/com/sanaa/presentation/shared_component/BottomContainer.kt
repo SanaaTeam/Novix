@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
+import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 
 @Composable
@@ -25,7 +26,8 @@ fun BottomContainer(
     isRateButtonEnabled: Boolean = true,
     onPlayTrailerClicked: () -> Unit = {},
     onSetRateClicked: () -> Unit = {},
-    isRateButtonVisible: Boolean = true
+    isFilledStarIcon: Boolean = false,
+    isRateButtonVisible: Boolean = true,
 ) {
     Row(
         modifier = modifier
@@ -41,11 +43,14 @@ fun BottomContainer(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         if (isRateButtonVisible) {
+            val icon = if (isFilledStarIcon) R.drawable.star else R.drawable.outlined_star
+
             PrimaryButton(
                 text = null,
                 isEnabled = isRateButtonEnabled,
                 onClick = onSetRateClicked,
-                icon = painterResource(R.drawable.icon_star_outlined)
+                icon = painterResource(icon),
+                iconTint = Theme.colors.onPrimary,
             )
         }
 

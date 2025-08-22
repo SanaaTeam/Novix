@@ -45,6 +45,14 @@ class ActorScreenViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged && state.value.showLoginBottomSheet) {
+            updateState {
+                copy(
+                    showLoginBottomSheet = false,
+                    showSaveToListBottomSheet = true,
+                )
+            }
+        }
         updateState { copy(userIsLoggedIn = isLogged) }
     }
 
@@ -72,27 +80,21 @@ class ActorScreenViewModel @Inject constructor(
         emitEffect(ActorScreenEffects.NavigateToMovieDetails(id))
     }
 
-    override fun onDismissBottomSheet() {
+    override fun onDismissLoginBottomSheet() {
         updateState { copy(showLoginBottomSheet = false) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { copy(showLoginBottomSheet = false) }
         emitEffect(ActorScreenEffects.NavigateToLogin)
     }
 
     override fun onSaveClicked(movie: MovieUiModel) {
         if (!state.value.userIsLoggedIn) {
-            updateState { copy(showLoginBottomSheet = true) }
+            updateState { copy(selectedMediaToSave = movie, showLoginBottomSheet = true) }
             return
         }
 
-        updateState {
-            copy(
-                showSaveToListBottomSheet = true,
-                selectedMediaToSave = movie
-            )
-        }
+        updateState { copy(showSaveToListBottomSheet = true, selectedMediaToSave = movie) }
     }
 
     override fun onDismissSaveToListBottomSheet() {

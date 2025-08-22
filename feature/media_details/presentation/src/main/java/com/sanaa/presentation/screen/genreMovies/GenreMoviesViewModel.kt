@@ -50,6 +50,14 @@ class GenreMoviesViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged && state.value.showLoginBottomSheet) {
+            updateState {
+                copy(
+                    showLoginBottomSheet = false,
+                    showSaveToListBottomSheet = true,
+                )
+            }
+        }
         updateState { copy(userIsLoggedIn = isLogged) }
     }
 
@@ -58,12 +66,12 @@ class GenreMoviesViewModel @Inject constructor(
         fetchMovies(route.genreId)
     }
 
-    override fun onBottomSheetDismiss() {
-        updateState { copy(showBottomSheet = false) }
+
+    override fun onLoginBottomSheetDismiss() {
+        updateState { copy(showLoginBottomSheet = false) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { copy(showBottomSheet = false) }
         emitEffect(GenreMoviesEffects.NavigateToLogin)
     }
 
@@ -81,16 +89,11 @@ class GenreMoviesViewModel @Inject constructor(
 
     override fun onSaveIconClick(media: MovieUiModel) {
         if (!state.value.userIsLoggedIn) {
-            updateState { copy(showBottomSheet = true) }
+            updateState { copy(showLoginBottomSheet = true, selectedMovieToSave = media) }
             return
         }
 
-        updateState {
-            copy(
-                showSaveToListBottomSheet = true,
-                selectedMovieToSave = media
-            )
-        }
+        updateState { copy(showSaveToListBottomSheet = true, selectedMovieToSave = media) }
     }
 
     override fun onBackClick() {

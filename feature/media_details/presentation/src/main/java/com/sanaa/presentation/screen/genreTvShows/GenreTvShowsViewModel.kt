@@ -73,15 +73,6 @@ class GenreTvShowsViewModel @Inject constructor(
         getTvShowsByGenreId(route.genreId)
     }
 
-    override fun onBottomSheetDismiss() {
-        updateState { copy(showBottomSheet = false) }
-    }
-
-    override fun onLoginButtonClick() {
-        updateState { copy(showBottomSheet = false) }
-        emitEffect(GenreTvShowsEffects.NavigateToLogin)
-    }
-
     override fun onBackClick() {
         emitEffect(GenreTvShowsEffects.NavigateBack)
     }

@@ -16,19 +16,18 @@ data class MovieDetailsUiState(
     val showLoginBottomSheet: Boolean = false,
     val showRateBottomSheet: Boolean = false,
     val noInternetConnection: Boolean = false,
-    val imdbRating: Int = 0,
-    val guestSessionId: String = "",
     val isUserLoggedIn: Boolean = false,
-    val isRatingSubmitted: Boolean = false,
     val loginPromptType: LoginPromptType? = null,
     val showSaveToListBottomSheet: Boolean = false,
     val showAddListBottomSheet: Boolean = false,
     val selectedMediaId: Int? = null,
     val snackBarData: SnackData? = null,
-    val showRateButton: Boolean = true
+    val isRatingSubmitted: Boolean = false,
+    val imdbRating: Int = 0,
+    val filledStarsCount: Int = 0,
 ) {
     val hasUserSelectedRate: Boolean
-        get() = imdbRating > 0
+        get() = filledStarsCount > 0 && (imdbRating == 0 || filledStarsCount != imdbRating)
 }
 
 data class SnackData(

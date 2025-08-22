@@ -265,10 +265,11 @@ class HomeScreenViewModelTest {
     }
 
     @Test
-    fun `onDismissBottomSheet should set showBottomSheet to false`() = runTest(testDispatcher) {
+    fun `onDismissLoginBottomSheet should set showBottomSheet to false`() = runTest(testDispatcher) {
         initializeViewModel()
-        viewModel.onSaveIconClick(mockk())
+        viewModel.onSaveIconClick(dummyMovie.toState())
         viewModel.onDismissLoginBottomSheet()
+        advanceUntilIdle()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
 
@@ -314,7 +315,7 @@ class HomeScreenViewModelTest {
         // Then
         val state = viewModel.state.value
         assertThat(state.showSaveToListBottomSheet).isTrue()
-        assertThat(state.selectedMediaToSave).isEqualTo(unsavedMediaItem)
+        assertThat(state.selectedMediaToSaveId).isEqualTo(unsavedMediaItem.id)
     }
 
     @Test

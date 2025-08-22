@@ -25,4 +25,6 @@
     <string name="removed_from_list_failed">Failed to remove from list</string>
     <string name="the_list_is_empty">There is no items for this list!</string>
 
+    <string name="list_items_count">%s items</string>
+
 </resources>
