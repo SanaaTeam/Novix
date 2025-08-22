@@ -1,7 +1,8 @@
 package com.sanaa.presentation.screen.topShowsScreen
 
 interface TopTvShowsScreenInteractionListener {
-    fun onDismissBottomSheet()
     fun onRetryClicked()
     fun onSnackDismissRequested()
+    fun onBackClick()
+    fun onTvShowClick(id: Int)
 }

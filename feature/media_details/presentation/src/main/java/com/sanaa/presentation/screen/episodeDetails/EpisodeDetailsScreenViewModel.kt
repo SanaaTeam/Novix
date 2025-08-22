@@ -135,9 +135,6 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     override fun onRetryLoadDetails() = fetchEpisodeDetails()
     override fun onSnackDismissRequested() = updateState { copy(snackBarData = null) }
-    override fun onDismissBottomSheet() = updateState { copy(showLoginBottomSheet = false) }
-    override fun onSavedClick(tvShowId: Int) {
-    }
 
     override fun onBackClick() = emitEffect(EpisodeDetailsEffects.NavigateBack)
     override fun onPlayTrailerClick() =
@@ -148,9 +145,4 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     override fun onCastClick(actorId: Int) =
         emitEffect(EpisodeDetailsEffects.NavigateToActorDetails(actorId))
-
-    override fun onLoginButtonClick() {
-        updateState { copy(showLoginBottomSheet = false) }
-        emitEffect(EpisodeDetailsEffects.NavigateToLogin)
-    }
 }

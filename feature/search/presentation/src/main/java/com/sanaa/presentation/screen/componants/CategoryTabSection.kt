@@ -123,7 +123,7 @@ fun CategoryTabContent(
                         interactionsListener.onSearchResultMediaClicked(recent)
                     },
                     onSaveIconClicked = { movie ->
-                        interactionsListener.onSaveIconClick(movie)
+                        interactionsListener.onSaveIconClick(movie.id)
                     })
             }
         }

@@ -22,6 +22,6 @@ data class TopRatedMediaScreenUiState(
     val userIsLoggedIn: Boolean = false,
     val showSaveToListBottomSheet: Boolean = false,
     val showAddListBottomSheet: Boolean = false,
-    val selectedMediaToSave: MediaItemUiState? = null,
+    val selectedMediaToSaveId: Int? = null,
     val snackBarData: SnackData? = null
 )

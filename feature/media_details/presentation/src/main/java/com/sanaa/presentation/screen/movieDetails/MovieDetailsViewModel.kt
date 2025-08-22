@@ -23,8 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.first
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -52,7 +51,6 @@ class MovieDetailsViewModel @Inject constructor(
 
     init {
         fetchMovieDetails(movieId)
-        fetchUserRating()
         updateUserLoginState()
     }
 
@@ -113,7 +111,6 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onLoginButtonClick() {
-        updateState { copy(showLoginBottomSheet = false) }
         emitEffect(MovieDetailsUiEffect.NavigateToLogin)
     }
 
@@ -140,11 +137,11 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onRatingChanged(newRating: Int) {
-        updateState { copy(imdbRating = newRating) }
+        updateState { copy(filledStarsCount = newRating) }
     }
 
     override fun onDismissRateBottomSheet() {
-        updateState { copy(showRateBottomSheet = false, imdbRating = 0) }
+        updateState { copy(showRateBottomSheet = false, filledStarsCount = imdbRating) }
     }
 
     override fun onSubmitRateBottomSheet() {
@@ -160,7 +157,6 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onSubmitRateFailed(exception: NovixAppException) {
         updateState {
             copy(
-                showRateBottomSheet = false,
                 snackBarData = SnackData(
                     message = stringProvider.submitRatingFailed,
                     isError = true
@@ -225,17 +221,20 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun fetchUserRating() {
-        tryToCollect(
+        tryToExecute(
             block = { getCurrentUserRating(movieId) },
-            onCollect = { rating ->
-                updateState {
-                    copy(
-                        imdbRating = rating,
-                        showRateButton = rating == 0
-                    )
-                }
-            },
+            onSuccess = ::onFetchUserRatingSuccess,
         )
+    }
+
+    private fun onFetchUserRatingSuccess(rating: Int) {
+        updateState {
+            copy(
+                imdbRating = rating,
+                filledStarsCount = rating,
+                isRatingSubmitted = rating != 0
+            )
+        }
     }
 
     private suspend fun loadMovieDetails(movieId: Int) = coroutineScope {
@@ -263,25 +262,17 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getCurrentUserRating(movieId: Int): Flow<Int> {
-        return getLoggedInUserUseCase.getLoggedInUser()
-            .flatMapLatest { user ->
-                flow {
-                    try {
-                        val rating = manageMovieDetails.getMovieRate(
-                            user.id,
-                            movieId
-                        )
-                        emit(rating)
-                    } catch (_: Exception) {
-                        emit(0)
-                    }
-                }
-            }
+    private suspend fun getCurrentUserRating(movieId: Int): Int {
+        try {
+            val user = getLoggedInUserUseCase.getLoggedInUser().first()
+            return manageMovieDetails.getMovieRate(user.id, movieId)
+        } catch (_: Exception) {
+            return 0
+        }
     }
 
     private suspend fun submitMovieRating() {
-        val rating = state.value.imdbRating
+        val rating = state.value.filledStarsCount
         val isSendRateSuccess = manageMovieDetails.addMovieRate(
             movieId = movieId,
             rating = rating.toFloat()
@@ -289,14 +280,15 @@ class MovieDetailsViewModel @Inject constructor(
         if (isSendRateSuccess) {
             updateState {
                 copy(
-                    showRateButton = false,
+                    isRatingSubmitted = true,
                     snackBarData = SnackData(
                         message = stringProvider.submitRatingSuccess,
                         isError = false,
-                    )
+                    ),
+                    imdbRating = rating,
+                    showRateBottomSheet = false
                 )
             }
-            updateState { copy(showRateBottomSheet = false) }
         } else {
             updateState {
                 copy(
@@ -319,6 +311,16 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onCollectLoggedFlag(isLogged: Boolean) {
         if (isLogged) {
             fetchUserRating()
+            if (state.value.showLoginBottomSheet) {
+                updateState {
+                    copy(
+                        showLoginBottomSheet = false,
+                        showSaveToListBottomSheet = loginPromptType == LoginPromptType.BOOKMARK,
+                        showRateBottomSheet = loginPromptType == LoginPromptType.RATE,
+                        loginPromptType = null
+                    )
+                }
+            }
         }
         updateState { copy(isUserLoggedIn = isLogged) }
     }

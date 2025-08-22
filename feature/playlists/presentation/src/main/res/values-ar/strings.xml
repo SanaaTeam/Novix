@@ -25,4 +25,6 @@
     <string name="removed_from_list_failed">فشل في الإزالة من القائمة</string>
     <string name="the_list_is_empty">"لا توجد عناصر في هذه القائمة!</string>
 
+    <string name="list_items_count">%s عناصر</string>
+
 </resources>

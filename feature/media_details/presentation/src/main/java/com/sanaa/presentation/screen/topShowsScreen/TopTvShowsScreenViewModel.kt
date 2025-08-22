@@ -20,7 +20,7 @@ class TopTvShowsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
     private val stringProvider: VodStringProvider,
-) : BaseViewModel<TopTvShowsScreenUiState, Any>(
+) : BaseViewModel<TopTvShowsScreenUiState, TopTvShowsScreenEffect>(
     initialState = TopTvShowsScreenUiState(),
     defaultDispatcher = Dispatchers.IO
 ), TopTvShowsScreenInteractionListener {
@@ -32,10 +32,6 @@ class TopTvShowsScreenViewModel @Inject constructor(
         loadDetails()
     }
 
-    override fun onDismissBottomSheet() {
-        updateState { copy(showLoginBottomSheet = false) }
-    }
-
     override fun onRetryClicked() {
         updateState { copy(noInternetConnection = false, isLoading = true) }
         loadDetails()
@@ -43,6 +39,14 @@ class TopTvShowsScreenViewModel @Inject constructor(
 
     override fun onSnackDismissRequested() {
         updateState { copy(snackBarData = null) }
+    }
+
+    override fun onBackClick() {
+        emitEffect(TopTvShowsScreenEffect.NavigateBack)
+    }
+
+    override fun onTvShowClick(id: Int) {
+        emitEffect(TopTvShowsScreenEffect.NavigateToTvShowDetails(id))
     }
 
     private fun loadDetails() {

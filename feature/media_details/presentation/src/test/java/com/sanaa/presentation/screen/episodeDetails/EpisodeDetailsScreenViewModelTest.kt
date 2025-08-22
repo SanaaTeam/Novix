@@ -113,26 +113,6 @@ class EpisodeDetailsScreenViewModelTest {
         }
     }
 
-    @Test
-    fun `onDismissBottomSheet sets showLoginBottomSheet to false`() = runTest {
-        givenHappyViewModel()
-        viewModel.onSavedClick(tvShowId)
-        viewModel.onDismissBottomSheet()
-        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
-    }
-
-    @Test
-    fun `onLoginButtonClick emits NavigateToLogin and hides BottomSheet`() = runTest {
-        givenHappyViewModel()
-        viewModel.onSavedClick(tvShowId)
-        viewModel.onLoginButtonClick()
-        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
-        viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(EpisodeDetailsEffects.NavigateToLogin)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
     companion object {
         private val dummyEpisode = Episode(
             id = 100,

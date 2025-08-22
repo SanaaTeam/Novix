@@ -33,4 +33,6 @@
     <string name="error_message">شيئا ما خاطئ</string>
     <string name="empty_watching_history">لا يوجد سجل للمشاهدة حتى الآن!</string>
 
+    <string name="list_items_count">%s عناصر</string>
+
 </resources>

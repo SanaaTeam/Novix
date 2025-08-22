@@ -20,6 +20,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.model.MediaItemUiModel
 import com.sanaa.presentation.profileProvider.LocalSaveContentThreshold
+import com.sanaa.presentation.screen.myRating.MediaTypeUi
 import com.sanaa.presentation.screen.myRating.component.RemoteImagePlaceholder
 
 @Composable
@@ -68,9 +69,11 @@ fun WatchingHistoryGrid(
                         }
                     },
                     topLeftContent = {
-                        SaveIconChip(
-                            onClick = { onSaveIconClick(it) }
-                        )
+                        if (media.mediaTypeUi == MediaTypeUi.MOVIE) {
+                            SaveIconChip(
+                                onClick = { onSaveIconClick(it) }
+                            )
+                        }
                     },
                     onCardClick = { onMediaClick(it) }
                 )

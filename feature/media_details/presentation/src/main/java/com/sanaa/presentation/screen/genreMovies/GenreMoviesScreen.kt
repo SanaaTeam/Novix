@@ -159,9 +159,9 @@ private fun GenreMoviesScreenContent(
         onDismiss = interactionListener::onDismissAddListBottomSheet,
     )
     RequestToLoginBottomSheet(
-        onDismiss = { interactionListener.onBottomSheetDismiss() },
-        onLoginButtonClick = { interactionListener.onLoginButtonClick() },
-        isVisible = state.showBottomSheet
+        onDismiss = interactionListener::onLoginBottomSheetDismiss,
+        onLoginButtonClick = interactionListener::onLoginButtonClick,
+        isVisible = state.showLoginBottomSheet
     )
     SaveToListBottomSheet(
         isVisible = state.showSaveToListBottomSheet,
