@@ -35,9 +35,9 @@ fun EpisodesContent(
         )
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+            columns = GridCells.Fixed(2),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.height(300.dp),
             contentPadding = PaddingValues(horizontal = 36.dp, vertical = 8.dp)
         ) {
