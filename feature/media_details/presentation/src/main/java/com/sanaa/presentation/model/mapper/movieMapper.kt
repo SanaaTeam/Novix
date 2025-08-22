@@ -32,5 +32,6 @@ fun Movie.toHistory(): MediaHistoryItem {
         posterImageUrl = posterImageUrl,
         mediaType = MediaType.MOVIE,
         lastWatchedAt = Clock.System.now().toEpochMilliseconds(),
+        title = title,
     )
 }

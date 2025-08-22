@@ -19,7 +19,7 @@ import androidx.tv.material3.CardDefaults
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.presentation.screens.category.CategoriesScreenInteractionListener
 import com.sanaa.tvapp.presentation.screens.category.state.CategoryUiState
-import com.sanaa.tvapp.presentation.screens.home.component.GenreTaps
+import com.sanaa.tvapp.presentation.screens.home.component.GenreTabs
 
 @Composable
 fun CategoriesGrid(
@@ -40,7 +40,7 @@ fun CategoriesGrid(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
-            GenreTaps(
+            GenreTabs(
                 modifier = Modifier,
                 onFocus = { interactionListener.onTabChanged(it) }
             )

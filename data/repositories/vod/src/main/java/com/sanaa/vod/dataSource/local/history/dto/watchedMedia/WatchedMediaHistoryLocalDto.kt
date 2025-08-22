@@ -10,6 +10,8 @@ data class WatchedMediaHistoryLocalDto(
     val id: Int,
     @ColumnInfo(name = "username")
     val username: String,
+    @ColumnInfo(name = "title")
+    val title: String,
     @ColumnInfo(name = "poster_image_url")
     val posterImageUrl: String,
     @ColumnInfo(name = "media_type")

@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,7 +44,7 @@ data class MediaTabItem(
 )
 
 @Composable
-fun HomeTaps(
+fun HomeTabs(
     modifier: Modifier = Modifier,
     sidePaddings: Dp,
     navController: NavHostController,
@@ -68,7 +69,7 @@ fun HomeTaps(
 }
 
 @Composable
-fun SearchTaps(
+fun SearchTabs(
     modifier: Modifier = Modifier,
     sidePaddings: Dp,
     onFocus: (Int) -> Unit,
@@ -97,7 +98,7 @@ fun SearchTaps(
 }
 
 @Composable
-fun GenreTaps(
+fun GenreTabs(
     sidePaddings: Dp = 0.dp,
     onFocus: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -136,7 +137,7 @@ fun MediaTab(
     }
     val layoutDirection = LocalLayoutDirection.current
 
-    var selectedTab by remember {
+    var selectedTab by rememberSaveable {
         mutableIntStateOf(0)
     }
 

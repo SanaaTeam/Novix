@@ -4,16 +4,20 @@ import androidx.lifecycle.SavedStateHandle
 import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.GenreUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
+import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toHistory
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toSeasonUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toTvShowUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import entity.TvShow
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvShowUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
 
@@ -22,6 +26,8 @@ class ShowDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageTvShowDetails: ManageTvShowUseCase,
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TvShowDetailsScreenUiState, TvShowDetailsScreenEffects>(
     initialState = TvShowDetailsScreenUiState(),
@@ -130,20 +136,34 @@ class ShowDetailsScreenViewModel @Inject constructor(
         val imagesDeferred = async { manageTvShowDetails.getTvShowImageUrls(tvShowId) }
         val trailerDeferred = async { manageTvShowDetails.getTvShowTrailer(tvShowId) }
 
-        val series = seriesDeferred.await()
+        val tvShow = seriesDeferred.await()
         val cast = castDeferred.await()
         val season = seasonDeferred.await()
         val images = imagesDeferred.await()
         val trailer = trailerDeferred.await()
 
+        addTvShowToHistory(tvShow)
+
         updateState {
             copy(
-                tvShows = series.toTvShowUiModel(trailer),
+                tvShows = tvShow.toTvShowUiModel(trailer),
                 cast = cast.map { actor -> actor.toActorUiModel() },
                 season = season.toSeasonUiModel(),
                 backgroundImageUrl = images.firstOrNull() ?: "",
             )
         }
+    }
+
+    private fun addTvShowToHistory(tvShow: TvShow) {
+        tryToCollect(
+            block = { getLoggedInUserUseCase.getLoggedInUser() },
+            onCollect = { user ->
+                manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
+                    mediaHistoryItem = tvShow.toHistory(),
+                    username = user.username
+                )
+            }
+        )
     }
 
     private suspend fun fetchSeasonDetails(seasonNumber: Int) {

@@ -22,7 +22,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.tvapp.presentation.screens.home.component.SearchTaps
+import com.sanaa.tvapp.presentation.screens.home.component.SearchTabs
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.MovieTvContent
@@ -123,7 +123,7 @@ fun SearchScreenContent(
             },
         )
 
-        SearchTaps(
+        SearchTabs(
             modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
             sidePaddings = 36.dp,
             { searchListener.onTabSelected(it) }

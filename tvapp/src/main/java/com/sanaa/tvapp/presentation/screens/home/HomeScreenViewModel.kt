@@ -1,9 +1,7 @@
 package com.sanaa.tvapp.presentation.screens.home
 
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import androidx.paging.cachedIn
 import com.sanaa.tvapp.base.BasePagingSource
 import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.state.MediaItemUiState
@@ -18,14 +16,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.launch
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvShowUseCase
-import usecase.custom_list.ManageSavedListsUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
@@ -37,7 +32,6 @@ class HomeScreenViewModel @Inject constructor(
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val savedMovieStatusProvider: ManageSavedListsUseCase,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
     defaultDispatcher = dispatcher
@@ -48,37 +42,23 @@ class HomeScreenViewModel @Inject constructor(
         fetchPopularMediaData()
         fetchTopRatedMovieData()
         fetchTopRatedTvShowData()
-        fetchWatchedMediaData()
         fetchMovieGenres()
         fetchUpcomingMovies()
-
-        viewModelScope.launch {
-            savedMovieStatusProvider.getSavedLists().collect { savedIds ->
-                updateState {
-                    copy(
-                        popularMedia = popularMedia,
-                        topRatingMovies = topRatingMovies,
-                        continueWatchingMovies = continueWatchingMovies
-                    )
-                }
-            }
-        }
     }
 
-
-    fun updateUserLoggingStatus() {
+    private fun updateUserLoggingStatus() {
         tryToCollect(
             block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    copy(
-                        userIsLoggedIn = isLogged,
-                        showBottomSheet = false
-
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag,
+            onError = ::onErrorLoadingData
         )
+    }
+
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged != state.value.userIsLoggedIn) {
+            fetchWatchedMediaData()
+            updateState { copy(userIsLoggedIn = isLogged) }
+        }
     }
 
     private fun fetchPopularMediaData() {
@@ -150,21 +130,24 @@ class HomeScreenViewModel @Inject constructor(
         updateState { copy(isLoading = true, errorMessage = null) }
         tryToCollect(
             block = { loadWatchedMediaHistory() },
-            onCollect = { watchedMediaList ->
-                updateState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = null,
-                        continueWatchingMovies = watchedMediaList.map { it.toState() }
-                            .filter { it.mediaTypeUiState == MediaTypeUiState.MOVIE },
-                        continueWatchingTvShows = watchedMediaList.map { it.toState() }
-                            .filter { it.mediaTypeUiState == MediaTypeUiState.TV_SHOW }
-                    )
-                }
-            },
+            onCollect = ::onFetchWatchedMediaSuccess,
             onError = ::onErrorLoadingData
         )
     }
+
+    private fun onFetchWatchedMediaSuccess(mediaList: List<MediaHistoryItem>) {
+        updateState {
+            copy(
+                isLoading = false,
+                errorMessage = null,
+                continueWatchingMovies = mediaList.map { it.toState() }
+                    .filter { it.mediaTypeUiState == MediaTypeUiState.MOVIE },
+                continueWatchingTvShows = mediaList.map { it.toState() }
+                    .filter { it.mediaTypeUiState == MediaTypeUiState.TV_SHOW }
+            )
+        }
+    }
+
 
     private fun fetchMovieGenres() {
         tryToExecute(
@@ -186,13 +169,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchUpcomingMovies(genreId: Int? = null) {
         tryToExecute(
-            block = {
-                loadUpcomingMovies(genreId)
-                    .combine(savedMovieStatusProvider.getSavedLists()) { pagingData, savedIds ->
-                        pagingData
-                    }
-                    .cachedIn(viewModelScope)
-            },
+            block = { loadUpcomingMovies(genreId) },
             onSuccess = { flowWithSaved ->
                 updateState { copy(upcomingMovies = flowWithSaved) }
             },
@@ -239,7 +216,6 @@ class HomeScreenViewModel @Inject constructor(
             )
         }
     }
-
 
     private fun onErrorLoadingData(e: Throwable) {
         when (e) {

@@ -35,7 +35,7 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.presentation.components.MediaSection
 import com.sanaa.tvapp.presentation.screens.home.component.HomeScreenLoading
-import com.sanaa.tvapp.presentation.screens.home.component.HomeTaps
+import com.sanaa.tvapp.presentation.screens.home.component.HomeTabs
 import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
@@ -130,7 +130,7 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
             }
         )
 
-        HomeTaps(
+        HomeTabs(
             modifier = Modifier.padding(top = 12.dp),
             sidePaddings = sidePaddings,
             navController = navController

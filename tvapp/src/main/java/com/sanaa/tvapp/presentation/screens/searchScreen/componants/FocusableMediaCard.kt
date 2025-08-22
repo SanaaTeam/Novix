@@ -62,6 +62,7 @@ fun FocusableMediaCard(
                 .fillMaxWidth()
                 .onFocusChanged { focusState -> isFocused = focusState.isFocused },
             onClick = onClick,
+            colors = CardDefaults.colors(containerColor = Theme.colors.surfaceHigh),
             border = CardDefaults.border(
                 border = Border.None,
                 focusedBorder = Border(
