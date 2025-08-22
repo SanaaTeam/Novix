@@ -24,8 +24,8 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.designsystem.R as designSystemR
 import com.sanaa.presentation.api.LocalThemeProvider
+import com.sanaa.designsystem.R as designSystemR
 
 @Composable
 fun RequestToLoginBottomSheet(
@@ -91,17 +91,18 @@ fun RequestToLoginBottomSheet(
 private fun RequestToLoginBottomSheetPreview() {
     val showSheet = remember { mutableStateOf(false) }
     Box(modifier = Modifier.fillMaxSize()) {
-        AppText(text = "Show Bottom Sheet",
-            modifier = Modifier.clickable(onClick =
-                { showSheet.value = true }
+        AppText(
+            text = "Show Bottom Sheet",
+            modifier = Modifier.clickable(
+                onClick =
+                    { showSheet.value = true }
             )
         )
 
-        if (showSheet.value) {
-            RequestToLoginBottomSheet(
-                isVisible = showSheet.value,
-                onDismiss = { showSheet.value = false }
-            )
-        }
+        RequestToLoginBottomSheet(
+            isVisible = showSheet.value,
+            onDismiss = { showSheet.value = false }
+        )
+
     }
 }

@@ -9,4 +9,7 @@
     <string name="actors">Actors</string>
     <string name="error_general_title">Oops! Something went wrong.</string>
     <string name="error_general_message">Please try again later, we’ll be waiting with your movies and popcorn</string>
+
+    <string name="list_items_count">%s items</string>
+
 </resources>

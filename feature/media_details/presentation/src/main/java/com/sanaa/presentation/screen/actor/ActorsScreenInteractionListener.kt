@@ -9,7 +9,7 @@ interface ActorsScreenInteractionListener {
     fun onViewAllGalleryClicked()
     fun onTvShowClicked(id: Int)
     fun onMovieClicked(id: Int)
-    fun onDismissBottomSheet()
+    fun onDismissLoginBottomSheet()
     fun onSaveClicked(movie: MovieUiModel)
     fun onRetryClicked()
     fun onLoginButtonClick()

@@ -188,7 +188,7 @@ class MovieDetailsViewModelTest {
         advanceUntilIdle()
 
         viewModel.onRatingChanged(8)
-        assertThat(viewModel.state.value.imdbRating).isEqualTo(8)
+        assertThat(viewModel.state.value.filledStarsCount).isEqualTo(8)
     }
 
     @Test

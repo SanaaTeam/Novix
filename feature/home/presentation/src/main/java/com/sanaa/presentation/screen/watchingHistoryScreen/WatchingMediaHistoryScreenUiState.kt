@@ -19,7 +19,7 @@ data class WatchingMediaHistoryScreenUiState(
     val showLoginBottomSheet: Boolean = false,
     val showSaveToListBottomSheet: Boolean = false,
     val showAddListBottomSheet: Boolean = false,
-    val selectedMediaToSave: MediaItemUiState? = null,
+    val selectedMediaToSaveId: Int? = null,
     val userIsLoggedIn: Boolean = false,
     val showBottomSheet: Boolean = false,
     val snackBarData: SnackData? = null

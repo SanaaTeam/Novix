@@ -134,7 +134,7 @@ private fun TvShowScreenContent(
                 exit = FadeSlideOutVertically
             ) {
                 BottomContainer(
-                    isRateButtonVisible = state.showRateButton,
+                    isFilledStarIcon = state.isRatingSubmitted,
                     modifier = Modifier,
                     trailerUrl = state.tvShow.trailerUrl,
                     isRateButtonEnabled = state.isError.not(),
@@ -144,7 +144,7 @@ private fun TvShowScreenContent(
             }
             RateBottomSheet(
                 isRateSelected = state.hasUserSelectedRate,
-                imdbRating = state.imdbRating,
+                imdbRating = state.filledStarsCount,
                 onDismiss = interactionListener::onDismissRateBottomSheet,
                 isVisible = state.showRateBottomSheet,
                 onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
@@ -153,7 +153,7 @@ private fun TvShowScreenContent(
 
             RequestToLoginBottomSheet(
                 onDismiss = interactionListener::onDismissLoginBottomSheet,
-                onLoginButtonClick = { interactionListener.onLoginButtonClick() },
+                onLoginButtonClick = interactionListener::onLoginButtonClick,
                 isVisible = state.showLoginBottomSheet,
                 text = stringResource(R.string.please_login_to_rate_your_favorite_items),
                 title = stringResource(R.string.rate_it)

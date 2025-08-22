@@ -28,7 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
@@ -36,8 +35,10 @@ import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.screen.playlistDetails.components.AnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
+import com.sanaa.designsystem.R as DesignSystemR
 
 @Composable
 fun RemoveFromListBottomSheet(
@@ -101,10 +102,10 @@ private fun RemoveFromListBottomSheetContent(
                     .padding(bottom = 24.dp),
             ) {
                 TopBar(
-                    screenTitle = stringResource(R.string.remove_from_list),
+                    screenTitle = stringResource(DesignSystemR.string.remove_from_list),
                     rightContent = {
                         TopBarClickableIcon(
-                            icon = painterResource(id = R.drawable.icon_cancel),
+                            icon = painterResource(id = DesignSystemR.drawable.icon_cancel),
                             onClick = {
                                 interactionListener.onBottomSheetDismiss()
                                 onDismiss()
@@ -113,7 +114,7 @@ private fun RemoveFromListBottomSheetContent(
                     }
                 )
                 AppText(
-                    text = stringResource(R.string.remove_from_list_caption),
+                    text = stringResource(DesignSystemR.string.remove_from_list_caption),
                     style = Theme.textStyle.body.small,
                     color = Theme.colors.body,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
@@ -159,7 +160,7 @@ private fun RemoveFromListBottomSheetContent(
                 }
 
                 PrimaryButton(
-                    text = stringResource(R.string.remove),
+                    text = stringResource(DesignSystemR.string.remove),
                     onClick = interactionListener::onRemoveClick,
                     isEnabled = state.isRemoveButtonEnabled,
                     isLoading = state.isUploading,
@@ -212,7 +213,7 @@ private fun PlaylistItem(
             )
             Spacer(Modifier.height(4.dp))
             AppText(
-                text = "$itemCount items",
+                text = stringResource(R.string.list_items_count, itemCount),
                 style = Theme.textStyle.body.small,
                 color = Theme.colors.body
             )

@@ -35,6 +35,7 @@ import com.sanaa.presentation.screen.RecentViewListener
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
 import com.sanaa.presentation.screen.componants.cards.SaveIconChip
+import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 
@@ -105,7 +106,10 @@ private fun ContentState(
                             item,
                             onMediaClicked = {
                                 recentViewListener.onRecentViewedMediaClicked(item)
-                            }
+                            },
+                            onSaveIconClicked = {
+                                recentViewListener.onSaveIconClick(item.id)
+                            },
                         )
                     }
                 }
@@ -145,6 +149,7 @@ private fun ContentState(
 private fun MediaPoster(
     item: RecentViewedUiModel,
     onMediaClicked: () -> Unit = {},
+    onSaveIconClicked: () -> Unit = {},
 ) {
 
     MediaPosterCard(
@@ -178,9 +183,11 @@ private fun MediaPoster(
             }
         },
         topLeftContent = {
-            SaveIconChip(
-                onClick = {}
-            )
+            if(item.mediaType == MediaTypeUi.MOVIE) {
+                SaveIconChip(
+                    onClick = onSaveIconClicked
+                )
+            }
         },
     )
 }

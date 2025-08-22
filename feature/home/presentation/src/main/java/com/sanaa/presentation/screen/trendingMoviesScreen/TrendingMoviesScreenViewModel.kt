@@ -41,10 +41,20 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     fun updateUserLoggingStatus() {
         tryToCollect(
             block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState { copy(userIsLoggedIn = isLogged) }
-            },
+            onCollect = ::onCollectLoggedFlag,
         )
+    }
+
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged && state.value.showLoginBottomSheet) {
+            updateState {
+                copy(
+                    showLoginBottomSheet = false,
+                    showSaveToListBottomSheet = true,
+                )
+            }
+        }
+        updateState { copy(userIsLoggedIn = isLogged) }
     }
 
     private fun fetchGenres() {
@@ -99,7 +109,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     override fun onSaveIconClick(media: MediaItemUiState) {
         if (!state.value.userIsLoggedIn) {
-            updateState { copy(showLoginBottomSheet = true) }
+            updateState { copy(showLoginBottomSheet = true, selectedMediaId = media.id) }
             return
         }
 
@@ -117,7 +127,8 @@ class TrendingMoviesScreenViewModel @Inject constructor(
                 snackBarData = SnackData(
                     message = stringProvider.addToListSuccess,
                     isError = false
-                )
+                ),
+                showSaveToListBottomSheet = false
             )
         }
     }

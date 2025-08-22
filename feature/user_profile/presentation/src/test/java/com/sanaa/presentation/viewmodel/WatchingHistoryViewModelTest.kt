@@ -278,7 +278,7 @@ class WatchingHistoryViewModelTest {
         viewModel.state.test {
             val updatedState = awaitItem()
             assertThat(updatedState.showSaveToListBottomSheet).isFalse()
-            assertThat(updatedState.selectedMediaToSave).isNull()
+            assertThat(updatedState.selectedMediaToSaveId).isNull()
             cancelAndConsumeRemainingEvents()
         }
     }

@@ -22,7 +22,7 @@ data class SearchScreenUiState(
     val safeContentThreshold: Float = 0f,
     val showSaveToListBottomSheet: Boolean = false,
     val showAddListBottomSheet: Boolean = false,
-    val selectedMediaToSave: MovieUiModel? = null,
+    val selectedMediaToSaveId: Int? = null,
     val snackBarData: SnackData? = null
 ) {
 
