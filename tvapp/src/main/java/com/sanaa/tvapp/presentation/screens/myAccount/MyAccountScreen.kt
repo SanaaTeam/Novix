@@ -59,6 +59,7 @@ import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ChangePasswordScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MyRatingScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.WatchingHistoryScreenRoute
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import repository.Language
 import com.sanaa.designsystem.R as designSystemResource
@@ -67,52 +68,8 @@ import com.sanaa.tvapp.R as tvResource
 @Composable
 fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val navController = LocalAppNavController.current
-    val view = LocalView.current
-    val context = LocalContext.current
-    val activity = view.context as? AppCompatActivity
 
-    val loginLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            activity?.recreate()
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
-            when (it) {
-                NavigateToChangePasswordSetting -> {
-                    navController.navigate(ChangePasswordScreenRoute)
-                }
-
-                is UpdateAppLanguage -> {
-                    val localeList = LocaleListCompat.forLanguageTags(it.language)
-                    val isLanguageSelected = AppCompatDelegate
-                        .getApplicationLocales()
-                        .toLanguageTags() != localeList.toLanguageTags()
-                    if (isLanguageSelected) {
-                        AppCompatDelegate.setApplicationLocales(localeList)
-                    }
-                }
-
-                NavigateToMyRating -> {
-                    navController.navigate(MyRatingScreenRoute)
-                }
-
-                NavigateToWatchingHistory -> {
-                    navController.navigate(WatchingHistoryScreenRoute)
-                }
-
-                NavigateToLogin -> {
-                    val intent = Intent(context, LoginActivity::class.java)
-                    loginLauncher.launch(intent)
-                }
-            }
-        }
-    }
-
+    EffectHandler(viewModel.effect)
     MyAccountScreenContent(state, viewModel)
 }
 
@@ -263,5 +220,56 @@ private fun MyAccountScreenContent(
                 onDismissRequest = interactionsListener::onDismissLogoutDialog,
                 onLogOutConfirmed = interactionsListener::onConfirmLogoutButtonClick,
             )
+    }
+}
+
+
+@Composable
+private fun EffectHandler(
+    effects: Flow<MyAccountScreenEffect>,
+) {
+    val navController = LocalAppNavController.current
+    val view = LocalView.current
+    val context = LocalContext.current
+    val activity = view.context as? AppCompatActivity
+
+    val loginLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            activity?.recreate()
+        }
+    }
+    LaunchedEffect(Unit) {
+        effects.collectLatest {
+            when (it) {
+                NavigateToChangePasswordSetting -> {
+                    navController.navigate(ChangePasswordScreenRoute)
+                }
+
+                is UpdateAppLanguage -> {
+                    val localeList = LocaleListCompat.forLanguageTags(it.language)
+                    val isLanguageSelected = AppCompatDelegate
+                        .getApplicationLocales()
+                        .toLanguageTags() != localeList.toLanguageTags()
+                    if (isLanguageSelected) {
+                        AppCompatDelegate.setApplicationLocales(localeList)
+                    }
+                }
+
+                NavigateToMyRating -> {
+                    navController.navigate(MyRatingScreenRoute)
+                }
+
+                NavigateToWatchingHistory -> {
+                    navController.navigate(WatchingHistoryScreenRoute)
+                }
+
+                NavigateToLogin -> {
+                    val intent = Intent(context, LoginActivity::class.java)
+                    loginLauncher.launch(intent)
+                }
+            }
+        }
     }
 }
