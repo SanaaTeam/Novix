@@ -8,8 +8,10 @@ import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toDetailsUiModel
+import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toHistory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
+import entity.User
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +19,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +29,8 @@ class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsScreenUiState, MovieDetailsScreenUiEffect>(
     initialState = MovieDetailsScreenUiState(),
@@ -87,6 +93,7 @@ class MovieDetailsViewModel @Inject constructor(
         val trailerUrl = trailerDeferred.await()
         val similar = similarDeferred.await()
 
+        addMovieToHistory(movie)
         updateState {
             copy(
                 movieDetails = movie.toDetailsUiModel(trailerUrl = trailerUrl),
@@ -151,6 +158,20 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onSummitRateClick() {
         tryToExecute(
             block = ::submitMovieRating,
+        )
+    }
+
+    private fun addMovieToHistory(movie: Movie) {
+        tryToCollect(
+            block = { getLoggedInUserUseCase.getLoggedInUser() },
+            onCollect = onCollectUser(movie)
+        )
+    }
+
+    private fun onCollectUser(movie: Movie): suspend (User) -> Unit = { user ->
+        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
+            mediaHistoryItem = movie.toHistory(),
+            username = user.username
         )
     }
 

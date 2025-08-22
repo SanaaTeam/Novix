@@ -31,11 +31,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Text
+import com.sanaa.designsystem.design_system.component.chips.MediaRatingChip
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.presentation.components.MediaSection
 import com.sanaa.tvapp.presentation.screens.home.component.HomeScreenLoading
-import com.sanaa.tvapp.presentation.screens.home.component.HomeTaps
+import com.sanaa.tvapp.presentation.screens.home.component.HomeTabs
 import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
@@ -130,7 +131,7 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
             }
         )
 
-        HomeTaps(
+        HomeTabs(
             modifier = Modifier.padding(top = 12.dp),
             sidePaddings = sidePaddings,
             navController = navController
@@ -201,6 +202,21 @@ fun HomeMovies(
                 }
             }
         }
+
+        if (state.ratedMovies.isNotEmpty()) {
+            MediaSection(title = stringResource(tvResource.string.my_rating)) {
+                items(state.ratedMovies) { item ->
+                    FocusableMediaCard(
+                        imageUrl = item.imageUrl ?: "",
+                        titleText = item.title,
+                        onClick = { onItemClick(item.id) },
+                        topCornerContent = {
+                            MediaRatingChip(rating = item.rating.orEmpty())
+                        }
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -241,18 +257,17 @@ fun HomeTvShows(
             }
         }
 
-        if (upcomingMovies.itemCount == 0) {
-            MediaSection(title = stringResource(tvResource.string.up_upcoming)) {
-                items(
-                    count = upcomingMovies.itemCount,
-                ) { index ->
-                    upcomingMovies[index]?.let {
-                        FocusableMediaCard(
-                            imageUrl = it.imageUrl ?: "",
-                            titleText = it.title,
-                            onClick = { onItemClick(it.id) }
-                        )
-                    }
+        if (state.ratedTvShows.isNotEmpty()) {
+            MediaSection(title = stringResource(tvResource.string.my_rating)) {
+                items(state.ratedTvShows) { item ->
+                    FocusableMediaCard(
+                        imageUrl = item.imageUrl ?: "",
+                        titleText = item.title,
+                        onClick = { onItemClick(item.id) },
+                        topCornerContent = {
+                            MediaRatingChip(rating = item.rating.orEmpty())
+                        }
+                    )
                 }
             }
         }

@@ -46,6 +46,7 @@ class LocalHistoryDataSourceImplTest {
     fun `deleteQueryById should call deleteQueryById on queryDao`() = runTest {
         // Given
         val id = 1
+
         // When
         dataSource.deleteQueryById(id)
         // Then
@@ -102,6 +103,7 @@ class LocalHistoryDataSourceImplTest {
             mediaType = "test mediaType",
             username = "username",
             genres = "",
+            title = "title",
         )
         // When
         dataSource.insertWatchedMediaHistory(watchedMedia)

@@ -15,6 +15,7 @@ fun MediaHistoryItem.toDto(
     return WatchedMediaHistoryLocalDto(
         id = id,
         username = username,
+        title = title,
         posterImageUrl = posterImageUrl,
         mediaType = mediaType.name,
         genres = genresString,
@@ -34,6 +35,7 @@ fun WatchedMediaHistoryLocalDto.toEntity(): MediaHistoryItem {
     return MediaHistoryItem(
         id = id,
         posterImageUrl = posterImageUrl,
+        title = title,
         mediaType = MediaType.valueOf(mediaType),
         genres = genreList,
         lastWatchedAt = timestamp

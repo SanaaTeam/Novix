@@ -30,7 +30,7 @@ fun TvShow.toState(): MediaItemUiState = MediaItemUiState(
 
 fun MediaHistoryItem.toState(): MediaItemUiState = MediaItemUiState(
     id = id,
-    title = "",
+    title = title,
     imageUrl = posterImageUrl,
     rating = "",
     mediaTypeUiState = mediaType.toState(),

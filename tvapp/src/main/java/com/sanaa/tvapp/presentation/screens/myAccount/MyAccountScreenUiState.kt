@@ -14,11 +14,16 @@ data class MyAccountScreenUiState(
     val myRatingMovies: List<MediaItemUiState> = emptyList(),
     val watchingHistoryTvShows: List<MediaItemUiState> = emptyList(),
     val myRatingTvShows: List<MediaItemUiState> = emptyList(),
+    val showLogoutDialog: Boolean = false,
 ) {
     enum class ContentRestrictionUiState {
         RESTRICTED,
         UNRESTRICTED,
         MODERATE_RESTRICTION
+    }
+    companion object {
+        const val ARABIC_LANGUAGE_CODE = "ar"
+        const val ENGLISH_LANGUAGE_CODE = "en"
     }
 }
 

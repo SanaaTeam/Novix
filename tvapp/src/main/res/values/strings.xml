@@ -8,6 +8,7 @@
     <string name="unsuitable_image">Unsuitable image</string>
     <string name="welcome_back">Welcome back</string>
     <string name="up_upcoming">Upcoming</string>"
+    <string name="my_rating">My rating</string>"
     <string name="no_internet_connection_error">No Internet Connection</string>
     <string name="invalid_username_password_error">Invalid user name or password</string>
     <string name="enter_username_password_error">Please enter username and password</string>
@@ -43,4 +44,5 @@
     <string name="movies">Movies</string>
     <string name="tv_shows">TV Shows</string>
     <string name="actors">Actors</string>
+    <string name="logout_message">Are you sure to continue?</string>
 </resources>

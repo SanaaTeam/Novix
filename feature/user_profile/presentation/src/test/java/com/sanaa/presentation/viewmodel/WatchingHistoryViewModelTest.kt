@@ -328,6 +328,7 @@ class WatchingHistoryViewModelTest {
             mediaType = MediaType.MOVIE,
             genres = listOf(dummyGenre),
             lastWatchedAt = 1L,
+            title = "Test Movie"
         )
     }
 }
