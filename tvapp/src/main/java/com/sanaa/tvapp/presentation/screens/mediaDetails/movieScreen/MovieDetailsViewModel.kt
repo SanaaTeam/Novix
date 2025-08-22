@@ -162,11 +162,11 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onSimilarMovieClick(movieId: Int) {
-        TODO("Not yet implemented")
+        emitEffect(MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails(movieId))
     }
 
     override fun onActorCardClick(actorId: Int) {
-        TODO("Not yet implemented")
+        emitEffect(MovieDetailsScreenUiEffect.NavigateToActorScreen(actorId))
     }
 
     private fun addMovieToHistory(movie: Movie) {
