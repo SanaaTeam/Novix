@@ -26,6 +26,8 @@ data class HomeScreenUiState(
     val showSaveToListBottomSheet: Boolean = false,
     val selectedMediaId: Long = 0L,
     val snackBarData: SnackData? = null,
+    val ratedMovies: List<MediaItemUiState> = emptyList(),
+    val ratedTvShows: List<MediaItemUiState> = emptyList(),
 )
 
 data class FeaturedCarouselState(

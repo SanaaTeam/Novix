@@ -51,5 +51,6 @@ fun TvShow.toHistory(): MediaHistoryItem {
         posterImageUrl = posterImageUrl,
         mediaType = MediaType.TV_SHOW,
         lastWatchedAt = Clock.System.now().toEpochMilliseconds(),
+        title = title,
     )
 }
