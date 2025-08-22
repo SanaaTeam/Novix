@@ -31,7 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
 import com.sanaa.designsystem.design_system.component.button.OutlinedButton
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
@@ -41,8 +40,10 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
+import com.sanaa.designsystem.R as DesignSystemR
 
 
 @Composable
@@ -103,10 +104,10 @@ private fun SaveToListBottomSheetContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 TopBar(
-                    screenTitle = stringResource(R.string.save_to_list),
+                    screenTitle = stringResource(DesignSystemR.string.save_to_list),
                     rightContent = {
                         TopBarClickableIcon(
-                            icon = painterResource(id = R.drawable.icon_cancel),
+                            icon = painterResource(id = DesignSystemR.drawable.icon_cancel),
                             onClick = {
                                 interactionListener.onRequestBottomSheetDismiss()
                                 onDismiss()
@@ -142,7 +143,7 @@ private fun SaveToListBottomSheetContent(
                 }
 
                 PrimaryButton(
-                    text = stringResource(R.string.add),
+                    text = stringResource(DesignSystemR.string.add),
                     onClick = interactionListener::onAddClick,
                     isEnabled = state.isAddButtonEnabled,
                     isLoading = state.isUploading,
@@ -153,7 +154,7 @@ private fun SaveToListBottomSheetContent(
                 )
 
                 OutlinedButton(
-                    text = stringResource(R.string.create_new_list),
+                    text = stringResource(DesignSystemR.string.create_new_list),
                     onClick = interactionListener::onCreateNewListClick,
                     modifier = Modifier
                         .padding(top = 12.dp)
@@ -205,7 +206,7 @@ private fun PlaylistItem(
             )
             Spacer(Modifier.height(4.dp))
             AppText(
-                text = "$itemCount items",
+                text = stringResource(R.string.list_items_count, itemCount),
                 style = Theme.textStyle.body.small,
                 color = Theme.colors.body
             )
