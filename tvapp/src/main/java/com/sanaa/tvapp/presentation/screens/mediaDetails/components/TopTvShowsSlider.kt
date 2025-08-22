@@ -19,9 +19,7 @@ fun TopTvShowsSlider(
     tvShows: List<TvShowDetailsUiModel>,
     onTvShowCardClicked: (Int) -> Unit = {},
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
             text = title,
             style = Theme.textStyle.headLine.small,

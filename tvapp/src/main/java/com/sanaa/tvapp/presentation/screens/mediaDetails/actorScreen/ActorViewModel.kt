@@ -27,7 +27,6 @@ class ActorViewModel @Inject constructor(
         loadDetails()
     }
 
-
     override fun onTvShowClicked(id: Int) {
         emitEffect(ActorScreenEffects.NavigateToSeriesDetails(id))
     }

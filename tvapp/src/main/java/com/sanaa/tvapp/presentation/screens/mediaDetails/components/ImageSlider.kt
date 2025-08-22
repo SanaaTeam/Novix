@@ -50,7 +50,6 @@ fun ImagesSlider(
             contentPadding = PaddingValues(horizontal = 36.dp)
         ) {
             itemsIndexed(images) { index, image ->
-
                 ImageCard(image)
             }
         }
@@ -63,7 +62,6 @@ private fun ImageCard(
     imageUrl: String?,
     modifier: Modifier = Modifier
 ) {
-
     Card(
         modifier =  Modifier.fillMaxWidth(),
         onClick = {},
@@ -108,5 +106,4 @@ private fun ImageCard(
             }
         }
     }
-
 }

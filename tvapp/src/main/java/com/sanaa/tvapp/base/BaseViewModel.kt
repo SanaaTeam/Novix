@@ -1,7 +1,6 @@
 package com.sanaa.tvapp.base
 
 import android.nfc.tech.MifareUltralight.PAGE_SIZE
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -10,15 +9,13 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -49,10 +46,10 @@ abstract class BaseViewModel<T, E>(
     }
 
     protected fun <T> tryToExecute(
-        onStart : ()->Unit = {},
+        onStart: () -> Unit = {},
         block: suspend () -> T,
         onSuccess: (T) -> Unit = {},
-        onError: (exception: Exception) -> Unit = {},
+        onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
         onStart()
@@ -60,14 +57,14 @@ abstract class BaseViewModel<T, E>(
             try {
                 val result = block()
                 onSuccess(result)
-            } catch (exception: Exception) {
+            } catch (exception: NovixAppException) {
                 onError(exception)
             }
         }
     }
 
     protected fun <T> tryToCollect(
-        onStart : ()->Unit = {},
+        onStart: () -> Unit = {},
         block: suspend () -> Flow<T>,
         onCollect: suspend (T) -> Unit,
         onError: (exception: Throwable) -> Unit = {},
