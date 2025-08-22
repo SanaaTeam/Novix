@@ -21,7 +21,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.tvapp.presentation.screens.home.component.SearchTaps
+import com.sanaa.tvapp.presentation.screens.home.component.SearchTabs
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.AnimatedSnackBarHost
@@ -81,7 +81,7 @@ private fun SearchScreenContent(
                 onTextChange = interactionListener::onSearchQueryChanged,
             )
 
-            SearchTaps(
+            SearchTabs(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp),
