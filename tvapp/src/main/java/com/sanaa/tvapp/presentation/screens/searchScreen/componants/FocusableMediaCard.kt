@@ -55,6 +55,11 @@ fun FocusableMediaCard(
         targetValue = if (isFocused) 8.dp else 16.dp,
         label = "animatedWidth"
     )
+    val sidePadding by animateDpAsState(
+        targetValue = if (isFocused) 8.dp else 0.dp,
+        label = "animatedWidth"
+    )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -62,6 +67,7 @@ fun FocusableMediaCard(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = sidePadding)
                 .onFocusChanged { focusState -> isFocused = focusState.isFocused },
             onClick = onClick,
             colors = CardDefaults.colors(containerColor = Theme.colors.surfaceHigh),

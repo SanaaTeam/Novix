@@ -3,7 +3,6 @@ package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
@@ -23,10 +22,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -58,7 +53,6 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiMod
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetailsRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
-import com.sanaa.tvapp.state.SnackData
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -93,7 +87,7 @@ private fun MovieDetailsEffectsHandler(
     viewModel: MovieDetailsViewModel,
     navController: NavHostController,
     context: Context,
-    loginLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>
+    loginLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>,
 ) {
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
@@ -130,6 +124,7 @@ fun MovieDetailsContent(
 
     NovixScaffold(
         modifier = Modifier,
+        backgroundShapes = {},
         snackBarHost = {
             NovixAnimatedSnackBarHost(
                 data = state.snackBarData,

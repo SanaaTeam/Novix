@@ -19,10 +19,10 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun IconWithText(
     iconRes: Int,
-    contentDescription: String?,
+    contentDescription: String? = "",
     text: String,
-    textColor: Color=Theme.colors.body,
-    tint: Color
+    textColor: Color = Theme.colors.body,
+    tint: Color,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,

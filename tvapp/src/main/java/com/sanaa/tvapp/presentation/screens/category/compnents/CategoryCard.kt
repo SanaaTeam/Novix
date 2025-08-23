@@ -37,8 +37,11 @@ fun CategoryCard(
     category: CategoryUiState,
     modifier: Modifier = Modifier,
 ) {
-
-    Box(modifier = modifier.aspectRatio(160 / 68f)) {
+    Box(
+        modifier = modifier
+            .aspectRatio(160 / 68f)
+            .background(Theme.colors.surface)
+    ) {
         AsyncImage(
             modifier = Modifier
                 .matchParentSize(),
@@ -54,9 +57,7 @@ fun CategoryCard(
             modifier = Modifier
                 .matchParentSize()
                 .background(boxOverlayBackgroundColor)
-                .padding(
-                    horizontal = 8.dp, vertical = 8.dp
-                )
+                .padding(horizontal = 8.dp, vertical = 8.dp)
                 .align(Alignment.TopStart)
         )
     }
