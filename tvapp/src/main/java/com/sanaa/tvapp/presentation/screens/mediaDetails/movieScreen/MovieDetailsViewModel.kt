@@ -105,7 +105,6 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-
     override fun onWatchTrailerClick(urlString: String) {
         emitEffect(MovieDetailsScreenUiEffect.OpenTrailer(urlString))
     }

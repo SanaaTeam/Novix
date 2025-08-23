@@ -50,13 +50,16 @@ class ActorViewModel @Inject constructor(
     }
 
     private fun loadDetails() {
-
         tryToExecute(
             onStart = ::setOnLoading,
             block = ::fetchActorDetails,
-            onSuccess = { updateState { copy(isLoading = false) } },
+            onSuccess = { onLoadSuccess() },
             onError = ::onErrorAccrue
         )
+    }
+
+    private fun onLoadSuccess() {
+        updateState { copy(isLoading = false) }
     }
 
     private suspend fun fetchActorDetails() = coroutineScope {
