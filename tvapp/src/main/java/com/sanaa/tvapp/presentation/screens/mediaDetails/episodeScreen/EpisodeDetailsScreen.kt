@@ -108,7 +108,7 @@ private fun EpisodeDetailsScreenContent(
     interactionListener: EpisodeDetailsInteractionListener,
     state: EpisodeDetailsScreenUiState,
 ) {
-    NovixScaffold {
+    NovixScaffold(backgroundShapes = {}) {
         AnimatedContent(
             targetState = Pair(state.isLoading, state.noInternetConnection),
             contentAlignment = Alignment.Center

@@ -77,6 +77,7 @@ private fun CategoriesScreenContent(
     interactionListener: CategoriesScreenInteractionListener,
 ) {
     NovixScaffold (
+        backgroundShapes = {},
         snackBarHost = {
             NovixAnimatedSnackBarHost(
                 data = state.snackBarData,

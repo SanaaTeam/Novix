@@ -154,7 +154,7 @@ fun TvShowScreenContent(
     state: TvShowDetailsScreenUiState,
     interactionListener: TvShowScreenInteractionListener,
 ) {
-    NovixScaffold {
+    NovixScaffold(backgroundShapes = {}) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
