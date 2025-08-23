@@ -11,7 +11,6 @@ data class
 MovieDetailsScreenUiState(
     val isLoading: Boolean = true,
     val movieDetails: MovieDetailsUiModel = MovieDetailsUiModel(),
-    val errorMessage: String? = null,
     val similarMovies: Flow<PagingData<MovieDetailsUiModel>> = flowOf(PagingData.empty()),
     val cast: List<ActorUiModel> = emptyList(),
     val imagesUrls: List<String> = emptyList(),

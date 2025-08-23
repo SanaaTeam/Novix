@@ -11,4 +11,5 @@ interface MovieDetailsScreenInteractionListener {
     fun onSummitRateClick()
     fun onSimilarMovieClick(movieId: Int)
     fun onActorCardClick(actorId: Int)
+    fun onSnackDismissRequested()
 }

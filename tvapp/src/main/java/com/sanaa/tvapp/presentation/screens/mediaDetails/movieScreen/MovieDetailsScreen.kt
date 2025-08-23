@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -65,7 +66,6 @@ import kotlinx.coroutines.flow.collectLatest
 fun MovieDetailsScreen(
     viewModel: MovieDetailsViewModel = hiltViewModel(),
 ) {
-    var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
     val context = LocalContext.current
@@ -84,10 +84,6 @@ fun MovieDetailsScreen(
         MovieDetailsContent(
             state = state.value,
             interactionListener = viewModel
-        )
-        NovixAnimatedSnackBarHost(
-            data = snack,
-            onDismiss = { snack = null }
         )
     }
 }
@@ -132,7 +128,16 @@ fun MovieDetailsContent(
     val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> =
         state.similarMovies.collectAsLazyPagingItems()
 
-    NovixScaffold(modifier = Modifier) {
+    NovixScaffold(
+        modifier = Modifier,
+        snackBarHost = {
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackDismissRequested,
+                modifier = Modifier.statusBarsPadding()
+            )
+        }
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
