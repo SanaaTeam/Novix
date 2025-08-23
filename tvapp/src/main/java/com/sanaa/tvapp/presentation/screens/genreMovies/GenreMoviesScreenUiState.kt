@@ -12,12 +12,7 @@ data class GenreMoviesScreenUiState(
     val movies: Flow<PagingData<MovieUiModel>> = flowOf(PagingData.empty()),
     val isLoading: Boolean = false,
     val error: String? = null,
-    val showBottomSheet: Boolean = false,
-    val noInternetConnection: Boolean = false,
-    val userIsLoggedIn: Boolean = false,
     val showSaveToListBottomSheet: Boolean = false,
-    val selectedMovieToSave: MovieUiModel? = null,
-    val showAddListBottomSheet: Boolean = false,
     val snackBarData: SnackData? = null
 )
 
