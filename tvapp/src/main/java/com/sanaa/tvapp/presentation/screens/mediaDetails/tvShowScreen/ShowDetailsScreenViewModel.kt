@@ -15,8 +15,10 @@ import exceptions.NoNetworkException
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.first
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -79,7 +81,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
     private fun loadTvShows() {
         tryToExecute(
             block = ::fetchTvShowsDetails,
-            onSuccess = { updateState { copy(isLoading = false, noInternetConnection=false) } },
+            onSuccess = { updateState { copy(isLoading = false, noInternetConnection = false) } },
             onError = ::onErrorAccrue
         )
     }
@@ -151,7 +153,10 @@ class ShowDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onSummitRateClick() {
-        tryToExecute(block = ::submitMovieRating)
+        tryToExecute(
+            block = ::submitTvShowRating,
+            onError = ::onErrorAccrue
+        )
     }
 
     override fun onLoginButtonClick() {
@@ -162,25 +167,82 @@ class ShowDetailsScreenViewModel @Inject constructor(
         updateState { copy(showLoginDialog = false) }
     }
 
+
     private fun updateUserLoginState() {
         tryToCollect(
-            block = checkUserLogin::isLoggedIn,
-            onCollect = ::onCollectLoggedState,
+            block = { checkUserLogin.isLoggedIn() },
+            onCollect = ::onCollectLoggedFlag,
+        )
+    }
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged) {
+            fetchUserRating()
+            if (state.value.showLoginDialog) {
+                updateState {
+                    copy(
+                        showLoginDialog = false,
+                        showRateDialog = true,
+                    )
+                }
+            }
+        }
+        updateState { copy(isUserLoggedIn = isLogged) }
+    }
+
+    private fun fetchUserRating() {
+        tryToExecute(
+            block = { getCurrentUserRating(route.tvShowId) },
+            onSuccess = ::onFetchUserRatingSuccess,
         )
     }
 
-    private fun onCollectLoggedState(loggedIn: Boolean) {
-        updateState { copy(isUserLoggedIn = loggedIn) }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private suspend fun getCurrentUserRating(id: Int): Int {
+        try {
+            val user = getLoggedInUserUseCase.getLoggedInUser().first()
+            return manageTvShowDetails.getTvShowRating(user.id, id)
+        } catch (_: Exception) {
+            return 0
+        }
     }
 
-    private suspend fun submitMovieRating() {
+    private fun onFetchUserRatingSuccess(rating: Int) {
+        updateState {
+            copy(
+                rating = rating,
+                isRatingSubmitted = rating != 0
+            )
+        }
+    }
+
+    private suspend fun submitTvShowRating() {
         val rating = state.value.rating
         val isSendRateSuccess = manageTvShowDetails.addTvShowRate(
             tvShowId = route.tvShowId,
             rating = rating.toFloat()
         )
         if (isSendRateSuccess) {
-            updateState { copy(showRateDialog = false) }
+            updateState {
+                copy(
+                    showRateDialog = false,
+                    isRatingSubmitted = true,
+                    snackBarData = SnackData(
+                        message = stringProvider.submitRatingSuccess,
+                        isError = false
+                    )
+                )
+            }
+        }
+        else {
+            updateState {
+                copy(
+                    showRateDialog = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.submitRatingFailed,
+                        isError = true
+                    )
+                )
+            }
         }
     }
 
@@ -190,19 +252,26 @@ class ShowDetailsScreenViewModel @Inject constructor(
                 copy(
                     noInternetConnection = true,
                     isLoading = false,
-                    snackBarData = SnackData(message = stringProvider.noInternetConnectionError, isError = true )
+                    snackBarData = SnackData(
+                        message = stringProvider.noInternetConnectionError,
+                        isError = true
+                    )
                 )
             }
         } else {
             updateState {
                 copy(
                     isLoading = false,
-                    snackBarData = SnackData(message = stringProvider.somethingWentWrongError, isError = true ),
+                    snackBarData = SnackData(
+                        message = stringProvider.somethingWentWrongError,
+                        isError = true
+                    ),
                     noInternetConnection = false
                 )
             }
         }
     }
+
     override fun onDismissSnackBar() {
         updateState { copy(snackBarData = null) }
     }
