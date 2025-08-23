@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -104,7 +105,6 @@ private fun ActorScreenContent(
         }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-
             AnimatedContent(
                 targetState = state.isLoading || state.noInternetConnection,
                 modifier = Modifier.align(Alignment.Center),
@@ -154,14 +154,9 @@ private fun ActorScreenContent(
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                                )
-                                {
-                                    FlowRow(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                                    ) {
-                                        ActorInfo(state)
-                                    }
+                                ) {
+                                    ActorInfo(state)
+
 
                                     state.actor.biography?.let { bio ->
                                         Text(
@@ -217,33 +212,47 @@ private fun ActorScreenSliders(
 
 @Composable
 private fun ActorInfo(state: ActorScreenUiState) {
-    state.actor.department?.let {
-        AppText(
-            text = it,
-            style = Theme.textStyle.label.small,
-            color = Theme.colors.body,
-        )
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        state.actor.department?.let {
+            AppText(
+                text = it,
+                style = Theme.textStyle.label.small,
+                color = Theme.colors.body,
+            )
+        }
+
+        state.actor.placeOfBirth?.let {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                DotSeparator()
+                IconWithText(
+                    iconRes = R.drawable.location,
+                    text = it,
+                    tint = Theme.colors.body
+                )
+            }
+        }
+
+        state.actor.lifeSpan?.let {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                DotSeparator()
+                IconWithText(
+                    iconRes = R.drawable.birthday_cake,
+                    text = it,
+                    tint = Theme.colors.body
+                )
+            }
+        }
     }
 
-    state.actor.placeOfBirth?.let {
-        DotSeparator()
-        IconWithText(
-            iconRes = R.drawable.location,
-            text = it,
-            contentDescription = "",
-            tint = Theme.colors.body
-        )
-    }
-
-    state.actor.lifeSpan?.let {
-        DotSeparator()
-        IconWithText(
-            iconRes = R.drawable.birthday_cake,
-            text = it,
-            contentDescription = "",
-            tint = Theme.colors.body
-        )
-    }
 }
 
 
