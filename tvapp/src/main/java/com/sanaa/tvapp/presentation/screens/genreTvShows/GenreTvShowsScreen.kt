@@ -85,9 +85,7 @@ fun GenreTvShowsScreenContent(
         else -> ScreenState.CONTENT
     }
 
-    NovixScaffold(
-        backgroundShapes = { BackgroundShapes() },
-    ) {
+    NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
         Column(
             modifier = Modifier.navigationBarsPadding()
         ) {

@@ -64,7 +64,7 @@ private fun CategoriesScreen(
     state: CategoriesScreenUiState,
     interactionListener: CategoriesScreenInteractionListener,
 ) {
-    NovixScaffold {
+    NovixScaffold(backgroundShapes = {}) {
         when {
             state.isNoInternet -> {
                 NetworkDisconnectionContact(
