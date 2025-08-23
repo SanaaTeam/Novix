@@ -15,7 +15,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.tvapp.presentation.components.TVNetworkDisconnectionContact
 import com.sanaa.tvapp.presentation.screens.category.CategoriesScreenUiState.Companion.MOVIE_TAB_INDEX
 import com.sanaa.tvapp.presentation.screens.category.compnents.CategoriesGrid
@@ -26,7 +25,7 @@ import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.GenreTvShows
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun CategoriesScreenContent(
+fun CategoriesScreen(
     viewModel: CategoriesScreenViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
