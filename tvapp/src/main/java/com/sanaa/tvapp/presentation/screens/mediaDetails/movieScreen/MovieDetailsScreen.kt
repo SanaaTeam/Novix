@@ -61,12 +61,10 @@ fun MovieDetailsScreen(
 
     MovieDetailsEffectsHandler(effect = viewModel.effect)
 
-    Box(modifier = Modifier.systemBarsPadding()) {
-        MovieDetailsContent(
-            state = state.value,
-            interactionListener = viewModel
-        )
-    }
+    MovieDetailsContent(
+        state = state.value,
+        interactionListener = viewModel
+    )
 }
 
 @Composable
@@ -118,7 +116,7 @@ fun MovieDetailsContent(
 
     NovixScaffold(
         backgroundShapes = {},
-        modifier = Modifier,
+        modifier = Modifier.systemBarsPadding(),
         snackBarHost = {
             NovixAnimatedSnackBarHost(
                 data = state.snackBarData,

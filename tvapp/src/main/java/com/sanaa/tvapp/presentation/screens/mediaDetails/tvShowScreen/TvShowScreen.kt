@@ -114,7 +114,11 @@ fun TvShowScreenContent(
     state: TvShowDetailsScreenUiState,
     interactionListener: TvShowScreenInteractionListener,
 ) {
-    NovixScaffold(backgroundShapes = {}, modifier = Modifier.systemBarsPadding().fillMaxSize()) {
+    NovixScaffold(
+        backgroundShapes = {},
+        modifier = Modifier.systemBarsPadding()
+            .fillMaxSize()
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
