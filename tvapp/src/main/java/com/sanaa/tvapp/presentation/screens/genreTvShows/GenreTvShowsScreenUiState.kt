@@ -2,6 +2,7 @@ package com.sanaa.tvapp.presentation.screens.genreTvShows
 
 import androidx.paging.PagingData
 import com.sanaa.tvapp.presentation.screens.searchScreen.TvShowUiModel
+import com.sanaa.tvapp.state.SnackData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -14,6 +15,7 @@ data class GenreTvShowsScreenUiState(
     val showBottomSheet: Boolean = false,
     val noInternetConnection: Boolean = false,
     val userIsLoggedIn: Boolean = false,
+    val snackBarData: SnackData? = null
 )
 
 enum class ScreenState {

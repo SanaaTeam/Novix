@@ -7,11 +7,14 @@ import com.sanaa.tvapp.base.BasePagingSource
 import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.presentation.screens.searchScreen.TvShowUiModel
 import com.sanaa.tvapp.presentation.screens.searchScreen.mapper.toUiState
+import com.sanaa.tvapp.state.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvShow
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageTvShowUseCase
 import javax.inject.Inject
@@ -21,6 +24,7 @@ class GenreTvShowsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageTvShowUseCase: ManageTvShowUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<GenreTvShowsScreenUiState, GenreTvShowsEffects>(
     initialState = GenreTvShowsScreenUiState(),
@@ -57,14 +61,22 @@ class GenreTvShowsViewModel @Inject constructor(
         getTvShowsByGenreId(genreId)
     }
 
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
+
     override fun onTvShowClick(id: Int) {
         emitEffect(GenreTvShowsEffects.NavigateToTvShowDetails(id))
     }
 
     private fun getTvShowsByGenreId(genreId: Int) {
         tryToCollect(
+            onStart = {
+                updateState { copy(isLoading = true) }
+            },
             block = { loadTvShowsByGenreId(genreId) },
             onCollect = ::onCollectTvShowsByGenreId,
+            onError = ::onErrorLoading
         )
     }
 
@@ -93,4 +105,29 @@ class GenreTvShowsViewModel @Inject constructor(
             )
         }
     }
+    private fun onErrorLoading(error: Throwable) {
+        when (error) {
+            is NoNetworkException -> {
+                updateState { copy(
+                    isLoading = false,
+                    noInternetConnection = true,
+                    snackBarData = SnackData(
+                        message = stringProvider.noInternetConnectionError,
+                        isError = true
+                    )
+                ) }
+            }
+            else->{
+                updateState { copy(
+                    isLoading = false,
+                    noInternetConnection = true,
+                    snackBarData = SnackData(
+                        message = stringProvider.somethingWentWrongError,
+                        isError = true
+                    )
+                ) }
+            }
+        }
+    }
+
 }
