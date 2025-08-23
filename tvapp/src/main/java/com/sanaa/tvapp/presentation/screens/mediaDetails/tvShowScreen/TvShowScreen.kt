@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -35,6 +36,7 @@ import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.components.LoginDialog
 import com.sanaa.tvapp.presentation.components.RateDialog
 import com.sanaa.tvapp.presentation.screens.login.LoginActivity
+import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
@@ -117,7 +119,14 @@ fun TvShowScreenContent(
     NovixScaffold(
         backgroundShapes = {},
         modifier = Modifier.systemBarsPadding()
-            .fillMaxSize()
+            .fillMaxSize(),
+        snackBarHost = {
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onDismissSnackBar,
+                modifier = Modifier.statusBarsPadding()
+            )
+        }
     ) {
         Box(
             modifier = Modifier
@@ -238,7 +247,8 @@ private fun TvShowScreenReadyContent(
                 TrailerAndRateSection(
                     trailerUrl = state.tvShows.trailerUrl,
                     onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
-                    onRateClicked = interactionListener::onRateClick
+                    onRateClicked = interactionListener::onRateClick,
+                    showRateButton = !state.isRatingSubmitted
                 )
             }
         }

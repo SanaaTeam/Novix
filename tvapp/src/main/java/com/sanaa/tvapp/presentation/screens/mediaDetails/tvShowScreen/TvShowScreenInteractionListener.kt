@@ -12,4 +12,5 @@ interface TvShowScreenInteractionListener {
     fun onSummitRateClick()
     fun onLoginButtonClick()
     fun onDismissLoginDialog()
+    fun onDismissSnackBar()
 }

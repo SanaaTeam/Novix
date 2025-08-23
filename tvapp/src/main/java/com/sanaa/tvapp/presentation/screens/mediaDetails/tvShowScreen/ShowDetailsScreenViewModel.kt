@@ -7,6 +7,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toHistory
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toSeasonUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toTvShowUiModel
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
+import com.sanaa.tvapp.state.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvShow
 import entity.User
@@ -16,6 +17,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvShowUseCase
@@ -30,6 +32,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
     private val manageTvShowDetails: ManageTvShowUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TvShowDetailsScreenUiState, TvShowDetailsScreenEffects>(
     initialState = TvShowDetailsScreenUiState(),
@@ -182,19 +185,25 @@ class ShowDetailsScreenViewModel @Inject constructor(
     }
 
     private fun onErrorAccrue(e: NovixAppException) {
-        updateState {
-            if (e is NoNetworkException) {
+        if (e is NoNetworkException) {
+            updateState {
                 copy(
                     noInternetConnection = true,
-                    isLoadingEpisodes = false
+                    isLoading = false,
+                    snackBarData = SnackData(message = stringProvider.noInternetConnectionError, isError = true )
                 )
-            } else {
+            }
+        } else {
+            updateState {
                 copy(
-                    error = e.message,
-                    noInternetConnection = false,
-                    isLoadingEpisodes = false
+                    isLoading = false,
+                    snackBarData = SnackData(message = stringProvider.somethingWentWrongError, isError = true ),
+                    noInternetConnection = false
                 )
             }
         }
+    }
+    override fun onDismissSnackBar() {
+        updateState { copy(snackBarData = null) }
     }
 }

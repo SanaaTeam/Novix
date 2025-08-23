@@ -212,12 +212,11 @@ fun MovieDetailsContent(
                                         trailerUrl = state.movieDetails.trailerUrl,
                                         onPlayTrailerClicked = {
                                             interactionListener.onWatchTrailerClick(
-                                                state.movieDetails.trailerUrl!!
+                                                state.movieDetails.trailerUrl.orEmpty()
                                             )
                                         },
-                                        onRateClicked = {
-                                            interactionListener.onRateMovieClick()
-                                        }
+                                        onRateClicked = interactionListener::onRateMovieClick,
+                                        showRateButton = !state.isRatingSubmitted
                                     )
                                 }
                             }
