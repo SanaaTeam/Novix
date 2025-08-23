@@ -7,12 +7,15 @@ import com.sanaa.tvapp.base.BasePagingSource
 import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.presentation.screens.searchScreen.MovieUiModel
 import com.sanaa.tvapp.presentation.screens.searchScreen.mapper.toUiState
+import com.sanaa.tvapp.state.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import javax.inject.Inject
@@ -22,6 +25,7 @@ class GenreMoviesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMoviesDetailsUseCase: ManageMovieUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<GenreMoviesScreenUiState, GenreMoviesEffects>(
     initialState = GenreMoviesScreenUiState(),
@@ -40,6 +44,7 @@ class GenreMoviesViewModel @Inject constructor(
         tryToCollect(
             block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
+            onError = ::onErrorLoading
         )
     }
 
@@ -53,14 +58,22 @@ class GenreMoviesViewModel @Inject constructor(
         fetchMovies(genreId)
     }
 
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
+
     override fun onMovieClick(id: Int) {
         emitEffect(GenreMoviesEffects.NavigateToMovieDetails(id))
     }
 
     private fun fetchMovies(categoryId: Int) {
         tryToCollect(
+            onStart = {
+                updateState { copy(isLoading = true) }
+            },
             block = { loadMoviesByCategory(categoryId) },
             onCollect = onCollectMovies(),
+            onError = ::onErrorLoading
         )
     }
 
@@ -88,6 +101,30 @@ class GenreMoviesViewModel @Inject constructor(
     ): PagingSource<Int, Movie> {
         return BasePagingSource { page ->
             manageMoviesDetailsUseCase.getMoviesByCategory(genreId = genreId, page = page)
+        }
+    }
+    private fun onErrorLoading(error: Throwable) {
+        when (error) {
+            is NoNetworkException -> {
+                updateState { copy(
+                    isLoading = false,
+                    noInternetConnection = true,
+                    snackBarData = SnackData(
+                        message = stringProvider.noInternetConnectionError,
+                        isError = true
+                    )
+                ) }
+            }
+            else->{
+                updateState { copy(
+                    isLoading = false,
+                    noInternetConnection = true,
+                    snackBarData = SnackData(
+                        message = stringProvider.somethingWentWrongError,
+                        isError = true
+                    )
+                ) }
+            }
         }
     }
 }
