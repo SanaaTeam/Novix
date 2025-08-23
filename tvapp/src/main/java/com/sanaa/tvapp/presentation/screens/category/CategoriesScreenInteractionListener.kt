@@ -6,4 +6,5 @@ interface CategoriesScreenInteractionListener {
     fun onGenreClicked(category: CategoryUiState)
     fun onTabChanged(tabIndex: Int)
     fun onRetryClick()
+    fun onSnackBarDismiss()
 }
