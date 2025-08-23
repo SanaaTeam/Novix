@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -94,7 +93,8 @@ private fun ActorScreenContent(
 
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
-    NovixScaffold (
+    NovixScaffold(
+        backgroundShapes = {},
         snackBarHost = {
             NovixAnimatedSnackBarHost(
                 data = state.snackBarData,

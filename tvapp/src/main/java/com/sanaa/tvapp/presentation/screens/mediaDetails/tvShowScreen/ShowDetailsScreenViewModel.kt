@@ -2,7 +2,6 @@ package com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen
 
 import androidx.lifecycle.SavedStateHandle
 import com.sanaa.tvapp.base.BaseViewModel
-import com.sanaa.tvapp.presentation.screens.mediaDetails.model.GenreUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toHistory
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toSeasonUiModel
@@ -41,7 +40,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
     )
 
     init {
-        loadSeries()
+        loadTvShows()
         updateUserLoginState()
     }
 
@@ -70,40 +69,28 @@ class ShowDetailsScreenViewModel @Inject constructor(
         emitEffect(TvShowDetailsScreenEffects.PlayTrailer(trailerUrl = state.value.tvShows.trailerUrl))
     }
 
-    override fun onGenreClicked(genre: GenreUiModel) {
-        emitEffect(TvShowDetailsScreenEffects.NavigateToMovieCategoriesScreen(genre))
-    }
-
     override fun onRetryLoadDetails() {
-        updateState {
-            copy(
-                isLoading = true,
-                error = null,
-                noInternetConnection = false
-            )
-        }
-
-        loadSeries()
+        loadTvShows()
     }
 
-    private fun loadSeries() {
+    private fun loadTvShows() {
         tryToExecute(
-            block = ::fetchSeriesDetails,
-            onSuccess = { updateState { copy(isLoading = false) } },
+            block = ::fetchTvShowsDetails,
+            onSuccess = { updateState { copy(isLoading = false, noInternetConnection=false) } },
             onError = ::onErrorAccrue
         )
     }
 
-    private suspend fun fetchSeriesDetails() = coroutineScope {
+    private suspend fun fetchTvShowsDetails() = coroutineScope {
         updateState { copy(isLoading = true) }
 
-        val seriesDeferred = async { manageTvShowDetails.getTvShowDetails(route.tvShowId) }
+        val tvShowsDeferred = async { manageTvShowDetails.getTvShowDetails(route.tvShowId) }
         val castDeferred = async { manageTvShowDetails.getTvShowCast(route.tvShowId) }
         val seasonDeferred = async { manageTvShowDetails.getTvShowSeasonDetails(route.tvShowId, 1) }
         val imagesDeferred = async { manageTvShowDetails.getTvShowImageUrls(route.tvShowId) }
         val trailerDeferred = async { manageTvShowDetails.getTvShowTrailer(route.tvShowId) }
 
-        val tvShow = seriesDeferred.await()
+        val tvShow = tvShowsDeferred.await()
         val cast = castDeferred.await()
         val season = seasonDeferred.await()
         val images = imagesDeferred.await()
@@ -143,7 +130,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
         updateState { copy(season = season.toSeasonUiModel()) }
     }
 
-    override fun onRateMovieClick() {
+    override fun onRateClick() {
         updateState {
             if (state.value.isUserLoggedIn)
                 copy(showRateDialog = true)
@@ -168,7 +155,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
         emitEffect(TvShowDetailsScreenEffects.NavigateToLogin)
     }
 
-    override fun onDismissLoginBottomSheet() {
+    override fun onDismissLoginDialog() {
         updateState { copy(showLoginDialog = false) }
     }
 

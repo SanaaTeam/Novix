@@ -1,7 +1,5 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen
 
-import com.sanaa.tvapp.presentation.screens.mediaDetails.model.GenreUiModel
-
 sealed interface TvShowDetailsScreenEffects {
     data class NavigateToActorScreen(val actorId: Int) : TvShowDetailsScreenEffects
     data class NavigateToEpisodeDetailsScreen(
@@ -9,8 +7,5 @@ sealed interface TvShowDetailsScreenEffects {
     ) : TvShowDetailsScreenEffects
 
     data class PlayTrailer(val trailerUrl: String?) : TvShowDetailsScreenEffects
-    data class NavigateToMovieCategoriesScreen(val category: GenreUiModel) : TvShowDetailsScreenEffects
-    data object  ShowErrorSnackBar : TvShowDetailsScreenEffects
-    data object ShowSuccessSnackBar : TvShowDetailsScreenEffects
     object NavigateToLogin : TvShowDetailsScreenEffects
 }

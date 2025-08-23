@@ -1,12 +1,8 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.util.Log
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
@@ -23,10 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Text
@@ -58,7 +49,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiMod
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetailsRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
-import com.sanaa.tvapp.state.SnackData
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -67,18 +58,8 @@ fun MovieDetailsScreen(
     viewModel: MovieDetailsViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val navController = LocalAppNavController.current
-    val context = LocalContext.current
 
-    val loginLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            (context as? Activity)?.recreate()
-        }
-    }
-
-    MovieDetailsEffectsHandler(viewModel, navController, context, loginLauncher)
+    MovieDetailsEffectsHandler(effect = viewModel.effect)
 
     Box(modifier = Modifier.systemBarsPadding()) {
         MovieDetailsContent(
@@ -90,13 +71,20 @@ fun MovieDetailsScreen(
 
 @Composable
 private fun MovieDetailsEffectsHandler(
-    viewModel: MovieDetailsViewModel,
-    navController: NavHostController,
-    context: Context,
-    loginLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>
+    effect: Flow<MovieDetailsScreenUiEffect>,
 ) {
+    val navController = LocalAppNavController.current
+    val context = LocalContext.current
+
+    val loginLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            (context as? Activity)?.recreate()
+        }
+    }
     LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
+        effect.collectLatest {
             when (it) {
                 is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(
                     ActorDetailsRoute(it.actorId)
@@ -129,6 +117,7 @@ fun MovieDetailsContent(
         state.similarMovies.collectAsLazyPagingItems()
 
     NovixScaffold(
+        backgroundShapes = {},
         modifier = Modifier,
         snackBarHost = {
             NovixAnimatedSnackBarHost(
@@ -179,11 +168,7 @@ fun MovieDetailsContent(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
-                                    GenresRow(
-                                        genres = state.movieDetails.genres,
-                                        onGenreClicked = {
-                                        }
-                                    )
+                                    GenresRow(genres = state.movieDetails.genres)
                                     FlowRow(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         verticalArrangement = Arrangement.spacedBy(8.dp),
