@@ -215,6 +215,15 @@ fun MovieDetailsContent(
 
                                                 DotSeparator()
                                             }
+
+                                            state.movieDetails.duration.let{ duration ->
+                                                IconWithText(
+                                                    text = duration,
+                                                    iconRes = R.drawable.icon_duration,
+                                                    contentDescription = duration,
+                                                    tint = Theme.colors.hint
+                                                )
+                                            }
                                         }
                                     }
 
