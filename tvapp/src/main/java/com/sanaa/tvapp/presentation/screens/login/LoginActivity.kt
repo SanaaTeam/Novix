@@ -20,7 +20,7 @@ class LoginActivity : ComponentActivity() {
 
         setContent {
             NovixTheme(true) {
-                LoginScreenTv(
+                LoginScreen(
                     showGuestButton = showGuestButton,
                     onFinish = {
                         onLoginSuccess()
