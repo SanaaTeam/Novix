@@ -52,13 +52,9 @@ class ActorViewModel @Inject constructor(
     private fun loadDetails() {
 
         tryToExecute(
-            onStart = {
-                updateState { copy(isLoading = true) }
-            },
+            onStart = ::setOnLoading,
             block = ::fetchActorDetails,
-            onSuccess = {
-                updateState { copy(isLoading = false) }
-            },
+            onSuccess = { updateState { copy(isLoading = false) } },
             onError = ::onErrorAccrue
         )
     }
@@ -85,6 +81,10 @@ class ActorViewModel @Inject constructor(
                 galleryImageUrls = gallery
             )
         }
+    }
+
+    private fun setOnLoading() {
+        updateState { copy(isLoading = true) }
     }
 
     private fun onErrorAccrue(e: NovixAppException) {

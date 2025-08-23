@@ -54,9 +54,7 @@ class GenreMoviesViewModel @Inject constructor(
 
     private fun fetchMovies(categoryId: Int) {
         tryToCollect(
-            onStart = {
-                updateState { copy(isLoading = true) }
-            },
+            onStart = ::setOnLoading,
             block = { loadMoviesByCategory(categoryId) },
             onCollect = ::onCollectMovies,
             onError = ::onErrorLoading
@@ -87,6 +85,10 @@ class GenreMoviesViewModel @Inject constructor(
         return BasePagingSource { page ->
             manageMoviesDetailsUseCase.getMoviesByCategory(genreId = genreId, page = page)
         }
+    }
+
+    private fun setOnLoading() {
+        updateState { copy(isLoading = true) }
     }
 
     private fun onErrorLoading(error: Throwable) {

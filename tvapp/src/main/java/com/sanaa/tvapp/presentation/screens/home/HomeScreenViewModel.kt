@@ -5,6 +5,7 @@ import androidx.paging.PagingSource
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.tvapp.base.BasePagingSource
 import com.sanaa.tvapp.base.BaseViewModel
+import com.sanaa.tvapp.state.GenreUiState
 import com.sanaa.tvapp.state.MediaItemUiState
 import com.sanaa.tvapp.state.MediaTypeUiState
 import com.sanaa.tvapp.state.mapper.toState
@@ -67,74 +68,70 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun fetchPopularMediaData() {
-        updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            block = {
-                val popularMovies = manageMovieUseCase
-                    .getPopularMovies(1).map { it.toState() }
-                val popularTvSeries = manageTvShowsUseCase
-                    .getPopularTvShows(1).map { it.toState() }
-                (popularMovies + popularTvSeries).shuffled()
-            },
-            onSuccess = { popularMediaList ->
-                updateState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = null,
-                        popularMedia = popularMediaList.take(10)
-                    )
-                }
-            },
+            onStart = ::setLoading,
+            block = ::onFetchPopularMediaData,
+            onSuccess = ::onFetchPopularMediaDataSuccess,
             onError = ::onErrorLoadingData
         )
+    }
+
+    private fun setLoading() {
+        updateState { copy(isLoading = true, errorMessage = null) }
+    }
+
+    private suspend fun onFetchPopularMediaData(): List<MediaItemUiState> {
+        val popularMovies = manageMovieUseCase
+            .getPopularMovies(1).map { it.toState() }
+        val popularTvSeries = manageTvShowsUseCase
+            .getPopularTvShows(1).map { it.toState() }
+        return (popularMovies + popularTvSeries).shuffled()
     }
 
     private fun fetchTopRatedMovieData() {
         updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            block = {
-                val topRatedMovies = manageMovieUseCase
-                    .getTopRatedMovies(1, null).map { it.toState() }
-                val topRatedTvSeries = manageTvShowsUseCase
-                    .getTopRatedTvShows(1, null).map { it.toState() }
-                (topRatedMovies + topRatedTvSeries).shuffled()
-            },
-            onSuccess = { topRatedMediaList ->
-                updateState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = null,
-                        topRatingMovies = topRatedMediaList.take(10)
-                    )
-                }
-            },
+            block = ::onFetchTopRatedMovieData,
+            onSuccess = ::onFetchPopularMediaDataSuccess,
             onError = ::onErrorLoadingData,
         )
+    }
+
+    private suspend fun onFetchTopRatedMovieData(): List<MediaItemUiState> {
+        val topRatedMovies = manageMovieUseCase
+            .getTopRatedMovies(1, null).map { it.toState() }
+        val topRatedTvSeries = manageTvShowsUseCase
+            .getTopRatedTvShows(1, null).map { it.toState() }
+        return (topRatedMovies + topRatedTvSeries).shuffled()
     }
 
     private fun fetchTopRatedTvShowData() {
         updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            block = {
-                manageTvShowsUseCase.getTopRatedTvShows(1, null).map { it.toState() }
-            },
-            onSuccess = { topRatedMediaList ->
-                updateState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = null,
-                        topRatingTvShows = topRatedMediaList.take(10)
-                    )
-                }
-            },
+            block = ::onFetchTopRatedTvShowData,
+            onSuccess = ::onFetchPopularMediaDataSuccess,
             onError = ::onErrorLoadingData,
         )
+    }
+
+    private suspend fun onFetchTopRatedTvShowData(): List<MediaItemUiState> {
+        return manageTvShowsUseCase.getTopRatedTvShows(1, null).map { it.toState() }
+    }
+
+    private fun onFetchPopularMediaDataSuccess(popularMediaList: List<MediaItemUiState>) {
+        updateState {
+            copy(
+                isLoading = false,
+                errorMessage = null,
+                popularMedia = popularMediaList.take(10)
+            )
+        }
     }
 
     private fun fetchWatchedMediaData() {
         updateState { copy(isLoading = true, errorMessage = null) }
         tryToCollect(
-            block = { loadWatchedMediaHistory() },
+            block = ::loadWatchedMediaHistory,
             onCollect = ::onFetchWatchedMediaSuccess,
             onError = ::onErrorLoadingData
         )
@@ -156,32 +153,32 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            block = {
-                updateState {
-                    copy(isLoading = true)
-                }
-                manageMovieUseCase.getMovieGenres().map { it.toState() }
-            },
-            onSuccess = { genres ->
-                updateState {
-                    copy(movieGenres = genres, isLoading = false)
-                }
-            },
+            block = ::onFetchMovieGenres,
+            onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onErrorLoadingData,
         )
     }
 
+    private fun onFetchMovieGenresSuccess(genres: List<GenreUiState>) {
+        updateState { copy(movieGenres = genres, isLoading = false) }
+    }
+
+    private suspend fun onFetchMovieGenres(): List<GenreUiState> {
+        updateState { copy(isLoading = true) }
+        return manageMovieUseCase.getMovieGenres().map { it.toState() }
+    }
 
     private fun fetchUpcomingMovies(genreId: Int? = null) {
         tryToExecute(
             block = { loadUpcomingMovies(genreId) },
-            onSuccess = { flowWithSaved ->
-                updateState { copy(upcomingMovies = flowWithSaved) }
-            },
+            onSuccess = ::onFetchUpcomingMoviesSuccess,
             onError = ::onErrorLoadingData
         )
     }
 
+    private fun onFetchUpcomingMoviesSuccess(flowWithSaved: Flow<PagingData<MediaItemUiState>>) {
+        updateState { copy(upcomingMovies = flowWithSaved) }
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun loadWatchedMediaHistory(): Flow<List<MediaHistoryItem>> {
@@ -228,7 +225,6 @@ class HomeScreenViewModel @Inject constructor(
         loadRatedTvShows()
     }
 
-
     private fun loadRatedMovies() {
         tryToExecute(
             block = { manageMovieUseCase.getUserRatedMovies() },
@@ -239,14 +235,16 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun loadRatedTvShows() {
         tryToExecute(
-            block = {
-                val accountId = preferencesManager.accountId.first()
-                val sessionId = preferencesManager.sessionId.first()
-                manageTvShowsUseCase.getRatedTvShows(accountId, sessionId)
-            },
+            block = ::onLoadRatedTvShows,
             onSuccess = ::onLoadTvShowsSuccess,
             onError = ::onErrorLoadingData
         )
+    }
+
+    private suspend fun onLoadRatedTvShows(): List<TvShow> {
+        val accountId = preferencesManager.accountId.first()
+        val sessionId = preferencesManager.sessionId.first()
+        return manageTvShowsUseCase.getRatedTvShows(accountId, sessionId)
     }
 
     private fun onLoadMoviesSuccess(movies: List<Movie>) {
@@ -267,10 +265,15 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-
     private fun onErrorLoadingData(e: Throwable) {
         when (e) {
-            is NoNetworkException -> updateState { copy(isNoInternet = true, isLoading = false) }
+            is NoNetworkException -> updateState {
+                copy(
+                    isNoInternet = true,
+                    isLoading = false
+                )
+            }
+
             else -> updateState { copy(errorMessage = e.message, isLoading = false) }
         }
     }

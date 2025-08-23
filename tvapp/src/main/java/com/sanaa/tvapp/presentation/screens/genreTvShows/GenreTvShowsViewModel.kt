@@ -71,9 +71,7 @@ class GenreTvShowsViewModel @Inject constructor(
 
     private fun getTvShowsByGenreId(genreId: Int) {
         tryToCollect(
-            onStart = {
-                updateState { copy(isLoading = true) }
-            },
+            onStart = ::setOnLoading,
             block = { loadTvShowsByGenreId(genreId) },
             onCollect = ::onCollectTvShowsByGenreId,
             onError = ::onErrorLoading
@@ -104,6 +102,10 @@ class GenreTvShowsViewModel @Inject constructor(
                 genreId = genreId, page = page
             )
         }
+    }
+
+    private fun setOnLoading() {
+        updateState { copy(isLoading = true) }
     }
 
     private fun onErrorLoading(error: Throwable) {

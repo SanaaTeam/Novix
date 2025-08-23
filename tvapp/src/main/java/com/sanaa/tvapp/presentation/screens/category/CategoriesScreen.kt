@@ -33,7 +33,6 @@ fun CategoriesScreen(
 
     CategoryScreenEffectHandler(viewModel, navController)
 
-
     CategoriesScreenContent(
         state = state,
         interactionListener = viewModel
