@@ -85,9 +85,7 @@ fun PopularMoviesCarousel(
                 shape = ShapeDefaults.Medium,
             )
             .clip(RoundedCornerShape(12.dp))
-            .onFocusChanged {
-                isFocused = it.hasFocus
-            }
+            .onFocusChanged { isFocused = it.hasFocus }
             .handleDPadKeyEvents(onEnter = {
                 if (mediaItemUiStates.isNotEmpty()) {
                     onShowDetails(mediaItemUiStates[carouselState.activeItemIndex])

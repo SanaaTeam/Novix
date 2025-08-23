@@ -29,11 +29,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
-import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
+import com.sanaa.tvapp.presentation.screens.home.SelectedHomeTab
 import com.sanaa.tvapp.presentation.screens.searchScreen.SearchTvScreenUiState
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import com.sanaa.designsystem.R as dosingSystemResource
@@ -47,21 +45,22 @@ data class MediaTabItem(
 fun HomeTabs(
     modifier: Modifier = Modifier,
     sidePaddings: Dp,
-    navController: NavHostController,
+    onTabSelected: (SelectedHomeTab) -> Unit,
 ) {
 
     val tabs = listOf(
         MediaTabItem(
             title = stringResource(dosingSystemResource.string.movies),
-            onFocus = { navController.navigate(HomeMoviesTapRoute) }
+            onFocus = { onTabSelected(SelectedHomeTab.MOVIES) }
         ),
         MediaTabItem(
             title = stringResource(dosingSystemResource.string.tv_shows),
-            onFocus = { navController.navigate(HomeTvShowsTapRoute) }
+            onFocus = { onTabSelected(SelectedHomeTab.TV_SHOWS) }
         ),
     )
 
     MediaTab(
+        modifier = modifier,
         tabs = tabs,
         sidePaddings = sidePaddings,
         textStyle = Theme.textStyle.title.medium
