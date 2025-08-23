@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -177,7 +178,7 @@ fun GenreTvShowsTopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "TvShows\\ $genreName",
+            text = stringResource(R.string.tv_shows) + "\\ $genreName",
 
             style = Theme.textStyle.title.medium,
             color = Theme.colors.body
