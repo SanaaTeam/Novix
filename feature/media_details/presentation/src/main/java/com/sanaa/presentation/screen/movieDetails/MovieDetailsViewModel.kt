@@ -44,7 +44,6 @@ class MovieDetailsViewModel @Inject constructor(
     initialState = MovieDetailsUiState(),
     defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
-
     private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
         "movieId is required in SavedStateHandle"
     }
@@ -335,7 +334,7 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onCollectUser(movie: Movie): suspend (User) -> Unit = { user ->
         manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
             mediaHistoryItem = movie.toHistory(),
-            username = user.username
+            username = user.username,
         )
     }
 

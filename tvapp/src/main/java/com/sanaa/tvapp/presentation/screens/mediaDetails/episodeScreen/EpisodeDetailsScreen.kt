@@ -48,32 +48,38 @@ import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designSystemResource
 
 @Composable
-fun EpisodeDetailsScreen(
-    viewModel: EpisodeDetailsScreenViewModel = hiltViewModel()
-) {
-
+fun EpisodeDetailsScreen(viewModel: EpisodeDetailsScreenViewModel = hiltViewModel()) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalAppNavController.current
-    var snack by remember { mutableStateOf<SnackData?>(null) }
+    var snackData by remember { mutableStateOf<SnackData?>(null) }
 
-    EffectHandler(viewModel, navController, context)
+    EffectHandler(
+        context,
+        viewModel,
+        navController,
+        onShowSnackBar = { data -> snackData = data }
+    )
+
     Box(modifier = Modifier.systemBarsPadding()) {
         EpisodeDetailsScreenContent(
-            interactionListener = viewModel, state = state.value
+            interactionListener = viewModel,
+            state = state.value,
         )
+
         NovixAnimatedSnackBarHost(
-            data = snack,
-            onDismiss = { snack = null }
+            data = snackData,
+            onDismiss = { snackData = null }
         )
     }
 }
 
 @Composable
 private fun EffectHandler(
+    context: Context,
     viewModel: EpisodeDetailsScreenViewModel,
     navController: NavHostController,
-    context: Context
+    onShowSnackBar: (SnackData) -> Unit,
 ) {
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
@@ -89,14 +95,8 @@ private fun EffectHandler(
                     context.startActivity(intent)
                 }
 
-                is EpisodeDetailsEffects.ShowSuccessSnackBar -> {
-                }
-
                 is EpisodeDetailsEffects.ShowErrorSnackBar -> {
-                }
-
-                EpisodeDetailsEffects.NavigateToLogin -> {
-
+                    onShowSnackBar(SnackData(message = it.errorMessage, isError = true))
                 }
             }
         }
@@ -105,110 +105,105 @@ private fun EffectHandler(
 
 @Composable
 private fun EpisodeDetailsScreenContent(
-    interactionListener: EpisodeDetailsInteractionListener, state: EpisodeDetailsScreenUiState
+    interactionListener: EpisodeDetailsInteractionListener,
+    state: EpisodeDetailsScreenUiState,
 ) {
+    NovixScaffold {
+        AnimatedContent(
+            targetState = Pair(state.isLoading, state.noInternetConnection),
+            contentAlignment = Alignment.Center
+        ) { (isLoading, noInternetConnection) ->
+            when {
+                isLoading -> {
+                    LoadingIndicator(
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
 
-    NovixScaffold(
-        backgroundShapes = { }) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            AnimatedContent(
-                targetState = state.isLoading || state.noInternetConnection,
-                modifier = Modifier.align(Alignment.Center),
-                contentAlignment = Alignment.Center
-            ) { shouldShowLoadingOrError ->
-                if (shouldShowLoadingOrError) {
-                    if (state.noInternetConnection) {
-                        NetworkDisconnectionContact(
-                            onRetryClick = { interactionListener.onRetryLoadDetails() },
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
-                        LoadingIndicator(
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                } else {
-                    Box(
+                noInternetConnection -> {
+                    NetworkDisconnectionContact(
+                        onRetryClick = { interactionListener.onRetryLoadDetails() },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+
+                else -> {
+                    Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(state = rememberScrollState())
                     ) {
-                        Column {
-                            DetailsHeaderSection(
-                                backgroundImageUrl = state.backgroundImageUrl,
-                                title = stringResource(
-                                    R.string.episode_number,
-                                    state.episode.number
-                                ) + " - ${state.episode.title}",
-                            )
-                            {
-                                Column(
+                        DetailsHeaderSection(
+                            backgroundImageUrl = state.backgroundImageUrl,
+                            title = stringResource(
+                                R.string.episode_number,
+                                state.episode.number
+                            ) + " - ${state.episode.title}",
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                FlowRow(
                                     modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
-                                    FlowRow(
+                                    Row(
+                                        modifier = Modifier.padding(bottom = 8.dp),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                                        modifier = Modifier.fillMaxWidth()
+                                        verticalAlignment = Alignment.CenterVertically,
                                     ) {
-                                        Row(
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier.padding(bottom = 8.dp)
-                                        ) {
-                                            state.episode.rating?.let { rating ->
-                                                IconWithText(
-                                                    iconRes = designSystemResource.drawable.icon_star,
-                                                    text = rating,
-                                                    textColor = Theme.colors.title,
-                                                    contentDescription = rating,
-                                                    tint = Theme.colors.statusColors.yellowAccent
-                                                )
-
-                                                DotSeparator()
-                                            }
-                                            state.episode.airDate?.let { releaseDate ->
-                                                IconWithText(
-                                                    text = releaseDate,
-                                                    iconRes = R.drawable.icon_calender,
-                                                    contentDescription = releaseDate,
-                                                    tint = Theme.colors.hint
-                                                )
-
-                                                DotSeparator()
-                                            }
+                                        state.episode.rating?.let { rating ->
                                             IconWithText(
-                                                text = state.episode.seasonNumber.toString(),
-                                                iconRes = R.drawable.icon_seasons,
-                                                contentDescription = state.episode.seasonNumber.toString(),
+                                                iconRes = designSystemResource.drawable.icon_star,
+                                                text = rating,
+                                                textColor = Theme.colors.title,
+                                                contentDescription = rating,
+                                                tint = Theme.colors.statusColors.yellowAccent
+                                            )
+
+                                            DotSeparator()
+                                        }
+
+                                        state.episode.airDate?.let { releaseDate ->
+                                            IconWithText(
+                                                text = releaseDate,
+                                                iconRes = R.drawable.icon_calender,
+                                                contentDescription = releaseDate,
                                                 tint = Theme.colors.hint
                                             )
+
+                                            DotSeparator()
                                         }
-                                    }
-                                    Text(
-                                        text = state.episode.overview.orEmpty(),
-                                        style = Theme.textStyle.body.small,
-                                        color = Theme.colors.body
-                                    )
 
-                                    TrailerAndRateSection(
-                                        trailerUrl = state.trailerUrl,
-                                        onPlayTrailerClicked = interactionListener::onPlayTrailerClick,
-                                    )
+                                        IconWithText(
+                                            text = state.episode.seasonNumber.toString(),
+                                            iconRes = R.drawable.icon_seasons,
+                                            contentDescription = state.episode.seasonNumber.toString(),
+                                            tint = Theme.colors.hint
+                                        )
+                                    }
                                 }
-                            }
-                            if (state.guestOfHonor.isNotEmpty()) {
-                                CastSlider(
-                                    cast = state.guestOfHonor,
-                                    title = stringResource(R.string.guest_of_honor),
-                                    onActorCardClicked = {
 
-                                    }
+                                Text(
+                                    text = state.episode.overview.orEmpty(),
+                                    style = Theme.textStyle.body.small,
+                                    color = Theme.colors.body
+                                )
+
+                                TrailerAndRateSection(
+                                    trailerUrl = state.trailerUrl,
+                                    onPlayTrailerClicked = interactionListener::onPlayTrailerClick,
                                 )
                             }
+                        }
+
+                        if (state.guestOfHonor.isNotEmpty()) {
+                            CastSlider(
+                                cast = state.guestOfHonor,
+                                title = stringResource(R.string.guest_of_honor),
+                            )
                         }
                     }
                 }

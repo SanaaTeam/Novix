@@ -1,6 +1,7 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -55,18 +57,47 @@ import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetailsRoute
 import com.sanaa.tvapp.state.SnackData
 
-
 @Composable
 fun TvShowScreen(
     modifier: Modifier = Modifier,
     viewModel: ShowDetailsScreenViewModel = hiltViewModel(),
 ) {
-    val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
-    val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalAppNavController.current
+
+    EffectHandler(
+        viewModel = viewModel,
+        navController = navController,
+        context = context,
+        onShowSnackBar = { snack = it }
+    )
+
+    NovixTheme(isDarkMode = true) {
+        Box(modifier = modifier.systemBarsPadding()) {
+            TvShowScreenContent(
+                state = state.value,
+                interactionListener = viewModel
+            )
+
+            NovixAnimatedSnackBarHost(
+                data = snack,
+                onDismiss = { snack = null }
+            )
+        }
+    }
+}
+
+@Composable
+private fun EffectHandler(
+    viewModel: ShowDetailsScreenViewModel,
+    navController: NavHostController,
+    context: Context,
+    onShowSnackBar: (SnackData) -> Unit,
+) {
+    val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
+    val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
 
     val loginLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -101,36 +132,19 @@ fun TvShowScreen(
                 is TvShowDetailsScreenEffects.NavigateToMovieCategoriesScreen -> {
                 }
 
-
                 is TvShowDetailsScreenEffects.PlayTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
                     context.startActivity(intent)
                 }
 
                 TvShowDetailsScreenEffects.ShowErrorSnackBar -> {
-                    snack = SnackData(message = submitRatingFailedMsg, isError = true)
+                    onShowSnackBar(SnackData(message = submitRatingFailedMsg, isError = true))
                 }
 
                 TvShowDetailsScreenEffects.ShowSuccessSnackBar -> {
-                    snack = SnackData(message = submitRatingSuccessMsg, isError = false)
+                    onShowSnackBar(SnackData(message = submitRatingSuccessMsg, isError = false))
                 }
             }
-        }
-    }
-
-    NovixTheme(isDarkMode = true) {
-
-        Box(modifier = modifier.systemBarsPadding()) {
-
-            TvShowScreenContent(
-                state = state.value,
-                interactionListener = viewModel
-            )
-
-            NovixAnimatedSnackBarHost(
-                data = snack,
-                onDismiss = { snack = null }
-            )
         }
     }
 }
@@ -140,139 +154,32 @@ fun TvShowScreenContent(
     state: TvShowDetailsScreenUiState,
     interactionListener: TvShowScreenInteractionListener,
 ) {
-
-    NovixScaffold(
-        backgroundShapes = { },
-    ) {
+    NovixScaffold {
         Box(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-
             AnimatedContent(
-                targetState = state.isLoading || state.noInternetConnection,
+                targetState = Pair(state.isLoading, state.noInternetConnection),
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) { shouldShowLoadingOrError ->
-                if (shouldShowLoadingOrError) {
-                    if (state.noInternetConnection) {
-                        NetworkDisconnectionContact(
-                            onRetryClick = { interactionListener.onRetryLoadDetails() },
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
+            ) { (isLoading, noInternetConnection) ->
+                when {
+                    isLoading -> {
                         LoadingIndicator(
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(
-                                state = rememberScrollState()
-                            )
-                    ) {
-                        Column {
-                            DetailsHeaderSection(
-                                backgroundImageUrl = state.backgroundImageUrl,
-                                title = state.tvShows.title,
-                            )
-                            {
-                                Column(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                                ) {
 
-                                    GenresRow(
-                                        genres = state.tvShows.genres,
-                                        onGenreClicked = interactionListener::onGenreClicked
-                                    )
-                                    FlowRow(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Row(
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier.padding(bottom = 8.dp)
-                                        ) {
-                                            state.tvShows.rating.let {
-                                                IconWithText(
-                                                    iconRes = R.drawable.icon_star,
-                                                    text = state.tvShows.rating,
-                                                    textColor = Theme.colors.title,
-                                                    contentDescription = state.tvShows.rating,
-                                                    tint = Theme.colors.statusColors.yellowAccent
-                                                )
+                    noInternetConnection -> {
+                        NetworkDisconnectionContact(
+                            onRetryClick = { interactionListener.onRetryLoadDetails() },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
 
-                                                DotSeparator()
-                                            }
-                                            state.tvShows.releaseDate.let { releaseDate ->
-                                                IconWithText(
-                                                    text = releaseDate,
-                                                    iconRes = R.drawable.icon_calender,
-                                                    contentDescription = releaseDate,
-                                                    tint = Theme.colors.hint
-                                                )
-
-                                                DotSeparator()
-                                            }
-                                            IconWithText(
-                                                text = state.tvShows.seasonsCount.toString(),
-                                                iconRes = R.drawable.icon_seasons,
-                                                contentDescription = state.tvShows.seasonsCount.toString(),
-                                                tint = Theme.colors.hint
-                                            )
-                                        }
-                                    }
-                                    Text(
-                                        text = state.tvShows.overview,
-                                        style = Theme.textStyle.body.small,
-                                        color = Theme.colors.body
-                                    )
-
-                                    TrailerAndRateSection(
-                                        trailerUrl = state.tvShows.trailerUrl,
-                                        onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
-                                        onRateClicked = interactionListener::onRateMovieClick
-                                    )
-                                }
-                            }
-
-                            if (state.cast.isNotEmpty()) {
-                                CastSlider(
-                                    cast = state.cast,
-                                    onActorCardClicked = interactionListener::onActorClicked
-                                )
-                            }
-
-                            SeasonTab(
-                                onClick = interactionListener::onSeasonNumberClicked,
-                                seasonCounts = state.tvShows.seasonsCount,
-                                currentSeason = state.selectedSeason,
-                            )
-                            AnimatedContent(state.isLoadingEpisodes) { isLoadingEpisodes ->
-                                if (isLoadingEpisodes) {
-                                    Box(
-                                        modifier = Modifier
-                                            .heightIn(min = 300.dp)
-                                            .fillMaxWidth(),
-                                        contentAlignment = Alignment.Center
-
-                                    ) {
-                                        LoadingIndicator()
-                                    }
-                                } else {
-                                    EpisodesContent(
-                                        episodes = state.season.episodes,
-                                        seriesId = state.tvShows.id,
-                                        onEpisodeClick = interactionListener::onEpisodeClicked
-                                    )
-                                }
-                            }
-                        }
+                    else -> {
+                        TvShowScreenReadyContent(state, interactionListener)
                     }
                 }
             }
@@ -285,11 +192,129 @@ fun TvShowScreenContent(
                     onSubmitRating = interactionListener::onSummitRateClick
                 )
             }
+
             if (state.showLoginDialog && !state.isUserLoggedIn) {
                 LoginDialog(
                     onDismissRequest = interactionListener::onDismissLoginBottomSheet,
                     onLoginClicked = interactionListener::onLoginButtonClick
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TvShowScreenReadyContent(
+    state: TvShowDetailsScreenUiState,
+    interactionListener: TvShowScreenInteractionListener,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(state = rememberScrollState())
+    ) {
+        DetailsHeaderSection(
+            backgroundImageUrl = state.backgroundImageUrl,
+            title = state.tvShows.title,
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                GenresRow(
+                    genres = state.tvShows.genres,
+                    onGenreClicked = interactionListener::onGenreClicked
+                )
+
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    ) {
+                        state.tvShows.rating.let {
+                            IconWithText(
+                                iconRes = R.drawable.icon_star,
+                                text = state.tvShows.rating,
+                                textColor = Theme.colors.title,
+                                contentDescription = state.tvShows.rating,
+                                tint = Theme.colors.statusColors.yellowAccent
+                            )
+
+                            DotSeparator()
+                        }
+
+                        state.tvShows.releaseDate.let { releaseDate ->
+                            IconWithText(
+                                text = releaseDate,
+                                iconRes = R.drawable.icon_calender,
+                                contentDescription = releaseDate,
+                                tint = Theme.colors.hint
+                            )
+
+                            DotSeparator()
+                        }
+
+                        IconWithText(
+                            text = state.tvShows.seasonsCount.toString(),
+                            iconRes = R.drawable.icon_seasons,
+                            contentDescription = state.tvShows.seasonsCount.toString(),
+                            tint = Theme.colors.hint
+                        )
+                    }
+                }
+
+                Text(
+                    text = state.tvShows.overview,
+                    style = Theme.textStyle.body.small,
+                    color = Theme.colors.body
+                )
+
+                TrailerAndRateSection(
+                    trailerUrl = state.tvShows.trailerUrl,
+                    onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
+                    onRateClicked = interactionListener::onRateMovieClick
+                )
+            }
+        }
+
+        if (state.cast.isNotEmpty()) {
+            CastSlider(
+                cast = state.cast,
+                onActorCardClicked = interactionListener::onActorClicked
+            )
+        }
+
+        SeasonTab(
+            onClick = interactionListener::onSeasonNumberClicked,
+            seasonCounts = state.tvShows.seasonsCount,
+            currentSeason = state.selectedSeason,
+        )
+
+        AnimatedContent(state.isLoadingEpisodes) { isLoadingEpisodes ->
+            when {
+                isLoadingEpisodes -> {
+                    Box(
+                        modifier = Modifier
+                            .heightIn(min = 300.dp)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+
+                    ) {
+                        LoadingIndicator()
+                    }
+                }
+                else -> {
+                    EpisodesContent(
+                        episodes = state.season.episodes,
+                        seriesId = state.tvShows.id,
+                        onEpisodeClick = interactionListener::onEpisodeClicked
+                    )
+                }
             }
         }
     }

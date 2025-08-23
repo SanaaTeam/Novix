@@ -9,6 +9,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiMod
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toHistory
+import com.sanaa.tvapp.state.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import entity.User
@@ -18,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -31,6 +33,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsScreenUiState, MovieDetailsScreenUiEffect>(
     initialState = MovieDetailsScreenUiState(),
@@ -49,13 +52,15 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun fetchMovieDetails(movieId: Int) {
-        updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
+            onStart = {
+                updateState { copy(isLoading = true) }
+            },
             block = {
                 loadMovieDetails(movieId)
             },
             onSuccess = {
-                updateState { copy(isLoading = false, errorMessage = null) }
+                updateState { copy(isLoading = false) }
             },
             onError = { exception ->
                 if (exception is NoNetworkException) {
@@ -63,14 +68,14 @@ class MovieDetailsViewModel @Inject constructor(
                         copy(
                             noInternetConnection = true,
                             isLoading = false,
-                            errorMessage = null
+                            snackBarData = SnackData(message = stringProvider.noInternetConnectionError, isError = true )
                         )
                     }
                 } else {
                     updateState {
                         copy(
                             isLoading = false,
-                            errorMessage = exception.message,
+                            snackBarData = SnackData(message = stringProvider.somethingWentWrongError, isError = true ),
                             noInternetConnection = false
                         )
                     }
@@ -132,7 +137,13 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onRetryLoadDetails() {
-        TODO("Not yet implemented")
+        updateState {
+            copy(
+                isLoading = true,
+                noInternetConnection = false
+            )
+        }
+        fetchMovieDetails(movieId)
     }
 
     override fun onRateMovieClick() {
@@ -161,6 +172,18 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
+    override fun onSimilarMovieClick(movieId: Int) {
+        emitEffect(MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails(movieId))
+    }
+
+    override fun onActorCardClick(actorId: Int) {
+        emitEffect(MovieDetailsScreenUiEffect.NavigateToActorScreen(actorId))
+    }
+
+    override fun onSnackDismissRequested() {
+        updateState { copy(snackBarData = null) }
+    }
+
     private fun addMovieToHistory(movie: Movie) {
         tryToCollect(
             block = { getLoggedInUserUseCase.getLoggedInUser() },
@@ -180,8 +203,11 @@ class MovieDetailsViewModel @Inject constructor(
             block = { checkUserLogin.isLoggedIn() },
             onCollect = { loggedIn ->
                 updateState { copy(isUserLoggedIn = loggedIn) }
+
             },
-            onError = { },
+            onError = {
+                updateState { copy(snackBarData = SnackData(message = stringProvider.somethingWentWrongError, isError = true)) }
+            },
         )
     }
 

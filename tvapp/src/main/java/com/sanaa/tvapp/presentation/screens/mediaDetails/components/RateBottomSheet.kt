@@ -22,8 +22,8 @@ import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.designsystem.R as designSystemResource
 import com.sanaa.tvapp.R
+import com.sanaa.designsystem.R as designSystemResource
 
 @Composable
 fun RateBottomSheet(
@@ -34,9 +34,8 @@ fun RateBottomSheet(
     imdbRating: Int = 0,
     onDismiss: () -> Unit = {},
     onRatingChanged: (Int) -> Unit = {},
-    onSubmitButtonClick: () -> Unit = {}
+    onSubmitButtonClick: () -> Unit = {},
 ) {
-
     BaseBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
@@ -56,6 +55,7 @@ fun RateBottomSheet(
                         )
                     }
                 )
+
                 AppText(
                     text = stringResource(R.string.select_how_much_you_like_it),
                     style = Theme.textStyle.body.medium,
@@ -64,6 +64,7 @@ fun RateBottomSheet(
                         .padding(top = 12.dp, bottom = 12.dp, start = 16.dp)
                         .align(Alignment.Start)
                 )
+
                 AnimatedVisibility(visible = !isUiStateLoading) {
                     ImdbRatingSelector(
                         currentRating = imdbRating,
@@ -89,15 +90,17 @@ fun RateBottomSheet(
 private fun RateBottomSheetPreview() {
     val showSheet = remember { mutableStateOf(false) }
     Box(modifier = Modifier.fillMaxSize()) {
-
-            AppText(text = "Show Bottom Sheet",
-                modifier = Modifier.clickable(onClick =
+        AppText(
+            text = "Show Bottom Sheet",
+            modifier = Modifier.clickable(
+                onClick =
                     { showSheet.value = true }
-                )
             )
+        )
 
         if (showSheet.value) {
-            RateBottomSheet(isVisible = showSheet.value,
+            RateBottomSheet(
+                isVisible = showSheet.value,
                 onDismiss = { showSheet.value = false }
             )
         }
