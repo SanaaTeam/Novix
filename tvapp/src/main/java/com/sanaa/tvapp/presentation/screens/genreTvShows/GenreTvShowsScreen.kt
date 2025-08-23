@@ -137,7 +137,8 @@ fun GenreTvShowsScreenContent(
                                     FocusableMediaCard(
                                         imageUrl = movie.imageUrl,
                                         titleText = movie.title,
-                                        onClick = { interactionListener.onTvShowClick(movie.id) }
+                                        onClick = { interactionListener.onTvShowClick(movie.id) },
+                                        withSidePadding = false,
                                     )
                                 }
 

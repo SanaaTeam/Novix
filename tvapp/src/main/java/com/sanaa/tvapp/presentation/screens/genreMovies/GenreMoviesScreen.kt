@@ -159,7 +159,8 @@ fun GenreMoviesScreenContent(
                                     FocusableMediaCard(
                                         imageUrl = movie.imageUrl,
                                         titleText = movie.title,
-                                        onClick = { interactionListener.onMovieClick(movie.id) }
+                                        onClick = { interactionListener.onMovieClick(movie.id) },
+                                        withSidePadding = false,
                                     )
                                 }
 
