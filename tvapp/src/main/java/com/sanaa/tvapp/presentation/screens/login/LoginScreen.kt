@@ -60,7 +60,7 @@ fun LoginScreenTv(
         }
     }
 
-    LoginContentTv(
+    LoginContent(
         state = uiState,
         listener = viewModel,
         showGuestButton = showGuestButton,
@@ -69,7 +69,7 @@ fun LoginScreenTv(
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-private fun LoginContentTv(
+private fun LoginContent(
     state: LoginUiState,
     listener: LoginScreenInteractionListener,
     showGuestButton: Boolean,
