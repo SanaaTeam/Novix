@@ -79,7 +79,5 @@ fun TvErrorStateContent(
                 onClick = {},
             )
         }
-
-
     }
 }

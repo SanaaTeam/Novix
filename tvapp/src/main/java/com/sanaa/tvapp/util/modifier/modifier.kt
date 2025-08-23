@@ -69,8 +69,6 @@ fun Modifier.handleDPadKeyEvents(
         if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) block()
     }
 
-    Log.d("SLKDHF", "handleDPadKeyEvents: " + it.nativeKeyEvent.keyCode)
-
     when (it.nativeKeyEvent.keyCode) {
         KeyEvent.KEYCODE_DPAD_LEFT -> {
             onLeft?.apply {

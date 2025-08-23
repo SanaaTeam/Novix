@@ -12,18 +12,18 @@ class CrashReportingTree(
         priority: Int,
         tag: String?,
         message: String,
-        throwable: Throwable?,
+        t: Throwable?,
     ) {
         val level = priority.toReadableName()
         val safeTag = tag ?: "NoTag"
         crashlytics.log("[$level][$safeTag] $message")
 
-        if (priority >= Log.WARN && throwable != null) {
-            crashlytics.recordException(throwable)
+        if (priority >= Log.WARN && t != null) {
+            crashlytics.recordException(t)
         }
 
         Log.println(priority, safeTag, message)
-        throwable?.let { Log.println(priority, safeTag, Log.getStackTraceString(it)) }
+        t?.let { Log.println(priority, safeTag, Log.getStackTraceString(it)) }
     }
 
     private fun Int.toReadableName(): String = when (this) {
