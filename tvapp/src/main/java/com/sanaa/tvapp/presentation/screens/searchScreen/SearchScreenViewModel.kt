@@ -2,9 +2,10 @@ package com.sanaa.tvapp.presentation.screens.searchScreen
 
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.base.BasePagingSource
+import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.presentation.screens.searchScreen.mapper.toUiState
+import com.sanaa.tvapp.state.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Actor
 import entity.Movie
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import service.VodStringProvider
 import usecase.search.SearchUseCase
 import javax.inject.Inject
 
@@ -25,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchScreenViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchTvScreenUiState, SearchScreenEffect>(
     SearchTvScreenUiState(),
@@ -35,7 +38,7 @@ class SearchScreenViewModel @Inject constructor(
         observeSearchQueryChanges()
     }
 
-    fun observeSearchQueryChanges() {
+    private fun observeSearchQueryChanges() {
         tryToCollect(
             block = ::observeSearchQueryFlow,
             onCollect = ::onSearchQueryChangedCollected,
@@ -82,34 +85,70 @@ class SearchScreenViewModel @Inject constructor(
     }
 
     private fun loadTvShows(query: String) {
-        setLoadingState()
         tryToCollect(
+            onStart = ::setLoadingState,
             block = { loadTvShowsOperation(query) },
-            onCollect = ::onTvShowsLoaded,
+            onCollect = { pagingData ->
+                updateState { copy(tvShows = flowOf(pagingData), isLoading = false, noInternetConnection = false) }
+            },
             onError = ::onDataLoadError
         )
     }
 
     private fun loadMovies(query: String) {
-        setLoadingState()
         tryToCollect(
+            onStart = ::setLoadingState,
             block = { loadMoviesOperation(query) },
-            onCollect = ::onMoviesLoaded,
+            onCollect = { pagingData ->
+                updateState { copy(movies = flowOf(pagingData), isLoading = false, noInternetConnection = false) }
+            },
             onError = ::onDataLoadError
         )
     }
 
     private fun loadActors(query: String) {
-        setLoadingState()
         tryToCollect(
+            onStart = ::setLoadingState,
             block = { loadActorsOperation(query) },
-            onCollect = ::onActorsLoaded,
+            onCollect = { pagingData ->
+                updateState { copy(actors = flowOf(pagingData), isLoading = false, noInternetConnection = false) }
+            },
             onError = ::onDataLoadError
         )
     }
-
     private fun setLoadingState() {
         updateState { copy(isLoading = true, error = null, noInternetConnection = false) }
+    }
+
+    private fun onDataLoadError(e: Throwable) {
+        when (e) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        noInternetConnection = true,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true,
+                        )
+                    )
+                }
+            }
+
+            else -> {
+                updateState {
+                    copy(
+                        noInternetConnection = false,
+                        isLoading = false,
+                        error = stringProvider.somethingWentWrongError,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
+            }
+        }
     }
 
     private fun loadActorsOperation(query: String): Flow<PagingData<ActorUiModel>> {
@@ -131,44 +170,6 @@ class SearchScreenViewModel @Inject constructor(
             pagingSourceFactory = { createMoviesPagingSource(query) },
             mapper = Movie::toUiState
         )
-    }
-
-    private fun onMoviesLoaded(pagingData: PagingData<MovieUiModel>) {
-        updateState { copy(movies = flowOf(pagingData)) }
-        setSuccessState()
-    }
-
-    private fun onTvShowsLoaded(pagingData: PagingData<TvShowUiModel>) {
-        updateState { copy(tvShows = flowOf(pagingData)) }
-        setSuccessState()
-    }
-
-    private fun onActorsLoaded(pagingData: PagingData<ActorUiModel>) {
-        updateState { copy(actors = flowOf(pagingData)) }
-        setSuccessState()
-    }
-
-    private fun setSuccessState() {
-        updateState { copy(isLoading = false, noInternetConnection = false) }
-    }
-
-    private fun onDataLoadError(e: Throwable) {
-        updateState {
-            if (e is NoNetworkException) {
-                copy(
-                    noInternetConnection = true,
-                    isLoading = false,
-                    error = null
-                )
-            } else {
-                val errorMessage = e.message ?: "An unexpected error occurred."
-                copy(
-                    isLoading = false,
-                    error = errorMessage,
-                    noInternetConnection = false
-                )
-            }
-        }
     }
 
     private fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
@@ -202,7 +203,7 @@ class SearchScreenViewModel @Inject constructor(
         updateState { copy(searchQuery = query) }
     }
 
-    override fun retrySearch() {
+    override fun onRetryClicked() {
         loadMediaByTab(state.value.searchQuery)
     }
 
@@ -216,6 +217,10 @@ class SearchScreenViewModel @Inject constructor(
 
     override fun onTvShowClicked(id: Int) {
         emitEffect(SearchScreenEffect.NavigateToTvShowDetails(id))
+    }
+
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
     }
 
     companion object {
