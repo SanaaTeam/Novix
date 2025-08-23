@@ -31,11 +31,7 @@ fun CategoriesGrid(
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
         modifier = modifier.padding(top = 24.dp),
-        contentPadding = PaddingValues(
-            start = 24.dp,
-            end = 24.dp,
-            bottom = 12.dp,
-        ),
+        contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -54,23 +50,14 @@ fun CategoriesGrid(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onCategoryClick(category) },
                 border = CardDefaults.border(
-                    border = Border(
-                        border = BorderStroke(
-                            width = 1.dp,
-                            color = Theme.colors.stroke,
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                    ),
                     focusedBorder = Border(
-                        border = BorderStroke(
-                            width = 3.dp,
-                            color = Theme.colors.primary,
-                        ),
+                        border = BorderStroke(width = 3.dp, color = Theme.colors.primary),
                         shape = RoundedCornerShape(12.dp),
                     )
                 ),
+                colors = CardDefaults.colors(containerColor = Theme.colors.surface),
                 shape = CardDefaults.shape(RoundedCornerShape(12.dp)),
-                scale = CardDefaults.scale(focusedScale = 1.05f),
+                scale = CardDefaults.scale(focusedScale = 1.03f),
             ) {
                 CategoryCard(category)
             }

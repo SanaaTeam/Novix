@@ -5,10 +5,14 @@ import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toTvShowUiModel
+import com.sanaa.tvapp.state.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import service.VodStringProvider
 import usecase.ManageActorUseCase
 import javax.inject.Inject
 
@@ -16,6 +20,7 @@ import javax.inject.Inject
 class ActorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
+    private val stringProvider: VodStringProvider,
 ) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
@@ -27,7 +32,6 @@ class ActorViewModel @Inject constructor(
         loadDetails()
     }
 
-
     override fun onTvShowClicked(id: Int) {
         emitEffect(ActorScreenEffects.NavigateToSeriesDetails(id))
     }
@@ -36,22 +40,26 @@ class ActorViewModel @Inject constructor(
         emitEffect(ActorScreenEffects.NavigateToMovieDetails(id))
     }
 
+    override fun onSnackDismissRequested() {
+        updateState { copy(snackBarData = null) }
+    }
+
     override fun onRetryClicked() {
         updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
         loadDetails()
     }
 
     private fun loadDetails() {
-        updateState { copy(isLoading = true) }
         tryToExecute(
+            onStart = ::setOnLoading,
             block = ::fetchActorDetails,
-            onSuccess = {
-                updateState { copy(isLoading = false) }
-            },
-            onError = { e ->
-                updateState { copy(isLoading = false) }
-            }
+            onSuccess = { onLoadSuccess() },
+            onError = ::onErrorAccrue
         )
+    }
+
+    private fun onLoadSuccess() {
+        updateState { copy(isLoading = false) }
     }
 
     private suspend fun fetchActorDetails() = coroutineScope {
@@ -77,4 +85,40 @@ class ActorViewModel @Inject constructor(
             )
         }
     }
+
+    private fun setOnLoading() {
+        updateState { copy(isLoading = true) }
+    }
+
+    private fun onErrorAccrue(e: NovixAppException) {
+        when (e) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        noInternetConnection = true,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true,
+                        )
+                    )
+                }
+            }
+
+            else -> {
+                updateState {
+                    copy(
+                        noInternetConnection = false,
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+
 }

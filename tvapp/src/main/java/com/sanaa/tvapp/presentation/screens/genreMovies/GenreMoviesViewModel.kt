@@ -5,15 +5,18 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.tvapp.base.BasePagingSource
 import com.sanaa.tvapp.base.BaseViewModel
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.searchScreen.MovieUiModel
 import com.sanaa.tvapp.presentation.screens.searchScreen.mapper.toUiState
+import com.sanaa.tvapp.state.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import usecase.CheckIfUserIsLoggedInUseCase
+import service.VodStringProvider
 import usecase.ManageMovieUseCase
 import javax.inject.Inject
 
@@ -21,36 +24,28 @@ import javax.inject.Inject
 class GenreMoviesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMoviesDetailsUseCase: ManageMovieUseCase,
-    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<GenreMoviesScreenUiState, GenreMoviesEffects>(
     initialState = GenreMoviesScreenUiState(),
     defaultDispatcher = dispatcher
 ), GenreMoviesScreenInteractionListener {
-
-    private val genreId: Int = checkNotNull(savedStateHandle["genreId"])
-    private val genreName: String = checkNotNull(savedStateHandle["genreName"])
+    val route = ScreensRoute.GenreMovieScreenRoute(
+        genreId = checkNotNull(savedStateHandle["genreId"]),
+        genreName = checkNotNull(savedStateHandle["genreName"])
+    )
 
     init {
-        updateUserLoggingStatus()
-        fetchMovies(genreId)
+        fetchMovies(route.genreId)
     }
-
-    fun updateUserLoggingStatus() {
-        tryToCollect(
-            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
-            onCollect = ::onCollectLoggedFlag,
-        )
-    }
-
-    private fun onCollectLoggedFlag(isLogged: Boolean) {
-        updateState { copy(userIsLoggedIn = isLogged) }
-    }
-
 
     override fun onRetryClicked() {
-        updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
-        fetchMovies(genreId)
+        updateState { copy(isLoading = true, error = null) }
+        fetchMovies(route.genreId)
+    }
+
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
     }
 
     override fun onMovieClick(id: Int) {
@@ -59,25 +54,26 @@ class GenreMoviesViewModel @Inject constructor(
 
     private fun fetchMovies(categoryId: Int) {
         tryToCollect(
+            onStart = ::setOnLoading,
             block = { loadMoviesByCategory(categoryId) },
-            onCollect = onCollectMovies(),
+            onCollect = ::onCollectMovies,
+            onError = ::onErrorLoading
         )
     }
 
     private fun loadMoviesByCategory(genreId: Int): Flow<PagingData<MovieUiModel>> {
-        updateState { copy(isLoading = true) }
         return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingDataSource(genreId) },
             mapper = Movie::toUiState
         )
     }
 
-    private fun onCollectMovies(): suspend (PagingData<MovieUiModel>) -> Unit = { movies ->
+    private fun onCollectMovies(movies: PagingData<MovieUiModel>) {
         updateState {
             copy(
                 movies = flowOf(movies),
-                title = genreName,
-                categoryId = genreId,
+                title = route.genreName,
+                categoryId = route.genreId,
                 isLoading = false
             )
         }
@@ -88,6 +84,38 @@ class GenreMoviesViewModel @Inject constructor(
     ): PagingSource<Int, Movie> {
         return BasePagingSource { page ->
             manageMoviesDetailsUseCase.getMoviesByCategory(genreId = genreId, page = page)
+        }
+    }
+
+    private fun setOnLoading() {
+        updateState { copy(isLoading = true) }
+    }
+
+    private fun onErrorLoading(error: Throwable) {
+        when (error) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true
+                        )
+                    )
+                }
+            }
+
+            else -> {
+                updateState {
+                    copy(
+                        isLoading = false,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
+            }
         }
     }
 }

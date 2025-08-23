@@ -50,7 +50,6 @@ fun ImdbRatingSelector(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
         Box(
             modifier = Modifier
                 .onSizeChanged { rowSize = it },
@@ -61,7 +60,6 @@ fun ImdbRatingSelector(
                     .wrapContentWidth()
                     .pointerInput(Unit) {
                         detectHorizontalDragGestures(
-                            onDragEnd = { },
                             onHorizontalDrag = { change, _ ->
                                 change.consume()
                                 val newRating = when (layoutDirection) {

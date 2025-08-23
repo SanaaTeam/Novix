@@ -6,12 +6,10 @@ import com.sanaa.identity.dataSoruce.dataStore.PreferencesManagerImpl
 import com.sanaa.identity.dataSoruce.local.dataStore.LocalUserDataSource
 import com.sanaa.identity.dataSoruce.local.dataStore.LocalUserPreferenceDataSource
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.tvapp.resourceProvider.StringProviderImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import service.IdentityStringProvider
 import javax.inject.Singleton
 
 
@@ -21,25 +19,19 @@ abstract class ServicesModule {
 
     @Binds
     @Singleton
-    abstract fun bindStringProvider(
-        stringProviderImpl: StringProviderImpl
-    ): IdentityStringProvider
-
-    @Binds
-    @Singleton
     abstract fun bindPreferencesManager(
-        preferencesManagerImpl: PreferencesManagerImpl
+        preferencesManagerImpl: PreferencesManagerImpl,
     ): PreferencesManager
 
     @Binds
     @Singleton
     abstract fun bindLocalUserDataSource(
-        localUserDataSourceImpl: LocalUserDataSourceImpl
+        localUserDataSourceImpl: LocalUserDataSourceImpl,
     ): LocalUserDataSource
 
     @Binds
     @Singleton
     abstract fun bindLocalUserPreferenceDataSource(
-        impl: LocalUserPreferenceImpl
+        impl: LocalUserPreferenceImpl,
     ): LocalUserPreferenceDataSource
 }

@@ -7,15 +7,15 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.conscrypt.Conscrypt
 import repository.UserPreferencesRepository
 import timber.log.Timber
-import javax.inject.Inject
-import org.conscrypt.Conscrypt
 import java.security.Security
+import javax.inject.Inject
 
 
 @HiltAndroidApp
-class TvApp: Application() {
+class TvApp : Application() {
 
     @Inject
     lateinit var crashlytics: FirebaseCrashlytics

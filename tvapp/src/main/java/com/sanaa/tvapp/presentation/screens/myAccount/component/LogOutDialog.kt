@@ -16,8 +16,8 @@ import com.sanaa.tvapp.presentation.components.DialogBaseComponent
 @Composable
 fun LogOutDialog(
     onDismissRequest: () -> Unit,
-    onLogOutConfirmed: () -> Unit
-){
+    onLogOutConfirmed: () -> Unit,
+) {
 
     DialogBaseComponent(
         onDismissRequest = onDismissRequest,

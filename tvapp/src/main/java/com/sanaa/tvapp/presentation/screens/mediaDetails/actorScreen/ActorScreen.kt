@@ -5,9 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import androidx.tv.material3.Border
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
@@ -44,6 +46,7 @@ import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
 import com.sanaa.tvapp.state.SnackData
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ActorScreen(
@@ -52,8 +55,22 @@ fun ActorScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
 
+    ActorDetailsEffectHandler(viewModel, navController)
+
+    ActorScreenContent(
+        state = state,
+        interactionListener = viewModel,
+    )
+
+}
+
+@Composable
+private fun ActorDetailsEffectHandler(
+    viewModel: ActorViewModel,
+    navController: NavHostController,
+) {
     LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
+        viewModel.effect.collectLatest { effect ->
             when (effect) {
                 is ActorScreenEffects.NavigateToMovieDetails -> navController.navigate(
                     MovieDetailsRoute(effect.movieId)
@@ -64,34 +81,30 @@ fun ActorScreen(
                         effect.seriesId
                     )
                 )
-
-                ActorScreenEffects.NavigateToLogin -> {
-
-                }
             }
         }
     }
-
-    ActorScreenContent(
-        state = state,
-        listener = viewModel,
-        modifier = Modifier.fillMaxSize(),
-    )
-
 }
 
 @Composable
 private fun ActorScreenContent(
     state: ActorScreenUiState,
-    listener: ActorsScreenInteractionListener,
-    modifier: Modifier = Modifier,
+    interactionListener: ActorsScreenInteractionListener,
 ) {
 
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
-    NovixScaffold {
-        Box(modifier = modifier.systemBarsPadding()) {
-
+    NovixScaffold(
+        backgroundShapes = {},
+        snackBarHost = {
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackDismissRequested,
+                modifier = Modifier.statusBarsPadding()
+            )
+        }
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             AnimatedContent(
                 targetState = state.isLoading || state.noInternetConnection,
                 modifier = Modifier.align(Alignment.Center),
@@ -100,7 +113,7 @@ private fun ActorScreenContent(
                 if (it) {
                     if (state.noInternetConnection) {
                         NetworkDisconnectionContact(
-                            onRetryClick = { listener.onRetryClicked() },
+                            onRetryClick = { interactionListener.onRetryClicked() },
                             modifier = Modifier.fillMaxSize(),
                         )
                     } else {
@@ -141,14 +154,9 @@ private fun ActorScreenContent(
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                                )
-                                {
-                                    FlowRow(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                                    ) {
-                                        ActorInfo(state)
-                                    }
+                                ) {
+                                    ActorInfo(state)
+
 
                                     state.actor.biography?.let { bio ->
                                         Text(
@@ -163,7 +171,7 @@ private fun ActorScreenContent(
 
                         }
 
-                        ActorScreenSliders(state, listener)
+                        ActorScreenSliders(state, interactionListener)
                     }
                 }
 
@@ -204,33 +212,47 @@ private fun ActorScreenSliders(
 
 @Composable
 private fun ActorInfo(state: ActorScreenUiState) {
-    state.actor.department?.let {
-        AppText(
-            text = it,
-            style = Theme.textStyle.label.small,
-            color = Theme.colors.body,
-        )
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        state.actor.department?.let {
+            AppText(
+                text = it,
+                style = Theme.textStyle.label.small,
+                color = Theme.colors.body,
+            )
+        }
+
+        state.actor.placeOfBirth?.let {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                DotSeparator()
+                IconWithText(
+                    iconRes = R.drawable.location,
+                    text = it,
+                    tint = Theme.colors.body
+                )
+            }
+        }
+
+        state.actor.lifeSpan?.let {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                DotSeparator()
+                IconWithText(
+                    iconRes = R.drawable.birthday_cake,
+                    text = it,
+                    tint = Theme.colors.body
+                )
+            }
+        }
     }
 
-    state.actor.placeOfBirth?.let {
-        DotSeparator()
-        IconWithText(
-            iconRes = R.drawable.location,
-            text = it,
-            contentDescription = "",
-            tint = Theme.colors.body
-        )
-    }
-
-    state.actor.lifeSpan?.let {
-        DotSeparator()
-        IconWithText(
-            iconRes = R.drawable.birthday_cake,
-            text = it,
-            contentDescription = "",
-            tint = Theme.colors.body
-        )
-    }
 }
 
 

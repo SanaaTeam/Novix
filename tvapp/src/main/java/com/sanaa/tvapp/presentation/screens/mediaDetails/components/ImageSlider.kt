@@ -50,7 +50,6 @@ fun ImagesSlider(
             contentPadding = PaddingValues(horizontal = 36.dp)
         ) {
             itemsIndexed(images) { index, image ->
-
                 ImageCard(image)
             }
         }
@@ -61,11 +60,10 @@ fun ImagesSlider(
 @Composable
 private fun ImageCard(
     imageUrl: String?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-
     Card(
-        modifier =  Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         onClick = {},
         colors = CardDefaults.colors(
             containerColor = Color.Transparent,
@@ -78,7 +76,7 @@ private fun ImageCard(
             focusedBorder = Border.None,
             pressedBorder = Border.None
         )
-    ){
+    ) {
         Box(
             modifier = modifier
                 .size(88.dp)
@@ -108,5 +106,4 @@ private fun ImageCard(
             }
         }
     }
-
 }

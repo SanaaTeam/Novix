@@ -21,6 +21,7 @@ data class MyAccountScreenUiState(
         UNRESTRICTED,
         MODERATE_RESTRICTION
     }
+
     companion object {
         const val ARABIC_LANGUAGE_CODE = "ar"
         const val ENGLISH_LANGUAGE_CODE = "en"

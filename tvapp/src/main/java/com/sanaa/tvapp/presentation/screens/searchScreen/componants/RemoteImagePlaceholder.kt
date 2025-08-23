@@ -23,7 +23,7 @@ fun RemoteImagePlaceholder(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Image(
             painter = painterResource(id = placeholderResId),
             contentDescription = "Remote Image Placeholder",

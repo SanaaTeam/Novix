@@ -47,7 +47,7 @@ class MyAccountScreenViewModel @Inject constructor(
         if (state.value.savedContentRestriction?.name == state.value.selectedContentRestriction?.name)
             return
 
-        tryToExecute(block =:: saveContentRestriction)
+        tryToExecute(block = ::saveContentRestriction)
     }
 
     override fun onLoginButtonClick() {
@@ -127,7 +127,7 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private fun onCheckUserLoginSuccess(isLogged: Boolean) {
-        if (isLogged)   fetchUserData()
+        if (isLogged) fetchUserData()
         updateState { copy(isUserLoggedIn = isLogged) }
     }
 

@@ -33,7 +33,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 fun SaveIconChip(
     modifier: Modifier = Modifier,
     isSaved: Boolean = false,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier

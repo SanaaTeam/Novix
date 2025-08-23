@@ -37,8 +37,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"
-            android:theme="@style/Theme.StartingScreen">
-        </activity>
+            android:theme="@style/Theme.StartingScreen" />
 
     </application>
 

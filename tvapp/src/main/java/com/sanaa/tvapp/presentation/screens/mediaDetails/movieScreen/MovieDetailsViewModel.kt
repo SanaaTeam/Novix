@@ -9,15 +9,20 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiMod
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toHistory
+import com.sanaa.tvapp.state.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import entity.User
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -31,6 +36,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsScreenUiState, MovieDetailsScreenUiEffect>(
     initialState = MovieDetailsScreenUiState(),
@@ -41,7 +47,6 @@ class MovieDetailsViewModel @Inject constructor(
         "movieId is required in SavedStateHandle"
     }
 
-
     init {
         fetchMovieDetails(movieId)
         updateUserLoginState()
@@ -49,34 +54,17 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun fetchMovieDetails(movieId: Int) {
-        updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
+            onStart = {
+                updateState { copy(isLoading = true) }
+            },
             block = {
                 loadMovieDetails(movieId)
             },
             onSuccess = {
-                updateState { copy(isLoading = false, errorMessage = null) }
+                updateState { copy(isLoading = false) }
             },
-            onError = { exception ->
-                if (exception is NoNetworkException) {
-                    updateState {
-                        copy(
-                            noInternetConnection = true,
-                            isLoading = false,
-                            errorMessage = null
-                        )
-                    }
-                } else {
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            errorMessage = exception.message,
-                            noInternetConnection = false
-                        )
-                    }
-                }
-            },
-            dispatcher = dispatcher
+            onError = ::onErrorAccrue
         )
     }
 
@@ -117,7 +105,6 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-
     override fun onWatchTrailerClick(urlString: String) {
         emitEffect(MovieDetailsScreenUiEffect.OpenTrailer(urlString))
     }
@@ -132,7 +119,13 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onRetryLoadDetails() {
-        TODO("Not yet implemented")
+        updateState {
+            copy(
+                isLoading = true,
+                noInternetConnection = false
+            )
+        }
+        fetchMovieDetails(movieId)
     }
 
     override fun onRateMovieClick() {
@@ -158,7 +151,20 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onSummitRateClick() {
         tryToExecute(
             block = ::submitMovieRating,
+            onError = ::onErrorAccrue
         )
+    }
+
+    override fun onSimilarMovieClick(movieId: Int) {
+        emitEffect(MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails(movieId))
+    }
+
+    override fun onActorCardClick(actorId: Int) {
+        emitEffect(MovieDetailsScreenUiEffect.NavigateToActorScreen(actorId))
+    }
+
+    override fun onSnackDismissRequested() {
+        updateState { copy(snackBarData = null) }
     }
 
     private fun addMovieToHistory(movie: Movie) {
@@ -178,13 +184,50 @@ class MovieDetailsViewModel @Inject constructor(
     private fun updateUserLoginState() {
         tryToCollect(
             block = { checkUserLogin.isLoggedIn() },
-            onCollect = { loggedIn ->
-                updateState { copy(isUserLoggedIn = loggedIn) }
-            },
-            onError = { },
+            onCollect = ::onCollectLoggedFlag,
         )
     }
 
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged) {
+            fetchUserRating()
+            if (state.value.showLoginDialog) {
+                updateState {
+                    copy(
+                        showLoginDialog = false,
+                        showRateDialog = true,
+                    )
+                }
+            }
+        }
+        updateState { copy(isUserLoggedIn = isLogged) }
+    }
+
+    private fun fetchUserRating() {
+        tryToExecute(
+            block = { getCurrentUserRating(movieId) },
+            onSuccess = ::onFetchUserRatingSuccess,
+        )
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private suspend fun getCurrentUserRating(movieId: Int): Int {
+        try {
+            val user = getLoggedInUserUseCase.getLoggedInUser().first()
+            return manageMovieDetails.getMovieRate(user.id, movieId)
+        } catch (_: Exception) {
+            return 0
+        }
+    }
+
+    private fun onFetchUserRatingSuccess(rating: Int) {
+        updateState {
+            copy(
+                rating = rating,
+                isRatingSubmitted = rating != 0
+            )
+        }
+    }
 
     private suspend fun submitMovieRating() {
         val rating = state.value.rating
@@ -193,11 +236,52 @@ class MovieDetailsViewModel @Inject constructor(
             rating = rating.toFloat()
         )
         if (isSendRateSuccess) {
-            updateState { copy(showRateDialog = false) }
+            updateState {
+                copy(
+                    showRateDialog = false,
+                    isRatingSubmitted = true,
+                    snackBarData = SnackData(
+                        message = stringProvider.submitRatingSuccess,
+                        isError = false
+                    )
+                )
+            }
+        } else {
+            updateState {
+                copy(
+                    showRateDialog = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.submitRatingFailed,
+                        isError = true
+                    )
+                )
+            }
         }
     }
 
-    companion object {
-        private const val PAGE_SIZE = 20
+    private fun onErrorAccrue(e: NovixAppException) {
+        if (e is NoNetworkException) {
+            updateState {
+                copy(
+                    noInternetConnection = true,
+                    isLoading = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.noInternetConnectionError,
+                        isError = true
+                    )
+                )
+            }
+        } else {
+            updateState {
+                copy(
+                    isLoading = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.somethingWentWrongError,
+                        isError = true
+                    ),
+                    noInternetConnection = false
+                )
+            }
+        }
     }
 }

@@ -132,7 +132,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun fetchWatchedMediaData() {
         updateState { copy(isLoading = true, errorMessage = null) }
         tryToCollect(
-            block = { loadWatchedMediaHistory() },
+            block = ::loadWatchedMediaHistory,
             onCollect = ::onFetchWatchedMediaSuccess,
             onError = ::onErrorLoadingData
         )
@@ -214,7 +214,6 @@ class HomeScreenViewModel @Inject constructor(
         loadRatedMovies()
         loadRatedTvShows()
     }
-
 
     private fun loadRatedMovies() {
         tryToExecute(

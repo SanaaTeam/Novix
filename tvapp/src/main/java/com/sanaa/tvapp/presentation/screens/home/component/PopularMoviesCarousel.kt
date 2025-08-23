@@ -44,8 +44,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.Button
-import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Carousel
 import androidx.tv.material3.CarouselState
 import androidx.tv.material3.ExperimentalTvMaterial3Api
@@ -152,7 +150,7 @@ fun MediaInfo(
             overflow = TextOverflow.Ellipsis,
         )
 
-        AnimatedVisibility(isFocused) { Button() }
+        AnimatedVisibility(isFocused) { SeeDetailsButton() }
     }
 }
 
@@ -254,15 +252,15 @@ fun FeaturedCarouselShimmer() {
 
 @Composable
 @OptIn(ExperimentalTvMaterial3Api::class)
-private fun Button() {
-    Button(
+private fun SeeDetailsButton() {
+    Row(
         modifier = Modifier
             .padding(top = 24.dp)
-            .focusable(false),
-        colors = ButtonDefaults.colors(
-            containerColor = Theme.colors.primary
-        ),
-        onClick = { }
+            .focusable(false)
+            .background(Theme.colors.primary, RoundedCornerShape(50.dp))
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
         Icon(
             modifier = Modifier.size(20.dp),

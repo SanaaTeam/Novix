@@ -20,12 +20,13 @@ import com.sanaa.tvapp.R
 @Composable
 fun BackButton(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-
     Card(
-        modifier = modifier.size(36.dp).clip(RoundedCornerShape(40.dp)),
-        onClick = {onBackClick()} ,
+        modifier = modifier
+            .size(36.dp)
+            .clip(RoundedCornerShape(40.dp)),
+        onClick = { onBackClick() },
         colors = CardDefaults.colors(
             containerColor = Theme.colors.iconBackgroundLow,
             contentColor = Theme.colors.surfaceHigh,
@@ -33,7 +34,7 @@ fun BackButton(
             focusedContentColor = Theme.colors.onPrimary
         ),
     ) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Icon(
                 modifier = Modifier.size(20.dp),
                 painter = painterResource(R.drawable.icon_back_tringle),

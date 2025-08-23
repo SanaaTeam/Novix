@@ -4,8 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toEpisodeUiModel
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,22 +27,19 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     initialState = EpisodeDetailsScreenUiState(),
     defaultDispatcher = dispatcher
 ), EpisodeDetailsInteractionListener {
-
-
-    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
-        "seriesId is required in SavedStateHandle"
-    }
-    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"]) {
-        "seasonNumber is required in SavedStateHandle"
-    }
-    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"]) {
-        "episodeNumber is required in SavedStateHandle"
-    }
+    val route = ScreensRoute.EpisodeDetailsRoute(
+        seriesId = checkNotNull(savedStateHandle["seriesId"]),
+        seasonNumber = checkNotNull(savedStateHandle["seasonNumber"]),
+        episodeNumber = checkNotNull(savedStateHandle["episodeNumber"]),
+    )
 
     init {
-        loadEpisode(seriesId, seasonNumber, episodeNumber)
+        loadEpisode(
+            route.seriesId,
+            route.seasonNumber,
+            route.episodeNumber
+        )
     }
-
 
     override fun onPlayTrailerClick() {
         emitEffect(EpisodeDetailsEffects.PlayTrailer(state.value.trailerUrl))
@@ -51,26 +50,30 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         loadEpisode(state.value.seriesId, 0, 0)
     }
 
+    override fun onActorClick(id: Int) {
+        emitEffect(EpisodeDetailsEffects.NavigateToActorDetails(id))
+    }
+
     private fun loadEpisode(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
         tryToExecute(
             block = { fetchEpisodeDetails(seriesId, seasonNumber, episodeNumber) },
-            onSuccess = {
-                updateState { copy(isLoading = false) }
-            },
-            onError = { e ->
-                if (e is NoNetworkException) {
-                    updateState {
-                        copy(
-                            noInternetConnection = true,
-                            error = null,
-                            isLoading = false
-                        )
-                    }
-                } else {
-                    updateState { copy(error = error, isLoading = false) }
-                }
-            }
+            onSuccess = { updateState { copy(isLoading = false) } },
+            onError = ::onErrorAccrue
         )
+    }
+
+    private fun onErrorAccrue(e: NovixAppException) {
+        if (e is NoNetworkException) {
+            updateState {
+                copy(
+                    noInternetConnection = true,
+                    error = null,
+                    isLoading = false
+                )
+            }
+        } else {
+            updateState { copy(error = error, isLoading = false) }
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

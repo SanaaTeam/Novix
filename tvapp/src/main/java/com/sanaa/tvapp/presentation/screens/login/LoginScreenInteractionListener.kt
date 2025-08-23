@@ -6,4 +6,5 @@ interface LoginScreenInteractionListener {
     fun onTogglePasswordVisibility()
     fun onLoginClicked()
     fun onContinueClicked()
+    fun onSnackBarDismiss()
 }

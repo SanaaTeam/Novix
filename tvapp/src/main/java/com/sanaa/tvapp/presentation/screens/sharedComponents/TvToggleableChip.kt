@@ -46,10 +46,10 @@ fun TvToggleableChip(
                 onClick()
             }
             .onKeyEvent(onKeyEvent = { keyEvent: KeyEvent ->
-                if (keyEvent.nativeKeyEvent.action == ACTION_UP){
+                if (keyEvent.nativeKeyEvent.action == ACTION_UP) {
                     onClick()
                     true
-                }else{
+                } else {
                     false
                 }
             })

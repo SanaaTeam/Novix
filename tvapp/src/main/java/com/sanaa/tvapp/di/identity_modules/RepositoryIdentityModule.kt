@@ -17,12 +17,12 @@ abstract class RepositoryIdentityModule {
     @Binds
     @Singleton
     abstract fun bindAuthenticationRepository(
-        authenticationRepositoryImpl: AuthenticationRepositoryImpl
+        authenticationRepositoryImpl: AuthenticationRepositoryImpl,
     ): AuthenticationRepository
 
     @Binds
     @Singleton
     abstract fun bindUserPreference(
-        userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl
+        userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl,
     ): UserPreferencesRepository
 }
