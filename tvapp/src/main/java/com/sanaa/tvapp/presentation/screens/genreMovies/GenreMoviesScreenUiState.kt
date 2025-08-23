@@ -16,4 +16,3 @@ data class GenreMoviesScreenUiState(
     val snackBarData: SnackData? = null
 )
 
-
