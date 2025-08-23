@@ -1,7 +1,8 @@
 package com.sanaa.tvapp.presentation.screens.searchScreen
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,30 +10,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.LoadState
+import androidx.navigation.NavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.presentation.screens.home.component.SearchTabs
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
+import com.sanaa.tvapp.presentation.screens.searchScreen.componants.AnimatedSnackBarHost
+import com.sanaa.tvapp.presentation.screens.searchScreen.componants.HandlePagingState
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.MovieTvContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.SearchTextField
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvEmptySearchContent
-import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvErrorStateContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvShowTvContent
-import com.sanaa.tvapp.presentation.screens.sharedComponents.TvLoadingIndicator
-
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SearchScreen(
@@ -44,140 +44,125 @@ fun SearchScreen(
     val actorsPagingData = uiState.actors.collectAsLazyPagingItems()
     val navController = LocalAppNavController.current
 
-    LaunchedEffect(Unit) {
-        searchViewModel.effect.collect {
-            when (it) {
-                is SearchScreenEffect.NavigateToActorDetails -> navController.navigate(
-                    ScreensRoute.ActorDetailsRoute(
-                        it.id
-                    )
-                )
+    EffectHandler(
+        effect = searchViewModel.effect,
+        navController = navController
+    )
 
-                SearchScreenEffect.NavigateToLogin -> TODO()
-                is SearchScreenEffect.NavigateToMovieDetails -> navController.navigate(
-                    ScreensRoute.MovieDetailsRoute(
-                        it.id
-                    )
-                )
-
-                is SearchScreenEffect.NavigateToTvShowDetails -> navController.navigate(
-                    ScreensRoute.TvShowDetailsRoute(
-                        it.id
-                    )
-                )
-            }
-        }
-    }
-
-
-
-    NovixTheme(isSystemInDarkTheme()) {
         SearchScreenContent(
             uiState = uiState,
-            searchListener = searchViewModel,
+            interactionListener = searchViewModel,
             moviesPagingData = moviesPagingData,
             tvShowsPagingData = tvShowsPagingData,
             actorsPagingData = actorsPagingData,
         )
-    }
-}
 
+}
 @Composable
-fun SearchScreenContent(
+private fun SearchScreenContent(
     uiState: SearchTvScreenUiState,
-    searchListener: SearchScreenInteractionListener,
+    interactionListener: SearchScreenInteractionListener,
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
 ) {
-
-    var text by remember { mutableStateOf("") }
-
-    val movieRefreshState = moviesPagingData.loadState.refresh
-    val tvShowRefreshState = tvShowsPagingData.loadState.refresh
-    val actorRefreshState = actorsPagingData.loadState.refresh
-
-    val isMovieEmpty = moviesPagingData.itemCount == 0 &&
-            movieRefreshState !is LoadState.Loading &&
-            movieRefreshState !is LoadState.Error
-
-    val isTvEmpty = tvShowsPagingData.itemCount == 0 &&
-            tvShowRefreshState !is LoadState.Loading &&
-            tvShowRefreshState !is LoadState.Error
-
-    val isActorEmpty = actorsPagingData.itemCount == 0 &&
-            actorRefreshState !is LoadState.Loading &&
-            actorRefreshState !is LoadState.Error
-
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.surface),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        contentAlignment = Alignment.TopCenter
     ) {
-        SearchTextField(
-            text = text,
-            onTextChange = {
-                text = it
-                searchListener.onSearchQueryChanged(it)
-            },
-        )
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            SearchTextField(
+                text = uiState.searchQuery,
+                onTextChange = interactionListener::onSearchQueryChanged,
+            )
 
-        SearchTabs(
-            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-            sidePaddings = 36.dp,
-            { searchListener.onTabSelected(it) }
-        )
+            SearchTabs(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                sidePaddings = 36.dp,
+                { interactionListener.onTabSelected(it) }
+            )
 
-        when (uiState.selectedTabIndex) {
-            SearchTvScreenUiState.MOVIE_INDEX -> {
+            AnimatedContent(
+                targetState = uiState,
+                label = "search_content"
+            ) { state ->
                 when {
-                    text.isBlank() -> TvEmptySearchContent()
-                    movieRefreshState is LoadState.Loading -> TvLoadingIndicator()
-                    movieRefreshState is LoadState.Error -> TvErrorStateContent(
-                        movieRefreshState,
-                        searchListener::retrySearch
+                    state.noInternetConnection -> NetworkDisconnectionContact(
+                        onRetryClick = { interactionListener.onRetryClicked() },
+                        modifier = Modifier.fillMaxSize(),
                     )
 
-                    isMovieEmpty -> TvEmptySearchContent()
-                    else -> MovieTvContent(moviesPagingData) { movieId ->
-                        searchListener.onMovieClicked(movieId)
+                    state.searchQuery.isNotBlank() -> {
+                        when (state.selectedTabIndex) {
+                            SearchTvScreenUiState.MOVIE_INDEX -> {
+                                HandlePagingState(moviesPagingData, interactionListener) {
+                                    MovieTvContent(moviesPagingData) { movieId ->
+                                        interactionListener.onMovieClicked(movieId)
+                                    }
+                                }
+                            }
+
+                            SearchTvScreenUiState.TV_SHOW_INDEX -> {
+                                HandlePagingState(tvShowsPagingData, interactionListener) {
+                                    TvShowTvContent(tvShowsPagingData) { tvShowId ->
+                                        interactionListener.onTvShowClicked(tvShowId)
+                                    }
+                                }
+                            }
+
+                            SearchTvScreenUiState.ACTOR_INDEX -> {
+                                HandlePagingState(actorsPagingData, interactionListener) {
+                                    TvContent(actorsPagingData) { actor ->
+                                        interactionListener.onActorClicked(actor.id)
+                                    }
+                                }
+                            }
+                        }
                     }
+
+                    state.isLoading -> LoadingIndicator()
+
+                    else -> TvEmptySearchContent()
                 }
             }
+        }
 
-            SearchTvScreenUiState.TV_SHOW_INDEX -> {
-                when {
-                    text.isBlank() -> TvEmptySearchContent()
+        if (uiState.snackBarData != null) {
+            AnimatedSnackBarHost(
+                data = uiState.snackBarData,
+                onDismiss = interactionListener::onSnackBarDismiss,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+        }
+    }
+}
 
-                    tvShowRefreshState is LoadState.Loading -> TvLoadingIndicator()
-                    tvShowRefreshState is LoadState.Error -> TvErrorStateContent(
-                        tvShowRefreshState,
-                        searchListener::retrySearch
-                    )
+@Composable
+private fun EffectHandler(
+    effect: SharedFlow<SearchScreenEffect>,
+    navController: NavController
+) {
+    LaunchedEffect(Unit) {
+        effect.collectLatest {
+            when (it) {
+                is SearchScreenEffect.NavigateToActorDetails -> navController.navigate(
+                    ScreensRoute.ActorDetailsRoute(it.id)
+                )
 
-                    isTvEmpty -> TvEmptySearchContent()
-                    else -> TvShowTvContent(tvShowsPagingData) { tvShowId ->
-                        searchListener.onTvShowClicked(tvShowId)
-                    }
-                }
-            }
+                is SearchScreenEffect.NavigateToMovieDetails -> navController.navigate(
+                    ScreensRoute.MovieDetailsRoute(it.id)
+                )
 
-            SearchTvScreenUiState.ACTOR_INDEX -> {
-                when {
-                    text.isBlank() -> TvEmptySearchContent()
-
-                    actorRefreshState is LoadState.Loading -> TvLoadingIndicator()
-                    actorRefreshState is LoadState.Error -> TvErrorStateContent(
-                        actorRefreshState,
-                        searchListener::retrySearch
-                    )
-
-                    isActorEmpty -> TvEmptySearchContent()
-                    else -> TvContent(actorsPagingData) {
-                        searchListener.onActorClicked(it.id)
-                    }
-                }
+                is SearchScreenEffect.NavigateToTvShowDetails -> navController.navigate(
+                    ScreensRoute.TvShowDetailsRoute(it.id)
+                )
             }
         }
     }

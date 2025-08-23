@@ -1,8 +1,10 @@
 package com.sanaa.tvapp.presentation.screens.searchScreen
 
 import androidx.paging.PagingData
+import com.sanaa.tvapp.state.SnackData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+
 
 
 data class SearchTvScreenUiState(
@@ -15,8 +17,7 @@ data class SearchTvScreenUiState(
     val actors: Flow<PagingData<ActorUiModel>> = flowOf(PagingData.empty()),
     val error: String? = null,
     val lastTabIndex: Int = -1,
-    val showLoginBottomSheet: Boolean = false,
-    val isUserLoggedIn: Boolean = false
+    val snackBarData: SnackData? = null
 ){
 
     companion object {

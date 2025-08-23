@@ -41,6 +41,7 @@ abstract class BaseViewModel<T, E>(
     }
 
     protected fun <T> tryToExecute(
+        onStart: () -> Unit = {},
         block: suspend () -> T,
         onSuccess: (T) -> Unit = {},
         onError: (exception: Exception) -> Unit = {},
@@ -57,6 +58,7 @@ abstract class BaseViewModel<T, E>(
     }
 
     protected fun <T> tryToCollect(
+        onStart: () -> Unit = {},
         block: suspend () -> Flow<T>,
         onCollect: suspend (T) -> Unit,
         onError: (exception: Throwable) -> Unit = {},
