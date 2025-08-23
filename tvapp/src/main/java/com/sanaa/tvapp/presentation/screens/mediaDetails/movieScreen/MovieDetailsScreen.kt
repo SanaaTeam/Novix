@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -28,6 +30,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.tv.material3.Card
+import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -159,6 +163,18 @@ fun MovieDetailsContent(
                                     state = rememberScrollState()
                                 )
                         ) {
+                        Card(
+                            modifier = Modifier.size(0.dp),
+                            onClick = {},
+                            colors = CardDefaults.colors(
+                                containerColor = Color.Transparent,
+                                contentColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                focusedContentColor = Color.Transparent,
+                                pressedContainerColor = Color.Transparent,
+                                pressedContentColor =Color.Transparent
+                            )
+                        ){}
                             DetailsHeaderSection(
                                 backgroundImageUrl = state.movieDetails.posterUrl ?: "",
                                 title = state.movieDetails.title,
