@@ -59,6 +59,8 @@ abstract class BaseViewModel<T, E>(
                 onSuccess(result)
             } catch (exception: NovixAppException) {
                 onError(exception)
+            }catch (_: Exception) {
+                onError(NovixAppException())
             }
         }
     }

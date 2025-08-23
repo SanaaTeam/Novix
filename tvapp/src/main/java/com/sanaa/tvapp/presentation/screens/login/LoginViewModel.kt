@@ -36,9 +36,8 @@ class LoginViewModel @Inject constructor(
 
     override fun onLoginClicked() {
         if (!state.value.canSubmit) return
-
-        updateState { copy(isLoading = true, canSubmit = false) }
         tryToExecute(
+            onStart = { updateState { copy(isLoading = true, canSubmit = false) } },
             block = login(),
             onSuccess = onLoginSuccess(),
             onError = ::onDataLoadError
@@ -98,5 +97,9 @@ class LoginViewModel @Inject constructor(
             },
             onError = ::onDataLoadError
         )
+    }
+
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
     }
 }
