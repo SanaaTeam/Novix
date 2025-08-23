@@ -61,7 +61,6 @@ fun ActorScreen(
         state = state,
         interactionListener = viewModel,
     )
-
 }
 
 @Composable
@@ -156,7 +155,6 @@ private fun ActorScreenContent(
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
                                     ActorInfo(state)
-
 
                                     state.actor.biography?.let { bio ->
                                         Text(
