@@ -4,11 +4,13 @@ import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.presentation.screens.category.CategoriesScreenUiState.Companion.MOVIE_TAB_INDEX
 import com.sanaa.tvapp.presentation.screens.category.state.CategoryUiState
 import com.sanaa.tvapp.presentation.screens.category.state.mapper.toUiState
+import com.sanaa.tvapp.state.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Genre
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import service.VodStringProvider
 import usecase.ManageMovieUseCase
 import usecase.ManageTvShowUseCase
 import javax.inject.Inject
@@ -17,6 +19,7 @@ import javax.inject.Inject
 class CategoriesScreenViewModel @Inject constructor(
     private val getTvGenresUseCase: ManageTvShowUseCase,
     private val getMovieGenresUseCase: ManageMovieUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<CategoriesScreenUiState, CategoriesScreenEffects>(
     CategoriesScreenUiState(),
@@ -51,16 +54,22 @@ class CategoriesScreenViewModel @Inject constructor(
     }
 
     override fun onRetryClick() {
-        loadTvGenres()
-        loadMovieGenres()
+        loadTvGenres(true)
+        loadMovieGenres(true)
+    }
+
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
     }
 
 
-    private fun loadTvGenres() {
-        updateState { copy(isLoading = true) }
+    private fun loadTvGenres(freshData:Boolean = false) {
         tryToExecute(
+            onStart = {
+                updateState { copy(isLoading = true) }
+            },
             block = {
-                getTvGenresUseCase.getTvShowGenres()
+                getTvGenresUseCase.getTvShowGenres(freshData)
             },
             onSuccess = ::onLoadTvGenresSuccess,
             onError = ::onErrorLoading
@@ -80,11 +89,13 @@ class CategoriesScreenViewModel @Inject constructor(
     }
 
 
-    private fun loadMovieGenres() {
-        updateState { copy(isLoading = true) }
+    private fun loadMovieGenres(freshData: Boolean = false) {
         tryToExecute(
+            onStart = {
+                updateState { copy(isLoading = true) }
+            },
             block = {
-                getMovieGenresUseCase.getMovieGenres()
+                getMovieGenresUseCase.getMovieGenres(freshData)
             },
             onSuccess = ::onLoadMovieGenresSuccess,
             onError = ::onErrorLoading
@@ -105,7 +116,18 @@ class CategoriesScreenViewModel @Inject constructor(
     private fun onErrorLoading(error: Throwable) {
         when (error) {
             is NoNetworkException -> {
-                updateState { copy(isNoInternet = true) }
+                updateState {
+                    copy(
+                        isNoInternet = true,
+                        snackBarData = SnackData(message = stringProvider.noInternetConnectionError, isError = true )
+                    )
+                }
+            }
+            else-> updateState {
+                copy(
+                    isNoInternet = true,
+                    snackBarData = SnackData(message = stringProvider.somethingWentWrongError, isError = true )
+                )
             }
         }
     }

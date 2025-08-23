@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Text
@@ -40,6 +41,8 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.components.TVNetworkDisconnectionContact
+import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
@@ -51,6 +54,18 @@ fun GenreMoviesScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
 
+    GenreMoviesScreenEffectHandler(viewModel, navController)
+
+    GenreMoviesScreenContent(
+        state = state.value, interactionListener = viewModel
+    )
+}
+
+@Composable
+private fun GenreMoviesScreenEffectHandler(
+    viewModel: GenreMoviesViewModel,
+    navController: NavHostController
+) {
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -61,19 +76,9 @@ fun GenreMoviesScreen(
                 is GenreMoviesEffects.NavigateToMovieDetails -> {
                     navController.navigate(MovieDetailsRoute(effect.id))
                 }
-
-
-                GenreMoviesEffects.NavigateToLogin -> {
-
-                }
-
             }
         }
     }
-
-    GenreMoviesScreenContent(
-        state = state.value, interactionListener = viewModel
-    )
 }
 
 
@@ -85,6 +90,12 @@ fun GenreMoviesScreenContent(
     val pagedMovies = state.movies.collectAsLazyPagingItems()
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
+        snackBarHost = {
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackBarDismiss
+            )
+        }
     ) {
         Column {
             GenreMoviesTopBar(state.title.toString())
@@ -123,7 +134,7 @@ fun GenreMoviesScreenContent(
                         }
 
                         noInternetConnection -> {
-                            NetworkDisconnectionContact(
+                            TVNetworkDisconnectionContact(
                                 onRetryClick = { interactionListener.onRetryClicked() },
                                 modifier = Modifier.fillMaxSize(),
                             )
