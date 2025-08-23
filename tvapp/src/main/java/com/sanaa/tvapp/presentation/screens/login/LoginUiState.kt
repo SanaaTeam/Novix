@@ -8,5 +8,5 @@ data class LoginUiState(
     val isPasswordVisible: Boolean = false,
     val isLoading: Boolean = false,
     val canSubmit: Boolean = false,
-    val snackBarData: SnackData? = null
+    val snackBarData: SnackData? = null,
 )

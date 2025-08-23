@@ -19,18 +19,18 @@ abstract class RepositoryDetailsModule {
     @Binds
     @Singleton
     abstract fun bindMovieRepository(
-        movieRepositoryImpl: MovieRepositoryImpl
+        movieRepositoryImpl: MovieRepositoryImpl,
     ): MovieRepository
 
     @Binds
     @Singleton
     abstract fun bindActorRepository(
-        actorRepositoryImpl: ActorRepositoryImpl
+        actorRepositoryImpl: ActorRepositoryImpl,
     ): ActorRepository
 
     @Binds
     @Singleton
     abstract fun bindTvShowRepository(
-        tvShowRepositoryImpl: TvShowRepositoryImpl
+        tvShowRepositoryImpl: TvShowRepositoryImpl,
     ): TvShowRepository
 }

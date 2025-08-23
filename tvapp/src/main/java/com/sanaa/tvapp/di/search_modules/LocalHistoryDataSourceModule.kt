@@ -15,11 +15,11 @@ abstract class LocalHistoryDataSourceModule {
 
     @Binds
     abstract fun bindLocalHistoryDataSource(
-        localHistoryDataSourceImpl: LocalHistoryDataSourceImpl
+        localHistoryDataSourceImpl: LocalHistoryDataSourceImpl,
     ): LocalHistoryDataSource
 
     @Binds
     abstract fun bindLocalCachedContentDataSource(
-        localCachedContentDataSourceImpl: LocalCachedContentDataSourceImpl
+        localCachedContentDataSourceImpl: LocalCachedContentDataSourceImpl,
     ): LocalCachedContentDataSource
 }

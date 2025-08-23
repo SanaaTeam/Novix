@@ -15,7 +15,7 @@ import exceptions.NoNetworkException
 import com.sanaa.designsystem.R as designSystemResource
 
 @Composable
- fun TvErrorStateContent(loadStateError: LoadState.Error, onRetryClick: () -> Unit) {
+fun TvErrorStateContent(loadStateError: LoadState.Error, onRetryClick: () -> Unit) {
     val scrollState = rememberScrollState()
     Box(
         modifier = Modifier

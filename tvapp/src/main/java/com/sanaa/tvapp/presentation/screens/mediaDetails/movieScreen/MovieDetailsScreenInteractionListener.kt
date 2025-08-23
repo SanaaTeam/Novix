@@ -6,7 +6,7 @@ interface MovieDetailsScreenInteractionListener {
     fun onLoginButtonClick()
     fun onRetryLoadDetails()
     fun onRateMovieClick()
-    fun onRatingChange(rating:Int)
+    fun onRatingChange(rating: Int)
     fun onDismissRateDialog()
     fun onSummitRateClick()
     fun onSimilarMovieClick(movieId: Int)

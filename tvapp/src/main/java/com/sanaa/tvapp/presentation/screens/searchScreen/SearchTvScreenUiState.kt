@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 
-
 data class SearchTvScreenUiState(
     val searchQuery: String = "",
     val selectedTabIndex: Int = 0,
@@ -17,8 +16,8 @@ data class SearchTvScreenUiState(
     val actors: Flow<PagingData<ActorUiModel>> = flowOf(PagingData.empty()),
     val error: String? = null,
     val lastTabIndex: Int = -1,
-    val snackBarData: SnackData? = null
-){
+    val snackBarData: SnackData? = null,
+) {
 
     companion object {
         const val MOVIE_INDEX = 0

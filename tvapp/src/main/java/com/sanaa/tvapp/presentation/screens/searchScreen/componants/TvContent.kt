@@ -11,7 +11,7 @@ import com.sanaa.tvapp.presentation.screens.searchScreen.ActorUiModel
 @Composable
 fun TvContent(
     actors: LazyPagingItems<ActorUiModel>,
-    onClick: (ActorUiModel) -> Unit
+    onClick: (ActorUiModel) -> Unit,
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(20.dp),

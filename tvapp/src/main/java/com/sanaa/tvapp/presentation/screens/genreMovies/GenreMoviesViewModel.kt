@@ -1,6 +1,5 @@
 package com.sanaa.tvapp.presentation.screens.genreMovies
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
@@ -55,9 +54,7 @@ class GenreMoviesViewModel @Inject constructor(
 
     private fun fetchMovies(categoryId: Int) {
         tryToCollect(
-            onStart = {
-                updateState { copy(isLoading = true) }
-            },
+            onStart = ::setOnLoading,
             block = { loadMoviesByCategory(categoryId) },
             onCollect = ::onCollectMovies,
             onError = ::onErrorLoading
@@ -71,7 +68,7 @@ class GenreMoviesViewModel @Inject constructor(
         )
     }
 
-    private fun onCollectMovies(movies:PagingData<MovieUiModel>) {
+    private fun onCollectMovies(movies: PagingData<MovieUiModel>) {
         updateState {
             copy(
                 movies = flowOf(movies),
@@ -88,6 +85,10 @@ class GenreMoviesViewModel @Inject constructor(
         return BasePagingSource { page ->
             manageMoviesDetailsUseCase.getMoviesByCategory(genreId = genreId, page = page)
         }
+    }
+
+    private fun setOnLoading() {
+        updateState { copy(isLoading = true) }
     }
 
     private fun onErrorLoading(error: Throwable) {

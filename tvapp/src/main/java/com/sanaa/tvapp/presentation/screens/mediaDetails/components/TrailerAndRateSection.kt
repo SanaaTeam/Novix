@@ -26,7 +26,7 @@ fun TrailerAndRateSection(
     trailerUrl: String? = null,
     onPlayTrailerClicked: () -> Unit = {},
     onRateClicked: () -> Unit = {},
-    showRateButton: Boolean = true
+    showRateButton: Boolean = true,
 ) {
     Row(
         modifier = modifier,

@@ -78,7 +78,9 @@ private fun LoginContentTv(
         modifier = Modifier.fillMaxSize(),
     ) {
         Column(
-            modifier = Modifier.width(320.dp).align (Alignment.Center),
+            modifier = Modifier
+                .width(320.dp)
+                .align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {

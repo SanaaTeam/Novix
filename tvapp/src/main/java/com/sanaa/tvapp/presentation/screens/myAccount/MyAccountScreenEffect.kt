@@ -5,7 +5,8 @@ sealed interface MyAccountScreenEffect {
     object NavigateToMyRating : MyAccountScreenEffect
     object NavigateToChangePasswordSetting : MyAccountScreenEffect
     data class UpdateAppLanguage(
-        val language: String
+        val language: String,
     ) : MyAccountScreenEffect
+
     object NavigateToLogin : MyAccountScreenEffect
 }

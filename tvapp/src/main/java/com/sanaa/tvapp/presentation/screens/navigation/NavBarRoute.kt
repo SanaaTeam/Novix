@@ -11,7 +11,7 @@ open class AppRoutes
 sealed class NavBarRoute(
     @StringRes val titleRes: Int,
     @DrawableRes val unselectedIcon: Int,
-    @DrawableRes val selectedIcon: Int
+    @DrawableRes val selectedIcon: Int,
 ) : AppRoutes() {
     @Serializable
     object Home : NavBarRoute(R.string.home, R.drawable.icon_home, R.drawable.icon_home_selected)
@@ -22,7 +22,11 @@ sealed class NavBarRoute(
 
     @Serializable
     object Categories :
-        NavBarRoute(R.string.categories, R.drawable.icon_category, R.drawable.icon_category_selected)
+        NavBarRoute(
+            R.string.categories,
+            R.drawable.icon_category,
+            R.drawable.icon_category_selected
+        )
 
     @Serializable
     object MyAccount :

@@ -37,7 +37,6 @@ import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.components.TVNetworkDisconnectionContact
@@ -65,7 +64,7 @@ fun GenreTvShowsScreen(
 @Composable
 private fun GenreTvShowsScreenEffectHandler(
     viewModel: GenreTvShowsViewModel,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -97,7 +96,7 @@ fun GenreTvShowsScreenContent(
 
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
-        snackBarHost ={
+        snackBarHost = {
             NovixAnimatedSnackBarHost(
                 data = state.snackBarData,
                 onDismiss = interactionListener::onSnackBarDismiss,

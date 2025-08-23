@@ -54,7 +54,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideLanguageInterceptor(
-        localUserPreferenceDataSource: LocalUserPreferenceDataSource
+        localUserPreferenceDataSource: LocalUserPreferenceDataSource,
     ): LanguageInterceptor {
         return LanguageInterceptor(
             getLanguage = {
@@ -68,7 +68,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideApiKeyInterceptor(
-        preferencesManager: PreferencesManager
+        preferencesManager: PreferencesManager,
     ): APIKeyInterceptor = APIKeyInterceptor(
         apiKey = BuildConfig.TMDB_API_KEY,
         sessionId = { runBlocking { preferencesManager.sessionId.firstOrNull() } }
@@ -78,7 +78,7 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(
         apiKeyInterceptor: APIKeyInterceptor,
-        languageInterceptor: LanguageInterceptor
+        languageInterceptor: LanguageInterceptor,
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(apiKeyInterceptor)
@@ -92,7 +92,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
-        json: Json
+        json: Json,
     ): Retrofit {
         val contentType = "application/json; charset=UTF-8".toMediaType()
 

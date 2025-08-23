@@ -21,7 +21,7 @@ class ActorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
     private val stringProvider: VodStringProvider,
-    ) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
+) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
 ), ActorsScreenInteractionListener {
@@ -50,17 +50,16 @@ class ActorViewModel @Inject constructor(
     }
 
     private fun loadDetails() {
-
         tryToExecute(
-            onStart = {
-                updateState { copy(isLoading = true) }
-            },
+            onStart = ::setOnLoading,
             block = ::fetchActorDetails,
-            onSuccess = {
-                updateState { copy(isLoading = false) }
-            },
+            onSuccess = { onLoadSuccess() },
             onError = ::onErrorAccrue
         )
+    }
+
+    private fun onLoadSuccess() {
+        updateState { copy(isLoading = false) }
     }
 
     private suspend fun fetchActorDetails() = coroutineScope {
@@ -85,6 +84,10 @@ class ActorViewModel @Inject constructor(
                 galleryImageUrls = gallery
             )
         }
+    }
+
+    private fun setOnLoading() {
+        updateState { copy(isLoading = true) }
     }
 
     private fun onErrorAccrue(e: NovixAppException) {
@@ -116,8 +119,6 @@ class ActorViewModel @Inject constructor(
             }
         }
     }
-
-
 
 
 }

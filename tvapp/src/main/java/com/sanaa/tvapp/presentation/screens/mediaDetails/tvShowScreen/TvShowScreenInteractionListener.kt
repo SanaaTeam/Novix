@@ -7,7 +7,7 @@ interface TvShowScreenInteractionListener {
     fun onPlayTrailerClicked()
     fun onRetryLoadDetails()
     fun onRateClick()
-    fun onRatingChange(rating:Int)
+    fun onRatingChange(rating: Int)
     fun onDismissRateDialog()
     fun onSummitRateClick()
     fun onLoginButtonClick()
