@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.home
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,9 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Text
@@ -38,58 +36,69 @@ import com.sanaa.tvapp.presentation.components.MediaSection
 import com.sanaa.tvapp.presentation.screens.home.component.HomeScreenLoading
 import com.sanaa.tvapp.presentation.screens.home.component.HomeTabs
 import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
-import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
-import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.TvShowDetailsRoute
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
 import com.sanaa.tvapp.state.MediaItemUiState
 import com.sanaa.tvapp.state.MediaTypeUiState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.tvapp.R as tvResource
 
 @Composable
-fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
-    val scrollState = rememberScrollState()
+fun HomeScreen(
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+) {
     val state by homeScreenViewModel.state.collectAsStateWithLifecycle()
-    val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
-    when {
-        state.isNoInternet -> {
-            NetworkDisconnectionContact(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState),
-                onRetryClick = {}
-            )
-        }
 
-        state.isLoading -> {
-            HomeScreenLoading(
-                modifier = Modifier
-                    .verticalScroll(scrollState),
-            )
-        }
+    EffectHandler(homeScreenViewModel.effect)
 
-        else -> {
-            HomeScreenContent(state, upcomingMovies)
+    HomeScreenContent(state, homeScreenViewModel)
+}
+
+@Composable
+fun HomeScreenContent(
+    state: HomeScreenUiState,
+    interactionListener: HomeScreenInteractionListener
+) {
+    AnimatedContent(
+        targetState = state.isLoading to state.isNoInternet,
+    ) { (isLoading, isNoInternet)->
+        when {
+            isNoInternet -> {
+                NetworkDisconnectionContact(
+                    modifier = Modifier.fillMaxSize(),
+                    onRetryClick = interactionListener::onRetryClick
+                )
+            }
+
+            isLoading -> {
+                HomeScreenLoading(modifier = Modifier.verticalScroll(rememberScrollState()))
+            }
+
+            else -> {
+                HomeReadyContent(state, interactionListener)
+            }
         }
     }
 }
 
 @Composable
-fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItemUiState>) {
+private fun HomeReadyContent(state: HomeScreenUiState, interactionListener: HomeScreenInteractionListener){
     val sidePaddings = 36.dp
-    val scrollState = rememberScrollState()
-    val mainTvNavController = LocalAppNavController.current
-    val navController = rememberNavController()
     val carouselFocusRequester = remember { FocusRequester() }
+
+    val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
 
     LaunchedEffect(Unit) {
         carouselFocusRequester.requestFocus()
     }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .verticalScroll(scrollState)
+            .verticalScroll(rememberScrollState())
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Row(
@@ -123,36 +132,39 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
                 .focusRequester(carouselFocusRequester),
 
             mediaItemUiStates = state.popularMedia,
-            onShowDetails = { it ->
-                if (it.mediaTypeUiState == MediaTypeUiState.MOVIE)
-                    mainTvNavController.navigate(ScreensRoute.MovieDetailsRoute(it.id))
-                else
-                    mainTvNavController.navigate(ScreensRoute.TvShowDetailsRoute(it.id))
+            onShowDetails = {
+                interactionListener.onMediaClick(
+                    it.id,
+                    it.mediaTypeUiState
+                )
             }
         )
 
         HomeTabs(
             modifier = Modifier.padding(top = 12.dp),
             sidePaddings = sidePaddings,
-            navController = navController
+            onTabSelected = interactionListener::onTabClick
         )
 
-        NavHost(navController = navController, startDestination = HomeMoviesTapRoute) {
-            composable(route = HomeMoviesTapRoute::class) {
-                HomeMovies(state, upcomingMovies) { id ->
-                    mainTvNavController.navigate(ScreensRoute.MovieDetailsRoute(id))
+        AnimatedContent(
+            targetState = state.selectedTab
+        ) { selectedTab ->
+            when (selectedTab) {
+                SelectedHomeTab.MOVIES -> {
+                    HomeMovies(state, upcomingMovies) { id ->
+                        interactionListener.onMediaClick(id, MediaTypeUiState.MOVIE)
+                    }
                 }
-            }
 
-            composable(route = HomeTvShowsTapRoute::class) {
-                HomeTvShows(state, upcomingMovies) { id ->
-                    mainTvNavController.navigate(ScreensRoute.TvShowDetailsRoute(id))
+                SelectedHomeTab.TV_SHOWS -> {
+                    HomeTvShows(state) { id ->
+                        interactionListener.onMediaClick(id, MediaTypeUiState.TV_SHOW)
+                    }
                 }
             }
         }
     }
 }
-
 
 @Composable
 fun HomeMovies(
@@ -223,7 +235,6 @@ fun HomeMovies(
 @Composable
 fun HomeTvShows(
     state: HomeScreenUiState,
-    upcomingMovies: LazyPagingItems<MediaItemUiState>,
     onItemClick: (Int) -> Unit,
 ) {
     Column {
@@ -268,6 +279,26 @@ fun HomeTvShows(
                             MediaRatingChip(rating = item.rating.orEmpty())
                         }
                     )
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun EffectHandler(
+    effect: Flow<HomeScreenEffect>
+) {
+    val mainTvNavController = LocalAppNavController.current
+    LaunchedEffect(Unit) {
+        effect.collectLatest { effect ->
+            when (effect) {
+                is HomeScreenEffect.NavigateToMediaDetails -> {
+                    if (effect.mediaTypeUiState == MediaTypeUiState.MOVIE)
+                        mainTvNavController.navigate(MovieDetailsRoute(effect.id))
+                    else
+                        mainTvNavController.navigate(TvShowDetailsRoute(effect.id))
                 }
             }
         }
