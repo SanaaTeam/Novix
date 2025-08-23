@@ -68,7 +68,6 @@ fun HomeScreen(
 ) {
 
     val state = viewModel.state.collectAsStateWithLifecycle()
-    Log.d("test94", "HomeScreen: genres:${state.value.movieGenres}")
 
     EffectHandler(effect = viewModel.effect)
 

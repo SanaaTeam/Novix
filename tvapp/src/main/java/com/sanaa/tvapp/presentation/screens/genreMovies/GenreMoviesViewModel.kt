@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.genreMovies
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
@@ -40,11 +41,10 @@ class GenreMoviesViewModel @Inject constructor(
         fetchMovies(genreId)
     }
 
-    fun updateUserLoggingStatus() {
+    private fun updateUserLoggingStatus() {
         tryToCollect(
             block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
-            onError = ::onErrorLoading
         )
     }
 
@@ -54,7 +54,9 @@ class GenreMoviesViewModel @Inject constructor(
 
 
     override fun onRetryClicked() {
-        updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
+        updateState { copy(noInternetConnection = false,
+            isLoading = true,
+            error = null) }
         fetchMovies(genreId)
     }
 
@@ -72,20 +74,19 @@ class GenreMoviesViewModel @Inject constructor(
                 updateState { copy(isLoading = true) }
             },
             block = { loadMoviesByCategory(categoryId) },
-            onCollect = onCollectMovies(),
+            onCollect = ::onCollectMovies,
             onError = ::onErrorLoading
         )
     }
 
     private fun loadMoviesByCategory(genreId: Int): Flow<PagingData<MovieUiModel>> {
-        updateState { copy(isLoading = true) }
         return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingDataSource(genreId) },
             mapper = Movie::toUiState
         )
     }
 
-    private fun onCollectMovies(): suspend (PagingData<MovieUiModel>) -> Unit = { movies ->
+    private fun onCollectMovies(movies:PagingData<MovieUiModel>) {
         updateState {
             copy(
                 movies = flowOf(movies),

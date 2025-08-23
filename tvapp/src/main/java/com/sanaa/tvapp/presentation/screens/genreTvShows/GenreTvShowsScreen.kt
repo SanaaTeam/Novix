@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Text
@@ -38,6 +39,8 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.components.TVNetworkDisconnectionContact
+import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.TvShowDetailsRoute
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
@@ -50,6 +53,19 @@ fun GenreTvShowsScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
 
+    GenreTvShowsScreenEffectHandler(viewModel, navController)
+
+    GenreTvShowsScreenContent(
+        state = state.value,
+        interactionListener = viewModel
+    )
+}
+
+@Composable
+private fun GenreTvShowsScreenEffectHandler(
+    viewModel: GenreTvShowsViewModel,
+    navController: NavHostController
+) {
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -60,16 +76,9 @@ fun GenreTvShowsScreen(
                 is GenreTvShowsEffects.NavigateToTvShowDetails -> {
                     navController.navigate(TvShowDetailsRoute(effect.id))
                 }
-
-                GenreTvShowsEffects.NavigateToLogin -> {
-                }
             }
         }
     }
-
-    GenreTvShowsScreenContent(
-        state = state.value, interactionListener = viewModel
-    )
 }
 
 
@@ -85,7 +94,15 @@ fun GenreTvShowsScreenContent(
         else -> ScreenState.CONTENT
     }
 
-    NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
+    NovixScaffold(
+        backgroundShapes = { BackgroundShapes() },
+        snackBarHost ={
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackBarDismiss,
+            )
+        }
+    ) {
         Column(
             modifier = Modifier.navigationBarsPadding()
         ) {
@@ -111,7 +128,7 @@ fun GenreTvShowsScreenContent(
                         }
 
                         ScreenState.NO_INTERNET -> {
-                            NetworkDisconnectionContact(
+                            TVNetworkDisconnectionContact(
                                 onRetryClick = { interactionListener.onRetryClick() },
                                 modifier = Modifier.fillMaxSize(),
                             )
