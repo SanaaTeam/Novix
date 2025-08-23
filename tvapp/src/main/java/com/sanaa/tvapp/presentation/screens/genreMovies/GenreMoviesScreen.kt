@@ -124,8 +124,6 @@ fun GenreMoviesScreenContent(
                     contentAlignment = Alignment.Center,
                     transitionSpec = { fadeIn() togetherWith fadeOut() }
                 ) { (isLoading, noInternetConnection) ->
-                    Log.d("test44test44", "GenreMoviesScreenContent: loding:${state.isLoading}")
-                    Log.d("test44test44", "GenreMoviesScreenContent: no internet:${state.noInternetConnection}")
                     when {
                         isLoading -> {
                             Box(

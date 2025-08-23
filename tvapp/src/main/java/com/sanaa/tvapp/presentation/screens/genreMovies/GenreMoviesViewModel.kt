@@ -69,7 +69,6 @@ class GenreMoviesViewModel @Inject constructor(
     }
 
     private fun fetchMovies(categoryId: Int) {
-        Log.d("test3", "fetchMovies: called")
         tryToCollect(
             onStart = {
                 updateState { copy(isLoading = true) }
@@ -88,7 +87,6 @@ class GenreMoviesViewModel @Inject constructor(
     }
 
     private fun onCollectMovies(movies:PagingData<MovieUiModel>) {
-        Log.d("test3", "onCollectMovies: loading ends")
         updateState {
             copy(
                 movies = flowOf(movies),
@@ -109,7 +107,6 @@ class GenreMoviesViewModel @Inject constructor(
     private fun onErrorLoading(error: Throwable) {
         when (error) {
             is NoNetworkException -> {
-                Log.d("test3", "onErrorLoading: no internest shit")
                 updateState { copy(
                     isLoading = false,
                     noInternetConnection = true,
@@ -120,7 +117,6 @@ class GenreMoviesViewModel @Inject constructor(
                 ) }
             }
             else->{
-                Log.d("test3", "onErrorLoading: somethingWentWrongError")
                 updateState { copy(
                     isLoading = false,
                     noInternetConnection = true,
