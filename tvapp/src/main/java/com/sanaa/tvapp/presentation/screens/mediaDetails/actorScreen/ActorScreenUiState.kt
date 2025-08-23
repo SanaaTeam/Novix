@@ -17,7 +17,7 @@ data class ActorScreenUiState(
     val showLoginBottomSheet: Boolean = false,
     val noInternetConnection: Boolean = false,
     val userIsLoggedIn: Boolean = false,
-    val snackBarData: SnackData? = null
+    val snackBarData: SnackData? = null,
 )
 
 

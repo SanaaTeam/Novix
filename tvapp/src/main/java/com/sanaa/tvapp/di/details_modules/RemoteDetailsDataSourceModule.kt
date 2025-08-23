@@ -24,19 +24,19 @@ abstract class RemoteDetailsDataSourceModule {
     @Binds
     @Singleton
     abstract fun bindMovieRemoteDataSource(
-        dataSource: RemoteMovieDataSourceImpl
+        dataSource: RemoteMovieDataSourceImpl,
     ): RemoteMovieDataSource
 
     @Binds
     @Singleton
     abstract fun bindActorRemoteDataSource(
-        dataSource: RemoteActorDataSourceImpl
+        dataSource: RemoteActorDataSourceImpl,
     ): RemoteActorDataSource
 
     @Binds
     @Singleton
     abstract fun bindTvShowRemoteDataSource(
-        dataSource: RemoteTvShowDataSourceImpl
+        dataSource: RemoteTvShowDataSourceImpl,
     ): RemoteTvShowDataSource
 
     companion object {

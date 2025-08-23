@@ -20,7 +20,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun LoginDialog(
     onDismissRequest: () -> Unit = {},
-    onLoginClicked: () -> Unit = {}
+    onLoginClicked: () -> Unit = {},
 ) {
     DialogBaseComponent(
         onDismissRequest = onDismissRequest

@@ -28,7 +28,7 @@ import com.sanaa.tvapp.presentation.screens.myAccount.UserUiState
 fun MyAccountUserInfo(user: UserUiState) {
     Row(
         modifier = Modifier
-           .fillMaxWidth(),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {

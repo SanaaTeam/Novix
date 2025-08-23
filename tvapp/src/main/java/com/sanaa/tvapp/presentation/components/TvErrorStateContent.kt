@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
-import androidx.tv.material3.Button
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
 import com.sanaa.designsystem.R
@@ -63,24 +62,22 @@ fun TvErrorStateContent(
         Spacer(modifier = Modifier.height(16.dp))
 
 
-       Card(
-           onClick = onRetryClick,
-           colors = CardDefaults.colors(
-               containerColor = Color.Transparent,
-               focusedContainerColor = Color.Transparent,
-           ),
-           border = CardDefaults.border(
-               focusedBorder = Border(
-                   border = BorderStroke(width = 3.dp, color = Theme.colors.primary),
-               ),
-           )
-       ) {
-           OutlinedButton(
-               text = stringResource(id = R.string.offline_note),
-               onClick = {},
-           )
-       }
-
-
+        Card(
+            onClick = onRetryClick,
+            colors = CardDefaults.colors(
+                containerColor = Color.Transparent,
+                focusedContainerColor = Color.Transparent,
+            ),
+            border = CardDefaults.border(
+                focusedBorder = Border(
+                    border = BorderStroke(width = 3.dp, color = Theme.colors.primary),
+                ),
+            )
+        ) {
+            OutlinedButton(
+                text = stringResource(id = R.string.offline_note),
+                onClick = {},
+            )
+        }
     }
 }

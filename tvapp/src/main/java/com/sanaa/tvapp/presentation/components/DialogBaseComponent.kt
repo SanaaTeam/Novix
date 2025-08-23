@@ -18,7 +18,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun DialogBaseComponent(
     onDismissRequest: () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Dialog(
         onDismissRequest = onDismissRequest

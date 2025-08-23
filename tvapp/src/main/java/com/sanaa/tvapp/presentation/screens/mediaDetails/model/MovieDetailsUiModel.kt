@@ -12,5 +12,5 @@ data class MovieDetailsUiModel(
     val posterUrls: List<String> = emptyList(),
     val genres: List<GenreUiModel> = emptyList(),
     val trailerUrl: String? = null,
-    val posterUrl: String? = null
+    val posterUrl: String? = null,
 )

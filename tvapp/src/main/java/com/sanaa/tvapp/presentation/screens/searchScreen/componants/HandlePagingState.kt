@@ -26,10 +26,12 @@ fun <T : Any> HandlePagingState(
             loadStateError = refreshState,
             onRetryClick = { searchListener.onRetryClicked() }
         )
+
         isEmpty -> TvEmptySearchContent(
             icon = painterResource(id = R.drawable.ic_no_search_result_dark),
             text = stringResource(id = R.string.no_search_result_message)
         )
+
         else -> content()
     }
 }

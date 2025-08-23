@@ -22,7 +22,7 @@ fun TVNetworkDisconnectionContact(
     modifier: Modifier = Modifier,
     errorTitle: String = stringResource(id = R.string.offline_title),
     errorMessage: String = stringResource(id = R.string.offline_subtitle),
-    useDarkTheme: Boolean = isSystemInDarkTheme()
+    useDarkTheme: Boolean = isSystemInDarkTheme(),
 ) {
     TvErrorStateContent(
         onRetryClick = onRetryClick,

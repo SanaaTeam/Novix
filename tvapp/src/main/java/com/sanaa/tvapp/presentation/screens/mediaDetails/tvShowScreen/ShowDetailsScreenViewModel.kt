@@ -174,6 +174,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
             onCollect = ::onCollectLoggedFlag,
         )
     }
+
     private fun onCollectLoggedFlag(isLogged: Boolean) {
         if (isLogged) {
             fetchUserRating()
@@ -232,8 +233,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
                     )
                 )
             }
-        }
-        else {
+        } else {
             updateState {
                 copy(
                     showRateDialog = false,

@@ -11,7 +11,7 @@ import com.sanaa.tvapp.presentation.screens.searchScreen.MovieUiModel
 @Composable
 fun MovieTvContent(
     movies: LazyPagingItems<MovieUiModel>,
-    onClick: (Int) -> Unit
+    onClick: (Int) -> Unit,
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(20.dp),

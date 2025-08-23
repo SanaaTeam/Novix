@@ -62,15 +62,10 @@ class CategoriesScreenViewModel @Inject constructor(
         updateState { copy(snackBarData = null) }
     }
 
-
-    private fun loadTvGenres(freshData:Boolean = false) {
+    private fun loadTvGenres(freshData: Boolean = false) {
         tryToExecute(
-            onStart = {
-                updateState { copy(isLoading = true) }
-            },
-            block = {
-                getTvGenresUseCase.getTvShowGenres(freshData)
-            },
+            onStart = ::setOnLoading,
+            block = { getTvGenresUseCase.getTvShowGenres(freshData) },
             onSuccess = ::onLoadTvGenresSuccess,
             onError = ::onErrorLoading
         )
@@ -88,15 +83,10 @@ class CategoriesScreenViewModel @Inject constructor(
         }
     }
 
-
     private fun loadMovieGenres(freshData: Boolean = false) {
         tryToExecute(
-            onStart = {
-                updateState { copy(isLoading = true) }
-            },
-            block = {
-                getMovieGenresUseCase.getMovieGenres(freshData)
-            },
+            onStart = ::setOnLoading,
+            block = { getMovieGenresUseCase.getMovieGenres(freshData) },
             onSuccess = ::onLoadMovieGenresSuccess,
             onError = ::onErrorLoading
         )
@@ -113,20 +103,31 @@ class CategoriesScreenViewModel @Inject constructor(
         }
     }
 
+    private fun setOnLoading() {
+        updateState { copy(isLoading = true) }
+    }
+
     private fun onErrorLoading(error: Throwable) {
         when (error) {
             is NoNetworkException -> {
                 updateState {
                     copy(
                         isNoInternet = true,
-                        snackBarData = SnackData(message = stringProvider.noInternetConnectionError, isError = true )
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true
+                        )
                     )
                 }
             }
-            else-> updateState {
+
+            else -> updateState {
                 copy(
                     isNoInternet = true,
-                    snackBarData = SnackData(message = stringProvider.somethingWentWrongError, isError = true )
+                    snackBarData = SnackData(
+                        message = stringProvider.somethingWentWrongError,
+                        isError = true
+                    )
                 )
             }
         }

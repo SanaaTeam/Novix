@@ -88,34 +88,59 @@ class SearchScreenViewModel @Inject constructor(
         tryToCollect(
             onStart = ::setLoadingState,
             block = { loadTvShowsOperation(query) },
-            onCollect = { pagingData ->
-                updateState { copy(tvShows = flowOf(pagingData), isLoading = false, noInternetConnection = false) }
-            },
+            onCollect = ::onCollectTvShows,
             onError = ::onDataLoadError
         )
+    }
+
+    private fun onCollectTvShows(pagingData: PagingData<TvShowUiModel>) {
+        updateState {
+            copy(
+                tvShows = flowOf(pagingData),
+                isLoading = false,
+                noInternetConnection = false
+            )
+        }
     }
 
     private fun loadMovies(query: String) {
         tryToCollect(
             onStart = ::setLoadingState,
             block = { loadMoviesOperation(query) },
-            onCollect = { pagingData ->
-                updateState { copy(movies = flowOf(pagingData), isLoading = false, noInternetConnection = false) }
-            },
+            onCollect = ::onCollectMovies,
             onError = ::onDataLoadError
         )
+    }
+
+    private fun onCollectMovies(pagingData: PagingData<MovieUiModel>) {
+        updateState {
+            copy(
+                movies = flowOf(pagingData),
+                isLoading = false,
+                noInternetConnection = false
+            )
+        }
     }
 
     private fun loadActors(query: String) {
         tryToCollect(
             onStart = ::setLoadingState,
             block = { loadActorsOperation(query) },
-            onCollect = { pagingData ->
-                updateState { copy(actors = flowOf(pagingData), isLoading = false, noInternetConnection = false) }
-            },
+            onCollect = ::onCollectActors,
             onError = ::onDataLoadError
         )
     }
+
+    private fun onCollectActors(pagingData: PagingData<ActorUiModel>) {
+        updateState {
+            copy(
+                actors = flowOf(pagingData),
+                isLoading = false,
+                noInternetConnection = false
+            )
+        }
+    }
+
     private fun setLoadingState() {
         updateState { copy(isLoading = true, error = null, noInternetConnection = false) }
     }

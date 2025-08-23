@@ -13,6 +13,6 @@ data class GenreMoviesScreenUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val showSaveToListBottomSheet: Boolean = false,
-    val snackBarData: SnackData? = null
+    val snackBarData: SnackData? = null,
 )
 

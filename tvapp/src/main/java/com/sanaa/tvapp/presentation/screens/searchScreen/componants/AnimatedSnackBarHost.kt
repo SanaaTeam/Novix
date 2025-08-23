@@ -21,13 +21,13 @@ fun AnimatedSnackBarHost(
     data: SnackData?,
     onDismiss: () -> Unit,
     durationMillis: Duration = 2.5.seconds,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
         visible = data != null,
         enter = FadeSlideInVerticallyFromTop,
         exit = FadeSlideOutVerticallyToTop,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(top = 12.dp)
             .statusBarsPadding()

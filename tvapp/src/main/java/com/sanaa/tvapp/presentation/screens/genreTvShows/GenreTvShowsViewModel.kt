@@ -71,9 +71,7 @@ class GenreTvShowsViewModel @Inject constructor(
 
     private fun getTvShowsByGenreId(genreId: Int) {
         tryToCollect(
-            onStart = {
-                updateState { copy(isLoading = true) }
-            },
+            onStart = ::setOnLoading,
             block = { loadTvShowsByGenreId(genreId) },
             onCollect = ::onCollectTvShowsByGenreId,
             onError = ::onErrorLoading
@@ -105,27 +103,37 @@ class GenreTvShowsViewModel @Inject constructor(
             )
         }
     }
+
+    private fun setOnLoading() {
+        updateState { copy(isLoading = true) }
+    }
+
     private fun onErrorLoading(error: Throwable) {
         when (error) {
             is NoNetworkException -> {
-                updateState { copy(
-                    isLoading = false,
-                    noInternetConnection = true,
-                    snackBarData = SnackData(
-                        message = stringProvider.noInternetConnectionError,
-                        isError = true
+                updateState {
+                    copy(
+                        isLoading = false,
+                        noInternetConnection = true,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true
+                        )
                     )
-                ) }
+                }
             }
-            else->{
-                updateState { copy(
-                    isLoading = false,
-                    noInternetConnection = true,
-                    snackBarData = SnackData(
-                        message = stringProvider.somethingWentWrongError,
-                        isError = true
+
+            else -> {
+                updateState {
+                    copy(
+                        isLoading = false,
+                        noInternetConnection = true,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
                     )
-                ) }
+                }
             }
         }
     }

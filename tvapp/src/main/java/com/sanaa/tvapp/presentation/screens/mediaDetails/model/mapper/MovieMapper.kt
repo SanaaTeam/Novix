@@ -10,7 +10,7 @@ import usecase.search.search_param.MediaType
 @SuppressLint("DefaultLocale")
 fun Movie.toDetailsUiModel(
     trailerUrl: String? = null,
-):MovieDetailsUiModel{
+): MovieDetailsUiModel {
     return MovieDetailsUiModel(
         id = id,
         title = title,

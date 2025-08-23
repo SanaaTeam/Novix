@@ -17,7 +17,7 @@ abstract class RemoteCustomListDataSourceModule {
 
     @Binds
     abstract fun bindSavedListRemoteDataSource(
-        remoteSavedListDataSourceImpl: RemoteSavedListDataSourceImpl
+        remoteSavedListDataSourceImpl: RemoteSavedListDataSourceImpl,
     ): RemoteSavedListDataSource
 
     companion object {

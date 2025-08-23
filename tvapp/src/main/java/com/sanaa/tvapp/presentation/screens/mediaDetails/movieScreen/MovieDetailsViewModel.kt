@@ -105,7 +105,6 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-
     override fun onWatchTrailerClick(urlString: String) {
         emitEffect(MovieDetailsScreenUiEffect.OpenTrailer(urlString))
     }
@@ -188,6 +187,7 @@ class MovieDetailsViewModel @Inject constructor(
             onCollect = ::onCollectLoggedFlag,
         )
     }
+
     private fun onCollectLoggedFlag(isLogged: Boolean) {
         if (isLogged) {
             fetchUserRating()
@@ -246,8 +246,7 @@ class MovieDetailsViewModel @Inject constructor(
                     )
                 )
             }
-        }
-        else {
+        } else {
             updateState {
                 copy(
                     showRateDialog = false,

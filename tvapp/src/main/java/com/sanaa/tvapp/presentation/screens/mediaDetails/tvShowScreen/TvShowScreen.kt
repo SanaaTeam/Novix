@@ -67,7 +67,7 @@ fun TvShowScreen(
 
 @Composable
 private fun EffectHandler(
-    effect: Flow<TvShowDetailsScreenEffects>
+    effect: Flow<TvShowDetailsScreenEffects>,
 ) {
     val context = LocalContext.current
     val navController = LocalAppNavController.current
@@ -118,7 +118,8 @@ fun TvShowScreenContent(
 ) {
     NovixScaffold(
         backgroundShapes = {},
-        modifier = Modifier.systemBarsPadding()
+        modifier = Modifier
+            .systemBarsPadding()
             .fillMaxSize(),
         snackBarHost = {
             NovixAnimatedSnackBarHost(
@@ -194,7 +195,7 @@ private fun TvShowScreenReadyContent(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                GenresRow(genres = state.tvShows.genres,)
+                GenresRow(genres = state.tvShows.genres)
 
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),

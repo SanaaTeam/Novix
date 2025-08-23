@@ -9,7 +9,7 @@ data class CategoriesScreenUiState(
     val tvCategories: List<CategoryUiState> = emptyList(),
     val movieCategories: List<CategoryUiState> = emptyList(),
     val selectedTabIndex: Int = MOVIE_TAB_INDEX,
-    val snackBarData: SnackData? = null
+    val snackBarData: SnackData? = null,
 ) {
     companion object {
         const val MOVIE_TAB_INDEX = 0
