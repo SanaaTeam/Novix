@@ -22,7 +22,6 @@ fun BackButton(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     Card(
         modifier = modifier.size(36.dp).clip(RoundedCornerShape(40.dp)),
         onClick = {onBackClick()} ,

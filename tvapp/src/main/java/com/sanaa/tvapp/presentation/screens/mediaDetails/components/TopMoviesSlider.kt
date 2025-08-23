@@ -21,15 +21,14 @@ fun TopMoviesSlider(
     onMovieCardClicked: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
         AppText(
             text = stringResource(R.string.more_like_this),
             style = Theme.textStyle.title.medium,
             color = Theme.colors.title,
             modifier = Modifier.padding(horizontal = 36.dp, vertical = 8.dp)
         )
+
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 36.dp, vertical = 8.dp)
@@ -45,5 +44,4 @@ fun TopMoviesSlider(
             }
         }
     }
-
 }

@@ -23,10 +23,12 @@ interface MovieDetailsScreenInteractionListener :
     fun onDismissAddListBottomSheet()
     fun onSnackDismissRequested()
 }
+
 interface MovieDetailsTopBarListener {
     fun onBackClick()
     fun onBookmarkClick(movie: MovieUiModel)
 }
+
 interface MoreLikeThisListener{
     fun onBookmarkClick(movie: MovieUiModel)
     fun onMovieClick(movieId: Int)

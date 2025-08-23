@@ -11,16 +11,12 @@ data class TvShowDetailsScreenUiState(
     val season: SeasonUiModel = SeasonUiModel(),
     val cast: List<ActorUiModel> = emptyList(),
     val backgroundImageUrl: String = "",
-    val showLoginBottomSheet: Boolean = false,
-    val showRateBottomSheet: Boolean = false,
     val isLoadingEpisodes: Boolean = false,
     val error: String? = null,
     val selectedSeason: Int = 1,
     val noInternetConnection: Boolean = false,
-    val guestSessionId: String = "",
     val isUserLoggedIn: Boolean = false,
     val showLoginDialog: Boolean = false,
     val showRateDialog: Boolean = false,
     val rating: Int = 0,
-
-    )
+)

@@ -31,7 +31,7 @@ import com.sanaa.tvapp.presentation.screens.searchScreen.componants.SearchTextFi
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvEmptySearchContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvShowTvContent
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -146,7 +146,7 @@ private fun SearchScreenContent(
 
 @Composable
 private fun EffectHandler(
-    effect: SharedFlow<SearchScreenEffect>,
+    effect: Flow<SearchScreenEffect>,
     navController: NavController
 ) {
     LaunchedEffect(Unit) {

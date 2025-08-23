@@ -23,7 +23,7 @@ fun LoadingIndicator(
     size: Dp = 64.dp,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(12.dp)
             .height(size + 12.dp),
