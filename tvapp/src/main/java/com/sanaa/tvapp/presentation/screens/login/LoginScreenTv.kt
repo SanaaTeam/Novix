@@ -37,6 +37,7 @@ import com.sanaa.designsystem.design_system.component.text_field.PasswordTextFie
 import com.sanaa.designsystem.design_system.component.text_field.TextField
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.screens.searchScreen.componants.AnimatedSnackBarHost
 import com.sanaa.tvapp.state.SnackData
 
 
@@ -75,10 +76,11 @@ private fun LoginContentTv(
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.width(320.dp),
+            modifier = Modifier
+                .width(320.dp)
+                .align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -165,5 +167,13 @@ private fun LoginContentTv(
                 }
             }
         }
+        if (state.snackBarData != null) {
+            AnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = listener::onSnackBarDismiss,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+        }
     }
+
 }
