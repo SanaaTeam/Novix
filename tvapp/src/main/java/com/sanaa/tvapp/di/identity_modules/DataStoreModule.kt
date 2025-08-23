@@ -25,7 +25,7 @@ object DataStoreModule {
     @Provides
     @Singleton
     fun provideUserDataStore(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): DataStore<User> =
         DataStoreFactory.create(
             serializer = UserSerializer,

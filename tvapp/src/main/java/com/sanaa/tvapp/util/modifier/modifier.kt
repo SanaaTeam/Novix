@@ -15,7 +15,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onPreviewKeyEvent
-import kotlin.math.log
 
 
 fun Modifier.shimmerEffect(
@@ -70,7 +69,7 @@ fun Modifier.handleDPadKeyEvents(
         if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) block()
     }
 
-    Log.d("SLKDHF", "handleDPadKeyEvents: "+it.nativeKeyEvent.keyCode)
+    Log.d("SLKDHF", "handleDPadKeyEvents: " + it.nativeKeyEvent.keyCode)
 
     when (it.nativeKeyEvent.keyCode) {
         KeyEvent.KEYCODE_DPAD_LEFT -> {
@@ -87,21 +86,21 @@ fun Modifier.handleDPadKeyEvents(
             }
         }
 
-        KeyEvent.KEYCODE_DPAD_UP-> {
+        KeyEvent.KEYCODE_DPAD_UP -> {
             onUp?.apply {
                 onActionUp(::invoke)
                 return@onPreviewKeyEvent true
             }
         }
 
-        KeyEvent.KEYCODE_DPAD_DOWN-> {
+        KeyEvent.KEYCODE_DPAD_DOWN -> {
             onDown?.apply {
                 onActionUp(::invoke)
                 return@onPreviewKeyEvent true
             }
         }
 
-        KeyEvent.KEYCODE_DPAD_CENTER-> {
+        KeyEvent.KEYCODE_DPAD_CENTER -> {
             onEnter?.apply {
                 onActionUp(::invoke)
                 return@onPreviewKeyEvent true

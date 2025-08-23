@@ -73,97 +73,97 @@ private fun LoginContentTv(
     listener: LoginScreenInteractionListener,
     showGuestButton: Boolean,
 ) {
-   Box(
-       modifier = Modifier.fillMaxSize(),
-       contentAlignment = Alignment.Center
-   ) {
-       Column(
-           modifier = Modifier.width(320.dp),
-           horizontalAlignment = Alignment.CenterHorizontally,
-           verticalArrangement = Arrangement.spacedBy(12.dp)
-       ) {
-           Image(
-               painter = painterResource(id = R.drawable.app_icon),
-               contentDescription = stringResource(R.string.app_icon),
-               modifier = Modifier
-                   .padding(bottom = 38.dp)
-                   .size(88.dp)
-           )
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier.width(320.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.app_icon),
+                contentDescription = stringResource(R.string.app_icon),
+                modifier = Modifier
+                    .padding(bottom = 38.dp)
+                    .size(88.dp)
+            )
 
-           TextField(
-               value = state.username,
-               onValueChange = listener::onUsernameChanged,
-               icon = painterResource(R.drawable.user_name),
-               modifier = Modifier.fillMaxWidth()
-           )
+            TextField(
+                value = state.username,
+                onValueChange = listener::onUsernameChanged,
+                icon = painterResource(R.drawable.user_name),
+                modifier = Modifier.fillMaxWidth()
+            )
 
 
-           PasswordTextField(
-               value = state.password,
-               icon = painterResource(R.drawable.lock_key),
-               onValueChange = listener::onPasswordChanged,
-               isPasswordVisible = state.isPasswordVisible,
-               onVisibilityToggle = listener::onTogglePasswordVisibility,
-               modifier = Modifier.fillMaxWidth()
-           )
+            PasswordTextField(
+                value = state.password,
+                icon = painterResource(R.drawable.lock_key),
+                onValueChange = listener::onPasswordChanged,
+                isPasswordVisible = state.isPasswordVisible,
+                onVisibilityToggle = listener::onTogglePasswordVisibility,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-           Button(
-               modifier = Modifier.fillMaxWidth(),
-               enabled = state.canSubmit,
-               scale = ButtonDefaults.scale(focusedScale = 1.03f),
-               shape = ButtonDefaults.shape(RoundedCornerShape(12.dp)),
-               onClick = { listener.onLoginClicked() },
-               colors = ButtonDefaults.colors(
-                   containerColor = Theme.colors.iconBackgroundLow,
-                   focusedContainerColor = Theme.colors.primary
-               ),
-           ) {
-               Row(
-                   modifier = Modifier.fillMaxWidth(),
-                   verticalAlignment = Alignment.CenterVertically,
-                   horizontalArrangement = Arrangement.Center,
-               ) {
-                   Text(
-                       text = stringResource(R.string.login),
-                       style = Theme.textStyle.label.large,
-                       color = Theme.colors.onPrimary,
-                       textAlign = TextAlign.Center
-                   )
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                enabled = state.canSubmit,
+                scale = ButtonDefaults.scale(focusedScale = 1.03f),
+                shape = ButtonDefaults.shape(RoundedCornerShape(12.dp)),
+                onClick = { listener.onLoginClicked() },
+                colors = ButtonDefaults.colors(
+                    containerColor = Theme.colors.iconBackgroundLow,
+                    focusedContainerColor = Theme.colors.primary
+                ),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = stringResource(R.string.login),
+                        style = Theme.textStyle.label.large,
+                        color = Theme.colors.onPrimary,
+                        textAlign = TextAlign.Center
+                    )
 
-                   AnimatedVisibility(state.isLoading) {
-                       AnimatedLoadingIndicator(
-                           modifier = Modifier.padding(start = 8.dp),
-                           iconTint = Theme.colors.onPrimary,
-                           size = 20.dp,
-                       )
-                   }
-               }
-           }
-           if (showGuestButton) {
-               Button(
-                   modifier = Modifier
-                       .fillMaxWidth()
-                       .padding(top = 4.dp),
-                   scale = ButtonDefaults.scale(focusedScale = 1.03f),
-                   shape = ButtonDefaults.shape(RoundedCornerShape(12.dp)),
-                   onClick = { listener.onContinueClicked() },
-                   colors = ButtonDefaults.colors(
-                       containerColor = Theme.colors.surface,
-                       focusedContainerColor = Theme.colors.primaryVariant
-                   ),
-                   border = ButtonDefaults.border(
-                       border = Border(BorderStroke(width = 1.dp, color = Theme.colors.stroke))
-                   ),
-               ) {
-                   Text(
-                       modifier = Modifier.fillMaxWidth(),
-                       text = stringResource(R.string.continue_as_guest),
-                       style = Theme.textStyle.label.large,
-                       color = Theme.colors.onPrimary,
-                       textAlign = TextAlign.Center
-                   )
-               }
-           }
-       }
-   }
+                    AnimatedVisibility(state.isLoading) {
+                        AnimatedLoadingIndicator(
+                            modifier = Modifier.padding(start = 8.dp),
+                            iconTint = Theme.colors.onPrimary,
+                            size = 20.dp,
+                        )
+                    }
+                }
+            }
+            if (showGuestButton) {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                    scale = ButtonDefaults.scale(focusedScale = 1.03f),
+                    shape = ButtonDefaults.shape(RoundedCornerShape(12.dp)),
+                    onClick = { listener.onContinueClicked() },
+                    colors = ButtonDefaults.colors(
+                        containerColor = Theme.colors.surface,
+                        focusedContainerColor = Theme.colors.primaryVariant
+                    ),
+                    border = ButtonDefaults.border(
+                        border = Border(BorderStroke(width = 1.dp, color = Theme.colors.stroke))
+                    ),
+                ) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.continue_as_guest),
+                        style = Theme.textStyle.label.large,
+                        color = Theme.colors.onPrimary,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
 }

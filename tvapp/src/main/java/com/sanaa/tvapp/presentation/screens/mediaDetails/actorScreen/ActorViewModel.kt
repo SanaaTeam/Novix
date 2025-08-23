@@ -21,7 +21,7 @@ class ActorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
     private val stringProvider: VodStringProvider,
-    ) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
+) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
 ), ActorsScreenInteractionListener {
@@ -116,8 +116,6 @@ class ActorViewModel @Inject constructor(
             }
         }
     }
-
-
 
 
 }

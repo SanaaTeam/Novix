@@ -89,7 +89,13 @@ class SearchScreenViewModel @Inject constructor(
             onStart = ::setLoadingState,
             block = { loadTvShowsOperation(query) },
             onCollect = { pagingData ->
-                updateState { copy(tvShows = flowOf(pagingData), isLoading = false, noInternetConnection = false) }
+                updateState {
+                    copy(
+                        tvShows = flowOf(pagingData),
+                        isLoading = false,
+                        noInternetConnection = false
+                    )
+                }
             },
             onError = ::onDataLoadError
         )
@@ -100,7 +106,13 @@ class SearchScreenViewModel @Inject constructor(
             onStart = ::setLoadingState,
             block = { loadMoviesOperation(query) },
             onCollect = { pagingData ->
-                updateState { copy(movies = flowOf(pagingData), isLoading = false, noInternetConnection = false) }
+                updateState {
+                    copy(
+                        movies = flowOf(pagingData),
+                        isLoading = false,
+                        noInternetConnection = false
+                    )
+                }
             },
             onError = ::onDataLoadError
         )
@@ -111,11 +123,18 @@ class SearchScreenViewModel @Inject constructor(
             onStart = ::setLoadingState,
             block = { loadActorsOperation(query) },
             onCollect = { pagingData ->
-                updateState { copy(actors = flowOf(pagingData), isLoading = false, noInternetConnection = false) }
+                updateState {
+                    copy(
+                        actors = flowOf(pagingData),
+                        isLoading = false,
+                        noInternetConnection = false
+                    )
+                }
             },
             onError = ::onDataLoadError
         )
     }
+
     private fun setLoadingState() {
         updateState { copy(isLoading = true, error = null, noInternetConnection = false) }
     }

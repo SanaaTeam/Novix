@@ -1,6 +1,5 @@
 package com.sanaa.tvapp.presentation.screens.genreMovies
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
@@ -71,7 +70,7 @@ class GenreMoviesViewModel @Inject constructor(
         )
     }
 
-    private fun onCollectMovies(movies:PagingData<MovieUiModel>) {
+    private fun onCollectMovies(movies: PagingData<MovieUiModel>) {
         updateState {
             copy(
                 movies = flowOf(movies),

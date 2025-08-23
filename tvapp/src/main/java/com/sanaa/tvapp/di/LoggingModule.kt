@@ -1,8 +1,8 @@
 package com.sanaa.tvapp.di
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.sanaa.tvapp.logging.CrashReportingTree
 import com.sanaa.tvapp.BuildConfig
+import com.sanaa.tvapp.logging.CrashReportingTree
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

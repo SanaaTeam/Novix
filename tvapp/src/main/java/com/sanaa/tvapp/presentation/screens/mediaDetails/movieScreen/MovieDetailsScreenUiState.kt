@@ -21,4 +21,4 @@ MovieDetailsScreenUiState(
     val showRateDialog: Boolean = false,
     val showLoginDialog: Boolean = false,
     val snackBarData: SnackData? = null,
-    )
+)

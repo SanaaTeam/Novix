@@ -20,18 +20,18 @@ abstract class ServicesModule {
     @Binds
     @Singleton
     abstract fun bindPreferencesManager(
-        preferencesManagerImpl: PreferencesManagerImpl
+        preferencesManagerImpl: PreferencesManagerImpl,
     ): PreferencesManager
 
     @Binds
     @Singleton
     abstract fun bindLocalUserDataSource(
-        localUserDataSourceImpl: LocalUserDataSourceImpl
+        localUserDataSourceImpl: LocalUserDataSourceImpl,
     ): LocalUserDataSource
 
     @Binds
     @Singleton
     abstract fun bindLocalUserPreferenceDataSource(
-        impl: LocalUserPreferenceImpl
+        impl: LocalUserPreferenceImpl,
     ): LocalUserPreferenceDataSource
 }

@@ -105,27 +105,33 @@ class GenreTvShowsViewModel @Inject constructor(
             )
         }
     }
+
     private fun onErrorLoading(error: Throwable) {
         when (error) {
             is NoNetworkException -> {
-                updateState { copy(
-                    isLoading = false,
-                    noInternetConnection = true,
-                    snackBarData = SnackData(
-                        message = stringProvider.noInternetConnectionError,
-                        isError = true
+                updateState {
+                    copy(
+                        isLoading = false,
+                        noInternetConnection = true,
+                        snackBarData = SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true
+                        )
                     )
-                ) }
+                }
             }
-            else->{
-                updateState { copy(
-                    isLoading = false,
-                    noInternetConnection = true,
-                    snackBarData = SnackData(
-                        message = stringProvider.somethingWentWrongError,
-                        isError = true
+
+            else -> {
+                updateState {
+                    copy(
+                        isLoading = false,
+                        noInternetConnection = true,
+                        snackBarData = SnackData(
+                            message = stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
                     )
-                ) }
+                }
             }
         }
     }

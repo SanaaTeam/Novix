@@ -49,15 +49,16 @@ fun SearchScreen(
         navController = navController
     )
 
-        SearchScreenContent(
-            uiState = uiState,
-            interactionListener = searchViewModel,
-            moviesPagingData = moviesPagingData,
-            tvShowsPagingData = tvShowsPagingData,
-            actorsPagingData = actorsPagingData,
-        )
+    SearchScreenContent(
+        uiState = uiState,
+        interactionListener = searchViewModel,
+        moviesPagingData = moviesPagingData,
+        tvShowsPagingData = tvShowsPagingData,
+        actorsPagingData = actorsPagingData,
+    )
 
 }
+
 @Composable
 private fun SearchScreenContent(
     uiState: SearchTvScreenUiState,
@@ -147,7 +148,7 @@ private fun SearchScreenContent(
 @Composable
 private fun EffectHandler(
     effect: Flow<SearchScreenEffect>,
-    navController: NavController
+    navController: NavController,
 ) {
     LaunchedEffect(Unit) {
         effect.collectLatest {

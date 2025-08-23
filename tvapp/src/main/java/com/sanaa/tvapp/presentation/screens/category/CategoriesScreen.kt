@@ -43,7 +43,7 @@ fun CategoriesScreen(
 @Composable
 private fun CategoryScreenEffectHandler(
     viewModel: CategoriesScreenViewModel,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
@@ -76,7 +76,7 @@ private fun CategoriesScreenContent(
     state: CategoriesScreenUiState,
     interactionListener: CategoriesScreenInteractionListener,
 ) {
-    NovixScaffold (
+    NovixScaffold(
         backgroundShapes = {},
         snackBarHost = {
             NovixAnimatedSnackBarHost(
@@ -105,6 +105,7 @@ private fun CategoriesScreenContent(
                                     LoadingIndicator()
                                 }
                             }
+
                             else -> {
                                 CategoriesGrid(
                                     categories = if (state.selectedTabIndex == MOVIE_TAB_INDEX)
