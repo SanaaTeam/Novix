@@ -36,6 +36,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.components.LoginDialog
 import com.sanaa.tvapp.presentation.components.RateDialog
+import com.sanaa.tvapp.presentation.components.TVNetworkDisconnectionContact
 import com.sanaa.tvapp.presentation.screens.login.LoginActivity
 import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
@@ -137,7 +138,7 @@ fun MovieDetailsContent(
             { shouldShowLoadingOrError ->
                 if (shouldShowLoadingOrError) {
                     if (state.noInternetConnection) {
-                        NetworkDisconnectionContact(
+                        TVNetworkDisconnectionContact(
                             onRetryClick = { interactionListener.onRetryLoadDetails() },
                             modifier = Modifier.fillMaxSize()
                         )
