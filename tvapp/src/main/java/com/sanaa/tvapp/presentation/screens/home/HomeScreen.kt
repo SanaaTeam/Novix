@@ -145,7 +145,7 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
             }
 
             composable(route = HomeTvShowsTapRoute::class) {
-                HomeTvShows(state, upcomingMovies) { id ->
+                HomeTvShows(state) { id ->
                     mainTvNavController.navigate(ScreensRoute.TvShowDetailsRoute(id))
                 }
             }
@@ -223,7 +223,6 @@ fun HomeMovies(
 @Composable
 fun HomeTvShows(
     state: HomeScreenUiState,
-    upcomingMovies: LazyPagingItems<MediaItemUiState>,
     onItemClick: (Int) -> Unit,
 ) {
     Column {
