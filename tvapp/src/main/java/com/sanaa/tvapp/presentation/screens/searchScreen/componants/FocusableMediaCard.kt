@@ -42,6 +42,7 @@ fun FocusableMediaCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     topCornerContent: @Composable (() -> Unit)? = null,
+    withSidePadding: Boolean = true,
 ) {
     val width: Dp = 153.dp
     val height: Dp = 231.dp
@@ -56,7 +57,7 @@ fun FocusableMediaCard(
         label = "animatedWidth"
     )
     val sidePadding by animateDpAsState(
-        targetValue = if (isFocused) 8.dp else 0.dp,
+        targetValue = if (isFocused && withSidePadding) 8.dp else 0.dp,
         label = "animatedWidth"
     )
 

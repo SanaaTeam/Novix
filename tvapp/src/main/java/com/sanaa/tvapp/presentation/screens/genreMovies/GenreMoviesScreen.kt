@@ -40,10 +40,10 @@ import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.components.TVNetworkDisconnectionContact
+import com.sanaa.tvapp.presentation.screens.genreTvShows.ScreenState
 import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
@@ -66,7 +66,7 @@ fun GenreMoviesScreen(
 @Composable
 private fun GenreMoviesScreenEffectHandler(
     viewModel: GenreMoviesViewModel,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -90,6 +90,12 @@ fun GenreMoviesScreenContent(
     interactionListener: GenreMoviesScreenInteractionListener,
 ) {
     val pagedMovies = state.movies.collectAsLazyPagingItems()
+    val screenState = when (pagedMovies.loadState.refresh) {
+        is LoadState.Loading -> ScreenState.LOADING
+        is LoadState.Error -> ScreenState.NO_INTERNET
+        else -> ScreenState.CONTENT
+    }
+
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
         snackBarHost = {
@@ -121,12 +127,12 @@ fun GenreMoviesScreenContent(
                 )
 
                 AnimatedContent(
-                    targetState = Pair(state.isLoading, state.noInternetConnection),
+                    targetState = screenState,
                     contentAlignment = Alignment.Center,
                     transitionSpec = { fadeIn() togetherWith fadeOut() }
-                ) { (isLoading, noInternetConnection) ->
-                    when {
-                        isLoading -> {
+                ) { currentState ->
+                    when (currentState) {
+                        ScreenState.LOADING -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
@@ -135,19 +141,18 @@ fun GenreMoviesScreenContent(
                             }
                         }
 
-                        noInternetConnection -> {
+                        ScreenState.NO_INTERNET -> {
                             TVNetworkDisconnectionContact(
                                 onRetryClick = { interactionListener.onRetryClicked() },
                                 modifier = Modifier.fillMaxSize(),
                             )
                         }
 
-                        else -> {
+                        ScreenState.CONTENT -> {
                             LazyVerticalGrid(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(horizontal = 64.dp),
-
                                 columns = GridCells.Fixed(5),
                                 contentPadding = PaddingValues(16.dp),
                                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -161,7 +166,8 @@ fun GenreMoviesScreenContent(
                                     FocusableMediaCard(
                                         imageUrl = movie.imageUrl,
                                         titleText = movie.title,
-                                        onClick = { interactionListener.onMovieClick(movie.id) }
+                                        onClick = { interactionListener.onMovieClick(movie.id) },
+                                        withSidePadding = false,
                                     )
                                 }
 
