@@ -89,7 +89,7 @@ private fun ActorScreenContent(
 
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
-    NovixScaffold {
+    NovixScaffold(backgroundShapes = {}) {
         Box(modifier = modifier.systemBarsPadding()) {
 
             AnimatedContent(

@@ -108,8 +108,7 @@ private fun EpisodeDetailsScreenContent(
     interactionListener: EpisodeDetailsInteractionListener, state: EpisodeDetailsScreenUiState
 ) {
 
-    NovixScaffold(
-        backgroundShapes = { }) {
+    NovixScaffold(backgroundShapes = {}) {
         Box(
             modifier = Modifier
                 .fillMaxSize()

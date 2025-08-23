@@ -141,14 +141,11 @@ fun TvShowScreenContent(
     interactionListener: TvShowScreenInteractionListener,
 ) {
 
-    NovixScaffold(
-        backgroundShapes = { },
-    ) {
+    NovixScaffold(backgroundShapes = {}) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-
             AnimatedContent(
                 targetState = state.isLoading || state.noInternetConnection,
                 modifier = Modifier.align(Alignment.Center),

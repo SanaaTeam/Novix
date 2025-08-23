@@ -121,7 +121,7 @@ fun MovieDetailsContent(
     val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> =
         state.similarMovies.collectAsLazyPagingItems()
     val navController = LocalAppNavController.current
-    NovixScaffold(modifier = modifier) {
+    NovixScaffold(modifier = modifier, backgroundShapes = {}) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
