@@ -6,24 +6,16 @@ import com.sanaa.identity.dataSoruce.dataStore.PreferencesManagerImpl
 import com.sanaa.identity.dataSoruce.local.dataStore.LocalUserDataSource
 import com.sanaa.identity.dataSoruce.local.dataStore.LocalUserPreferenceDataSource
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.tvapp.resourceProvider.StringProviderImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import service.IdentityStringProvider
 import javax.inject.Singleton
 
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class ServicesModule {
-
-    @Binds
-    @Singleton
-    abstract fun bindStringProvider(
-        stringProviderImpl: StringProviderImpl
-    ): IdentityStringProvider
 
     @Binds
     @Singleton

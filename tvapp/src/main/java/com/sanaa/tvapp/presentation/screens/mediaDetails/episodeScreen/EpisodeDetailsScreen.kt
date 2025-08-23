@@ -1,10 +1,8 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.episodeScreen
 
-import android.content.Context
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -16,10 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,14 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
-import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
@@ -43,46 +35,31 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
-import com.sanaa.tvapp.state.SnackData
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designSystemResource
 
 @Composable
 fun EpisodeDetailsScreen(viewModel: EpisodeDetailsScreenViewModel = hiltViewModel()) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    val navController = LocalAppNavController.current
-    var snackData by remember { mutableStateOf<SnackData?>(null) }
 
-    EffectHandler(
-        context,
-        viewModel,
-        navController,
-        onShowSnackBar = { data -> snackData = data }
+    EffectHandler(viewModel.effect)
+
+    EpisodeDetailsScreenContent(
+        interactionListener = viewModel,
+        state = state.value,
     )
-
-    Box(modifier = Modifier.systemBarsPadding()) {
-        EpisodeDetailsScreenContent(
-            interactionListener = viewModel,
-            state = state.value,
-        )
-
-        NovixAnimatedSnackBarHost(
-            data = snackData,
-            onDismiss = { snackData = null }
-        )
-    }
 }
 
 @Composable
 private fun EffectHandler(
-    context: Context,
-    viewModel: EpisodeDetailsScreenViewModel,
-    navController: NavHostController,
-    onShowSnackBar: (SnackData) -> Unit,
+    effect: Flow<EpisodeDetailsEffects>,
 ) {
+    val context = LocalContext.current
+    val navController = LocalAppNavController.current
+
     LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
+        effect.collectLatest {
             when (it) {
                 is EpisodeDetailsEffects.NavigateToActorDetails -> {
                     navController.navigate(
@@ -94,10 +71,6 @@ private fun EffectHandler(
                     val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
                     context.startActivity(intent)
                 }
-
-                is EpisodeDetailsEffects.ShowErrorSnackBar -> {
-                    onShowSnackBar(SnackData(message = it.errorMessage, isError = true))
-                }
             }
         }
     }
@@ -108,16 +81,19 @@ private fun EpisodeDetailsScreenContent(
     interactionListener: EpisodeDetailsInteractionListener,
     state: EpisodeDetailsScreenUiState,
 ) {
-    NovixScaffold(backgroundShapes = {}) {
+    NovixScaffold(
+        backgroundShapes = {},
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding(),
+    ) {
         AnimatedContent(
             targetState = Pair(state.isLoading, state.noInternetConnection),
             contentAlignment = Alignment.Center
         ) { (isLoading, noInternetConnection) ->
             when {
                 isLoading -> {
-                    LoadingIndicator(
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    LoadingIndicator(modifier = Modifier.fillMaxSize())
                 }
 
                 noInternetConnection -> {
@@ -195,6 +171,7 @@ private fun EpisodeDetailsScreenContent(
                                 TrailerAndRateSection(
                                     trailerUrl = state.trailerUrl,
                                     onPlayTrailerClicked = interactionListener::onPlayTrailerClick,
+                                    showRateButton = false
                                 )
                             }
                         }
@@ -203,6 +180,7 @@ private fun EpisodeDetailsScreenContent(
                             CastSlider(
                                 cast = state.guestOfHonor,
                                 title = stringResource(R.string.guest_of_honor),
+                                onActorCardClicked = interactionListener::onActorClick
                             )
                         }
                     }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">نوفيكس</string>
+    <string name="app_name">نوفكس</string>
     <string name="unsuitable_image">صورة غير مناسبة</string>
     <string name="see_detail">عرض التفاصيل</string>
     <string name="top_rated">الاعلى تقييمًا</string>
