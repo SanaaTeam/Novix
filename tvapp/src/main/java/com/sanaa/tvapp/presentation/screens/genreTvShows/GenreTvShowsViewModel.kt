@@ -39,7 +39,7 @@ class GenreTvShowsViewModel @Inject constructor(
         getTvShowsByGenreId(genreId)
     }
 
-    fun updateUserLoggingStatus() {
+    private fun updateUserLoggingStatus() {
         tryToCollect(
             block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,

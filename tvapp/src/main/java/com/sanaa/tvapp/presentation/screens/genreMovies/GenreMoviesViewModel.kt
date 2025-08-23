@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.genreMovies
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
@@ -40,11 +41,10 @@ class GenreMoviesViewModel @Inject constructor(
         fetchMovies(genreId)
     }
 
-    fun updateUserLoggingStatus() {
+    private fun updateUserLoggingStatus() {
         tryToCollect(
             block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
-            onError = ::onErrorLoading
         )
     }
 
@@ -54,7 +54,9 @@ class GenreMoviesViewModel @Inject constructor(
 
 
     override fun onRetryClicked() {
-        updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
+        updateState { copy(noInternetConnection = false,
+            isLoading = true,
+            error = null) }
         fetchMovies(genreId)
     }
 
@@ -67,25 +69,26 @@ class GenreMoviesViewModel @Inject constructor(
     }
 
     private fun fetchMovies(categoryId: Int) {
+        Log.d("test3", "fetchMovies: called")
         tryToCollect(
             onStart = {
                 updateState { copy(isLoading = true) }
             },
             block = { loadMoviesByCategory(categoryId) },
-            onCollect = onCollectMovies(),
+            onCollect = ::onCollectMovies,
             onError = ::onErrorLoading
         )
     }
 
     private fun loadMoviesByCategory(genreId: Int): Flow<PagingData<MovieUiModel>> {
-        updateState { copy(isLoading = true) }
         return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingDataSource(genreId) },
             mapper = Movie::toUiState
         )
     }
 
-    private fun onCollectMovies(): suspend (PagingData<MovieUiModel>) -> Unit = { movies ->
+    private fun onCollectMovies(movies:PagingData<MovieUiModel>) {
+        Log.d("test3", "onCollectMovies: loading ends")
         updateState {
             copy(
                 movies = flowOf(movies),
@@ -106,6 +109,7 @@ class GenreMoviesViewModel @Inject constructor(
     private fun onErrorLoading(error: Throwable) {
         when (error) {
             is NoNetworkException -> {
+                Log.d("test3", "onErrorLoading: no internest shit")
                 updateState { copy(
                     isLoading = false,
                     noInternetConnection = true,
@@ -116,6 +120,7 @@ class GenreMoviesViewModel @Inject constructor(
                 ) }
             }
             else->{
+                Log.d("test3", "onErrorLoading: somethingWentWrongError")
                 updateState { copy(
                     isLoading = false,
                     noInternetConnection = true,
