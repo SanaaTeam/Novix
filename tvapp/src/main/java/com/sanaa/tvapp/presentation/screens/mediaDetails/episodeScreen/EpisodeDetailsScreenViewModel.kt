@@ -50,6 +50,10 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         loadEpisode(state.value.seriesId, 0, 0)
     }
 
+    override fun onActorClick(id: Int) {
+        emitEffect(EpisodeDetailsEffects.NavigateToActorDetails(id))
+    }
+
     private fun loadEpisode(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
         tryToExecute(
             block = { fetchEpisodeDetails(seriesId, seasonNumber, episodeNumber) },

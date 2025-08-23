@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -203,7 +204,7 @@ fun GenreMoviesTopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Movies\\ $genreName",
+            text = stringResource(R.string.movies) + "\\ $genreName",
             style = Theme.textStyle.title.medium,
             color = Theme.colors.body
         )

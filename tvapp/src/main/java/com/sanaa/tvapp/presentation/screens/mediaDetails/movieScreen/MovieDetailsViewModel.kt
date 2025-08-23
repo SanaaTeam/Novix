@@ -14,11 +14,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import entity.User
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -44,7 +47,6 @@ class MovieDetailsViewModel @Inject constructor(
         "movieId is required in SavedStateHandle"
     }
 
-
     init {
         fetchMovieDetails(movieId)
         updateUserLoginState()
@@ -62,26 +64,7 @@ class MovieDetailsViewModel @Inject constructor(
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },
-            onError = { exception ->
-                if (exception is NoNetworkException) {
-                    updateState {
-                        copy(
-                            noInternetConnection = true,
-                            isLoading = false,
-                            snackBarData = SnackData(message = stringProvider.noInternetConnectionError, isError = true )
-                        )
-                    }
-                } else {
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            snackBarData = SnackData(message = stringProvider.somethingWentWrongError, isError = true ),
-                            noInternetConnection = false
-                        )
-                    }
-                }
-            },
-            dispatcher = dispatcher
+            onError = ::onErrorAccrue
         )
     }
 
@@ -169,6 +152,7 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onSummitRateClick() {
         tryToExecute(
             block = ::submitMovieRating,
+            onError = ::onErrorAccrue
         )
     }
 
@@ -201,16 +185,49 @@ class MovieDetailsViewModel @Inject constructor(
     private fun updateUserLoginState() {
         tryToCollect(
             block = { checkUserLogin.isLoggedIn() },
-            onCollect = { loggedIn ->
-                updateState { copy(isUserLoggedIn = loggedIn) }
+            onCollect = ::onCollectLoggedFlag,
+        )
+    }
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged) {
+            fetchUserRating()
+            if (state.value.showLoginDialog) {
+                updateState {
+                    copy(
+                        showLoginDialog = false,
+                        showRateDialog = true,
+                    )
+                }
+            }
+        }
+        updateState { copy(isUserLoggedIn = isLogged) }
+    }
 
-            },
-            onError = {
-                updateState { copy(snackBarData = SnackData(message = stringProvider.somethingWentWrongError, isError = true)) }
-            },
+    private fun fetchUserRating() {
+        tryToExecute(
+            block = { getCurrentUserRating(movieId) },
+            onSuccess = ::onFetchUserRatingSuccess,
         )
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private suspend fun getCurrentUserRating(movieId: Int): Int {
+        try {
+            val user = getLoggedInUserUseCase.getLoggedInUser().first()
+            return manageMovieDetails.getMovieRate(user.id, movieId)
+        } catch (_: Exception) {
+            return 0
+        }
+    }
+
+    private fun onFetchUserRatingSuccess(rating: Int) {
+        updateState {
+            copy(
+                rating = rating,
+                isRatingSubmitted = rating != 0
+            )
+        }
+    }
 
     private suspend fun submitMovieRating() {
         val rating = state.value.rating
@@ -219,11 +236,53 @@ class MovieDetailsViewModel @Inject constructor(
             rating = rating.toFloat()
         )
         if (isSendRateSuccess) {
-            updateState { copy(showRateDialog = false) }
+            updateState {
+                copy(
+                    showRateDialog = false,
+                    isRatingSubmitted = true,
+                    snackBarData = SnackData(
+                        message = stringProvider.submitRatingSuccess,
+                        isError = false
+                    )
+                )
+            }
+        }
+        else {
+            updateState {
+                copy(
+                    showRateDialog = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.submitRatingFailed,
+                        isError = true
+                    )
+                )
+            }
         }
     }
 
-    companion object {
-        private const val PAGE_SIZE = 20
+    private fun onErrorAccrue(e: NovixAppException) {
+        if (e is NoNetworkException) {
+            updateState {
+                copy(
+                    noInternetConnection = true,
+                    isLoading = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.noInternetConnectionError,
+                        isError = true
+                    )
+                )
+            }
+        } else {
+            updateState {
+                copy(
+                    isLoading = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.somethingWentWrongError,
+                        isError = true
+                    ),
+                    noInternetConnection = false
+                )
+            }
+        }
     }
 }

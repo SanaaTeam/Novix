@@ -26,6 +26,7 @@ fun TrailerAndRateSection(
     trailerUrl: String? = null,
     onPlayTrailerClicked: () -> Unit = {},
     onRateClicked: () -> Unit = {},
+    showRateButton: Boolean = true
 ) {
     Row(
         modifier = modifier,
@@ -61,20 +62,22 @@ fun TrailerAndRateSection(
                 )
             }
         }
-        Button(
-            onClick = {
-                onRateClicked()
-            },
-            colors = ButtonDefaults.colors(
-                containerColor = Theme.colors.disable,
-                focusedContainerColor = Theme.colors.primary
-            ),
-        ) {
-            Image(
-                painter = painterResource(R.drawable.icon_star_outlined),
-                contentDescription = null,
-                modifier = Modifier.padding(4.dp)
-            )
+        if (showRateButton) {
+            Button(
+                onClick = {
+                    onRateClicked()
+                },
+                colors = ButtonDefaults.colors(
+                    containerColor = Theme.colors.disable,
+                    focusedContainerColor = Theme.colors.primary
+                ),
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.icon_star_outlined),
+                    contentDescription = null,
+                    modifier = Modifier.padding(4.dp)
+                )
+            }
         }
     }
 }

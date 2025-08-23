@@ -1,7 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,29 +14,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.components.LoginDialog
@@ -55,49 +48,29 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetailsRoute
-import com.sanaa.tvapp.state.SnackData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun TvShowScreen(
-    modifier: Modifier = Modifier,
     viewModel: ShowDetailsScreenViewModel = hiltViewModel(),
 ) {
-    var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    val navController = LocalAppNavController.current
 
-    EffectHandler(
-        viewModel = viewModel,
-        navController = navController,
-        context = context,
-        onShowSnackBar = { snack = it }
+    EffectHandler(effect = viewModel.effect)
+
+    TvShowScreenContent(
+        state = state.value,
+        interactionListener = viewModel
     )
-
-    NovixTheme(isDarkMode = true) {
-        Box(modifier = modifier.systemBarsPadding()) {
-            TvShowScreenContent(
-                state = state.value,
-                interactionListener = viewModel
-            )
-
-            NovixAnimatedSnackBarHost(
-                data = snack,
-                onDismiss = { snack = null }
-            )
-        }
-    }
 }
 
 @Composable
 private fun EffectHandler(
-    viewModel: ShowDetailsScreenViewModel,
-    navController: NavHostController,
-    context: Context,
-    onShowSnackBar: (SnackData) -> Unit,
+    effect: Flow<TvShowDetailsScreenEffects>
 ) {
-    val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
-    val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
+    val context = LocalContext.current
+    val navController = LocalAppNavController.current
 
     val loginLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -108,7 +81,7 @@ private fun EffectHandler(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collect {
+        effect.collectLatest {
             when (it) {
                 is TvShowDetailsScreenEffects.NavigateToActorScreen -> {
                     navController.navigate(ActorDetailsRoute(it.actorId))
@@ -129,20 +102,9 @@ private fun EffectHandler(
                     loginLauncher.launch(intent)
                 }
 
-                is TvShowDetailsScreenEffects.NavigateToMovieCategoriesScreen -> {
-                }
-
                 is TvShowDetailsScreenEffects.PlayTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
                     context.startActivity(intent)
-                }
-
-                TvShowDetailsScreenEffects.ShowErrorSnackBar -> {
-                    onShowSnackBar(SnackData(message = submitRatingFailedMsg, isError = true))
-                }
-
-                TvShowDetailsScreenEffects.ShowSuccessSnackBar -> {
-                    onShowSnackBar(SnackData(message = submitRatingSuccessMsg, isError = false))
                 }
             }
         }
@@ -154,13 +116,24 @@ fun TvShowScreenContent(
     state: TvShowDetailsScreenUiState,
     interactionListener: TvShowScreenInteractionListener,
 ) {
-    NovixScaffold(backgroundShapes = {}) {
+    NovixScaffold(
+        backgroundShapes = {},
+        modifier = Modifier.systemBarsPadding()
+            .fillMaxSize(),
+        snackBarHost = {
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onDismissSnackBar,
+                modifier = Modifier.statusBarsPadding()
+            )
+        }
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
         ) {
             AnimatedContent(
-                targetState = Pair(state.isLoading, state.noInternetConnection),
+                targetState = state.isLoading to state.noInternetConnection,
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
             ) { (isLoading, noInternetConnection) ->
@@ -173,7 +146,7 @@ fun TvShowScreenContent(
 
                     noInternetConnection -> {
                         NetworkDisconnectionContact(
-                            onRetryClick = { interactionListener.onRetryLoadDetails() },
+                            onRetryClick = interactionListener::onRetryLoadDetails,
                             modifier = Modifier.fillMaxSize()
                         )
                     }
@@ -195,7 +168,7 @@ fun TvShowScreenContent(
 
             if (state.showLoginDialog && !state.isUserLoggedIn) {
                 LoginDialog(
-                    onDismissRequest = interactionListener::onDismissLoginBottomSheet,
+                    onDismissRequest = interactionListener::onDismissLoginDialog,
                     onLoginClicked = interactionListener::onLoginButtonClick
                 )
             }
@@ -221,10 +194,7 @@ private fun TvShowScreenReadyContent(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                GenresRow(
-                    genres = state.tvShows.genres,
-                    onGenreClicked = interactionListener::onGenreClicked
-                )
+                GenresRow(genres = state.tvShows.genres,)
 
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -277,7 +247,8 @@ private fun TvShowScreenReadyContent(
                 TrailerAndRateSection(
                     trailerUrl = state.tvShows.trailerUrl,
                     onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
-                    onRateClicked = interactionListener::onRateMovieClick
+                    onRateClicked = interactionListener::onRateClick,
+                    showRateButton = !state.isRatingSubmitted
                 )
             }
         }
@@ -308,6 +279,7 @@ private fun TvShowScreenReadyContent(
                         LoadingIndicator()
                     }
                 }
+
                 else -> {
                     EpisodesContent(
                         episodes = state.season.episodes,
