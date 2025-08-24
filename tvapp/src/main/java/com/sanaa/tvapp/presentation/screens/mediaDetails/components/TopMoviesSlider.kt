@@ -17,13 +17,14 @@ import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMed
 
 @Composable
 fun TopMoviesSlider(
-    movies: List<MovieDetailsUiModel>,
     onMovieCardClicked: (Int) -> Unit,
+    title: String=stringResource(R.string.more_like_this),
+    movies: List<MovieDetailsUiModel>,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         AppText(
-            text = stringResource(R.string.more_like_this),
+            text = title,
             style = Theme.textStyle.title.medium,
             color = Theme.colors.title,
             modifier = Modifier.padding(horizontal = 36.dp, vertical = 8.dp)
