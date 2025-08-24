@@ -28,7 +28,6 @@ import androidx.navigation.NavHostController
 import androidx.tv.material3.Border
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
-import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -157,7 +156,7 @@ private fun ActorScreenContent(
                                     ActorInfo(state)
 
                                     state.actor.biography?.let { bio ->
-                                        Text(
+                                        AppText(
                                             text = bio,
                                             style = Theme.textStyle.body.small,
                                             color = Theme.colors.body,
@@ -195,13 +194,14 @@ private fun ActorScreenSliders(
 
     if (state.topMovies.isNotEmpty()) {
         TopMoviesSlider(
+            title = stringResource(R.string.top_movies_pick),
             movies = state.topMovies,
             onMovieCardClicked = listener::onMovieClicked,
         )
     }
     if (state.topTvShows.isNotEmpty()) {
         TopTvShowsSlider(
-            title = stringResource(R.string.series),
+            title = stringResource(R.string.top_tvShows_picks),
             tvShows = state.topTvShows,
             onTvShowCardClicked = listener::onTvShowClicked
         )
@@ -222,7 +222,7 @@ private fun ActorInfo(state: ActorScreenUiState) {
             )
         }
 
-        state.actor.placeOfBirth?.let {
+        if (!state.actor.placeOfBirth.isNullOrBlank()) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -230,13 +230,13 @@ private fun ActorInfo(state: ActorScreenUiState) {
                 DotSeparator()
                 IconWithText(
                     iconRes = R.drawable.location,
-                    text = it,
+                    text = state.actor.placeOfBirth,
                     tint = Theme.colors.body
                 )
             }
         }
 
-        state.actor.lifeSpan?.let {
+        if (!state.actor.lifeSpan.isNullOrBlank()) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -244,14 +244,11 @@ private fun ActorInfo(state: ActorScreenUiState) {
                 DotSeparator()
                 IconWithText(
                     iconRes = R.drawable.birthday_cake,
-                    text = it,
+                    text = state.actor.lifeSpan,
                     tint = Theme.colors.body
                 )
             }
         }
     }
-
 }
-
-
 
