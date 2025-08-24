@@ -125,12 +125,6 @@ fun MediaInfo(
     ) {
         Spacer(modifier = Modifier.weight(1f))
 
-        Text(
-            modifier = Modifier,
-            text = mediaItemUiState.title,
-            color = Theme.colors.body,
-            style = Theme.textStyle.label.medium
-        )
 
         Text(
             modifier = Modifier.padding(top = 4.dp),
@@ -139,16 +133,18 @@ fun MediaInfo(
             style = Theme.textStyle.title.large
         )
 
-        Text(
-            modifier = Modifier
-                .fillMaxWidth(0.5f)
-                .padding(top = 12.dp),
-            text = mediaItemUiState.overview,
-            color = Theme.colors.body,
-            style = Theme.textStyle.label.medium,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis,
-        )
+        if (mediaItemUiState.overview.isNotEmpty()) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .padding(top = 12.dp),
+                text = mediaItemUiState.overview,
+                color = Theme.colors.body,
+                style = Theme.textStyle.label.medium,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
 
         AnimatedVisibility(isFocused) { SeeDetailsButton() }
     }
@@ -255,7 +251,7 @@ fun FeaturedCarouselShimmer() {
 private fun SeeDetailsButton() {
     Row(
         modifier = Modifier
-            .padding(top = 24.dp)
+            .padding(top = 16.dp)
             .focusable(false)
             .background(Theme.colors.primary, RoundedCornerShape(50.dp))
             .padding(horizontal = 16.dp, vertical = 12.dp),

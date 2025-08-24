@@ -2,7 +2,6 @@ package com.sanaa.tvapp.presentation.screens.category.util
 
 import com.sanaa.tvapp.R
 
-
 private val genreImageMap = mapOf(
     GENRE_MOVIE_ACTION to R.drawable.movie_action,
     GENRE_MOVIE_ADVENTURE to R.drawable.movie_adventure,

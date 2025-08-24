@@ -5,7 +5,6 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiMod
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.TvShowDetailsUiModel
 import com.sanaa.tvapp.state.SnackData
 
-
 data class ActorScreenUiState(
     val actor: ActorUiModel = ActorUiModel(),
     val topMovies: List<MovieDetailsUiModel> = emptyList(),

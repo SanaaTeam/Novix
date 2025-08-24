@@ -44,7 +44,6 @@ class LoginViewModel @Inject constructor(
         )
     }
 
-
     private fun login(): suspend () -> Unit = {
         if (state.value.username.isNotBlank()
             && state.value.password.isNotBlank()

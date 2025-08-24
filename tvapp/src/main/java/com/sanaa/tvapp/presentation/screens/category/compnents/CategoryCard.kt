@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.sanaa.designsystem.design_system.component.text.AppText
@@ -22,21 +24,14 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.category.state.CategoryUiState
 
-val boxOverlayBackgroundColor = Brush.horizontalGradient(
-    colors = listOf(
-        Color(0xFF0D0608),
-        Color(0xCC0D0608),
-        Color(0xB20D0608),
-        Color(0x000D0608),
-    )
-)
-
 
 @Composable
 fun CategoryCard(
     category: CategoryUiState,
     modifier: Modifier = Modifier,
 ) {
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+
     Box(
         modifier = modifier
             .aspectRatio(160 / 68f)
@@ -56,7 +51,7 @@ fun CategoryCard(
             color = Theme.colors.onPrimary,
             modifier = Modifier
                 .matchParentSize()
-                .background(boxOverlayBackgroundColor)
+                .background(getBoxOverlayBackgroundColor(isRtl))
                 .padding(horizontal = 8.dp, vertical = 8.dp)
                 .align(Alignment.TopStart)
         )
@@ -92,5 +87,31 @@ private fun PreviewCategory() {
                 )
             )
         }
+    }
+}
+
+
+@Composable
+fun getBoxOverlayBackgroundColor(isRtl: Boolean): Brush {
+    return if (isRtl) {
+        Brush.horizontalGradient(
+            colors = listOf(
+                Color(0xFF0D0608),
+                Color(0xCC0D0608),
+                Color(0xB20D0608),
+                Color(0x000D0608),
+            ),
+            startX = Float.POSITIVE_INFINITY,
+            endX = 0f
+        )
+    } else {
+        Brush.horizontalGradient(
+            colors = listOf(
+                Color(0xFF0D0608),
+                Color(0xCC0D0608),
+                Color(0xB20D0608),
+                Color(0x000D0608),
+            )
+        )
     }
 }

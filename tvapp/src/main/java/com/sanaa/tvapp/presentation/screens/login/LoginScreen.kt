@@ -42,7 +42,7 @@ import com.sanaa.tvapp.state.SnackData
 
 
 @Composable
-fun LoginScreenTv(
+fun LoginScreen(
     showGuestButton: Boolean,
     onFinish: () -> Unit = {},
     viewModel: LoginViewModel = hiltViewModel(),
@@ -60,7 +60,7 @@ fun LoginScreenTv(
         }
     }
 
-    LoginContentTv(
+    LoginContent(
         state = uiState,
         listener = viewModel,
         showGuestButton = showGuestButton,
@@ -69,7 +69,7 @@ fun LoginScreenTv(
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-private fun LoginContentTv(
+private fun LoginContent(
     state: LoginUiState,
     listener: LoginScreenInteractionListener,
     showGuestButton: Boolean,

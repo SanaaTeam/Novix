@@ -2,6 +2,7 @@ package com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper
 
 import android.annotation.SuppressLint
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
+import com.sanaa.tvapp.util.DateTimeUtils.formatTime
 import entity.MediaHistoryItem
 import entity.Movie
 import kotlinx.datetime.Clock
@@ -17,7 +18,7 @@ fun Movie.toDetailsUiModel(
         overview = overview,
         rating = String.format("%.1f", imdbRating),
         releaseDate = releaseDate.toString(),
-        duration = duration,
+        duration = formatTime(duration),
         genres = genres.map { it.toUiModel() },
         trailerUrl = trailerUrl,
         posterUrl = posterImageUrl
