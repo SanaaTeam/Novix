@@ -17,15 +17,19 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -57,63 +61,71 @@ fun TvNavigation(content: @Composable () -> Unit) {
         NavBarRoute.MyAccount
     )
 
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val isDrawerVisible = screens.any { it::class.qualifiedName == currentRoute }
 
-    NavigationDrawer(
-        drawerContent = {
-            AnimatedVisibility(
-                visible = isDrawerVisible,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .focusable(enabled = true, interactionSource)
-                        .padding(end = 12.dp)
-                        .handleDPadKeyEvents(
-                            onUp = {
-                                if (selectedTab != 0) {
-                                    selectedTab -= 1
-                                    navController.navigate(screens[selectedTab]) {
-                                        popUpTo(0)
-                                        launchSingleTop = true
-                                    }
-                                }
-                            },
-                            onDown = {
-                                if (selectedTab != screens.lastIndex) {
-                                    selectedTab += 1
-                                    navController.navigate(screens[selectedTab]) {
-                                        popUpTo(0)
-                                        launchSingleTop = true
-                                    }
-                                }
-                            }
-                        ),
-                    contentAlignment = Alignment.Center
+    val drawerFocusRequester = remember { FocusRequester() }
+
+    CompositionLocalProvider(LocalDrawerFocusRequester provides drawerFocusRequester) {
+        NavigationDrawer(
+            drawerContent = {
+                AnimatedVisibility(
+                    visible = isDrawerVisible,
                 ) {
-                    Column(
+                    Box(
                         modifier = Modifier
-                            .background(color = Theme.colors.surface)
-                            .selectableGroup(),
-                        horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                            .fillMaxHeight()
+                            .focusRequester(drawerFocusRequester)
+                            .focusable(enabled = true, interactionSource)
+                            .padding(end = 12.dp)
+                            .handleDPadKeyEvents(
+                                onUp = {
+                                    if (selectedTab != 0) {
+                                        selectedTab -= 1
+                                        navController.navigate(screens[selectedTab]) {
+                                            popUpTo(0)
+                                            launchSingleTop = true
+                                        }
+                                    }
+                                },
+                                onDown = {
+                                    if (selectedTab != screens.lastIndex) {
+                                        selectedTab += 1
+                                        navController.navigate(screens[selectedTab]) {
+                                            popUpTo(0)
+                                            launchSingleTop = true
+                                        }
+                                    }
+                                }
+                            ),
+                        contentAlignment = Alignment.Center
                     ) {
-                        screens.forEachIndexed { index, screen ->
-                            OvalColoredShadow(
-                                hasFocus = isFocused,
-                                isSelected = selectedTab == index,
-                                screen = screen,
-                                shadowColor = Theme.colors.primary
-                            )
+                        Column(
+                            modifier = Modifier
+                                .background(color = Theme.colors.surface)
+                                .selectableGroup(),
+                            horizontalAlignment = Alignment.Start,
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            screens.forEachIndexed { index, screen ->
+                                OvalColoredShadow(
+                                    hasFocus = isFocused,
+                                    isSelected = selectedTab == index,
+                                    screen = screen,
+                                    shadowColor = Theme.colors.primary
+                                )
+                            }
                         }
                     }
                 }
-            }
-        },
-        content = content
-    )
+            },
+            content = content
+        )
+    }
+
+
 }
 
 @Composable
