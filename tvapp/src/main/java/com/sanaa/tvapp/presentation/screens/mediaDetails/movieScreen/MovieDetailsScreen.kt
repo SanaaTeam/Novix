@@ -252,10 +252,12 @@ fun MovieDetailsContent(
                                     onActorCardClicked = interactionListener::onActorCardClick
                                 )
                             }
-                            SimilarMoviesSlider(
-                                moviesPagingData = moviesPagingData,
-                                onMovieCardClicked = interactionListener::onSimilarMovieClick
-                            )
+                            if (moviesPagingData.itemCount > 0) {
+                                SimilarMoviesSlider(
+                                    moviesPagingData = moviesPagingData,
+                                    onMovieCardClicked = interactionListener::onSimilarMovieClick
+                                )
+                            }
                         }
 
                     }

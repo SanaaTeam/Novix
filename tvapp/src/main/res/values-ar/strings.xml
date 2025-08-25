@@ -35,6 +35,8 @@
     <string name="continue_as_guest">المتابعة كضيف</string>
     <string name="Gallery">مجموعة الصور</string>
     <string name="series">مسلسلات</string>
+    <string name="read_more">أقرأ المزيد</string>
+    <string name="read_less">أقرأ أقل</string>
 
     <string name="empty_search_message">إبدأ التصفح! ابحث عن أفلامك وبرامجك المفضلة</string>
     <string name="search_hint">بحث…</string>
@@ -45,5 +47,7 @@
     <string name="movies">الأفلام</string>
     <string name="tv_shows">المسلسلات</string>
     <string name="actors">الممثلين</string>
+    <string name="top_movies_pick">أفضل الأفلام المختارة</string>
+    <string name="top_tvShows_picks">أفضل المسلسلات المختارة</string>
     <string name="logout_message">هل أنت متأكد أنك تريد المتابعة؟</string>
 </resources>

@@ -33,7 +33,7 @@
     <string name="please_login_to_rate_your_favorite_items">Please login to rate your favorite items.</string>
     <string name="please_login_to_access_your_account_details_and_other_features">Please login to access your account details and other features!</string>
     <string name="continue_as_guest">Continue as guest</string>
-    <string name="Gallery">gallery</string>
+    <string name="Gallery">Gallery</string>
     <string name="series">Series</string>
     <string name="empty_search_message">Start exploring! Search for your favorite movies, series and shows</string>
     <string name="search_hint">Search…</string>
@@ -44,5 +44,9 @@
     <string name="movies">Movies</string>
     <string name="tv_shows">TV Shows</string>
     <string name="actors">Actors</string>
+    <string name="read_more">Read more</string>
+    <string name="read_less">Read less</string>
     <string name="logout_message">Are you sure to continue?</string>
+    <string name="top_movies_pick">Top movies picks</string>
+    <string name="top_tvShows_picks">Top tv shows picks</string>
 </resources>
