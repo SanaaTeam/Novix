@@ -25,9 +25,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -56,9 +58,11 @@ import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingOptionIte
 import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingOptions
 import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingSection
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
+import com.sanaa.tvapp.presentation.screens.navigation.LocalDrawerFocusRequester
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ChangePasswordScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MyRatingScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.WatchingHistoryScreenRoute
+import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import repository.Language
@@ -80,6 +84,8 @@ private fun MyAccountScreenContent(
     interactionsListener: MyAccountScreenInteractionsListener,
 ) {
     val scrollState = rememberScrollState()
+    val drawerFocusRequester = LocalDrawerFocusRequester.current
+    val layoutDirection = LocalLayoutDirection.current
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -180,7 +186,19 @@ private fun MyAccountScreenContent(
                 }
 
                 Button(
-                    modifier = Modifier,
+                    modifier = Modifier
+                        .handleDPadKeyEvents(
+                            onLeft = if (layoutDirection == LayoutDirection.Rtl) {
+                                {
+                                    // do nothing
+                                }
+                            } else null,
+                            onRight = if (layoutDirection == LayoutDirection.Ltr) {
+                                {
+                                    // do nothing
+                                }
+                            } else null
+                        ),
                     shape = ButtonDefaults.shape(RoundedCornerShape(8.dp)),
                     colors = ButtonDefaults.colors(containerColor = Theme.colors.surfaceHigh),
                     border = ButtonDefaults.border(
