@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.navigation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
@@ -75,7 +76,7 @@ fun TvNavigation(content: @Composable () -> Unit) {
                                 if (selectedTab != 0) {
                                     selectedTab -= 1
                                     navController.navigate(screens[selectedTab]) {
-                                        popUpTo<NavBarRoute.Home>()
+                                        popUpTo(0)
                                         launchSingleTop = true
                                     }
                                 }
@@ -84,7 +85,7 @@ fun TvNavigation(content: @Composable () -> Unit) {
                                 if (selectedTab != screens.lastIndex) {
                                     selectedTab += 1
                                     navController.navigate(screens[selectedTab]) {
-                                        popUpTo<NavBarRoute.Home>()
+                                        popUpTo(0)
                                         launchSingleTop = true
                                     }
                                 }

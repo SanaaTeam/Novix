@@ -131,7 +131,8 @@ private fun MyAccountScreenContent(
                 SettingSection(
                     modifier = Modifier,
                     title = stringResource(designSystemResource.string.language),
-                ) {
+                )
+                {
                     SettingOptions(
                         settingOptionItems = listOf(
                             SettingOptionItem(
