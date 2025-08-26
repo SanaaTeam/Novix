@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.home.component
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -40,9 +41,13 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Carousel
 import androidx.tv.material3.CarouselState
@@ -55,6 +60,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.api.LocalSafeContentThreshold
+import com.sanaa.tvapp.presentation.screens.navigation.LocalDrawerFocusRequester
 import com.sanaa.tvapp.state.MediaItemUiState
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
@@ -75,6 +81,8 @@ fun PopularMoviesCarousel(
 ) {
     val carouselState = rememberSaveable(saver = CarouselSaver) { CarouselState(0) }
     var isFocused by remember { mutableStateOf(false) }
+    val drawerFocusRequester = LocalDrawerFocusRequester.current
+    val layoutDirection = LocalLayoutDirection.current
 
     Carousel(
         modifier = modifier
@@ -86,11 +94,20 @@ fun PopularMoviesCarousel(
             )
             .clip(RoundedCornerShape(12.dp))
             .onFocusChanged { isFocused = it.hasFocus }
-            .handleDPadKeyEvents(onEnter = {
-                if (mediaItemUiStates.isNotEmpty()) {
-                    onShowDetails(mediaItemUiStates[carouselState.activeItemIndex])
-                }
-            }),
+            .handleDPadKeyEvents(
+                onEnter = {
+                    if (mediaItemUiStates.isNotEmpty()) {
+                        onShowDetails(mediaItemUiStates[carouselState.activeItemIndex])
+                    }
+                },
+                onLeft = if (carouselState.activeItemIndex == 0 && layoutDirection == LayoutDirection.Ltr) {
+                    { drawerFocusRequester.requestFocus() }
+                } else null,
+                onRight = if (carouselState.activeItemIndex == 0 && layoutDirection == LayoutDirection.Rtl) {
+                    { drawerFocusRequester.requestFocus() }
+                } else null
+            ),
+
         itemCount = mediaItemUiStates.size,
         carouselState = carouselState,
         carouselIndicator = {

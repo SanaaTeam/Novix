@@ -22,13 +22,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.tvapp.presentation.screens.navigation.LocalDrawerFocusRequester
+import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import com.sanaa.designsystem.R as designSystemResource
 
 @Composable
@@ -71,12 +75,28 @@ fun <T> SettingOptions(
     onSelected: (SettingOptionItem<T>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val drawerFocusRequester = LocalDrawerFocusRequester.current
+    val layoutDirection = LocalLayoutDirection.current
+    var firstIndexIsFocused by remember { mutableStateOf(false) }
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier
     ) {
-        settingOptionItems.forEach { item ->
+        settingOptionItems.forEachIndexed { index,item ->
             ToggleableSettingChip(
+                modifier = Modifier
+                    .onFocusChanged{focusState ->
+                        firstIndexIsFocused = index == 0 && focusState.isFocused
+                    }
+                    .handleDPadKeyEvents(
+                        onLeft = if (firstIndexIsFocused && layoutDirection == LayoutDirection.Ltr) {
+                            { drawerFocusRequester.requestFocus() }
+                        } else null,
+                        onRight = if (firstIndexIsFocused && layoutDirection == LayoutDirection.Rtl) {
+                            { drawerFocusRequester.requestFocus() }
+                        } else null
+                    )
+                ,
                 settingOptionItem = item,
                 onClick = { onSelected(item) }
             )
