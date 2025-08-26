@@ -13,5 +13,5 @@ data class EpisodeDetailsScreenUiState(
     val seriesId: Int = 0,
     val trailerUrl: String? = null,
     val noInternetConnection: Boolean = false,
-    val isExpanded: Boolean = false,
+    val isExpandedOverView: Boolean = false,
 )

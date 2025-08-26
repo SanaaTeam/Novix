@@ -168,7 +168,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onReadMoreClicked() {
-        updateState { copy(isExpanded = !state.value.isExpanded) }
+        updateState { copy(isExpandedOverView = !state.value.isExpandedOverView) }
     }
 
     private fun addMovieToHistory(movie: Movie) {

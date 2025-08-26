@@ -228,12 +228,12 @@ fun MovieDetailsContent(
                                         }
                                     }
 
-                                    state.movieDetails.overview?.let { bio ->
+                                    state.movieDetails.overview.let { overview ->
                                         OverviewSection(
                                             titleResId = R.string.overview,
-                                            overview = bio,
+                                            overview = overview,
                                             onReadMore = interactionListener::onReadMoreClicked,
-                                            isExpanded = state.isExpanded,
+                                            isExpanded = state.isExpandedOverView,
                                         )
                                     }
 

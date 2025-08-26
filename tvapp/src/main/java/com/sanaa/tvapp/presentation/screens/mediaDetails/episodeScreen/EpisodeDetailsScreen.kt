@@ -162,12 +162,12 @@ private fun EpisodeDetailsScreenContent(
                                     }
                                 }
 
-                                state.episode.overview?.let { bio ->
+                                state.episode.overview?.let { overview ->
                                     OverviewSection(
                                         titleResId = R.string.overview,
-                                        overview = bio,
+                                        overview = overview ,
                                         onReadMore = interactionListener::onReadMoreClicked,
-                                        isExpanded = state.isExpanded,
+                                        isExpanded = state.isExpandedOverView,
                                     )
                                 }
 

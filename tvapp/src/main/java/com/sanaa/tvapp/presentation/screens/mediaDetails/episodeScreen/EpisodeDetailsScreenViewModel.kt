@@ -55,7 +55,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onReadMoreClicked() {
-        updateState { copy(isExpanded = !isExpanded) }
+        updateState { copy(isExpandedOverView = !isExpandedOverView) }
     }
 
     private fun loadEpisode(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {

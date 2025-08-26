@@ -50,7 +50,7 @@ class ActorViewModel @Inject constructor(
     }
 
     override fun onReadMoreClicked() {
-        updateState { copy(isExpanded = !isExpanded) }
+        updateState { copy(isExpandedOverView = !isExpandedOverView) }
     }
 
     private fun loadDetails() {

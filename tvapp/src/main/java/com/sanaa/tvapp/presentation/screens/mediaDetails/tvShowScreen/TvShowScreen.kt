@@ -255,12 +255,12 @@ private fun TvShowScreenReadyContent(
                     }
                 }
 
-                state.tvShows.overview?.let { bio ->
+                state.tvShows.overview.let { overview ->
                     OverviewSection(
                         titleResId = R.string.overview,
-                        overview = bio,
+                        overview = overview,
                         onReadMore = interactionListener::onReadMoreClicked,
-                        isExpanded = state.isExpanded,
+                        isExpanded = state.isExpandedOverView,
                     )
                 }
 

@@ -163,17 +163,15 @@ private fun ActorScreenContent(
                                             titleResId = R.string.biography,
                                             overview = bio,
                                             onReadMore = interactionListener::onReadMoreClicked,
-                                            isExpanded = state.isExpanded,
+                                            isExpanded = state.isExpandedOverView,
                                         )
                                     }
                                 }
                             }
                         }
-
                         ActorScreenSliders(state, interactionListener)
                     }
                 }
-
                 NovixAnimatedSnackBarHost(
                     data = snack, onDismiss = { snack = null }
                 )
