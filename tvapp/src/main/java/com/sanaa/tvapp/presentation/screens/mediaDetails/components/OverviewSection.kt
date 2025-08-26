@@ -19,7 +19,7 @@ fun OverviewSection(
     overview: String,
     isExpanded: Boolean,
     modifier: Modifier = Modifier,
-    collapsedMaxLines: Int = 4,
+    collapsedMaxLines: Int = 7,
 ) {
     Column(modifier = modifier) {
         AppText(
