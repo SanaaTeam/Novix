@@ -1,6 +1,5 @@
 package com.sanaa.tvapp.presentation.screens.navigation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
@@ -23,7 +22,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,7 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.tv.material3.NavigationDrawer
+import androidx.tv.material3.ModalNavigationDrawer
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
@@ -69,7 +67,7 @@ fun TvNavigation(content: @Composable () -> Unit) {
     val drawerFocusRequester = remember { FocusRequester() }
 
     CompositionLocalProvider(LocalDrawerFocusRequester provides drawerFocusRequester) {
-        NavigationDrawer(
+        ModalNavigationDrawer(
             drawerContent = {
                 AnimatedVisibility(
                     visible = isDrawerVisible,
@@ -79,7 +77,7 @@ fun TvNavigation(content: @Composable () -> Unit) {
                             .fillMaxHeight()
                             .focusRequester(drawerFocusRequester)
                             .focusable(enabled = true, interactionSource)
-                            .padding(end = 12.dp)
+                            .padding(end = 24.dp)
                             .handleDPadKeyEvents(
                                 onUp = {
                                     if (selectedTab != 0) {
@@ -104,7 +102,6 @@ fun TvNavigation(content: @Composable () -> Unit) {
                     ) {
                         Column(
                             modifier = Modifier
-                                .background(color = Theme.colors.surface)
                                 .selectableGroup(),
                             horizontalAlignment = Alignment.Start,
                             verticalArrangement = Arrangement.spacedBy(10.dp)
