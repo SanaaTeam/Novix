@@ -39,6 +39,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeade
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.ImagesSlider
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.OverviewSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TopMoviesSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TopTvShowsSlider
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
@@ -46,6 +47,7 @@ import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
 import com.sanaa.tvapp.state.SnackData
 import kotlinx.coroutines.flow.collectLatest
+
 
 @Composable
 fun ActorScreen(
@@ -135,7 +137,7 @@ private fun ActorScreenContent(
                         ) {
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
-                                onClick = {},
+                                onClick = interactionListener::onReadMoreClicked,
                                 colors = CardDefaults.colors(
                                     containerColor = Color.Transparent,
                                 ),
@@ -153,25 +155,23 @@ private fun ActorScreenContent(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
+
                                     ActorInfo(state)
 
                                     state.actor.biography?.let { bio ->
-                                        AppText(
-                                            text = bio,
-                                            style = Theme.textStyle.body.small,
-                                            color = Theme.colors.body,
-                                            maxLines = 7
+                                        OverviewSection(
+                                            titleResId = R.string.biography,
+                                            overview = bio,
+                                            onReadMore = interactionListener::onReadMoreClicked,
+                                            isExpanded = state.isExpandedOverView,
                                         )
                                     }
                                 }
                             }
-
                         }
-
                         ActorScreenSliders(state, interactionListener)
                     }
                 }
-
                 NovixAnimatedSnackBarHost(
                     data = snack, onDismiss = { snack = null }
                 )
@@ -251,4 +251,3 @@ private fun ActorInfo(state: ActorScreenUiState) {
         }
     }
 }
-

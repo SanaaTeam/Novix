@@ -37,7 +37,10 @@ fun DetailsHeaderSection(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(
+        modifier = modifier
+            .fillMaxSize())
+    {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -77,6 +80,7 @@ fun DetailsHeaderSection(
                 Color.Transparent,
                 Theme.colors.surface
             )
+
             Canvas(modifier = Modifier.matchParentSize()) {
                 drawRect(
                     brush = Brush.radialGradient(
@@ -94,20 +98,20 @@ fun DetailsHeaderSection(
                     size = size
                 )
             }
+        }
 
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 36.dp, vertical = 24.dp)
-                    .fillMaxWidth(0.5f)
-                    .align(Alignment.BottomStart),
-            ) {
-                Text(
-                    text = title,
-                    style = Theme.textStyle.title.large,
-                    color = Theme.colors.title
-                )
-                content()
-            }
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 36.dp, vertical = 24.dp)
+                .fillMaxWidth(0.5f)
+                .align(Alignment.BottomStart),
+        ) {
+            Text(
+                text = title,
+                style = Theme.textStyle.title.large,
+                color = Theme.colors.title
+            )
+            content()
         }
     }
 }
