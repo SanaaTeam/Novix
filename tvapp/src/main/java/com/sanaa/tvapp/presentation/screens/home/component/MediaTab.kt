@@ -191,19 +191,19 @@ fun MediaTab(
                         return@handleDPadKeyEvents
                     }
 
-                    if (layoutDirection == LayoutDirection.Ltr) {
+                    if (layoutDirection == LayoutDirection.Rtl) {
+                        if (selectedTab != 0) {
+                            selectedTab--
+                            tabs[selectedTab].onFocus()
+                        } else {
+                            focusManager.moveFocus(FocusDirection.Right)
+                        }
+                    } else {
                         if (selectedTab != tabs.lastIndex) {
                             selectedTab++
                             tabs[selectedTab].onFocus()
                         } else {
                             focusManager.moveFocus(FocusDirection.Down)
-                        }
-                    } else {
-                        if (selectedTab != 0) {
-                            selectedTab--
-                            tabs[selectedTab].onFocus()
-                        } else {
-                            focusManager.moveFocus(FocusDirection.Left)
                         }
                     }
                 }
