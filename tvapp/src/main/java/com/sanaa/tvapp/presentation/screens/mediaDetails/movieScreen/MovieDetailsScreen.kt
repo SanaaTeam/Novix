@@ -250,10 +250,10 @@ fun MovieDetailsContent(
                                         }
                                     }
 
-                                    state.movieDetails.overview.let { overview ->
+                                   if (state.movieDetails.overview.isNotEmpty()){
                                         OverviewSection(
                                             titleResId = R.string.overview,
-                                            overview = overview,
+                                            overview = state.movieDetails.overview,
                                             onReadMore = interactionListener::onReadMoreClicked,
                                             isExpanded = state.isExpandedOverView,
                                         )

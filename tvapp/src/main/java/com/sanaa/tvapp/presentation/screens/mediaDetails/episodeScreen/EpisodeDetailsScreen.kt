@@ -201,10 +201,10 @@ private fun EpisodeDetailsScreenContent(
                                     }
                                 }
 
-                                state.episode.overview?.let { overview ->
+                                if(state.episode.overview.isNotEmpty()){
                                     OverviewSection(
                                         titleResId = R.string.overview,
-                                        overview = overview ,
+                                        overview = state.episode.overview ,
                                         onReadMore = interactionListener::onReadMoreClicked,
                                         isExpanded = state.isExpandedOverView,
                                     )

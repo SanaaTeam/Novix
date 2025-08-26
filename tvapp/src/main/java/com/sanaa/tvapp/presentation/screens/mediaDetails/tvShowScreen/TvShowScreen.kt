@@ -276,10 +276,10 @@ private fun TvShowScreenReadyContent(
                     }
                 }
 
-                state.tvShows.overview.let { overview ->
+               if(state.tvShows.overview.isNotEmpty()){
                     OverviewSection(
                         titleResId = R.string.overview,
-                        overview = overview,
+                        overview = state.tvShows.overview,
                         onReadMore = interactionListener::onReadMoreClicked,
                         isExpanded = state.isExpandedOverView,
                     )
