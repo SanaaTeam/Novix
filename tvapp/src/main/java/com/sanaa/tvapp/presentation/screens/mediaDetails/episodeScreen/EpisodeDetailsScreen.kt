@@ -130,8 +130,8 @@ private fun EpisodeDetailsScreenContent(
                             modifier = Modifier
                                 .size(0.dp)
                                 .focusRequester(focusRequester)
-                                .focusTarget()
                                 .focusable()
+                                .focusTarget()
                                 .onGloballyPositioned {
                                     if (!hasRequestedFocus) {
                                         hasRequestedFocus = true
