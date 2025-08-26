@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,8 +42,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -64,6 +63,7 @@ import com.sanaa.tvapp.presentation.screens.navigation.LocalDrawerFocusRequester
 import com.sanaa.tvapp.state.MediaItemUiState
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
+import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalTvMaterial3Api::class)
@@ -80,6 +80,14 @@ fun PopularMoviesCarousel(
     onShowDetails: (movie: MediaItemUiState) -> Unit,
 ) {
     val carouselState = rememberSaveable(saver = CarouselSaver) { CarouselState(0) }
+    var delayedItemIndex by remember { mutableStateOf(0) }
+    LaunchedEffect (carouselState.activeItemIndex){
+        delay(100)
+        delayedItemIndex = carouselState.activeItemIndex
+    }
+
+
+
     var isFocused by remember { mutableStateOf(false) }
     val drawerFocusRequester = LocalDrawerFocusRequester.current
     val layoutDirection = LocalLayoutDirection.current
@@ -100,10 +108,10 @@ fun PopularMoviesCarousel(
                         onShowDetails(mediaItemUiStates[carouselState.activeItemIndex])
                     }
                 },
-                onLeft = if (carouselState.activeItemIndex == 0 && layoutDirection == LayoutDirection.Ltr) {
+                onLeft = if (delayedItemIndex == 0 && layoutDirection == LayoutDirection.Ltr) {
                     { drawerFocusRequester.requestFocus() }
                 } else null,
-                onRight = if (carouselState.activeItemIndex == 0 && layoutDirection == LayoutDirection.Rtl) {
+                onRight = if (delayedItemIndex == 0 && layoutDirection == LayoutDirection.Rtl) {
                     { drawerFocusRequester.requestFocus() }
                 } else null
             ),
