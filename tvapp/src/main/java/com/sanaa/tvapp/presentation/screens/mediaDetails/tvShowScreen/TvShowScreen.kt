@@ -21,9 +21,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -186,13 +194,26 @@ private fun TvShowScreenReadyContent(
     state: TvShowDetailsScreenUiState,
     interactionListener: TvShowScreenInteractionListener,
 ) {
+    val focusRequester = remember {
+        FocusRequester()
+    }
+    var hasRequestedFocus by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(state = rememberScrollState())
     ) {
         Card(
-            modifier = Modifier.size(0.dp),
+            modifier = Modifier
+                .size(0.dp)
+                .focusRequester(focusRequester)
+                .focusTarget()
+                .onGloballyPositioned {
+                    if (!hasRequestedFocus) {
+                        hasRequestedFocus = true
+                        focusRequester.requestFocus()
+                    }
+                },
             onClick = interactionListener::onReadMoreClicked,
             colors = CardDefaults.colors(
                 containerColor = Color.Transparent,
@@ -202,7 +223,7 @@ private fun TvShowScreenReadyContent(
                 pressedContainerColor = Color.Transparent,
                 pressedContentColor = Color.Transparent
             )
-        ){}
+        ) {}
         DetailsHeaderSection(
             backgroundImageUrl = state.backgroundImageUrl,
             title = state.tvShows.title,
