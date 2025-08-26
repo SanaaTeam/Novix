@@ -54,6 +54,10 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         emitEffect(EpisodeDetailsEffects.NavigateToActorDetails(id))
     }
 
+    override fun onReadMoreClicked() {
+        updateState { copy(isExpanded = !isExpanded) }
+    }
+
     private fun loadEpisode(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
         tryToExecute(
             block = { fetchEpisodeDetails(seriesId, seasonNumber, episodeNumber) },

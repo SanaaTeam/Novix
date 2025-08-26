@@ -49,6 +49,10 @@ class ActorViewModel @Inject constructor(
         loadDetails()
     }
 
+    override fun onReadMoreClicked() {
+        updateState { copy(isExpanded = !isExpanded) }
+    }
+
     private fun loadDetails() {
         tryToExecute(
             onStart = ::setOnLoading,

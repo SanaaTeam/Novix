@@ -31,7 +31,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
-import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -46,6 +45,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeade
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.OverviewSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.EpisodesContent
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.SeasonTab
@@ -193,7 +193,7 @@ private fun TvShowScreenReadyContent(
     ) {
         Card(
             modifier = Modifier.size(0.dp),
-            onClick = {},
+            onClick = interactionListener::onReadMoreClicked,
             colors = CardDefaults.colors(
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent,
@@ -255,11 +255,14 @@ private fun TvShowScreenReadyContent(
                     }
                 }
 
-                Text(
-                    text = state.tvShows.overview,
-                    style = Theme.textStyle.body.small,
-                    color = Theme.colors.body
-                )
+                state.tvShows.overview?.let { bio ->
+                    OverviewSection(
+                        titleResId = R.string.overview,
+                        overview = bio,
+                        onReadMore = interactionListener::onReadMoreClicked,
+                        isExpanded = state.isExpanded,
+                    )
+                }
 
                 TrailerAndRateSection(
                     trailerUrl = state.tvShows.trailerUrl,

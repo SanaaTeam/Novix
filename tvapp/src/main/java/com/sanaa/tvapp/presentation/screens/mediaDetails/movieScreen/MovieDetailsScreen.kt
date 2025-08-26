@@ -32,7 +32,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
-import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -47,6 +46,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeade
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.OverviewSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.SimilarMoviesSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
@@ -97,6 +97,7 @@ private fun MovieDetailsEffectsHandler(
                 }
 
                 MovieDetailsScreenUiEffect.NavigateToLogin -> {
+
                     val intent = Intent(context, LoginActivity::class.java)
                     loginLauncher.launch(intent)
                 }
@@ -164,7 +165,7 @@ fun MovieDetailsContent(
                         ) {
                         Card(
                             modifier = Modifier.size(0.dp),
-                            onClick = {},
+                            onClick = interactionListener::onReadMoreClicked,
                             colors = CardDefaults.colors(
                                 containerColor = Color.Transparent,
                                 contentColor = Color.Transparent,
@@ -227,11 +228,14 @@ fun MovieDetailsContent(
                                         }
                                     }
 
-                                    Text(
-                                        text = state.movieDetails.overview,
-                                        style = Theme.textStyle.body.small,
-                                        color = Theme.colors.body
-                                    )
+                                    state.movieDetails.overview?.let { bio ->
+                                        OverviewSection(
+                                            titleResId = R.string.overview,
+                                            overview = bio,
+                                            onReadMore = interactionListener::onReadMoreClicked,
+                                            isExpanded = state.isExpanded,
+                                        )
+                                    }
 
                                     TrailerAndRateSection(
                                         trailerUrl = state.movieDetails.trailerUrl,

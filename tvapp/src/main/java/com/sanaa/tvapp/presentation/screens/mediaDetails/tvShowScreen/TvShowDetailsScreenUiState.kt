@@ -22,4 +22,5 @@ data class TvShowDetailsScreenUiState(
     val showRateDialog: Boolean = false,
     val rating: Int = 0,
     val snackBarData: SnackData? = null,
+    val isExpanded: Boolean = false,
 )
