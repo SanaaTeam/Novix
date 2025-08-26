@@ -145,15 +145,16 @@ class ShowDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onRatingChange(rating: Int) {
-        updateState { copy(rating = rating) }
+        updateState { copy(filledStarsCount = rating) }
     }
 
     override fun onDismissRateDialog() {
-        updateState { copy(showLoginDialog = false) }
+        updateState { copy(showLoginDialog = false, filledStarsCount = imdbRating) }
     }
 
     override fun onSummitRateClick() {
         tryToExecute(
+            onStart = { updateState { copy(showRateDialog = false) }},
             block = ::submitTvShowRating,
             onError = ::onErrorAccrue
         )
@@ -210,14 +211,15 @@ class ShowDetailsScreenViewModel @Inject constructor(
     private fun onFetchUserRatingSuccess(rating: Int) {
         updateState {
             copy(
-                rating = rating,
+                imdbRating = rating,
+                filledStarsCount = rating,
                 isRatingSubmitted = rating != 0
             )
         }
     }
 
     private suspend fun submitTvShowRating() {
-        val rating = state.value.rating
+        val rating = state.value.filledStarsCount
         val isSendRateSuccess = manageTvShowDetails.addTvShowRate(
             tvShowId = route.tvShowId,
             rating = rating.toFloat()
@@ -225,7 +227,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
         if (isSendRateSuccess) {
             updateState {
                 copy(
-                    showRateDialog = false,
+                    imdbRating = rating,
                     isRatingSubmitted = true,
                     snackBarData = SnackData(
                         message = stringProvider.submitRatingSuccess,

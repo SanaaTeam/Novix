@@ -113,7 +113,7 @@ private fun MovieDetailsEffectsHandler(
 @Composable
 fun MovieDetailsContent(
     state: MovieDetailsScreenUiState,
-    interactionListener: MovieDetailsViewModel,
+    interactionListener: MovieDetailsScreenInteractionListener,
 ) {
     val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> =
         state.similarMovies.collectAsLazyPagingItems()
@@ -235,13 +235,9 @@ fun MovieDetailsContent(
 
                                     TrailerAndRateSection(
                                         trailerUrl = state.movieDetails.trailerUrl,
-                                        onPlayTrailerClicked = {
-                                            interactionListener.onWatchTrailerClick(
-                                                state.movieDetails.trailerUrl.orEmpty()
-                                            )
-                                        },
-                                        onRateClicked = interactionListener::onRateMovieClick,
-                                        showRateButton = !state.isRatingSubmitted
+                                        onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
+                                        onRateClicked = interactionListener::onRateClick,
+                                        isFilledStarIcon = state.isRatingSubmitted
                                     )
                                 }
                             }
@@ -266,7 +262,7 @@ fun MovieDetailsContent(
 
             if (state.showRateDialog) {
                 RateDialog(
-                    currentRating = state.rating,
+                    currentRating = state.filledStarsCount,
                     onRatingChanged = interactionListener::onRatingChange,
                     onDismissRequest = interactionListener::onDismissRateDialog,
                     onSubmitRating = interactionListener::onSummitRateClick

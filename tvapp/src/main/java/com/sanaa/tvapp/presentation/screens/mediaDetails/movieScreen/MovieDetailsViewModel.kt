@@ -55,15 +55,9 @@ class MovieDetailsViewModel @Inject constructor(
 
     private fun fetchMovieDetails(movieId: Int) {
         tryToExecute(
-            onStart = {
-                updateState { copy(isLoading = true) }
-            },
-            block = {
-                loadMovieDetails(movieId)
-            },
-            onSuccess = {
-                updateState { copy(isLoading = false) }
-            },
+            onStart = { updateState { copy(isLoading = true) } },
+            block = { loadMovieDetails(movieId) },
+            onSuccess = { updateState { copy(isLoading = false) } },
             onError = ::onErrorAccrue
         )
     }
@@ -105,8 +99,8 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onWatchTrailerClick(urlString: String) {
-        emitEffect(MovieDetailsScreenUiEffect.OpenTrailer(urlString))
+    override fun onPlayTrailerClicked() {
+        emitEffect(MovieDetailsScreenUiEffect.OpenTrailer(state.value.movieDetails.trailerUrl))
     }
 
 
@@ -128,28 +122,25 @@ class MovieDetailsViewModel @Inject constructor(
         fetchMovieDetails(movieId)
     }
 
-    override fun onRateMovieClick() {
+    override fun onRateClick() {
         if (state.value.isUserLoggedIn) {
-            updateState {
-                copy(showRateDialog = true)
-            }
+            updateState { copy(showRateDialog = true) }
         } else {
-            updateState {
-                copy(showLoginDialog = true)
-            }
+            updateState { copy(showLoginDialog = true) }
         }
     }
 
     override fun onRatingChange(rating: Int) {
-        updateState { copy(rating = rating) }
+        updateState { copy(filledStarsCount = rating) }
     }
 
     override fun onDismissRateDialog() {
-        updateState { copy(showLoginDialog = false) }
+        updateState { copy(showRateDialog = false, filledStarsCount = imdbRating) }
     }
 
     override fun onSummitRateClick() {
         tryToExecute(
+            onStart = { updateState { copy(showRateDialog = false) } },
             block = ::submitMovieRating,
             onError = ::onErrorAccrue
         )
@@ -223,23 +214,22 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onFetchUserRatingSuccess(rating: Int) {
         updateState {
             copy(
-                rating = rating,
+                imdbRating = rating,
+                filledStarsCount = rating,
                 isRatingSubmitted = rating != 0
             )
         }
     }
 
     private suspend fun submitMovieRating() {
-        val rating = state.value.rating
-        val isSendRateSuccess = manageMovieDetails.addMovieRate(
-            movieId = movieId,
-            rating = rating.toFloat()
-        )
+        val rating = state.value.filledStarsCount
+        val isSendRateSuccess =
+            manageMovieDetails.addMovieRate(movieId = movieId, rating = rating.toFloat())
         if (isSendRateSuccess) {
             updateState {
                 copy(
-                    showRateDialog = false,
                     isRatingSubmitted = true,
+                    imdbRating = rating,
                     snackBarData = SnackData(
                         message = stringProvider.submitRatingSuccess,
                         isError = false

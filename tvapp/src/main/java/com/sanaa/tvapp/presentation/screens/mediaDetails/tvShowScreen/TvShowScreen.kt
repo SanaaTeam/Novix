@@ -164,7 +164,7 @@ fun TvShowScreenContent(
 
             if (state.showRateDialog) {
                 RateDialog(
-                    currentRating = state.rating,
+                    currentRating = state.filledStarsCount,
                     onRatingChanged = interactionListener::onRatingChange,
                     onDismissRequest = interactionListener::onDismissRateDialog,
                     onSubmitRating = interactionListener::onSummitRateClick
@@ -265,7 +265,7 @@ private fun TvShowScreenReadyContent(
                     trailerUrl = state.tvShows.trailerUrl,
                     onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
                     onRateClicked = interactionListener::onRateClick,
-                    showRateButton = !state.isRatingSubmitted
+                    isFilledStarIcon = state.isRatingSubmitted
                 )
             }
         }
