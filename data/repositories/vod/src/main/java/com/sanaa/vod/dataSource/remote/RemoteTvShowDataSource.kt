@@ -36,6 +36,7 @@ interface RemoteTvShowDataSource {
     suspend fun fetchPopularTvShows(page: Int): List<TvShowDto>
     suspend fun fetchTopRatedTvShows(page: Int, genreId: Int?): List<TvShowDto>
     suspend fun fetchTrendingTvShows(page: Int, genreId: Int?): List<TvShowDto>
+    suspend fun fetchUpcomingTvShows(page: Int, genreId: Int?): List<TvShowDto>
     suspend fun sendTvShowRate(tvShowId: Int, sessionId: String, rating: Float): RatingResponse
     suspend fun sendTvEpisodeRate(
         tvShowId: Int,

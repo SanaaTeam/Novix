@@ -103,6 +103,11 @@ class TvShowRepositoryImpl @Inject constructor(
             remoteDataSource.fetchTrendingTvShows(page, genreId).map { it.toEntity() }
         }
 
+    override suspend fun getUpcomingTvShows(page: Int, genreId: Int?): List<TvShow> =
+        safeCall("Failed to fetch Tv Show Trending") {
+            remoteDataSource.fetchUpcomingTvShows(page, genreId).map { it.toEntity() }
+        }
+
     override suspend fun getPopularTvShows(page: Int): List<TvShow> =
         safeCall("Failed to fetch Tv Show Popular") {
             if (page == 1) {

@@ -111,6 +111,7 @@ private fun HomeReadyContent(state: HomeScreenUiState, interactionListener: Home
     val carouselFocusRequester = remember { FocusRequester() }
 
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
+    val upcomingTvShows = state.upcomingTvShows.collectAsLazyPagingItems()
 
     LaunchedEffect(Unit) {
         carouselFocusRequester.requestFocus()
@@ -179,7 +180,7 @@ private fun HomeReadyContent(state: HomeScreenUiState, interactionListener: Home
                 }
 
                 SelectedHomeTab.TV_SHOWS -> {
-                    HomeTvShows(state) { id ->
+                    HomeTvShows(state, upcomingTvShows) { id ->
                         interactionListener.onMediaClick(id, MediaTypeUiState.TV_SHOW)
                     }
                 }
@@ -208,10 +209,10 @@ fun HomeMovies(
             }
         }
 
-        if (state.continueWatchingMovies.isNotEmpty()) {
+        if (state.WatchingHistoryMovies.isNotEmpty()) {
             MediaSection(title = stringResource(tvResource.string.watching_history)) {
                 items(
-                    items = state.continueWatchingMovies,
+                    items = state.WatchingHistoryMovies,
                     key = { it.id }
                 ) {
                     FocusableMediaCard(
@@ -257,15 +258,13 @@ fun HomeMovies(
 @Composable
 fun HomeTvShows(
     state: HomeScreenUiState,
+    upcomingTvShows: LazyPagingItems<MediaItemUiState>,
     onItemClick: (Int) -> Unit,
 ) {
     Column {
         if (state.topRatingTvShows.isNotEmpty()) {
             MediaSection(title = stringResource(tvResource.string.top_rated)) {
-                items(
-                    items = state.topRatingTvShows,
-                    key = { it.id }
-                ) {
+                items(items = state.topRatingTvShows, key = { it.id }) {
                     FocusableMediaCard(
                         imageUrl = it.imageUrl ?: "",
                         titleText = it.title,
@@ -275,12 +274,21 @@ fun HomeTvShows(
             }
         }
 
-        if (state.continueWatchingTvShows.isNotEmpty()) {
+        if (state.WatchingHistoryTvShows.isNotEmpty()) {
             MediaSection(title = stringResource(tvResource.string.watching_history)) {
-                items(
-                    items = state.continueWatchingTvShows,
-                    key = { it.id }
-                ) {
+                items(items = state.WatchingHistoryTvShows, key = { it.id }) {
+                    FocusableMediaCard(
+                        imageUrl = it.imageUrl ?: "",
+                        titleText = it.title,
+                        onClick = { onItemClick(it.id) }
+                    )
+                }
+            }
+        }
+
+        MediaSection(title = stringResource(tvResource.string.up_upcoming)) {
+            items(count = upcomingTvShows.itemCount,) { index ->
+                upcomingTvShows[index]?.let {
                     FocusableMediaCard(
                         imageUrl = it.imageUrl ?: "",
                         titleText = it.title,
