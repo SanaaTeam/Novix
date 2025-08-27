@@ -20,6 +20,7 @@ data class TvShowDetailsScreenUiState(
     val showLoginDialog: Boolean = false,
     val showRateDialog: Boolean = false,
     val snackBarData: SnackData? = null,
+    val isExpandedOverView: Boolean = false,
     val isRatingSubmitted: Boolean = false,
     val imdbRating: Int = 0,
     val filledStarsCount: Int = 0,
