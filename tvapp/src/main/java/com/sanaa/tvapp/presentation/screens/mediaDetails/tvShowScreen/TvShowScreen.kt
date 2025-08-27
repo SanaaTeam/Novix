@@ -128,6 +128,7 @@ fun TvShowScreenContent(
     state: TvShowDetailsScreenUiState,
     interactionListener: TvShowScreenInteractionListener,
 ) {
+
     NovixScaffold(
         backgroundShapes = {},
         modifier = Modifier
