@@ -82,7 +82,7 @@ fun MovieDetailsScreen(
 
 @Composable
 private fun MovieDetailsEffectsHandler(
-    effect: Flow<MovieDetailsScreenUiEffect>,
+    effect: Flow<MovieDetailsScreenEffect>,
 ) {
     val navController = LocalAppNavController.current
     val context = LocalContext.current
@@ -97,23 +97,29 @@ private fun MovieDetailsEffectsHandler(
     LaunchedEffect(Unit) {
         effect.collectLatest {
             when (it) {
-                is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(
+                is MovieDetailsScreenEffect.NavigateToActorScreen -> navController.navigate(
                     ActorDetailsRoute(it.actorId)
                 )
 
-                is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> {
+                is MovieDetailsScreenEffect.NavigateToAnotherMovieDetails -> {
                     navController.navigate(MovieDetailsRoute(it.movieId))
                 }
 
-                MovieDetailsScreenUiEffect.NavigateToLogin -> {
+                MovieDetailsScreenEffect.NavigateToLogin -> {
 
                     val intent = Intent(context, LoginActivity::class.java)
                     loginLauncher.launch(intent)
                 }
 
-                is MovieDetailsScreenUiEffect.OpenTrailer -> {
+                is MovieDetailsScreenEffect.OpenTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.url?.toUri())
                     context.startActivity(intent)
+                }
+
+                MovieDetailsScreenEffect.UpdateRate -> {
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("movie_rate_updated", true)
                 }
             }
         }

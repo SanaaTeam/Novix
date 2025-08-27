@@ -28,7 +28,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class ShowDetailsScreenViewModel @Inject constructor(
+class TvShowDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageTvShowDetails: ManageTvShowUseCase,
@@ -36,7 +36,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<TvShowDetailsScreenUiState, TvShowDetailsScreenEffects>(
+) : BaseViewModel<TvShowDetailsScreenUiState, TvShowDetailsScreenEffect>(
     initialState = TvShowDetailsScreenUiState(),
     defaultDispatcher = dispatcher
 ), TvShowScreenInteractionListener {
@@ -50,7 +50,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onActorClicked(actorId: Int) {
-        emitEffect(TvShowDetailsScreenEffects.NavigateToActorScreen(actorId))
+        emitEffect(TvShowDetailsScreenEffect.NavigateToActorScreen(actorId))
     }
 
     override fun onSeasonNumberClicked(seasonNumber: Int) {
@@ -64,14 +64,14 @@ class ShowDetailsScreenViewModel @Inject constructor(
 
     override fun onEpisodeClicked(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
         emitEffect(
-            TvShowDetailsScreenEffects.NavigateToEpisodeDetailsScreen(
+            TvShowDetailsScreenEffect.NavigateToEpisodeDetailsScreen(
                 seriesId, seasonNumber, episodeNumber
             )
         )
     }
 
     override fun onPlayTrailerClicked() {
-        emitEffect(TvShowDetailsScreenEffects.PlayTrailer(trailerUrl = state.value.tvShows.trailerUrl))
+        emitEffect(TvShowDetailsScreenEffect.PlayTrailer(trailerUrl = state.value.tvShows.trailerUrl))
     }
 
     override fun onRetryLoadDetails() {
@@ -191,6 +191,8 @@ class ShowDetailsScreenViewModel @Inject constructor(
                     )
                 )
             }
+            emitEffect(TvShowDetailsScreenEffect.UpdateRate)
+
         } else {
             updateState {
                 copy(
@@ -205,7 +207,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onLoginButtonClick() {
-        emitEffect(TvShowDetailsScreenEffects.NavigateToLogin)
+        emitEffect(TvShowDetailsScreenEffect.NavigateToLogin)
     }
 
     override fun onDismissLoginDialog() {
@@ -279,6 +281,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
                     )
                 )
             }
+            emitEffect(TvShowDetailsScreenEffect.UpdateRate)
         } else {
             updateState {
                 copy(

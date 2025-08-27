@@ -38,7 +38,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<MovieDetailsScreenUiState, MovieDetailsScreenUiEffect>(
+) : BaseViewModel<MovieDetailsScreenUiState, MovieDetailsScreenEffect>(
     initialState = MovieDetailsScreenUiState(),
     defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
@@ -100,7 +100,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onPlayTrailerClicked() {
-        emitEffect(MovieDetailsScreenUiEffect.OpenTrailer(state.value.movieDetails.trailerUrl))
+        emitEffect(MovieDetailsScreenEffect.OpenTrailer(state.value.movieDetails.trailerUrl))
     }
 
 
@@ -109,7 +109,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onLoginButtonClick() {
-        emitEffect(MovieDetailsScreenUiEffect.NavigateToLogin)
+        emitEffect(MovieDetailsScreenEffect.NavigateToLogin)
     }
 
     override fun onRetryLoadDetails() {
@@ -171,6 +171,7 @@ class MovieDetailsViewModel @Inject constructor(
                     )
                 )
             }
+            emitEffect(MovieDetailsScreenEffect.UpdateRate)
         } else {
             updateState {
                 copy(
@@ -185,11 +186,11 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onSimilarMovieClick(movieId: Int) {
-        emitEffect(MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails(movieId))
+        emitEffect(MovieDetailsScreenEffect.NavigateToAnotherMovieDetails(movieId))
     }
 
     override fun onActorCardClick(actorId: Int) {
-        emitEffect(MovieDetailsScreenUiEffect.NavigateToActorScreen(actorId))
+        emitEffect(MovieDetailsScreenEffect.NavigateToActorScreen(actorId))
     }
 
     override fun onSnackDismissRequested() {
@@ -278,6 +279,7 @@ class MovieDetailsViewModel @Inject constructor(
                     )
                 )
             }
+            emitEffect(MovieDetailsScreenEffect.UpdateRate)
         } else {
             updateState {
                 copy(

@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -48,13 +49,32 @@ import com.sanaa.tvapp.R as tvResource
 
 @Composable
 fun HomeScreen(
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+    viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
-    val state by homeScreenViewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val navController = LocalAppNavController.current
 
-    EffectHandler(homeScreenViewModel.effect)
+    LaunchedEffect(Unit) {
+        snapshotFlow { navController.currentBackStackEntry }
+            .collect { backStackEntry ->
+                val moviesRateUpdated =
+                    backStackEntry?.savedStateHandle?.get<Boolean>("movie_rate_updated") == true
+                val tvShowsRateUpdated =
+                    backStackEntry?.savedStateHandle?.get<Boolean>("tv_show_rate_updated") == true
+                if (moviesRateUpdated) {
+                    viewModel.onMoviesRateUpdated()
+                    backStackEntry.savedStateHandle.remove<Boolean>("movie_rate_updated")
+                }
+                if (tvShowsRateUpdated) {
+                    viewModel.onTvShowsRateUpdated()
+                    backStackEntry.savedStateHandle.remove<Boolean>("tv_show_rate_updated")
+                }
+            }
+    }
 
-    HomeScreenContent(state, homeScreenViewModel)
+    EffectHandler(viewModel.effect)
+
+    HomeScreenContent(state, viewModel)
 }
 
 @Composable

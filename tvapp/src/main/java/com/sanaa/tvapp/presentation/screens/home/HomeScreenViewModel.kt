@@ -47,7 +47,6 @@ class HomeScreenViewModel @Inject constructor(
         fetchTopRatedMovieData()
         fetchTopRatedTvShowData()
         fetchUpcomingMovies()
-        loadRatedMedia()
     }
 
     private fun updateUserLoggingStatus() {
@@ -61,6 +60,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun onCollectLoggedFlag(isLogged: Boolean) {
         if (isLogged != state.value.userIsLoggedIn) {
             fetchWatchedMediaData()
+            loadRatedMedia()
             updateState { copy(userIsLoggedIn = isLogged) }
         }
     }
@@ -286,5 +286,13 @@ class HomeScreenViewModel @Inject constructor(
 
     override fun onSnackBarDismiss() {
         updateState { copy(snackBarData = null) }
+    }
+
+    override fun onTvShowsRateUpdated() {
+        loadRatedTvShows()
+    }
+
+    override fun onMoviesRateUpdated() {
+       loadRatedMovies()
     }
 }
