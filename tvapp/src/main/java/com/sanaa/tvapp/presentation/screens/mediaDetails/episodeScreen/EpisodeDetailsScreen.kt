@@ -213,7 +213,7 @@ private fun EpisodeDetailsScreenContent(
                                 TrailerAndRateSection(
                                     trailerUrl = state.trailerUrl,
                                     onPlayTrailerClicked = interactionListener::onPlayTrailerClick,
-                                    showRateButton = false
+                                    isRateButtonVisible = false
                                 )
                             }
                         }

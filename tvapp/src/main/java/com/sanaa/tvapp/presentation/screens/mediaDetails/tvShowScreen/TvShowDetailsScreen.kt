@@ -58,14 +58,14 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRa
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.EpisodesContent
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.SeasonTab
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetailsRoute
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.EpisodeDetailsRoute
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun TvShowScreen(
-    viewModel: ShowDetailsScreenViewModel = hiltViewModel(),
+    viewModel: TvShowDetailsScreenViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
@@ -79,7 +79,7 @@ fun TvShowScreen(
 
 @Composable
 private fun EffectHandler(
-    effect: Flow<TvShowDetailsScreenEffects>,
+    effect: Flow<TvShowDetailsScreenEffect>,
 ) {
     val context = LocalContext.current
     val navController = LocalAppNavController.current
@@ -95,13 +95,13 @@ private fun EffectHandler(
     LaunchedEffect(Unit) {
         effect.collectLatest {
             when (it) {
-                is TvShowDetailsScreenEffects.NavigateToActorScreen -> {
+                is TvShowDetailsScreenEffect.NavigateToActorScreen -> {
                     navController.navigate(ActorDetailsRoute(it.actorId))
                 }
 
-                is TvShowDetailsScreenEffects.NavigateToEpisodeDetailsScreen -> {
+                is TvShowDetailsScreenEffect.NavigateToEpisodeDetailsScreen -> {
                     navController.navigate(
-                        ScreensRoute.EpisodeDetailsRoute(
+                        EpisodeDetailsRoute(
                             seriesId = it.seriesId,
                             seasonNumber = it.seasonNumber,
                             episodeNumber = it.episodeNumber
@@ -109,14 +109,20 @@ private fun EffectHandler(
                     )
                 }
 
-                TvShowDetailsScreenEffects.NavigateToLogin -> {
+                TvShowDetailsScreenEffect.NavigateToLogin -> {
                     val intent = Intent(context, LoginActivity::class.java)
                     loginLauncher.launch(intent)
                 }
 
-                is TvShowDetailsScreenEffects.PlayTrailer -> {
+                is TvShowDetailsScreenEffect.PlayTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
                     context.startActivity(intent)
+                }
+
+                TvShowDetailsScreenEffect.UpdateRate -> {
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("tv_show_rate_updated", true)
                 }
             }
         }
@@ -128,6 +134,7 @@ fun TvShowScreenContent(
     state: TvShowDetailsScreenUiState,
     interactionListener: TvShowScreenInteractionListener,
 ) {
+
     NovixScaffold(
         backgroundShapes = {},
         modifier = Modifier
@@ -172,10 +179,13 @@ fun TvShowScreenContent(
 
             if (state.showRateDialog) {
                 RateDialog(
-                    currentRating = state.rating,
+                    currentRating = state.filledStarsCount,
                     onRatingChanged = interactionListener::onRatingChange,
                     onDismissRequest = interactionListener::onDismissRateDialog,
-                    onSubmitRating = interactionListener::onSummitRateClick
+                    onSubmitRating = interactionListener::onSummitRateClick,
+                    onDeleteRating = interactionListener::onDeleteRateClick,
+                    isSubmitButtonEnabled = state.hasUserSelectedRate,
+                    isDeleteButtonVisible = state.isRatingSubmitted
                 )
             }
 
@@ -289,7 +299,7 @@ private fun TvShowScreenReadyContent(
                     trailerUrl = state.tvShows.trailerUrl,
                     onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
                     onRateClicked = interactionListener::onRateClick,
-                    showRateButton = !state.isRatingSubmitted
+                    isFilledStarIcon = state.isRatingSubmitted
                 )
             }
         }

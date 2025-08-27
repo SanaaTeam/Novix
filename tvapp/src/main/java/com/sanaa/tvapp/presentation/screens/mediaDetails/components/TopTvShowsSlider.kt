@@ -8,8 +8,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.Text
-import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.TvShowDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
 
@@ -20,10 +19,8 @@ fun TopTvShowsSlider(
     onTvShowCardClicked: (Int) -> Unit = {},
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Text(
-            text = title,
-            style = Theme.textStyle.headLine.small,
-            color = Theme.colors.title,
+        Title(
+            title = title,
             modifier = Modifier.padding(horizontal = 36.dp)
         )
 

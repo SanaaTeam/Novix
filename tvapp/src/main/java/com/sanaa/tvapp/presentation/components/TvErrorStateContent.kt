@@ -1,26 +1,23 @@
 package com.sanaa.tvapp.presentation.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.Border
-import androidx.tv.material3.Card
-import androidx.tv.material3.CardDefaults
+import androidx.tv.material3.Button
+import androidx.tv.material3.ButtonDefaults
 import com.sanaa.designsystem.R
-import com.sanaa.designsystem.design_system.component.button.OutlinedButton
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
@@ -62,21 +59,20 @@ fun TvErrorStateContent(
         Spacer(modifier = Modifier.height(16.dp))
 
 
-        Card(
+        Button(
+            scale = ButtonDefaults.scale(focusedScale = 1.03f),
+            shape = ButtonDefaults.shape(RoundedCornerShape(12.dp)),
             onClick = onRetryClick,
-            colors = CardDefaults.colors(
-                containerColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent,
+            colors = ButtonDefaults.colors(
+                containerColor = Theme.colors.iconBackgroundLow,
+                focusedContainerColor = Theme.colors.primary
             ),
-            border = CardDefaults.border(
-                focusedBorder = Border(
-                    border = BorderStroke(width = 3.dp, color = Theme.colors.primary),
-                ),
-            )
         ) {
-            OutlinedButton(
-                text = stringResource(id = R.string.offline_note),
-                onClick = {},
+            Text(
+                text = stringResource(R.string.offline_note),
+                style = Theme.textStyle.label.large,
+                color = Theme.colors.onPrimary,
+                textAlign = TextAlign.Center
             )
         }
     }

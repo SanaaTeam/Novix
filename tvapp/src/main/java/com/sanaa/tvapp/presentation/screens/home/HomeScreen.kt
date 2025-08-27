@@ -17,14 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,26 +38,43 @@ import com.sanaa.tvapp.presentation.screens.home.component.HomeScreenLoading
 import com.sanaa.tvapp.presentation.screens.home.component.HomeTabs
 import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
-import com.sanaa.tvapp.presentation.screens.navigation.LocalDrawerFocusRequester
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.TvShowDetailsRoute
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
 import com.sanaa.tvapp.state.MediaItemUiState
 import com.sanaa.tvapp.state.MediaTypeUiState
-import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.tvapp.R as tvResource
 
 @Composable
 fun HomeScreen(
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+    viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
-    val state by homeScreenViewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val navController = LocalAppNavController.current
 
-    EffectHandler(homeScreenViewModel.effect)
+    LaunchedEffect(Unit) {
+        snapshotFlow { navController.currentBackStackEntry }
+            .collect { backStackEntry ->
+                val moviesRateUpdated =
+                    backStackEntry?.savedStateHandle?.get<Boolean>("movie_rate_updated") == true
+                val tvShowsRateUpdated =
+                    backStackEntry?.savedStateHandle?.get<Boolean>("tv_show_rate_updated") == true
+                if (moviesRateUpdated) {
+                    viewModel.onMoviesRateUpdated()
+                    backStackEntry.savedStateHandle.remove<Boolean>("movie_rate_updated")
+                }
+                if (tvShowsRateUpdated) {
+                    viewModel.onTvShowsRateUpdated()
+                    backStackEntry.savedStateHandle.remove<Boolean>("tv_show_rate_updated")
+                }
+            }
+    }
 
-    HomeScreenContent(state, homeScreenViewModel)
+    EffectHandler(viewModel.effect)
+
+    HomeScreenContent(state, viewModel)
 }
 
 @Composable
@@ -229,7 +245,7 @@ fun HomeMovies(
                         titleText = item.title,
                         onClick = { onItemClick(item.id) },
                         topCornerContent = {
-                            MediaRatingChip(rating = item.rating.orEmpty())
+                            MediaRatingChip(rating = item.userRating.orEmpty())
                         }
                     )
                 }
@@ -282,7 +298,7 @@ fun HomeTvShows(
                         titleText = item.title,
                         onClick = { onItemClick(item.id) },
                         topCornerContent = {
-                            MediaRatingChip(rating = item.rating.orEmpty())
+                            MediaRatingChip(rating = item.userRating.orEmpty())
                         }
                     )
                 }

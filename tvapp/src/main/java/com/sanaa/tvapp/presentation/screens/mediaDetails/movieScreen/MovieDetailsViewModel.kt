@@ -38,7 +38,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<MovieDetailsScreenUiState, MovieDetailsScreenUiEffect>(
+) : BaseViewModel<MovieDetailsScreenUiState, MovieDetailsScreenEffect>(
     initialState = MovieDetailsScreenUiState(),
     defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
@@ -55,15 +55,9 @@ class MovieDetailsViewModel @Inject constructor(
 
     private fun fetchMovieDetails(movieId: Int) {
         tryToExecute(
-            onStart = {
-                updateState { copy(isLoading = true) }
-            },
-            block = {
-                loadMovieDetails(movieId)
-            },
-            onSuccess = {
-                updateState { copy(isLoading = false) }
-            },
+            onStart = { updateState { copy(isLoading = true) } },
+            block = { loadMovieDetails(movieId) },
+            onSuccess = { updateState { copy(isLoading = false) } },
             onError = ::onErrorAccrue
         )
     }
@@ -105,8 +99,8 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onWatchTrailerClick(urlString: String) {
-        emitEffect(MovieDetailsScreenUiEffect.OpenTrailer(urlString))
+    override fun onPlayTrailerClicked() {
+        emitEffect(MovieDetailsScreenEffect.OpenTrailer(state.value.movieDetails.trailerUrl))
     }
 
 
@@ -115,7 +109,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onLoginButtonClick() {
-        emitEffect(MovieDetailsScreenUiEffect.NavigateToLogin)
+        emitEffect(MovieDetailsScreenEffect.NavigateToLogin)
     }
 
     override fun onRetryLoadDetails() {
@@ -126,41 +120,77 @@ class MovieDetailsViewModel @Inject constructor(
             )
         }
         fetchMovieDetails(movieId)
+        if (state.value.isUserLoggedIn) {
+            fetchUserRating()
+        }
     }
 
-    override fun onRateMovieClick() {
+    override fun onRateClick() {
         if (state.value.isUserLoggedIn) {
-            updateState {
-                copy(showRateDialog = true)
-            }
+            updateState { copy(showRateDialog = true) }
         } else {
-            updateState {
-                copy(showLoginDialog = true)
-            }
+            updateState { copy(showLoginDialog = true) }
         }
     }
 
     override fun onRatingChange(rating: Int) {
-        updateState { copy(rating = rating) }
+        updateState { copy(filledStarsCount = rating) }
     }
 
     override fun onDismissRateDialog() {
-        updateState { copy(showLoginDialog = false) }
+        updateState { copy(showRateDialog = false, filledStarsCount = imdbRating) }
     }
 
     override fun onSummitRateClick() {
         tryToExecute(
+            onStart = { updateState { copy(showRateDialog = false) } },
             block = ::submitMovieRating,
             onError = ::onErrorAccrue
         )
     }
 
+    override fun onDeleteRateClick() {
+        tryToExecute(
+            onStart = { updateState { copy(showRateDialog = false) }},
+            block = ::deleteRating,
+            onError = ::onErrorAccrue
+        )
+    }
+
+    private suspend fun deleteRating() {
+        val isSuccess = manageMovieDetails.deleteMovieRate(movieId = movieId)
+        if (isSuccess) {
+            updateState {
+                copy(
+                    filledStarsCount = 0,
+                    imdbRating = 0,
+                    isRatingSubmitted = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingSuccess,
+                        isError = false
+                    )
+                )
+            }
+            emitEffect(MovieDetailsScreenEffect.UpdateRate)
+        } else {
+            updateState {
+                copy(
+                    filledStarsCount = imdbRating,
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingFailed,
+                        isError = true
+                    )
+                )
+            }
+        }
+    }
+
     override fun onSimilarMovieClick(movieId: Int) {
-        emitEffect(MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails(movieId))
+        emitEffect(MovieDetailsScreenEffect.NavigateToAnotherMovieDetails(movieId))
     }
 
     override fun onActorCardClick(actorId: Int) {
-        emitEffect(MovieDetailsScreenUiEffect.NavigateToActorScreen(actorId))
+        emitEffect(MovieDetailsScreenEffect.NavigateToActorScreen(actorId))
     }
 
     override fun onSnackDismissRequested() {
@@ -227,29 +257,29 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onFetchUserRatingSuccess(rating: Int) {
         updateState {
             copy(
-                rating = rating,
+                imdbRating = rating,
+                filledStarsCount = rating,
                 isRatingSubmitted = rating != 0
             )
         }
     }
 
     private suspend fun submitMovieRating() {
-        val rating = state.value.rating
-        val isSendRateSuccess = manageMovieDetails.addMovieRate(
-            movieId = movieId,
-            rating = rating.toFloat()
-        )
+        val rating = state.value.filledStarsCount
+        val isSendRateSuccess =
+            manageMovieDetails.addMovieRate(movieId = movieId, rating = rating.toFloat())
         if (isSendRateSuccess) {
             updateState {
                 copy(
-                    showRateDialog = false,
                     isRatingSubmitted = true,
+                    imdbRating = rating,
                     snackBarData = SnackData(
                         message = stringProvider.submitRatingSuccess,
                         isError = false
                     )
                 )
             }
+            emitEffect(MovieDetailsScreenEffect.UpdateRate)
         } else {
             updateState {
                 copy(

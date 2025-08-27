@@ -82,7 +82,7 @@ fun MovieDetailsScreen(
 
 @Composable
 private fun MovieDetailsEffectsHandler(
-    effect: Flow<MovieDetailsScreenUiEffect>,
+    effect: Flow<MovieDetailsScreenEffect>,
 ) {
     val navController = LocalAppNavController.current
     val context = LocalContext.current
@@ -97,23 +97,29 @@ private fun MovieDetailsEffectsHandler(
     LaunchedEffect(Unit) {
         effect.collectLatest {
             when (it) {
-                is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(
+                is MovieDetailsScreenEffect.NavigateToActorScreen -> navController.navigate(
                     ActorDetailsRoute(it.actorId)
                 )
 
-                is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> {
+                is MovieDetailsScreenEffect.NavigateToAnotherMovieDetails -> {
                     navController.navigate(MovieDetailsRoute(it.movieId))
                 }
 
-                MovieDetailsScreenUiEffect.NavigateToLogin -> {
+                MovieDetailsScreenEffect.NavigateToLogin -> {
 
                     val intent = Intent(context, LoginActivity::class.java)
                     loginLauncher.launch(intent)
                 }
 
-                is MovieDetailsScreenUiEffect.OpenTrailer -> {
+                is MovieDetailsScreenEffect.OpenTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.url?.toUri())
                     context.startActivity(intent)
+                }
+
+                MovieDetailsScreenEffect.UpdateRate -> {
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("movie_rate_updated", true)
                 }
             }
         }
@@ -123,7 +129,7 @@ private fun MovieDetailsEffectsHandler(
 @Composable
 fun MovieDetailsContent(
     state: MovieDetailsScreenUiState,
-    interactionListener: MovieDetailsViewModel,
+    interactionListener: MovieDetailsScreenInteractionListener,
 ) {
     val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> =
         state.similarMovies.collectAsLazyPagingItems()
@@ -261,13 +267,9 @@ fun MovieDetailsContent(
 
                                     TrailerAndRateSection(
                                         trailerUrl = state.movieDetails.trailerUrl,
-                                        onPlayTrailerClicked = {
-                                            interactionListener.onWatchTrailerClick(
-                                                state.movieDetails.trailerUrl.orEmpty()
-                                            )
-                                        },
-                                        onRateClicked = interactionListener::onRateMovieClick,
-                                        showRateButton = !state.isRatingSubmitted
+                                        onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
+                                        onRateClicked = interactionListener::onRateClick,
+                                        isFilledStarIcon = state.isRatingSubmitted
                                     )
                                 }
                             }
@@ -292,11 +294,13 @@ fun MovieDetailsContent(
 
             if (state.showRateDialog) {
                 RateDialog(
-                    currentRating = state.rating,
+                    currentRating = state.filledStarsCount,
                     onRatingChanged = interactionListener::onRatingChange,
                     onDismissRequest = interactionListener::onDismissRateDialog,
-                    onSubmitRating = interactionListener::onSummitRateClick
-                )
+                    onSubmitRating = interactionListener::onSummitRateClick,
+                    onDeleteRating = interactionListener::onDeleteRateClick,
+                    isSubmitButtonEnabled = state.hasUserSelectedRate,
+                    isDeleteButtonVisible = state.isRatingSubmitted                )
             }
             if (state.showLoginDialog && !state.isUserLoggedIn) {
                 LoginDialog(
