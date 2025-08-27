@@ -158,7 +158,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onDismissRateDialog() {
-        updateState { copy(showLoginDialog = false, filledStarsCount = imdbRating) }
+        updateState { copy(showRateDialog = false, filledStarsCount = imdbRating) }
     }
 
     override fun onSummitRateClick() {
