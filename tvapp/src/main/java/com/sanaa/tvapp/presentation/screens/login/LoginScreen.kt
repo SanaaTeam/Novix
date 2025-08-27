@@ -32,12 +32,11 @@ import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.button.common.AnimatedLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.component.text_field.PasswordTextField
 import com.sanaa.designsystem.design_system.component.text_field.TextField
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.screens.login.components.PasswordInput
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.AnimatedSnackBarHost
-
 
 @Composable
 fun LoginScreen(
@@ -94,8 +93,14 @@ private fun LoginContent(
                     painter = painterResource(id = R.drawable.app_icon),
                     contentDescription = stringResource(R.string.app_icon),
                     modifier = Modifier
-                        .padding(bottom = 38.dp)
                         .size(88.dp)
+                )
+
+                Text(
+                    modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
+                    text = stringResource(R.string.login_to_your_account),
+                    style = Theme.textStyle.title.large,
+                    color = Theme.colors.title,
                 )
 
                 TextField(
@@ -105,14 +110,11 @@ private fun LoginContent(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-
-                PasswordTextField(
-                    value = state.password,
-                    icon = painterResource(R.drawable.lock_key),
+                PasswordInput(
+                    password = state.password,
                     onValueChange = listener::onPasswordChanged,
-                    isPasswordVisible = state.isPasswordVisible,
+                    passwordVisible = state.isPasswordVisible,
                     onVisibilityToggle = listener::onTogglePasswordVisibility,
-                    modifier = Modifier.fillMaxWidth()
                 )
 
                 Button(

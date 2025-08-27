@@ -28,6 +28,7 @@
     <string name="season_number">م%d</string>
     <string name="episodes_count">%d حلقات</string>
     <string name="login">تسجيل الدخول</string>
+    <string name="login_to_your_account">تسجيل الدخول إلى حسابك</string>
     <string name="logout">تسجيل خروج</string>
     <string name="app_icon">أيقونة التطبيق</string>
     <string name="please_login_to_rate_your_favorite_items">يرجى تسجيل الدخول للوصول إلى تفاصيل حسابك والميزات الأخرى!</string>
