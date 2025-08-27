@@ -5,4 +5,5 @@ interface ActorsScreenInteractionListener {
     fun onMovieClicked(id: Int)
     fun onSnackDismissRequested()
     fun onRetryClicked()
+    fun onReadMoreClicked()
 }

@@ -1,0 +1,131 @@
+package com.sanaa.tvapp.presentation.screens.mediaDetails.components
+
+import android.annotation.SuppressLint
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Constraints
+import com.sanaa.designsystem.design_system.component.text.AnnotatedText
+import com.sanaa.designsystem.design_system.theme.Theme
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
+@Composable
+fun ExpandableText(
+    text: String,
+    modifier: Modifier = Modifier,
+    style: TextStyle,
+    color: Color,
+    collapsedMaxLines: Int = 4,
+    readMoreText: String,
+    readLessText: String,
+    isExpanded: Boolean = false,
+    onReadMore: (() -> Unit)? = null
+) {
+    val textMeasurer = rememberTextMeasurer()
+
+    var hasOverflow by rememberSaveable { mutableStateOf(false) }
+    var displayText by rememberSaveable { mutableStateOf(text) }
+
+    BoxWithConstraints(
+        modifier = modifier
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
+                )
+            )
+            .clickable(
+                enabled = hasOverflow,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                onReadMore?.invoke()
+            }
+    ) {
+        val maxWidthPx = with(LocalDensity.current) { maxWidth.toPx() }
+
+        LaunchedEffect(text, isExpanded, maxWidthPx) {
+            val layoutResult: TextLayoutResult = textMeasurer.measure(
+                text = AnnotatedString(text),
+                style = style,
+                constraints = Constraints(maxWidth = maxWidthPx.toInt())
+            )
+
+            if (layoutResult.lineCount > collapsedMaxLines) {
+                hasOverflow = true
+
+                if (!isExpanded) {
+                    val lastChar = layoutResult
+                        .getLineEnd(collapsedMaxLines - 1, visibleEnd = true)
+
+                    val rawCutoff = (lastChar - readMoreText.length)
+                        .coerceAtLeast(0)
+
+                    val raw = text.substring(0, rawCutoff)
+                    val lastSpace = raw.lastIndexOf(' ')
+                    val safe = if (lastSpace != -1) raw.substring(0, lastSpace) else raw
+
+                    displayText = safe.trimEnd() + readMoreText
+                } else {
+                    displayText = text + readLessText
+                }
+            } else {
+                hasOverflow = false
+                displayText = text
+            }
+        }
+
+        AnnotatedText(
+            text = buildAnnotatedString {
+                when {
+                    !isExpanded && hasOverflow && displayText.endsWith(readMoreText) -> {
+                        append(displayText.removeSuffix(readMoreText))
+                        withStyle(
+                            Theme.textStyle.label.medium
+                                .toSpanStyle()
+                                .copy(color = Theme.colors.primary)
+                        ) {
+                            append(readMoreText)
+                        }
+                    }
+
+                    isExpanded && hasOverflow && displayText.endsWith(readLessText) -> {
+                        append(displayText.removeSuffix(readLessText))
+                        withStyle(
+                            Theme.textStyle.label.medium
+                                .toSpanStyle()
+                                .copy(color = Theme.colors.primary)
+                        ) {
+                            append(readLessText)
+                        }
+                    }
+
+                    else -> append(displayText)
+                }
+            },
+            style = style.copy(color = color),
+            maxLines = if (!isExpanded && hasOverflow) collapsedMaxLines else Int.MAX_VALUE,
+            overflow = TextOverflow.Clip
+        )
+    }
+}

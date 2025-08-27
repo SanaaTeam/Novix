@@ -21,9 +21,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -31,7 +39,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
-import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -46,6 +53,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeade
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.OverviewSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.EpisodesContent
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.SeasonTab
@@ -189,14 +197,27 @@ private fun TvShowScreenReadyContent(
     state: TvShowDetailsScreenUiState,
     interactionListener: TvShowScreenInteractionListener,
 ) {
+    val focusRequester = remember {
+        FocusRequester()
+    }
+    var hasRequestedFocus by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(state = rememberScrollState())
     ) {
         Card(
-            modifier = Modifier.size(0.dp),
-            onClick = {},
+            modifier = Modifier
+                .size(0.dp)
+                .focusRequester(focusRequester)
+                .focusTarget()
+                .onGloballyPositioned {
+                    if (!hasRequestedFocus) {
+                        hasRequestedFocus = true
+                        focusRequester.requestFocus()
+                    }
+                },
+            onClick = interactionListener::onReadMoreClicked,
             colors = CardDefaults.colors(
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent,
@@ -205,7 +226,7 @@ private fun TvShowScreenReadyContent(
                 pressedContainerColor = Color.Transparent,
                 pressedContentColor = Color.Transparent
             )
-        ){}
+        ) {}
         DetailsHeaderSection(
             backgroundImageUrl = state.backgroundImageUrl,
             title = state.tvShows.title,
@@ -258,11 +279,14 @@ private fun TvShowScreenReadyContent(
                     }
                 }
 
-                Text(
-                    text = state.tvShows.overview,
-                    style = Theme.textStyle.body.small,
-                    color = Theme.colors.body
-                )
+               if(state.tvShows.overview.isNotEmpty()){
+                    OverviewSection(
+                        titleResId = R.string.overview,
+                        overview = state.tvShows.overview,
+                        onReadMore = interactionListener::onReadMoreClicked,
+                        isExpanded = state.isExpandedOverView,
+                    )
+                }
 
                 TrailerAndRateSection(
                     trailerUrl = state.tvShows.trailerUrl,

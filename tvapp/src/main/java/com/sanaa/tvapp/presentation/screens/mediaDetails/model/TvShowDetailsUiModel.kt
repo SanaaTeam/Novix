@@ -26,6 +26,6 @@ data class EpisodeUiModel(
     val airDate: String? = null,
     val stillPath: String? = null,
     val duration: Int? = null,
-    val overview: String? = null,
+    val overview: String = "",
     val seasonNumber: Int = 0,
 )

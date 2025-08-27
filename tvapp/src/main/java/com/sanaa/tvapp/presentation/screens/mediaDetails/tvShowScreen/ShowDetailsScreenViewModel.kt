@@ -321,4 +321,8 @@ class ShowDetailsScreenViewModel @Inject constructor(
     override fun onDismissSnackBar() {
         updateState { copy(snackBarData = null) }
     }
+
+    override fun onReadMoreClicked() {
+        updateState { copy(isExpandedOverView = !state.value.isExpandedOverView) }
+    }
 }

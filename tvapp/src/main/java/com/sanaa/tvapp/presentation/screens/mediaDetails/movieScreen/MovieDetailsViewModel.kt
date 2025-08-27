@@ -196,6 +196,10 @@ class MovieDetailsViewModel @Inject constructor(
         updateState { copy(snackBarData = null) }
     }
 
+    override fun onReadMoreClicked() {
+        updateState { copy(isExpandedOverView = !state.value.isExpandedOverView) }
+    }
+
     private fun addMovieToHistory(movie: Movie) {
         tryToCollect(
             block = { getLoggedInUserUseCase.getLoggedInUser() },
