@@ -39,15 +39,15 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         apiService.fetchTvShowsByCategory(
             page = page,
             category = genreId
-        ).results.distinctBy { it.id }
+        ).results
     }
 
     override suspend fun getReviewsByTvShowId(id: Int, page: Int): List<ReviewDto> = wrapApiCall {
-        apiService.fetchTvShowsReviews(id, page).results.distinctBy { it.id }
+        apiService.fetchTvShowsReviews(id, page).results
     }
 
     override suspend fun getTvShowCast(id: Int): List<ActorDto> = wrapApiCall {
-        apiService.fetchTvShowsCast(id).cast.distinctBy { it.id }
+        apiService.fetchTvShowsCast(id).cast
     }
 
     override suspend fun getEpisodeDetails(
@@ -65,11 +65,11 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         tvShowId: Int, seasonNumber: Int, episodeNumber: Int
     ): List<ActorDto> = wrapApiCall {
         apiService.fetchEpisodeGuestsOfHonor(tvShowId, seasonNumber, episodeNumber).guestStars
-            .distinctBy { it.id }
+
     }
 
     override suspend fun getTvShowGenres(): List<GenreDto> {
-        return apiService.fetchTvShowsGenres().genres.distinctBy { it.id }
+        return apiService.fetchTvShowsGenres().genres
     }
 
     override suspend fun getTvShowRate(accountId: Long, sessionId: String): List<TvShowDto> =
@@ -85,7 +85,7 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
     override suspend fun fetchPopularTvShows(
         page: Int,
     ): List<TvShowDto> {
-        return apiService.getPopularTvShows(page).results.distinctBy { it.id }
+        return apiService.getPopularTvShows(page).results
     }
 
     override suspend fun fetchTopRatedTvShows(
@@ -95,7 +95,7 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         return apiService.fetchTopRatingTvShows(
             page,
             genreId?.toString()
-        ).results.distinctBy { it.id }
+        ).results
     }
 
     override suspend fun fetchTrendingTvShows(
@@ -105,8 +105,11 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         return apiService.fetchTrendingTvShows(
             page,
             genreId?.toString()
-        ).results.distinctBy { it.id }
+        ).results
     }
+
+    override suspend fun fetchUpcomingTvShows(page: Int, genreId: Int?): List<TvShowDto> =
+        wrapApiCall { apiService.fetchUpcomingTvShows(page, genreId?.toString()).results }
 
     override suspend fun sendTvShowRate(
         tvShowId: Int,

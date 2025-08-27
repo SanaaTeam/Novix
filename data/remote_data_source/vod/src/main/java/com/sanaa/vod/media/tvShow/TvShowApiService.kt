@@ -93,6 +93,17 @@ interface TvShowApiService {
     ): MovieApiResponse<TvShowDto>
 
     @GET("discover/tv")
+    suspend fun fetchUpcomingTvShows(
+        @Query("page") page: Int,
+        @Query("with_genres") withGenres: String? = null,
+        @Query("include_adult") includeAdult: Boolean = false,
+        @Query("include_video") includeVideo: Boolean = false,
+        @Query("with_release_type") releaseType: String = "2|3",
+        @Query("release_date.gte") minDate: String? = null,
+        @Query("release_date.lte") maxDate: String? = null
+    ): MovieApiResponse<TvShowDto>
+
+    @GET("discover/tv")
     suspend fun fetchTopRatingTvShows(
         @Query("page") page: Int,
         @Query("with_genres") withGenres: String? = null,
