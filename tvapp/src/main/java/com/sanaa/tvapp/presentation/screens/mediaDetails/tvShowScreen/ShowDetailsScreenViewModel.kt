@@ -75,7 +75,16 @@ class ShowDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onRetryLoadDetails() {
+        updateState {
+            copy(
+                isLoading = true,
+                noInternetConnection = false
+            )
+        }
         loadTvShows()
+        if (state.value.isUserLoggedIn) {
+            fetchUserRating()
+        }
     }
 
     private fun loadTvShows() {
@@ -160,6 +169,41 @@ class ShowDetailsScreenViewModel @Inject constructor(
         )
     }
 
+    override fun onDeleteRateClick() {
+        tryToExecute(
+            onStart = { updateState { copy(showRateDialog = false) }},
+            block = ::deleteRating,
+            onError = ::onErrorAccrue
+        )
+    }
+
+    private suspend fun deleteRating() {
+        val isSuccess = manageTvShowDetails.deleteTvShowRate(tvShowId = route.tvShowId)
+        if (isSuccess) {
+            updateState {
+                copy(
+                    filledStarsCount = 0,
+                    imdbRating = 0,
+                    isRatingSubmitted = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingSuccess,
+                        isError = false
+                    )
+                )
+            }
+        } else {
+            updateState {
+                copy(
+                    filledStarsCount = imdbRating,
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingFailed,
+                        isError = true
+                    )
+                )
+            }
+        }
+    }
+
     override fun onLoginButtonClick() {
         emitEffect(TvShowDetailsScreenEffects.NavigateToLogin)
     }
@@ -238,7 +282,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
         } else {
             updateState {
                 copy(
-                    showRateDialog = false,
+                    filledStarsCount = imdbRating,
                     snackBarData = SnackData(
                         message = stringProvider.submitRatingFailed,
                         isError = true

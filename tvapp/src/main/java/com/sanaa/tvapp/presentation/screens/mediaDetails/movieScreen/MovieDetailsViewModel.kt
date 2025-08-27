@@ -120,6 +120,9 @@ class MovieDetailsViewModel @Inject constructor(
             )
         }
         fetchMovieDetails(movieId)
+        if (state.value.isUserLoggedIn) {
+            fetchUserRating()
+        }
     }
 
     override fun onRateClick() {
@@ -144,6 +147,41 @@ class MovieDetailsViewModel @Inject constructor(
             block = ::submitMovieRating,
             onError = ::onErrorAccrue
         )
+    }
+
+    override fun onDeleteRateClick() {
+        tryToExecute(
+            onStart = { updateState { copy(showRateDialog = false) }},
+            block = ::deleteRating,
+            onError = ::onErrorAccrue
+        )
+    }
+
+    private suspend fun deleteRating() {
+        val isSuccess = manageMovieDetails.deleteMovieRate(movieId = movieId)
+        if (isSuccess) {
+            updateState {
+                copy(
+                    filledStarsCount = 0,
+                    imdbRating = 0,
+                    isRatingSubmitted = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingSuccess,
+                        isError = false
+                    )
+                )
+            }
+        } else {
+            updateState {
+                copy(
+                    filledStarsCount = imdbRating,
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingFailed,
+                        isError = true
+                    )
+                )
+            }
+        }
     }
 
     override fun onSimilarMovieClick(movieId: Int) {

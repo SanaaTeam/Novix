@@ -10,6 +10,7 @@ interface TvShowScreenInteractionListener {
     fun onRatingChange(rating: Int)
     fun onDismissRateDialog()
     fun onSummitRateClick()
+    fun onDeleteRateClick()
     fun onLoginButtonClick()
     fun onDismissLoginDialog()
     fun onDismissSnackBar()

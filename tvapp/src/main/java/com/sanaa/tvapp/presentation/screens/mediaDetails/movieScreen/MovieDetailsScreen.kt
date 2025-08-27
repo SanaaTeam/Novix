@@ -265,8 +265,10 @@ fun MovieDetailsContent(
                     currentRating = state.filledStarsCount,
                     onRatingChanged = interactionListener::onRatingChange,
                     onDismissRequest = interactionListener::onDismissRateDialog,
-                    onSubmitRating = interactionListener::onSummitRateClick
-                )
+                    onSubmitRating = interactionListener::onSummitRateClick,
+                    onDeleteRating = interactionListener::onDeleteRateClick,
+                    isSubmitButtonEnabled = state.hasUserSelectedRate,
+                    isDeleteButtonVisible = state.isRatingSubmitted                )
             }
             if (state.showLoginDialog && !state.isUserLoggedIn) {
                 LoginDialog(

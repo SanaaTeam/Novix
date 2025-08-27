@@ -9,6 +9,7 @@ interface MovieDetailsScreenInteractionListener {
     fun onRatingChange(rating: Int)
     fun onDismissRateDialog()
     fun onSummitRateClick()
+    fun onDeleteRateClick()
     fun onSimilarMovieClick(movieId: Int)
     fun onActorCardClick(actorId: Int)
     fun onSnackDismissRequested()

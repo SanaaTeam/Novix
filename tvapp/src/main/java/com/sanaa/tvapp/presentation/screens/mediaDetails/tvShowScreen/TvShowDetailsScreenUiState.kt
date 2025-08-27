@@ -23,4 +23,7 @@ data class TvShowDetailsScreenUiState(
     val isRatingSubmitted: Boolean = false,
     val imdbRating: Int = 0,
     val filledStarsCount: Int = 0,
-)
+) {
+    val hasUserSelectedRate: Boolean
+        get() = filledStarsCount > 0 && (imdbRating == 0 || filledStarsCount != imdbRating)
+}
