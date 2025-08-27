@@ -308,6 +308,7 @@ class HomeScreenViewModel @Inject constructor(
         fetchTopRatedMovieData()
         fetchTopRatedTvShowData()
         fetchUpcomingMovies()
+        fetchUpcomingTvShows()
         loadRatedMedia()
     }
 
