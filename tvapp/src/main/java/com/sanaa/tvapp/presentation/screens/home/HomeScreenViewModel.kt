@@ -78,7 +78,7 @@ class HomeScreenViewModel @Inject constructor(
         val popularMovies = manageMovieUseCase.getPopularMovies(1).map { it.toState() }.take(5)
         val popularTvShows = manageTvShowsUseCase.getPopularTvShows(1).map { it.toState() }.take(5)
 
-        return (popularMovies + popularTvShows).sortedByDescending { media -> media.rating }
+        return (popularMovies + popularTvShows).sortedByDescending { media -> media.imdbRating }
     }
 
     private fun onFetchPopularMediaSuccess(mediaList: List<MediaItemUiState>) {
@@ -210,7 +210,6 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun loadRatedMedia() {
-        updateState { copy(isLoading = true) }
         loadRatedMovies()
         loadRatedTvShows()
     }
@@ -226,7 +225,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun onLoadMoviesSuccess(movies: List<Movie>) {
         updateState {
             copy(
-                ratedMovies = movies.map { it.toState() }.filter { it.rating != null },
+                ratedMovies = movies.map { it.toState() },
                 isLoading = false
             )
         }
@@ -243,7 +242,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun onLoadTvShowsSuccess(tvShows: List<TvShow>) {
         updateState {
             copy(
-                ratedTvShows = tvShows.map { it.toState() }.filter { it.rating != null },
+                ratedTvShows = tvShows.map { it.toState() },
                 isLoading = false
             )
         }

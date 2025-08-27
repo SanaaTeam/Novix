@@ -21,10 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,13 +37,11 @@ import com.sanaa.tvapp.presentation.screens.home.component.HomeScreenLoading
 import com.sanaa.tvapp.presentation.screens.home.component.HomeTabs
 import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
-import com.sanaa.tvapp.presentation.screens.navigation.LocalDrawerFocusRequester
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.TvShowDetailsRoute
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
 import com.sanaa.tvapp.state.MediaItemUiState
 import com.sanaa.tvapp.state.MediaTypeUiState
-import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.tvapp.R as tvResource
@@ -229,7 +225,7 @@ fun HomeMovies(
                         titleText = item.title,
                         onClick = { onItemClick(item.id) },
                         topCornerContent = {
-                            MediaRatingChip(rating = item.rating.orEmpty())
+                            MediaRatingChip(rating = item.userRating.orEmpty())
                         }
                     )
                 }
@@ -282,7 +278,7 @@ fun HomeTvShows(
                         titleText = item.title,
                         onClick = { onItemClick(item.id) },
                         topCornerContent = {
-                            MediaRatingChip(rating = item.rating.orEmpty())
+                            MediaRatingChip(rating = item.userRating.orEmpty())
                         }
                     )
                 }

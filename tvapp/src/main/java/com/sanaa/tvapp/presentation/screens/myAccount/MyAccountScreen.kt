@@ -58,7 +58,6 @@ import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingOptionIte
 import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingOptions
 import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingSection
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
-import com.sanaa.tvapp.presentation.screens.navigation.LocalDrawerFocusRequester
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ChangePasswordScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MyRatingScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.WatchingHistoryScreenRoute
@@ -84,7 +83,6 @@ private fun MyAccountScreenContent(
     interactionsListener: MyAccountScreenInteractionsListener,
 ) {
     val scrollState = rememberScrollState()
-    val drawerFocusRequester = LocalDrawerFocusRequester.current
     val layoutDirection = LocalLayoutDirection.current
     Box(
         modifier = Modifier.fillMaxSize(),
