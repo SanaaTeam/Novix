@@ -4,4 +4,5 @@ interface EpisodeDetailsInteractionListener {
     fun onPlayTrailerClick()
     fun onRetryLoadDetails()
     fun onActorClick(id: Int)
+    fun onReadMoreClicked()
 }

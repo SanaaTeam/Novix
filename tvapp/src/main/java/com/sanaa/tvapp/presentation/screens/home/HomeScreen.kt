@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -48,13 +49,32 @@ import com.sanaa.tvapp.R as tvResource
 
 @Composable
 fun HomeScreen(
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+    viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
-    val state by homeScreenViewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val navController = LocalAppNavController.current
 
-    EffectHandler(homeScreenViewModel.effect)
+    LaunchedEffect(Unit) {
+        snapshotFlow { navController.currentBackStackEntry }
+            .collect { backStackEntry ->
+                val moviesRateUpdated =
+                    backStackEntry?.savedStateHandle?.get<Boolean>("movie_rate_updated") == true
+                val tvShowsRateUpdated =
+                    backStackEntry?.savedStateHandle?.get<Boolean>("tv_show_rate_updated") == true
+                if (moviesRateUpdated) {
+                    viewModel.onMoviesRateUpdated()
+                    backStackEntry.savedStateHandle.remove<Boolean>("movie_rate_updated")
+                }
+                if (tvShowsRateUpdated) {
+                    viewModel.onTvShowsRateUpdated()
+                    backStackEntry.savedStateHandle.remove<Boolean>("tv_show_rate_updated")
+                }
+            }
+    }
 
-    HomeScreenContent(state, homeScreenViewModel)
+    EffectHandler(viewModel.effect)
+
+    HomeScreenContent(state, viewModel)
 }
 
 @Composable
@@ -86,10 +106,12 @@ fun HomeScreenContent(
 
 @Composable
 private fun HomeReadyContent(state: HomeScreenUiState, interactionListener: HomeScreenInteractionListener){
+
     val sidePaddings = 36.dp
     val carouselFocusRequester = remember { FocusRequester() }
 
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
+    val upcomingTvShows = state.upcomingTvShows.collectAsLazyPagingItems()
 
     LaunchedEffect(Unit) {
         carouselFocusRequester.requestFocus()
@@ -129,7 +151,8 @@ private fun HomeReadyContent(state: HomeScreenUiState, interactionListener: Home
                     end = sidePaddings,
                     bottom = 16.dp
                 )
-                .focusRequester(carouselFocusRequester),
+                .focusRequester(carouselFocusRequester)
+            ,
 
             mediaItemUiStates = state.popularMedia,
             onShowDetails = {
@@ -157,7 +180,7 @@ private fun HomeReadyContent(state: HomeScreenUiState, interactionListener: Home
                 }
 
                 SelectedHomeTab.TV_SHOWS -> {
-                    HomeTvShows(state) { id ->
+                    HomeTvShows(state, upcomingTvShows) { id ->
                         interactionListener.onMediaClick(id, MediaTypeUiState.TV_SHOW)
                     }
                 }
@@ -186,10 +209,10 @@ fun HomeMovies(
             }
         }
 
-        if (state.continueWatchingMovies.isNotEmpty()) {
+        if (state.WatchingHistoryMovies.isNotEmpty()) {
             MediaSection(title = stringResource(tvResource.string.watching_history)) {
                 items(
-                    items = state.continueWatchingMovies,
+                    items = state.WatchingHistoryMovies,
                     key = { it.id }
                 ) {
                     FocusableMediaCard(
@@ -223,7 +246,7 @@ fun HomeMovies(
                         titleText = item.title,
                         onClick = { onItemClick(item.id) },
                         topCornerContent = {
-                            MediaRatingChip(rating = item.rating.orEmpty())
+                            MediaRatingChip(rating = item.userRating.orEmpty())
                         }
                     )
                 }
@@ -235,15 +258,13 @@ fun HomeMovies(
 @Composable
 fun HomeTvShows(
     state: HomeScreenUiState,
+    upcomingTvShows: LazyPagingItems<MediaItemUiState>,
     onItemClick: (Int) -> Unit,
 ) {
     Column {
         if (state.topRatingTvShows.isNotEmpty()) {
             MediaSection(title = stringResource(tvResource.string.top_rated)) {
-                items(
-                    items = state.topRatingTvShows,
-                    key = { it.id }
-                ) {
+                items(items = state.topRatingTvShows, key = { it.id }) {
                     FocusableMediaCard(
                         imageUrl = it.imageUrl ?: "",
                         titleText = it.title,
@@ -253,12 +274,21 @@ fun HomeTvShows(
             }
         }
 
-        if (state.continueWatchingTvShows.isNotEmpty()) {
+        if (state.WatchingHistoryTvShows.isNotEmpty()) {
             MediaSection(title = stringResource(tvResource.string.watching_history)) {
-                items(
-                    items = state.continueWatchingTvShows,
-                    key = { it.id }
-                ) {
+                items(items = state.WatchingHistoryTvShows, key = { it.id }) {
+                    FocusableMediaCard(
+                        imageUrl = it.imageUrl ?: "",
+                        titleText = it.title,
+                        onClick = { onItemClick(it.id) }
+                    )
+                }
+            }
+        }
+
+        MediaSection(title = stringResource(tvResource.string.up_upcoming)) {
+            items(count = upcomingTvShows.itemCount,) { index ->
+                upcomingTvShows[index]?.let {
                     FocusableMediaCard(
                         imageUrl = it.imageUrl ?: "",
                         titleText = it.title,
@@ -276,7 +306,7 @@ fun HomeTvShows(
                         titleText = item.title,
                         onClick = { onItemClick(item.id) },
                         topCornerContent = {
-                            MediaRatingChip(rating = item.rating.orEmpty())
+                            MediaRatingChip(rating = item.userRating.orEmpty())
                         }
                     )
                 }

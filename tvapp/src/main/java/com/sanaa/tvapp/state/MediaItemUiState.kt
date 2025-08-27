@@ -5,9 +5,9 @@ data class MediaItemUiState(
     val title: String,
     val overview: String,
     val imageUrl: String?,
-    val rating: String? = null,
+    val imdbRating: String? = null,
+    val userRating: String? = null,
     val mediaTypeUiState: MediaTypeUiState,
-    val isSaved: Boolean = false,
 )
 
 enum class MediaTypeUiState {

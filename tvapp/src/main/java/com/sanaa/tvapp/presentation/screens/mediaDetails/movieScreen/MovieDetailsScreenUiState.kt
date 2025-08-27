@@ -15,10 +15,15 @@ MovieDetailsScreenUiState(
     val cast: List<ActorUiModel> = emptyList(),
     val imagesUrls: List<String> = emptyList(),
     val noInternetConnection: Boolean = false,
-    val rating: Int = 0,
     val isUserLoggedIn: Boolean = false,
-    val isRatingSubmitted: Boolean = false,
     val showRateDialog: Boolean = false,
     val showLoginDialog: Boolean = false,
     val snackBarData: SnackData? = null,
-)
+    val isExpandedOverView: Boolean = false,
+    val isRatingSubmitted: Boolean = false,
+    val imdbRating: Int = 0,
+    val filledStarsCount: Int = 0,
+) {
+    val hasUserSelectedRate: Boolean
+        get() = filledStarsCount > 0 && (imdbRating == 0 || filledStarsCount != imdbRating)
+}

@@ -2,6 +2,7 @@ package com.sanaa.tvapp.presentation.screens.mediaDetails.episodeScreen
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -9,20 +10,31 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusTarget
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.tv.material3.Text
+import androidx.tv.material3.Card
+import androidx.tv.material3.CardDefaults
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -32,6 +44,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.OverviewSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
@@ -81,6 +94,10 @@ private fun EpisodeDetailsScreenContent(
     interactionListener: EpisodeDetailsInteractionListener,
     state: EpisodeDetailsScreenUiState,
 ) {
+    val focusRequester = remember {
+        FocusRequester()
+    }
+    var hasRequestedFocus by remember { mutableStateOf(false) }
     NovixScaffold(
         backgroundShapes = {},
         modifier = Modifier
@@ -109,6 +126,28 @@ private fun EpisodeDetailsScreenContent(
                             .fillMaxSize()
                             .verticalScroll(state = rememberScrollState())
                     ) {
+                        Card(
+                            modifier = Modifier
+                                .size(0.dp)
+                                .focusRequester(focusRequester)
+                                .focusable()
+                                .focusTarget()
+                                .onGloballyPositioned {
+                                    if (!hasRequestedFocus) {
+                                        hasRequestedFocus = true
+                                        focusRequester.requestFocus()
+                                    }
+                                },
+                            onClick = interactionListener::onReadMoreClicked,
+                            colors = CardDefaults.colors(
+                                containerColor = Color.Transparent,
+                                contentColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                focusedContentColor = Color.Transparent,
+                                pressedContainerColor = Color.Transparent,
+                                pressedContentColor = Color.Transparent
+                            )
+                        ) {}
                         DetailsHeaderSection(
                             backgroundImageUrl = state.backgroundImageUrl,
                             title = stringResource(
@@ -162,16 +201,19 @@ private fun EpisodeDetailsScreenContent(
                                     }
                                 }
 
-                                Text(
-                                    text = state.episode.overview.orEmpty(),
-                                    style = Theme.textStyle.body.small,
-                                    color = Theme.colors.body
-                                )
+                                if(state.episode.overview.isNotEmpty()){
+                                    OverviewSection(
+                                        titleResId = R.string.overview,
+                                        overview = state.episode.overview ,
+                                        onReadMore = interactionListener::onReadMoreClicked,
+                                        isExpanded = state.isExpandedOverView,
+                                    )
+                                }
 
                                 TrailerAndRateSection(
                                     trailerUrl = state.trailerUrl,
                                     onPlayTrailerClicked = interactionListener::onPlayTrailerClick,
-                                    showRateButton = false
+                                    isRateButtonVisible = false
                                 )
                             }
                         }

@@ -22,11 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
-import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.presentation.api.LocalSafeContentThreshold
+import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.RemoteImagePlaceholder
 
 
@@ -38,10 +38,8 @@ fun ImagesSlider(
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = title,
-            style = Theme.textStyle.headLine.small,
-            color = Theme.colors.title,
+        Title(
+            title = title,
             modifier = Modifier.padding(horizontal = 36.dp)
         )
 

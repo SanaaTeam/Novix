@@ -51,4 +51,6 @@
     <string name="top_movies_pick">أفضل الأفلام المختارة</string>
     <string name="top_tvShows_picks">أفضل المسلسلات المختارة</string>
     <string name="logout_message">هل أنت متأكد أنك تريد المتابعة؟</string>
+    <string name="biography">سيرة ذاتية</string>
+    <string name="overview">نظرة عامة</string>
 </resources>

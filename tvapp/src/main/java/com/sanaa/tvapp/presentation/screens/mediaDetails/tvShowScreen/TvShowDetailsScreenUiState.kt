@@ -16,10 +16,15 @@ data class TvShowDetailsScreenUiState(
     val error: String? = null,
     val selectedSeason: Int = 1,
     val noInternetConnection: Boolean = false,
-    val isRatingSubmitted: Boolean = false,
     val isUserLoggedIn: Boolean = false,
     val showLoginDialog: Boolean = false,
     val showRateDialog: Boolean = false,
-    val rating: Int = 0,
     val snackBarData: SnackData? = null,
-)
+    val isExpandedOverView: Boolean = false,
+    val isRatingSubmitted: Boolean = false,
+    val imdbRating: Int = 0,
+    val filledStarsCount: Int = 0,
+) {
+    val hasUserSelectedRate: Boolean
+        get() = filledStarsCount > 0 && (imdbRating == 0 || filledStarsCount != imdbRating)
+}

@@ -50,4 +50,6 @@
     <string name="logout_message">Are you sure to continue?</string>
     <string name="top_movies_pick">Top movies picks</string>
     <string name="top_tvShows_picks">Top tv shows picks</string>
+    <string name="biography">Biography</string>
+    <string name="overview">Overview</string>
 </resources>

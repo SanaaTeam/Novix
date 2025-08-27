@@ -7,4 +7,6 @@ interface HomeScreenInteractionListener {
     fun onTabClick(selectedTab: SelectedHomeTab)
     fun onRetryClick()
     fun onSnackBarDismiss()
+    fun onTvShowsRateUpdated()
+    fun onMoviesRateUpdated()
 }

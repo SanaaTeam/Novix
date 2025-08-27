@@ -47,7 +47,7 @@ class HomeScreenViewModel @Inject constructor(
         fetchTopRatedMovieData()
         fetchTopRatedTvShowData()
         fetchUpcomingMovies()
-        loadRatedMedia()
+        fetchUpcomingTvShows()
     }
 
     private fun updateUserLoggingStatus() {
@@ -61,6 +61,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun onCollectLoggedFlag(isLogged: Boolean) {
         if (isLogged != state.value.userIsLoggedIn) {
             fetchWatchedMediaData()
+            loadRatedMedia()
             updateState { copy(userIsLoggedIn = isLogged) }
         }
     }
@@ -78,7 +79,7 @@ class HomeScreenViewModel @Inject constructor(
         val popularMovies = manageMovieUseCase.getPopularMovies(1).map { it.toState() }.take(5)
         val popularTvShows = manageTvShowsUseCase.getPopularTvShows(1).map { it.toState() }.take(5)
 
-        return (popularMovies + popularTvShows).sortedByDescending { media -> media.rating }
+        return (popularMovies + popularTvShows).sortedByDescending { media -> media.imdbRating }
     }
 
     private fun onFetchPopularMediaSuccess(mediaList: List<MediaItemUiState>) {
@@ -143,19 +144,19 @@ class HomeScreenViewModel @Inject constructor(
             copy(
                 isLoading = false,
                 errorMessage = null,
-                continueWatchingMovies = mediaList.map { it.toState() }
+                WatchingHistoryMovies = mediaList.map { it.toState() }
                     .filter { it.mediaTypeUiState == MediaTypeUiState.MOVIE },
-                continueWatchingTvShows = mediaList.map { it.toState() }
+                WatchingHistoryTvShows = mediaList.map { it.toState() }
                     .filter { it.mediaTypeUiState == MediaTypeUiState.TV_SHOW }
             )
         }
     }
 
 
-    private fun fetchUpcomingMovies(genreId: Int? = null) {
+    private fun fetchUpcomingMovies() {
         tryToExecute(
             onStart = { updateState { copy(isLoading = true) } },
-            block = { loadUpcomingMovies(genreId) },
+            block = { loadUpcomingMovies() },
             onSuccess = ::onFetchUpcomingMoviesSuccess,
             onError = ::onErrorLoadingData
         )
@@ -165,6 +166,24 @@ class HomeScreenViewModel @Inject constructor(
         updateState {
             copy(
                 upcomingMovies = movies,
+                isLoading = false
+            )
+        }
+    }
+
+    private fun fetchUpcomingTvShows() {
+        tryToExecute(
+            onStart = { updateState { copy(isLoading = true) } },
+            block = { loadUpcomingTvShows() },
+            onSuccess = ::onFetchUpcomingTvShowsSuccess,
+            onError = ::onErrorLoadingData
+        )
+    }
+
+    private fun onFetchUpcomingTvShowsSuccess(tvShows: Flow<PagingData<MediaItemUiState>>) {
+        updateState {
+            copy(
+                upcomingTvShows = tvShows,
                 isLoading = false
             )
         }
@@ -185,32 +204,39 @@ class HomeScreenViewModel @Inject constructor(
             }
     }
 
-    private fun loadUpcomingMovies(
-        genreId: Int?,
-    ): Flow<PagingData<MediaItemUiState>> {
+    private fun loadUpcomingMovies(): Flow<PagingData<MediaItemUiState>> {
         return createPagingFlow(
-            pagingSourceFactory = {
-                createUpcomingMoviesPagingDataSource(
-                    genreId = genreId
-                )
-            },
+            pagingSourceFactory = { createUpcomingMoviesPagingDataSource() },
             mapper = Movie::toState
         )
     }
 
-    fun createUpcomingMoviesPagingDataSource(
-        genreId: Int?,
-    ): PagingSource<Int, Movie> {
+    private fun loadUpcomingTvShows(): Flow<PagingData<MediaItemUiState>> {
+        return createPagingFlow(
+            pagingSourceFactory = { createUpcomingTvShowsPagingDataSource() },
+            mapper = TvShow::toState
+        )
+    }
+
+    fun createUpcomingMoviesPagingDataSource(): PagingSource<Int, Movie> {
         return BasePagingSource { page ->
             manageMovieUseCase.getUpcomingMovies(
                 page = page,
-                genreId = genreId
+                genreId = null
+            )
+        }
+    }
+
+    fun createUpcomingTvShowsPagingDataSource(): PagingSource<Int, TvShow> {
+        return BasePagingSource { page ->
+            manageTvShowsUseCase.getUpcomingTvShows(
+                page = page,
+                genreId = null
             )
         }
     }
 
     private fun loadRatedMedia() {
-        updateState { copy(isLoading = true) }
         loadRatedMovies()
         loadRatedTvShows()
     }
@@ -226,7 +252,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun onLoadMoviesSuccess(movies: List<Movie>) {
         updateState {
             copy(
-                ratedMovies = movies.map { it.toState() }.filter { it.rating != null },
+                ratedMovies = movies.map { it.toState() },
                 isLoading = false
             )
         }
@@ -243,7 +269,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun onLoadTvShowsSuccess(tvShows: List<TvShow>) {
         updateState {
             copy(
-                ratedTvShows = tvShows.map { it.toState() }.filter { it.rating != null },
+                ratedTvShows = tvShows.map { it.toState() },
                 isLoading = false
             )
         }
@@ -282,10 +308,19 @@ class HomeScreenViewModel @Inject constructor(
         fetchTopRatedMovieData()
         fetchTopRatedTvShowData()
         fetchUpcomingMovies()
+        fetchUpcomingTvShows()
         loadRatedMedia()
     }
 
     override fun onSnackBarDismiss() {
         updateState { copy(snackBarData = null) }
+    }
+
+    override fun onTvShowsRateUpdated() {
+        loadRatedTvShows()
+    }
+
+    override fun onMoviesRateUpdated() {
+       loadRatedMovies()
     }
 }

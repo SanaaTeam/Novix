@@ -26,7 +26,8 @@ fun TrailerAndRateSection(
     trailerUrl: String? = null,
     onPlayTrailerClicked: () -> Unit = {},
     onRateClicked: () -> Unit = {},
-    showRateButton: Boolean = true,
+    isFilledStarIcon: Boolean = false,
+    isRateButtonVisible: Boolean = true,
 ) {
     Row(
         modifier = modifier,
@@ -62,18 +63,18 @@ fun TrailerAndRateSection(
                 )
             }
         }
-        if (showRateButton) {
+        if (isRateButtonVisible) {
             Button(
-                onClick = {
-                    onRateClicked()
-                },
+                onClick = onRateClicked,
                 colors = ButtonDefaults.colors(
                     containerColor = Theme.colors.disable,
                     focusedContainerColor = Theme.colors.primary
                 ),
             ) {
+                val icon = if (isFilledStarIcon) R.drawable.star else R.drawable.outlined_star
+
                 Image(
-                    painter = painterResource(R.drawable.icon_star_outlined),
+                    painter = painterResource(icon),
                     contentDescription = null,
                     modifier = Modifier.padding(4.dp)
                 )

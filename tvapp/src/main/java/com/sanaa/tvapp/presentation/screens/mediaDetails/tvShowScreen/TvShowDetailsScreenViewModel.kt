@@ -28,7 +28,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class ShowDetailsScreenViewModel @Inject constructor(
+class TvShowDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageTvShowDetails: ManageTvShowUseCase,
@@ -36,7 +36,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<TvShowDetailsScreenUiState, TvShowDetailsScreenEffects>(
+) : BaseViewModel<TvShowDetailsScreenUiState, TvShowDetailsScreenEffect>(
     initialState = TvShowDetailsScreenUiState(),
     defaultDispatcher = dispatcher
 ), TvShowScreenInteractionListener {
@@ -50,7 +50,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onActorClicked(actorId: Int) {
-        emitEffect(TvShowDetailsScreenEffects.NavigateToActorScreen(actorId))
+        emitEffect(TvShowDetailsScreenEffect.NavigateToActorScreen(actorId))
     }
 
     override fun onSeasonNumberClicked(seasonNumber: Int) {
@@ -64,18 +64,27 @@ class ShowDetailsScreenViewModel @Inject constructor(
 
     override fun onEpisodeClicked(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
         emitEffect(
-            TvShowDetailsScreenEffects.NavigateToEpisodeDetailsScreen(
+            TvShowDetailsScreenEffect.NavigateToEpisodeDetailsScreen(
                 seriesId, seasonNumber, episodeNumber
             )
         )
     }
 
     override fun onPlayTrailerClicked() {
-        emitEffect(TvShowDetailsScreenEffects.PlayTrailer(trailerUrl = state.value.tvShows.trailerUrl))
+        emitEffect(TvShowDetailsScreenEffect.PlayTrailer(trailerUrl = state.value.tvShows.trailerUrl))
     }
 
     override fun onRetryLoadDetails() {
+        updateState {
+            copy(
+                isLoading = true,
+                noInternetConnection = false
+            )
+        }
         loadTvShows()
+        if (state.value.isUserLoggedIn) {
+            fetchUserRating()
+        }
     }
 
     private fun loadTvShows() {
@@ -145,22 +154,60 @@ class ShowDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onRatingChange(rating: Int) {
-        updateState { copy(rating = rating) }
+        updateState { copy(filledStarsCount = rating) }
     }
 
     override fun onDismissRateDialog() {
-        updateState { copy(showLoginDialog = false) }
+        updateState { copy(showRateDialog = false, filledStarsCount = imdbRating) }
     }
 
     override fun onSummitRateClick() {
         tryToExecute(
+            onStart = { updateState { copy(showRateDialog = false) }},
             block = ::submitTvShowRating,
             onError = ::onErrorAccrue
         )
     }
 
+    override fun onDeleteRateClick() {
+        tryToExecute(
+            onStart = { updateState { copy(showRateDialog = false) }},
+            block = ::deleteRating,
+            onError = ::onErrorAccrue
+        )
+    }
+
+    private suspend fun deleteRating() {
+        val isSuccess = manageTvShowDetails.deleteTvShowRate(tvShowId = route.tvShowId)
+        if (isSuccess) {
+            updateState {
+                copy(
+                    filledStarsCount = 0,
+                    imdbRating = 0,
+                    isRatingSubmitted = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingSuccess,
+                        isError = false
+                    )
+                )
+            }
+            emitEffect(TvShowDetailsScreenEffect.UpdateRate)
+
+        } else {
+            updateState {
+                copy(
+                    filledStarsCount = imdbRating,
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingFailed,
+                        isError = true
+                    )
+                )
+            }
+        }
+    }
+
     override fun onLoginButtonClick() {
-        emitEffect(TvShowDetailsScreenEffects.NavigateToLogin)
+        emitEffect(TvShowDetailsScreenEffect.NavigateToLogin)
     }
 
     override fun onDismissLoginDialog() {
@@ -210,14 +257,15 @@ class ShowDetailsScreenViewModel @Inject constructor(
     private fun onFetchUserRatingSuccess(rating: Int) {
         updateState {
             copy(
-                rating = rating,
+                imdbRating = rating,
+                filledStarsCount = rating,
                 isRatingSubmitted = rating != 0
             )
         }
     }
 
     private suspend fun submitTvShowRating() {
-        val rating = state.value.rating
+        val rating = state.value.filledStarsCount
         val isSendRateSuccess = manageTvShowDetails.addTvShowRate(
             tvShowId = route.tvShowId,
             rating = rating.toFloat()
@@ -225,7 +273,7 @@ class ShowDetailsScreenViewModel @Inject constructor(
         if (isSendRateSuccess) {
             updateState {
                 copy(
-                    showRateDialog = false,
+                    imdbRating = rating,
                     isRatingSubmitted = true,
                     snackBarData = SnackData(
                         message = stringProvider.submitRatingSuccess,
@@ -233,10 +281,11 @@ class ShowDetailsScreenViewModel @Inject constructor(
                     )
                 )
             }
+            emitEffect(TvShowDetailsScreenEffect.UpdateRate)
         } else {
             updateState {
                 copy(
-                    showRateDialog = false,
+                    filledStarsCount = imdbRating,
                     snackBarData = SnackData(
                         message = stringProvider.submitRatingFailed,
                         isError = true
@@ -274,5 +323,9 @@ class ShowDetailsScreenViewModel @Inject constructor(
 
     override fun onDismissSnackBar() {
         updateState { copy(snackBarData = null) }
+    }
+
+    override fun onReadMoreClicked() {
+        updateState { copy(isExpandedOverView = !state.value.isExpandedOverView) }
     }
 }

@@ -13,7 +13,8 @@ fun Movie.toState(): MediaItemUiState = MediaItemUiState(
     id = id,
     title = title,
     imageUrl = posterImageUrl,
-    rating = String.format("%.1f", imdbRating),
+    imdbRating = String.format("%.1f", imdbRating),
+    userRating = rating.toString(),
     mediaTypeUiState = MediaTypeUiState.MOVIE,
     overview = overview,
 )
@@ -23,7 +24,8 @@ fun TvShow.toState(): MediaItemUiState = MediaItemUiState(
     id = id,
     title = title,
     imageUrl = posterImageUrl,
-    rating = String.format("%.1f", imdbRating),
+    imdbRating = String.format("%.1f", imdbRating),
+    userRating = rating.toString(),
     mediaTypeUiState = MediaTypeUiState.TV_SHOW,
     overview = overview,
 )
@@ -32,7 +34,7 @@ fun MediaHistoryItem.toState(): MediaItemUiState = MediaItemUiState(
     id = id,
     title = title,
     imageUrl = posterImageUrl,
-    rating = "",
+    imdbRating = "",
     mediaTypeUiState = mediaType.toState(),
     overview = "",
 )
