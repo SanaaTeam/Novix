@@ -32,7 +32,6 @@ import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.button.common.AnimatedLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.component.text_field.PasswordTextField
 import com.sanaa.designsystem.design_system.component.text_field.TextField
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
@@ -94,8 +93,14 @@ private fun LoginContent(
                     painter = painterResource(id = R.drawable.app_icon),
                     contentDescription = stringResource(R.string.app_icon),
                     modifier = Modifier
-                        .padding(bottom = 38.dp)
                         .size(88.dp)
+                )
+
+                Text(
+                    modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
+                    text = stringResource(R.string.login_to_your_account),
+                    style = Theme.textStyle.title.large,
+                    color = Theme.colors.title,
                 )
 
                 TextField(
@@ -105,13 +110,12 @@ private fun LoginContent(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-
-            PasswordInput(
-                password = state.password,
-                onValueChange = listener::onPasswordChanged,
-                passwordVisible = state.isPasswordVisible,
-                onVisibilityToggle = listener::onTogglePasswordVisibility,
-            )
+                PasswordInput(
+                    password = state.password,
+                    onValueChange = listener::onPasswordChanged,
+                    passwordVisible = state.isPasswordVisible,
+                    onVisibilityToggle = listener::onTogglePasswordVisibility,
+                )
 
                 Button(
                     modifier = Modifier.fillMaxWidth(),
