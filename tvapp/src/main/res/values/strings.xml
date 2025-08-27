@@ -28,6 +28,7 @@
     <string name="season_number">S%d</string>
     <string name="episodes_count">%d Episodes</string>
     <string name="login">Login</string>
+    <string name="login_to_your_account">Login to your account</string>
     <string name="logout">Logout</string>
     <string name="app_icon">app icon</string>
     <string name="please_login_to_rate_your_favorite_items">Please login to rate your favorite items.</string>

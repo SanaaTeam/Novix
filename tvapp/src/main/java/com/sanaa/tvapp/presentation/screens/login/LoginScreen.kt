@@ -33,13 +33,12 @@ import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.button.common.AnimatedLoadingIndicator
-import com.sanaa.designsystem.design_system.component.text_field.PasswordTextField
 import com.sanaa.designsystem.design_system.component.text_field.TextField
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.screens.login.components.PasswordInput
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.AnimatedSnackBarHost
 import com.sanaa.tvapp.state.SnackData
-
 
 @Composable
 fun LoginScreen(
@@ -100,13 +99,11 @@ private fun LoginContent(
             )
 
 
-            PasswordTextField(
-                value = state.password,
-                icon = painterResource(R.drawable.lock_key),
+            PasswordInput(
+                password = state.password,
                 onValueChange = listener::onPasswordChanged,
-                isPasswordVisible = state.isPasswordVisible,
+                passwordVisible = state.isPasswordVisible,
                 onVisibilityToggle = listener::onTogglePasswordVisibility,
-                modifier = Modifier.fillMaxWidth()
             )
 
             Button(
