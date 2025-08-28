@@ -1,5 +1,9 @@
 package com.sanaa.tvapp.presentation.screens.myAccount.component
 
+import android.util.Log
+import android.view.KeyEvent.ACTION_DOWN
+import android.view.KeyEvent.KEYCODE_DPAD_LEFT
+import android.view.KeyEvent.KEYCODE_DPAD_RIGHT
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,7 +26,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -33,6 +43,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.presentation.screens.navigation.LocalDrawerFocusRequester
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
+import kotlinx.coroutines.delay
 import com.sanaa.designsystem.R as designSystemResource
 
 @Composable
@@ -77,7 +88,7 @@ fun <T> SettingOptions(
 ) {
     val drawerFocusRequester = LocalDrawerFocusRequester.current
     val layoutDirection = LocalLayoutDirection.current
-    var firstIndexIsFocused by remember { mutableStateOf(false) }
+
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier
@@ -85,17 +96,24 @@ fun <T> SettingOptions(
         settingOptionItems.forEachIndexed { index,item ->
             ToggleableSettingChip(
                 modifier = Modifier
-                    .onFocusChanged{focusState ->
-                        firstIndexIsFocused = index == 0 && focusState.isFocused
+                    .onKeyEvent { keyEvent: KeyEvent ->
+                        if (
+                            keyEvent.nativeKeyEvent.action == ACTION_DOWN &&
+                            keyEvent.nativeKeyEvent.keyCode == KEYCODE_DPAD_LEFT &&
+                            index == 0 &&
+                            layoutDirection == LayoutDirection.Ltr
+                            ){
+                            drawerFocusRequester.requestFocus()
+                        }else if (
+                            keyEvent.nativeKeyEvent.action == ACTION_DOWN &&
+                            keyEvent.nativeKeyEvent.keyCode == KEYCODE_DPAD_RIGHT &&
+                            index == 0 &&
+                            layoutDirection == LayoutDirection.Rtl
+                        ){
+                            drawerFocusRequester.requestFocus()
+                        }
+                        false
                     }
-                    .handleDPadKeyEvents(
-                        onLeft = if (firstIndexIsFocused && layoutDirection == LayoutDirection.Ltr) {
-                            { drawerFocusRequester.requestFocus() }
-                        } else null,
-                        onRight = if (firstIndexIsFocused && layoutDirection == LayoutDirection.Rtl) {
-                            { drawerFocusRequester.requestFocus() }
-                        } else null
-                    )
                 ,
                 settingOptionItem = item,
                 onClick = { onSelected(item) }
