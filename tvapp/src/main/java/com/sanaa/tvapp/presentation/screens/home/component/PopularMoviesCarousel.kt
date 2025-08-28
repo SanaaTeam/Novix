@@ -201,6 +201,7 @@ private fun CarouselItemBackground(movie: MediaItemUiState, modifier: Modifier =
     movie.imageUrl?.let {
         RemoteBlurredSensitiveImage(
             isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+            safeContentThreshold = LocalSafeContentThreshold.current,
             imageUrl = movie.imageUrl,
             contentDescription = movie.title,
             modifier = modifier
