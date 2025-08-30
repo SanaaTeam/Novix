@@ -8,5 +8,7 @@ import kotlinx.serialization.Serializable
 data class MovieApiResponse<T>(
     @SerialName("page") val page: Int? = null,
     @SerialName("results") val results: List<T> = emptyList(),
-    @SerialName("genres") val genres: List<GenreDto> = emptyList()
+    @SerialName("genres") val genres: List<GenreDto> = emptyList(),
+    @SerialName("total_pages") val totalPages: Int? = null,
+    @SerialName("total_results") val totalResults: Int? = null
 )

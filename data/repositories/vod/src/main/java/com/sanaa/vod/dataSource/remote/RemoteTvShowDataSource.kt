@@ -1,5 +1,6 @@
 package com.sanaa.vod.dataSource.remote
 
+import com.sanaa.vod.dataSource.remote.dto.FavoriteResponse
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.RatingResponse
@@ -36,6 +37,7 @@ interface RemoteTvShowDataSource {
     suspend fun fetchPopularTvShows(page: Int): List<TvShowDto>
     suspend fun fetchTopRatedTvShows(page: Int, genreId: Int?): List<TvShowDto>
     suspend fun fetchTrendingTvShows(page: Int, genreId: Int?): List<TvShowDto>
+
     suspend fun sendTvShowRate(tvShowId: Int, sessionId: String, rating: Float): RatingResponse
     suspend fun sendTvEpisodeRate(
         tvShowId: Int,
@@ -44,5 +46,20 @@ interface RemoteTvShowDataSource {
         sessionId: String,
         rating: Float
     ): RatingResponse
+
     suspend fun deleteTvShowRate(tvShowId: Int, sessionId: String): RatingResponse
+
+    suspend fun addTvShowToFavorite(
+        tvShowId: Int,
+        accountId: Long,
+        sessionId: String
+    ): FavoriteResponse
+
+    suspend fun fetchFavoriteTvShows(accountId: Long, sessionId: String, page: Int): List<TvShowDto>
+    suspend fun isTvShowInFavorite(tvShowId: Int, accountId: Long, sessionId: String): Boolean
+    suspend fun deleteTvShowFromFavorite(
+        tvShowId: Int,
+        accountId: Long,
+        sessionId: String
+    ): FavoriteResponse
 }

@@ -1,6 +1,7 @@
 package com.sanaa.vod.media.tvShow
 
 import com.sanaa.vod.dataSource.remote.RemoteTvShowDataSource
+import com.sanaa.vod.dataSource.remote.dto.FavoriteResponse
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.RatingResponse
@@ -10,6 +11,7 @@ import com.sanaa.vod.dataSource.remote.dto.review.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.tvShow.EpisodeDto
 import com.sanaa.vod.dataSource.remote.dto.tvShow.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.tvShow.TvShowDto
+import com.sanaa.vod.media.tvShow.request.TvShowFavoriteRequest
 import com.sanaa.vod.media.tvShow.request.TvShowRateRequest
 import com.sanaa.vod.util.wrapApiCall
 import javax.inject.Inject
@@ -121,6 +123,71 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         return response
     }
 
+    override suspend fun addTvShowToFavorite(
+        tvShowId: Int,
+        accountId: Long,
+        sessionId: String
+    ): FavoriteResponse {
+        val response = apiService.updateTvShowFavoriteStatus(
+            accountId = accountId,
+            sessionId = sessionId,
+            requestBody = TvShowFavoriteRequest(mediaId = tvShowId, favorite = true)
+        )
+        return response
+    }
+
+    override suspend fun fetchFavoriteTvShows(
+        accountId: Long,
+        sessionId: String,
+        page: Int
+    ): List<TvShowDto> {
+        return apiService.fetchFavoriteTvShow(
+            accountId = accountId,
+            sessionId = sessionId,
+            page = page
+        ).results
+    }
+
+    override suspend fun isTvShowInFavorite(
+        tvShowId: Int,
+        accountId: Long,
+        sessionId: String
+    ): Boolean {
+        var page = 1
+        var totalPages: Int
+
+        do {
+            val response = apiService.fetchFavoriteTvShow(
+                accountId = accountId,
+                sessionId = sessionId,
+                page = page
+            )
+
+            totalPages = response.totalPages ?: 0
+
+            if (response.results.any { it.id == tvShowId }) {
+                return true
+            }
+
+            page++
+        } while (page <= totalPages)
+
+        return false
+    }
+
+    override suspend fun deleteTvShowFromFavorite(
+        tvShowId: Int,
+        accountId: Long,
+        sessionId: String
+    ): FavoriteResponse {
+        val response = apiService.updateTvShowFavoriteStatus(
+            accountId = accountId,
+            sessionId = sessionId,
+            requestBody = TvShowFavoriteRequest(mediaId = tvShowId, favorite = false)
+        )
+        return response
+    }
+
     override suspend fun sendTvEpisodeRate(
         tvShowId: Int,
         seasonNumber: Int,
@@ -137,6 +204,7 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         )
         return response
     }
+
     override suspend fun deleteTvShowRate(tvShowId: Int, sessionId: String): RatingResponse =
         wrapApiCall {
             apiService.deleteTvShowRating(tvShowId, sessionId)

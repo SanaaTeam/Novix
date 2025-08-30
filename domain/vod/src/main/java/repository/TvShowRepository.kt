@@ -39,4 +39,8 @@ interface TvShowRepository {
     ): Boolean
     suspend fun getRatedTvShows(accountId: Long, sessionId: String): List<TvShow>
     suspend fun deleteTvShowRate(tvShowId: Int): Boolean
+
+    suspend fun addTvShowToFavorite(tvShowId: Int): Boolean
+    suspend fun fetchFavoriteTvShows(page: Int): List<TvShow>
+    suspend fun deleteTvShowFromFavorite(tvShowId: Int): Boolean
 }

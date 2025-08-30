@@ -1,10 +1,12 @@
 package com.sanaa.vod.media.tvShow
 
+import com.sanaa.vod.dataSource.remote.dto.FavoriteResponse
 import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.tvShow.EpisodeDto
 import com.sanaa.vod.dataSource.remote.dto.tvShow.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.tvShow.TvShowDto
 import com.sanaa.vod.media.movie.response.MovieApiResponse
+import com.sanaa.vod.media.tvShow.request.TvShowFavoriteRequest
 import com.sanaa.vod.media.tvShow.request.TvShowRateRequest
 import com.sanaa.vod.media.tvShow.response.GenreTvShowResponse
 import com.sanaa.vod.media.tvShow.response.TvShowCastResponse
@@ -116,6 +118,20 @@ interface TvShowApiService {
         @Query("session_id") sessionId: String,
         @Body rating: TvShowRateRequest
     ): RatingResponse
+
+    @POST("account/{account_id}/favorite")
+    suspend fun updateTvShowFavoriteStatus(
+        @Path("account_id") accountId: Long,
+        @Query("session_id") sessionId: String,
+        @Body requestBody: TvShowFavoriteRequest
+    ): FavoriteResponse
+
+    @GET("account/{account_id}/favorite/tv")
+    suspend fun fetchFavoriteTvShow(
+        @Path("account_id") accountId: Long,
+        @Query("session_id") sessionId: String,
+        @Query("page") page: Int = 1,
+    ): MovieApiResponse<TvShowDto>
 
     @GET("account/{account_id}/rated/tv")
     suspend fun fetchTvShowRate(

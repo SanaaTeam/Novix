@@ -68,6 +68,18 @@ class ManageTvShowUseCase @Inject constructor(
         return repository.deleteTvShowRate(tvShowId)
     }
 
+    suspend fun addTvShowToFavorite(tvShowId: Int): Boolean {
+        return repository.addTvShowToFavorite(tvShowId = tvShowId)
+    }
+
+    suspend fun getFavoriteTvShows(page: Int): List<TvShow> {
+        return repository.fetchFavoriteTvShows(page = page)
+    }
+
+    suspend fun deleteTvShowFromFavorite(tvShowId: Int): Boolean {
+        return repository.deleteTvShowFromFavorite(tvShowId)
+    }
+
     private companion object {
         const val IMAGE_COUNT = 10
     }

@@ -212,4 +212,28 @@ class TvShowRepositoryImpl @Inject constructor(
             remoteDataSource.deleteTvShowRate(tvShowId, sessionId).isSuccess
         }
     }
+
+    override suspend fun addTvShowToFavorite(tvShowId: Int): Boolean {
+        return safeCall("Failed to add Tv Show to favorite") {
+            val sessionId = preferences.sessionId.first()
+            val accountId = preferences.accountId.first()
+            remoteDataSource.addTvShowToFavorite(tvShowId, accountId, sessionId).isSuccess
+        }
+    }
+
+    override suspend fun fetchFavoriteTvShows(page: Int): List<TvShow> {
+        return safeCall("Failed to fetch user favorite tv shows") {
+            val sessionId = preferences.sessionId.first()
+            val accountId = preferences.accountId.first()
+            remoteDataSource.fetchFavoriteTvShows(accountId, sessionId, page).map { it.toEntity() }
+        }
+    }
+
+    override suspend fun deleteTvShowFromFavorite(tvShowId: Int, ): Boolean {
+        return safeCall("Failed to delete Tv Show from favorite") {
+            val sessionId = preferences.sessionId.first()
+            val accountId = preferences.accountId.first()
+            remoteDataSource.deleteTvShowFromFavorite(tvShowId, accountId, sessionId).isSuccess
+        }
+    }
 }
